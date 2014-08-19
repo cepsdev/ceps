@@ -1,0 +1,501 @@
+/**
+ The MIT License (MIT)
+
+Copyright (c) 2014 The authors of ceps
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+ **/
+
+#ifndef YAMDLPARSETREE_H_
+#define YAMDLPARSETREE_H_
+#warning "!!!!! cepsparsetree.hh is DEPRECATED and will be removed in future versions !!!!!"
+#include <string>
+#include <vector>
+#include <algorithm>
+#include <iostream>
+
+namespace ceps
+{
+ namespace parsetree
+ {
+
+ class Node
+  {
+  public:
+	 typedef std::vector<Node*>::iterator Iter;
+
+	  enum Kind{
+		  root = 0,
+		  structdef,
+		  identifier,
+		  expr,
+		  string_literal,
+		  integer_literal,
+		  float_literal,
+		  si_unit_or_derived,
+		  binary_operator,
+		  stmts,
+		  stmt,
+		  valdef,
+		  lambda,
+		  formal_parameters,
+		  formal_parameter,
+		  lambda_body,
+		  return_stmt,
+		  rawmap,
+		  atoms
+	  };
+	  Kind kind;
+	  Node():kind(root){}
+	  Node(Kind k):kind(k){}
+
+	  void push_back(Node* n)
+	  {
+		  children.push_back(n);
+	  }
+
+	  std::vector<Node*>::iterator begin() {return children.begin();}
+	  std::vector<Node*>::iterator end() {return children.end();}
+	  std::vector<Node*>::const_iterator cbegin() const {return children.cbegin();}
+	  std::vector<Node*>::const_iterator cend() const {return children.cend();}
+	  std::vector<Node*> get_children() {return children;}
+
+	  virtual void print(std::ostream& os) const {
+		  os << "ROOT ";
+		  print_children(os);
+	  }
+
+	  void print_children(std::ostream&  os) const
+	  {
+		  for(auto it = cbegin(); it != cend();++it)
+		  {
+			  os << "(";(*it)->print(os);os <<")";
+		  }
+	  }
+
+	  Node* get_first_of_kind(int k)
+	  {
+		  for(Node* n : children)
+		  {
+			  if (n->kind == k)
+				  return n;
+		  }
+		  return nullptr;
+	  }
+
+	  bool has_children() const {return !children.empty();}
+
+  private:
+	  std::vector<Node*> children;
+  };
+
+
+
+
+
+
+
+
+  struct Root: public Node
+  {
+
+  };
+
+  struct Structdef: public Node
+  {
+	  Structdef(const std::string& name_value):
+		  Node(Node::structdef),name(name_value)
+	  {}
+	  void print(std::ostream& os) const {
+		  	  os << "STRUCTDEF " << name<< " ";
+		  	  print_children(os);
+	  	  }
+ 	 const std::string& get_name() {return name;}
+
+  private:
+	  std::string name;
+
+
+  };
+
+
+
+  struct Valdef: public Node
+    {
+  	  Valdef(const std::string& name_value,Node*exprnode):
+  		  Node(Node::valdef),name(name_value)
+  	  {
+  		  push_back(exprnode);
+  	  }
+    private:
+  	  std::string name;
+
+    };
+
+  struct Identifier: public Node
+  {
+	  Identifier(const std::string& name_value):
+		  Node(Node::identifier),name(name_value)
+	  {}
+
+	  void print(std::ostream& os) const {
+			  	  os << "ID " << name << " ";
+			  	  print_children(os);
+		  	  }
+	  const std::string& get_name(){return name;}
+
+  private:
+	  std::string name;
+
+  };
+
+  struct Expr: public Node
+  {
+
+	  Expr():Node(Node::expr){}
+
+	  void print(std::ostream& os) const {
+			  	  os << "EXPR ";
+			  	  print_children(os);
+		  	  }
+
+  };
+
+  struct String_literal: public Node
+  {
+	  String_literal(const std::string& svalue):
+		  Node(Node::string_literal),val(svalue)
+	  {}
+	  std::string& str(){return val;}
+	  const std::string& str()const{return val;}
+	  void print(std::ostream& os) const {
+			  	  os << "STRINGVAL '" << val << "' ";
+			  	  print_children(os);
+		  	  }
+
+  private:
+	  std::string val;
+  };
+
+  struct Integer_literal: public Node
+  {
+	  Integer_literal(int value):
+		  Node(Node::integer_literal),val(value)
+	  {}
+	  int& value(){return val;}
+	  int value()const{return val;}
+	  void print(std::ostream& os) const {
+			  	  os << "INTVAL " << val << " ";
+			  	  print_children(os);
+		  	  }
+
+  private:
+	  int val;
+  };
+
+  struct Float_literal: public Node
+  {
+	  Float_literal(double value):
+		  Node(Node::float_literal),val(value)
+	  {}
+	  double value(){return val;}
+	  double value()const{return val;}
+	  void print(std::ostream& os) const {
+			  	  os << "FLOATVAL " << val << " ";
+			  	  print_children(os);
+		  	  }
+	  void neg() {val = -val;}
+
+  private:
+	  double val;
+
+  };
+
+  struct Binary_operator: public Node
+  {
+	  Binary_operator(char oper):
+		  Node(Node::binary_operator),op(oper)
+	  {}
+	  Binary_operator(char oper,Node* lhs,Node* rhs):
+		  Node(Node::binary_operator),op(oper)
+	  {
+		  push_back(lhs);
+		  push_back(rhs);
+	  }
+	  void print(std::ostream& os) const {
+			  	  os << "BINOP " << op << " ";
+			  	  print_children(os);
+		  	  }
+
+  private:
+	  char op;
+
+  };
+
+  struct Stmts: public Node
+  {
+	  Stmts():
+		  Node(Node::stmts)
+	  {}
+
+	  void print(std::ostream& os) const {
+		  	  os << "STMTS ";
+		  	  print_children(os);
+	  	  }
+
+  private:
+
+  };
+
+  struct Stmt: public Node
+  {
+	  Stmt():
+		  Node(Node::stmt)
+	  {}
+	  void print(std::ostream& os) const {
+		  	  os << "STMT ";
+		  	  print_children(os);
+	  	  }
+
+  private:
+
+  };
+
+
+  struct SI_unit_or_derived: public Node
+  {
+
+  };
+
+
+  struct Atoms: public Node
+    {
+  	  Atoms():
+  		  Node(Node::atoms)
+  	  {}
+  	  void print(std::ostream& os) const {
+  		  	  os << "ATOMS " << " ";
+  		  	  print_children(os);
+  	  	  }
+
+    private:
+
+    };
+
+  struct Raw_map: public Node
+  {
+	  Raw_map():
+		  Node(Node::rawmap)
+	  {}
+	  void print(std::ostream& os) const {
+		  	  os << "RAWMAP " << " ";
+		  	  print_children(os);
+	  	  }
+
+  private:
+
+  };
+
+
+  struct Ident
+  {
+	  Ident(const std::string& ss):s(ss){}
+	  const std::string& get_str() {return s;}
+  private:
+	  std::string s;
+  };
+
+  struct Structid
+   {
+ 	  Structid(const std::string& ss):s(ss){}
+ 	  const std::string& get_str() {return s;}
+   private:
+ 	  std::string s;
+   };
+
+  class Parsetrees
+  {
+	  std::vector<Node*> roots;
+  public:
+	  typedef std::vector<Node*>::iterator Iter;
+	  typedef std::vector<Node*>::const_iterator Const_iter;
+	  Parsetrees(){}
+	  Parsetrees(std::vector<Node*> trees):roots(trees){}
+	  Parsetrees(Node* p){ if (p != nullptr) roots.push_back(p); }
+	  Parsetrees operator[](Node::Kind k) const;
+	  Parsetrees operator[](Ident) const;
+	  Parsetrees operator[](Structid) const;
+
+
+
+	  Parsetrees operator[](char const * sz) const
+	  {
+		  return operator[](std::string{sz});
+	  }
+
+
+	  Parsetrees operator[](std::string const & struct_name) const
+
+	  {
+	  	  std::vector<Node*> result;
+	  	  for (Node* r : roots)
+	  	  {
+	  		  if (r->kind == Node::structdef && ((Structdef*)r)->get_name() == struct_name)
+	  		  {
+	  			  result.push_back(r);
+	  		  }
+	  		  else if (r->kind == Node::structdef && ((Structdef*)r)->get_name() != struct_name)
+	  		  {
+	  			  Parsetrees pt = Parsetrees{r->get_children()}.operator[](struct_name);
+	  			  for(Node* n : pt.roots )
+	  			  {
+	  				  result.push_back(n);
+	  			  }
+
+	  		  }
+	  		  else if (r->kind == Node::stmts)
+	  		  {
+	  			  Parsetrees pt = Parsetrees{r->get_children()}.operator[](struct_name);
+	  			  for(Node* n : pt.roots )
+	  			  {
+	  				  result.push_back(n);
+	  			  }
+	  		  }
+	  	  }
+	  	  return Parsetrees{result};
+	  }
+
+	  Parsetrees at(size_t j) const
+	  {
+		  return Parsetrees{roots[j]};
+	  }
+
+	  std::vector<Node*>& get_roots() {return roots;}
+	  std::vector<Node*>const & get_roots() const{return roots;}
+
+	  operator Node* () {return roots[0];}
+
+
+
+
+	  size_t size() const
+	  {
+		  return roots.size();
+	  }
+	  bool empty()
+	  {
+		  return roots.empty();
+	  }
+	  operator int()
+		{
+		  //return (dynamic_cast<Integer_literal*>(get_roots()[0]))->value();
+
+
+		  if (get_roots().empty())
+				  return 0;
+			  Node* n = get_roots()[0];
+			  if (n->kind == Node::integer_literal )
+				  return (dynamic_cast<Integer_literal*>(get_roots()[0]))->value();
+			  else if (n->kind == Node::structdef || n->kind == Node::stmts || n->kind == Node::expr)
+			  {
+				  return Parsetrees{n->get_children()}.operator int();
+			  }
+			  return 0;
+
+		}
+
+	  operator double()
+		{
+		  //return (dynamic_cast<Float_literal*>(get_roots()[0]))->value();
+
+		  if (get_roots().empty())
+				  return 0.0;
+			  Node* n = get_roots()[0];
+			  if (n->kind == Node::float_literal )
+				  return (dynamic_cast<Float_literal*>(get_roots()[0]))->value();
+			  else if (n->kind == Node::structdef || n->kind == Node::stmts || n->kind == Node::expr)
+			  {
+				  return Parsetrees{n->get_children()}.operator double();
+			  }
+			  return 0.0;
+		}
+	  operator std::string()
+	  {
+		  if (get_roots().empty())
+			  return std::string{};
+		  Node* n = get_roots()[0];
+		  if (n->kind == Node::string_literal )
+			  return (dynamic_cast<String_literal*>(get_roots()[0]))->str();
+		  else if (n->kind == Node::structdef || n->kind == Node::stmts || n->kind == Node::expr)
+		  {
+			  return Parsetrees{n->get_children()}.operator std::string();
+		  }
+		  return std::string{};
+	  }
+  };
+
+  class Parsetree
+  {
+  public:
+	  Parsetree(Node* r):root(r)
+  	  {}
+	  Node* get_root() {return root;}
+	  Parsetrees operator[](char const * sz)
+	  {
+		  return this->operator[](std::string{sz});
+	  }
+	  Parsetrees operator[](std::string const & s)
+	  {
+		  std::vector<Node*> tmp;
+		  for(Node::Iter it = root->begin();it != root->end();++it)
+		  {
+			  tmp.push_back(*it);
+		  }
+		  return Parsetrees{tmp}.operator[](s);
+	  }
+
+	  Parsetrees operator[](Node::Kind k)
+	  {
+		  std::vector<Node*> tmp;
+		  for(Node::Iter it = root->begin();it != root->end();++it)
+		  {
+
+			  if (*it == NULL)
+				  continue;
+			  Node& node = **it;
+			  //std::cout << node.kind << "\n";
+			  if ( node.kind != k) continue;
+			  tmp.push_back(*it);
+
+		  }
+		  return Parsetrees(tmp);
+	  }
+
+  private:
+	  Node* root;
+  };
+
+  std::ostream& operator << (std::ostream&, Parsetrees const & pts );
+  std::ostream& operator << (std::ostream&, Node const & pts );
+
+ }
+}
+
+
+#endif /* YAMDLPARSETREE_H_ */
