@@ -22,8 +22,8 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
  **/
 
-#ifndef YAMDLRUNTIME_H_
-#define YAMDLRUNTIME_H_
+#ifndef CEPSRUNTIME_H_
+#define CEPSRUNTIME_H_
 
 #include <vector>
 #include <cassert>
@@ -344,4 +344,4 @@ namespace ceps
 			            void (*)(Ceps_Environment&) = nullptr );
 }
 
-#endif /* YAMDLRUNTIME_H_ */
+#endif /* CEPSRUNTIME_H_ */

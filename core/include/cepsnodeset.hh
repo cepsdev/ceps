@@ -22,8 +22,8 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
  **/
 
-#ifndef YAMDL_NODESET_H_
-#define YAMDL_NODESET_H_
+#ifndef CEPS_NODESET_H_
+#define CEPS_NODESET_H_
 
 #include <iterator>
 #include <set>

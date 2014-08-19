@@ -22,8 +22,8 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
  **/
 
-#ifndef YAMDL_ALL_HH_
-#define YAMDL_ALL_HH_
+#ifndef CEPS_ALL_HH_
+#define CEPS_ALL_HH_
 
 
 
@@ -44,4 +44,4 @@ SOFTWARE.
 #include "include_gen/ceps.tab.hh"
 
 
-#endif /* YAMDL_ALL_HH_ */
+#endif /* CEPS_ALL_HH_ */

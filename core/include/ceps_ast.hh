@@ -22,8 +22,8 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
  **/
 
-#ifndef YAMDL_AST_H_
-#define YAMDL_AST_H_
+#ifndef CEPS_AST_H_
+#define CEPS_AST_H_
 
 
 #include<map>
@@ -727,7 +727,7 @@ TYPE_ALIAS(Vector_ptr , Vector*)
 	 return vv;
  }
 
-#ifdef YAMDL_CORE_WITH_BOOST
+#ifdef CEPS_CORE_WITH_BOOST
 #include "boost/array.hpp"
 
  template<typename T, size_t N>
@@ -1049,7 +1049,7 @@ template<typename T, size_t N, typename... Ts>
 		return  p;
 	}
 
-#ifdef YAMDL_CORE_WITH_BOOST
+#ifdef CEPS_CORE_WITH_BOOST
 #include "boost/array.hpp"
 
 template<typename T, size_t N, typename... Ts>

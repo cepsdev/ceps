@@ -22,8 +22,8 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
  **/
 
-#ifndef YAMDLLEXER_HH_
-#define YAMDLLEXER_HH_
+#ifndef CEPSLEXER_HH_
+#define CEPSLEXER_HH_
 
 #include <iostream>
 #include <iomanip>
@@ -48,4 +48,4 @@ ceps::Cepsparser::token_type yylex(ceps::Cepsparser::semantic_type* yylval,
 									 Ceps_parser_driver& driver);
 
 
-#endif /* YAMDLLEXER_HH_ */
+#endif /* CEPSLEXER_HH_ */

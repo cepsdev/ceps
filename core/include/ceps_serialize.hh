@@ -23,8 +23,8 @@ SOFTWARE.
  **/
 
 
-#ifndef YAMDL_SERIALIZE_H_
-#define YAMDL_SERIALIZE_H_
+#ifndef CEPS_SERIALIZE_H_
+#define CEPS_SERIALIZE_H_
 
 #include "ceps_ast.hh"
 #include<string>
