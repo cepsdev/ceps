@@ -40,8 +40,13 @@ SOFTWARE.
 
 inline std::string mk_string(int j)
 {
-	char buffer[64] = {0};
-	sprintf(buffer,"%d",j);
+	auto const buf_size = 64;
+	char buffer[buf_size] = { 0 };
+#if _MSC_VER >= 1700
+	sprintf_s(buffer, buf_size,"%d", j);
+#else
+	sprintf(buffer, "%d", j);
+#endif
 	return buffer;
 }
 

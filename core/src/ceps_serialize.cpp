@@ -114,10 +114,10 @@ void ceps::ast::serialize(std::ostream & os, Struct_ptr s, int indent)
 			struct_names.insert(name(as_struct_ref(n)));
 		}
 	}
-	for (std::string const & s : struct_names)
+	for (std::string const & s_n : struct_names)
 	{
 		helper_serialize_print_ws(os,indent);
-		os << "struct "<<s<<";\n";
+		os << "struct "<<s_n<<";\n";
 	}
 	for(Nodebase_ptr n : s->children())
 	{

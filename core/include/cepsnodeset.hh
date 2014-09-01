@@ -37,7 +37,7 @@ namespace ceps
   
   
 
-	class Nodeset;
+	struct Nodeset;
 	
 	
 	struct first
