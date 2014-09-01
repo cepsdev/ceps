@@ -22,7 +22,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
  **/
 
-
+  
 %verbose
 %skeleton "lalr1.cc"
 %require "2.7"
@@ -226,28 +226,28 @@ decl:
 }
 |KINDID id_list
 {
- auto r = new ceps::ast::Kinddef{*$1};
+ auto r = new ceps::ast::Kinddef(*$1,nullptr,nullptr,nullptr);
  for (auto s : *$2)
  {
-  r->children().push_back(new ceps::ast::Identifier{s}); 
+  r->children().push_back(new ceps::ast::Identifier(s,nullptr,nullptr,nullptr)); 
  }
  delete $2; 
  $$ = r;
 } 
 |expr 
 {
-	$$ = new ceps::ast::Expression{$1};
+	$$ = new ceps::ast::Expression($1,nullptr,nullptr);
 }
 ;
 
 struct_decl:
 STRUCTID {driver.symboltable().push_scope();} struct_initialization {driver.symboltable().pop_scope();}
 {
- $$ = new ceps::ast::Struct{*$1,$3};
+ $$ = new ceps::ast::Struct(*$1,$3,nullptr,nullptr);
 }
 |STRUCTID ID struct_initialization  
 {
- $$ = new ceps::ast::Struct{*$1,new ceps::ast::Identifier{*$2},$3};
+ $$ = new ceps::ast::Struct(*$1,new ceps::ast::Identifier{*$2},$3,nullptr);
 }
 ;
 
@@ -262,19 +262,19 @@ struct_initialization:
 expr:
  LITERAL 
  {
- 	$$ = new ceps::ast::String{*$1};
+ 	$$ = new ceps::ast::String(*$1,nullptr,nullptr,nullptr);
  	delete $1;
  }
 
 |ID 
  {
-    $$ = new ceps::ast::Identifier(*$1);
+    $$ = new ceps::ast::Identifier(*$1,nullptr,nullptr,nullptr);
     delete $1;
   }
 |STRUCTID 
 
 {
-	$$ = new ceps::ast::Identifier(*$1); 
+	$$ = new ceps::ast::Identifier(*$1,nullptr,nullptr,nullptr); 
 	delete $1;
 }
 |KINDID
@@ -285,13 +285,13 @@ expr:
 |INTNUM 
 
 {
-	$$ = new ceps::ast::Int{$1,ceps::ast::Unit_rep{}};
+	$$ = new ceps::ast::Int($1,ceps::ast::Unit_rep(),nullptr,nullptr,nullptr);
 }
 
 |FLOATNUM 
 
 {
-	$$ = new ceps::ast::Double{$1,ceps::ast::Unit_rep{}};
+	$$ = new ceps::ast::Double($1,ceps::ast::Unit_rep{},nullptr,nullptr,nullptr);
 }
 
 |'-' expr %prec NEG
@@ -299,43 +299,43 @@ expr:
 {  
 	//ceps::ast::neg(*dynamic_cast<ceps::ast::Double*>($2));
 	//$$=$2;
-	$$ = new ceps::ast::Unary_operator{'-',$2}; 
+	$$ = new ceps::ast::Unary_operator('-',$2,nullptr,nullptr); 
 }
 
 |expr ',' expr
 {
-	$$ = new ceps::ast::Binary_operator{',',$1,$3}; 
+	$$ = new ceps::ast::Binary_operator(',',$1,$3,nullptr); 
 }
 
 |expr '+' expr 
 
 {
-	$$ = new ceps::ast::Binary_operator{'+',$1,$3}; 
+	$$ = new ceps::ast::Binary_operator('+',$1,$3,nullptr); 
 }
 |expr '-' expr
 
 {
-	$$ = new ceps::ast::Binary_operator{'-',$1,$3};
+	$$ = new ceps::ast::Binary_operator('-',$1,$3,nullptr);
 }
 
 |expr '*' expr
 
 {
-	$$ = new ceps::ast::Binary_operator{'*',$1,$3};			
+	$$ = new ceps::ast::Binary_operator('*',$1,$3,nullptr);			
 }
 |expr '/' expr
 
 {
-	$$ = new ceps::ast::Binary_operator{'/',$1,$3}; 
+	$$ = new ceps::ast::Binary_operator('/',$1,$3,nullptr); 
 }
 |expr '^' expr
 
 {
-	$$ = new ceps::ast::Binary_operator{'^',$1,$3}; 
+	$$ = new ceps::ast::Binary_operator('^',$1,$3,nullptr); 
 }
 | expr '=' expr 
 {
-	$$ = new ceps::ast::Binary_operator{'=',$1,$3};
+	$$ = new ceps::ast::Binary_operator('=',$1,$3,nullptr);
 } 
 |'('expr')' 
 {
@@ -354,7 +354,7 @@ expr:
 | expr '('  ')'  %prec FUNCCALL
 {
  //std::cout << "FUNCTION!!" << std::endl;
- $$ = new ceps::ast::Func_call{$1,new  ceps::ast::Call_parameters{} };
+ $$ = new ceps::ast::Func_call($1,new  ceps::ast::Call_parameters(), nullptr);
 }
 
 | FUN '('  parameter_list ')' '{' func_body '}'
@@ -388,12 +388,12 @@ if_then_else:
 id_or_struct_id:
  ID
  {
-    $$ = new ceps::ast::Identifier(*$1); 
+    $$ = new ceps::ast::Identifier(*$1,nullptr,nullptr,nullptr); 
 	delete $1;
  }
 | STRUCTID
 {
-   $$ = new ceps::ast::Identifier(*$1); 
+   $$ = new ceps::ast::Identifier(*$1,nullptr,nullptr,nullptr); 
 	delete $1;
 }
 ;
@@ -401,7 +401,7 @@ id_or_struct_id:
 for_loop_head :
  id_or_struct_id ':' expr
  {
-  auto head = new ceps::ast::Loop_head{};
+  auto head = new ceps::ast::Loop_head();
   head->children().push_back($1);
   head->children().push_back($3);
   $$ = head;
@@ -419,7 +419,7 @@ for_loop_head :
 for_loop:
  FOR '('  for_loop_head  ')' '{' stmts '}'
  {
-  auto temp = new ceps::ast::Loop{};
+  auto temp = new ceps::ast::Loop();
 
   temp->children().push_back($3);
   temp->children().push_back($6);
@@ -441,7 +441,7 @@ parameter:
 argument_list:
  argument
  {
-  $$ = new ceps::ast::Call_parameters{$1};
+  $$ = new ceps::ast::Call_parameters($1,nullptr,nullptr);
  }
    
  | argument_list ',' argument
@@ -474,7 +474,7 @@ raw_map:
 raw_lines:
  /*empty*/ 
  {
- 	$$ = new ceps::ast::Rawmap{};
+ 	$$ = new ceps::ast::Rawmap();
  }
  | raw_lines raw_line 
  { 
@@ -487,22 +487,22 @@ raw_lines:
 raw_line:
 EOL 
 {
-	$$ = new ceps::ast::Atoms{};
+	$$ = new ceps::ast::Atoms();
 }
 | raw_line INTNUM  
 {
-  ceps::ast::nlf_ptr($1)->children().push_back(new ceps::ast::Int{$2,ceps::ast::Unit_rep{}});
+  ceps::ast::nlf_ptr($1)->children().push_back(new ceps::ast::Int($2,ceps::ast::Unit_rep(),nullptr,nullptr,nullptr));
   $$ = $1;
 }
 | raw_line '-' INTNUM  
 {
-  ceps::ast::nlf_ptr($1)->children().push_back(new ceps::ast::Int{-1 * $3,ceps::ast::Unit_rep{}});
+  ceps::ast::nlf_ptr($1)->children().push_back(new ceps::ast::Int(-1 * $3,ceps::ast::Unit_rep(),nullptr,nullptr,nullptr));
   $$ = $1;
 }
 
 | raw_line '+' INTNUM  
 {
-  ceps::ast::nlf_ptr($1)->children().push_back(new ceps::ast::Int{$3,ceps::ast::Unit_rep{}});
+  ceps::ast::nlf_ptr($1)->children().push_back(new ceps::ast::Int($3,ceps::ast::Unit_rep(),nullptr,nullptr,nullptr));
 
   $$ = $1;
 }
@@ -510,18 +510,18 @@ EOL
 
 | raw_line FLOATNUM 
 {
-  ceps::ast::nlf_ptr($1)->children().push_back(new ceps::ast::Double{$2,ceps::ast::Unit_rep{}});
+  ceps::ast::nlf_ptr($1)->children().push_back(new ceps::ast::Double($2,ceps::ast::Unit_rep(),nullptr,nullptr,nullptr));
   $$ = $1;
 }
 | raw_line '-' FLOATNUM 
 {
-  ceps::ast::nlf_ptr($1)->children().push_back(new ceps::ast::Double{-1.0*$3,ceps::ast::Unit_rep{}});
+  ceps::ast::nlf_ptr($1)->children().push_back(new ceps::ast::Double(-1.0*$3,ceps::ast::Unit_rep(),nullptr,nullptr,nullptr));
   $$ = $1;
 }
 
 | raw_line '+' FLOATNUM  
 {
-  ceps::ast::nlf_ptr($1)->children().push_back(new ceps::ast::Double{$3,ceps::ast::Unit_rep{}});
+  ceps::ast::nlf_ptr($1)->children().push_back(new ceps::ast::Double($3,ceps::ast::Unit_rep(),nullptr,nullptr,nullptr));
 
   $$ = $1;
 }
@@ -529,7 +529,7 @@ EOL
 
 | raw_line LITERAL
 {
-  ceps::ast::nlf_ptr($1)->children().push_back(new ceps::ast::String{*$2});
+  ceps::ast::nlf_ptr($1)->children().push_back(new ceps::ast::String(*$2,nullptr,nullptr,nullptr));
   delete $2;
   $$ = $1;
 }

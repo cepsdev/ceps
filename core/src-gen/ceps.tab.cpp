@@ -705,10 +705,10 @@ namespace ceps {
   case 22:
 #line 228 "../src/grammar/ceps.y" // lalr1.cc:846
     {
- auto r = new ceps::ast::Kinddef{*(yystack_[1].value.sval)};
+ auto r = new ceps::ast::Kinddef(*(yystack_[1].value.sval),nullptr,nullptr,nullptr);
  for (auto s : *(yystack_[0].value.str_list))
  {
-  r->children().push_back(new ceps::ast::Identifier{s}); 
+  r->children().push_back(new ceps::ast::Identifier(s,nullptr,nullptr,nullptr)); 
  }
  delete (yystack_[0].value.str_list); 
  (yylhs.value.ast_node) = r;
@@ -719,7 +719,7 @@ namespace ceps {
   case 23:
 #line 238 "../src/grammar/ceps.y" // lalr1.cc:846
     {
-	(yylhs.value.ast_node) = new ceps::ast::Expression{(yystack_[0].value.ast_node)};
+	(yylhs.value.ast_node) = new ceps::ast::Expression((yystack_[0].value.ast_node),nullptr,nullptr);
 }
 #line 725 "ceps.tab.c" // lalr1.cc:846
     break;
@@ -739,7 +739,7 @@ namespace ceps {
   case 26:
 #line 245 "../src/grammar/ceps.y" // lalr1.cc:846
     {
- (yylhs.value.ast_node) = new ceps::ast::Struct{*(yystack_[3].value.sval),(yystack_[1].value.ast_node)};
+ (yylhs.value.ast_node) = new ceps::ast::Struct(*(yystack_[3].value.sval),(yystack_[1].value.ast_node),nullptr,nullptr);
 }
 #line 745 "ceps.tab.c" // lalr1.cc:846
     break;
@@ -747,7 +747,7 @@ namespace ceps {
   case 27:
 #line 249 "../src/grammar/ceps.y" // lalr1.cc:846
     {
- (yylhs.value.ast_node) = new ceps::ast::Struct{*(yystack_[2].value.sval),new ceps::ast::Identifier{*(yystack_[1].value.sval)},(yystack_[0].value.ast_node)};
+ (yylhs.value.ast_node) = new ceps::ast::Struct(*(yystack_[2].value.sval),new ceps::ast::Identifier{*(yystack_[1].value.sval)},(yystack_[0].value.ast_node),nullptr);
 }
 #line 753 "ceps.tab.c" // lalr1.cc:846
     break;
@@ -763,7 +763,7 @@ namespace ceps {
   case 29:
 #line 264 "../src/grammar/ceps.y" // lalr1.cc:846
     {
- 	(yylhs.value.ast_node) = new ceps::ast::String{*(yystack_[0].value.sval)};
+ 	(yylhs.value.ast_node) = new ceps::ast::String(*(yystack_[0].value.sval),nullptr,nullptr,nullptr);
  	delete (yystack_[0].value.sval);
  }
 #line 770 "ceps.tab.c" // lalr1.cc:846
@@ -772,7 +772,7 @@ namespace ceps {
   case 30:
 #line 270 "../src/grammar/ceps.y" // lalr1.cc:846
     {
-    (yylhs.value.ast_node) = new ceps::ast::Identifier(*(yystack_[0].value.sval));
+    (yylhs.value.ast_node) = new ceps::ast::Identifier(*(yystack_[0].value.sval),nullptr,nullptr,nullptr);
     delete (yystack_[0].value.sval);
   }
 #line 779 "ceps.tab.c" // lalr1.cc:846
@@ -781,7 +781,7 @@ namespace ceps {
   case 31:
 #line 276 "../src/grammar/ceps.y" // lalr1.cc:846
     {
-	(yylhs.value.ast_node) = new ceps::ast::Identifier(*(yystack_[0].value.sval)); 
+	(yylhs.value.ast_node) = new ceps::ast::Identifier(*(yystack_[0].value.sval),nullptr,nullptr,nullptr); 
 	delete (yystack_[0].value.sval);
 }
 #line 788 "ceps.tab.c" // lalr1.cc:846
@@ -798,7 +798,7 @@ namespace ceps {
   case 33:
 #line 287 "../src/grammar/ceps.y" // lalr1.cc:846
     {
-	(yylhs.value.ast_node) = new ceps::ast::Int{(yystack_[0].value.ival),ceps::ast::Unit_rep{}};
+	(yylhs.value.ast_node) = new ceps::ast::Int((yystack_[0].value.ival),ceps::ast::Unit_rep(),nullptr,nullptr,nullptr);
 }
 #line 804 "ceps.tab.c" // lalr1.cc:846
     break;
@@ -806,7 +806,7 @@ namespace ceps {
   case 34:
 #line 293 "../src/grammar/ceps.y" // lalr1.cc:846
     {
-	(yylhs.value.ast_node) = new ceps::ast::Double{(yystack_[0].value.fval),ceps::ast::Unit_rep{}};
+	(yylhs.value.ast_node) = new ceps::ast::Double((yystack_[0].value.fval),ceps::ast::Unit_rep{},nullptr,nullptr,nullptr);
 }
 #line 812 "ceps.tab.c" // lalr1.cc:846
     break;
@@ -816,7 +816,7 @@ namespace ceps {
     {  
 	//ceps::ast::neg(*dynamic_cast<ceps::ast::Double*>($2));
 	//$$=$2;
-	(yylhs.value.ast_node) = new ceps::ast::Unary_operator{'-',(yystack_[0].value.ast_node)}; 
+	(yylhs.value.ast_node) = new ceps::ast::Unary_operator('-',(yystack_[0].value.ast_node),nullptr,nullptr); 
 }
 #line 822 "ceps.tab.c" // lalr1.cc:846
     break;
@@ -824,7 +824,7 @@ namespace ceps {
   case 36:
 #line 306 "../src/grammar/ceps.y" // lalr1.cc:846
     {
-	(yylhs.value.ast_node) = new ceps::ast::Binary_operator{',',(yystack_[2].value.ast_node),(yystack_[0].value.ast_node)}; 
+	(yylhs.value.ast_node) = new ceps::ast::Binary_operator(',',(yystack_[2].value.ast_node),(yystack_[0].value.ast_node),nullptr); 
 }
 #line 830 "ceps.tab.c" // lalr1.cc:846
     break;
@@ -832,7 +832,7 @@ namespace ceps {
   case 37:
 #line 312 "../src/grammar/ceps.y" // lalr1.cc:846
     {
-	(yylhs.value.ast_node) = new ceps::ast::Binary_operator{'+',(yystack_[2].value.ast_node),(yystack_[0].value.ast_node)}; 
+	(yylhs.value.ast_node) = new ceps::ast::Binary_operator('+',(yystack_[2].value.ast_node),(yystack_[0].value.ast_node),nullptr); 
 }
 #line 838 "ceps.tab.c" // lalr1.cc:846
     break;
@@ -840,7 +840,7 @@ namespace ceps {
   case 38:
 #line 317 "../src/grammar/ceps.y" // lalr1.cc:846
     {
-	(yylhs.value.ast_node) = new ceps::ast::Binary_operator{'-',(yystack_[2].value.ast_node),(yystack_[0].value.ast_node)};
+	(yylhs.value.ast_node) = new ceps::ast::Binary_operator('-',(yystack_[2].value.ast_node),(yystack_[0].value.ast_node),nullptr);
 }
 #line 846 "ceps.tab.c" // lalr1.cc:846
     break;
@@ -848,7 +848,7 @@ namespace ceps {
   case 39:
 #line 323 "../src/grammar/ceps.y" // lalr1.cc:846
     {
-	(yylhs.value.ast_node) = new ceps::ast::Binary_operator{'*',(yystack_[2].value.ast_node),(yystack_[0].value.ast_node)};			
+	(yylhs.value.ast_node) = new ceps::ast::Binary_operator('*',(yystack_[2].value.ast_node),(yystack_[0].value.ast_node),nullptr);			
 }
 #line 854 "ceps.tab.c" // lalr1.cc:846
     break;
@@ -856,7 +856,7 @@ namespace ceps {
   case 40:
 #line 328 "../src/grammar/ceps.y" // lalr1.cc:846
     {
-	(yylhs.value.ast_node) = new ceps::ast::Binary_operator{'/',(yystack_[2].value.ast_node),(yystack_[0].value.ast_node)}; 
+	(yylhs.value.ast_node) = new ceps::ast::Binary_operator('/',(yystack_[2].value.ast_node),(yystack_[0].value.ast_node),nullptr); 
 }
 #line 862 "ceps.tab.c" // lalr1.cc:846
     break;
@@ -864,7 +864,7 @@ namespace ceps {
   case 41:
 #line 333 "../src/grammar/ceps.y" // lalr1.cc:846
     {
-	(yylhs.value.ast_node) = new ceps::ast::Binary_operator{'^',(yystack_[2].value.ast_node),(yystack_[0].value.ast_node)}; 
+	(yylhs.value.ast_node) = new ceps::ast::Binary_operator('^',(yystack_[2].value.ast_node),(yystack_[0].value.ast_node),nullptr); 
 }
 #line 870 "ceps.tab.c" // lalr1.cc:846
     break;
@@ -872,7 +872,7 @@ namespace ceps {
   case 42:
 #line 337 "../src/grammar/ceps.y" // lalr1.cc:846
     {
-	(yylhs.value.ast_node) = new ceps::ast::Binary_operator{'=',(yystack_[2].value.ast_node),(yystack_[0].value.ast_node)};
+	(yylhs.value.ast_node) = new ceps::ast::Binary_operator('=',(yystack_[2].value.ast_node),(yystack_[0].value.ast_node),nullptr);
 }
 #line 878 "ceps.tab.c" // lalr1.cc:846
     break;
@@ -906,7 +906,7 @@ namespace ceps {
 #line 355 "../src/grammar/ceps.y" // lalr1.cc:846
     {
  //std::cout << "FUNCTION!!" << std::endl;
- (yylhs.value.ast_node) = new ceps::ast::Func_call{(yystack_[2].value.ast_node),new  ceps::ast::Call_parameters{} };
+ (yylhs.value.ast_node) = new ceps::ast::Func_call((yystack_[2].value.ast_node),new  ceps::ast::Call_parameters(), nullptr);
 }
 #line 912 "ceps.tab.c" // lalr1.cc:846
     break;
@@ -922,7 +922,7 @@ namespace ceps {
   case 59:
 #line 390 "../src/grammar/ceps.y" // lalr1.cc:846
     {
-    (yylhs.value.ast_node) = new ceps::ast::Identifier(*(yystack_[0].value.sval)); 
+    (yylhs.value.ast_node) = new ceps::ast::Identifier(*(yystack_[0].value.sval),nullptr,nullptr,nullptr); 
 	delete (yystack_[0].value.sval);
  }
 #line 929 "ceps.tab.c" // lalr1.cc:846
@@ -931,7 +931,7 @@ namespace ceps {
   case 60:
 #line 395 "../src/grammar/ceps.y" // lalr1.cc:846
     {
-   (yylhs.value.ast_node) = new ceps::ast::Identifier(*(yystack_[0].value.sval)); 
+   (yylhs.value.ast_node) = new ceps::ast::Identifier(*(yystack_[0].value.sval),nullptr,nullptr,nullptr); 
 	delete (yystack_[0].value.sval);
 }
 #line 938 "ceps.tab.c" // lalr1.cc:846
@@ -940,7 +940,7 @@ namespace ceps {
   case 61:
 #line 403 "../src/grammar/ceps.y" // lalr1.cc:846
     {
-  auto head = new ceps::ast::Loop_head{};
+  auto head = new ceps::ast::Loop_head();
   head->children().push_back((yystack_[2].value.ast_node));
   head->children().push_back((yystack_[0].value.ast_node));
   (yylhs.value.ast_node) = head;
@@ -962,7 +962,7 @@ namespace ceps {
   case 63:
 #line 421 "../src/grammar/ceps.y" // lalr1.cc:846
     {
-  auto temp = new ceps::ast::Loop{};
+  auto temp = new ceps::ast::Loop();
 
   temp->children().push_back((yystack_[4].value.ast_node));
   temp->children().push_back((yystack_[1].value.ast_node));
@@ -974,7 +974,7 @@ namespace ceps {
   case 68:
 #line 443 "../src/grammar/ceps.y" // lalr1.cc:846
     {
-  (yylhs.value.ast_node) = new ceps::ast::Call_parameters{(yystack_[0].value.ast_node)};
+  (yylhs.value.ast_node) = new ceps::ast::Call_parameters((yystack_[0].value.ast_node),nullptr,nullptr);
  }
 #line 980 "ceps.tab.c" // lalr1.cc:846
     break;
@@ -1009,7 +1009,7 @@ namespace ceps {
   case 72:
 #line 476 "../src/grammar/ceps.y" // lalr1.cc:846
     {
- 	(yylhs.value.ast_node) = new ceps::ast::Rawmap{};
+ 	(yylhs.value.ast_node) = new ceps::ast::Rawmap();
  }
 #line 1015 "ceps.tab.c" // lalr1.cc:846
     break;
@@ -1027,7 +1027,7 @@ namespace ceps {
   case 74:
 #line 489 "../src/grammar/ceps.y" // lalr1.cc:846
     {
-	(yylhs.value.ast_node) = new ceps::ast::Atoms{};
+	(yylhs.value.ast_node) = new ceps::ast::Atoms();
 }
 #line 1033 "ceps.tab.c" // lalr1.cc:846
     break;
@@ -1035,7 +1035,7 @@ namespace ceps {
   case 75:
 #line 493 "../src/grammar/ceps.y" // lalr1.cc:846
     {
-  ceps::ast::nlf_ptr((yystack_[1].value.ast_node))->children().push_back(new ceps::ast::Int{(yystack_[0].value.ival),ceps::ast::Unit_rep{}});
+  ceps::ast::nlf_ptr((yystack_[1].value.ast_node))->children().push_back(new ceps::ast::Int((yystack_[0].value.ival),ceps::ast::Unit_rep(),nullptr,nullptr,nullptr));
   (yylhs.value.ast_node) = (yystack_[1].value.ast_node);
 }
 #line 1042 "ceps.tab.c" // lalr1.cc:846
@@ -1044,7 +1044,7 @@ namespace ceps {
   case 76:
 #line 498 "../src/grammar/ceps.y" // lalr1.cc:846
     {
-  ceps::ast::nlf_ptr((yystack_[2].value.ast_node))->children().push_back(new ceps::ast::Int{-1 * (yystack_[0].value.ival),ceps::ast::Unit_rep{}});
+  ceps::ast::nlf_ptr((yystack_[2].value.ast_node))->children().push_back(new ceps::ast::Int(-1 * (yystack_[0].value.ival),ceps::ast::Unit_rep(),nullptr,nullptr,nullptr));
   (yylhs.value.ast_node) = (yystack_[2].value.ast_node);
 }
 #line 1051 "ceps.tab.c" // lalr1.cc:846
@@ -1053,7 +1053,7 @@ namespace ceps {
   case 77:
 #line 504 "../src/grammar/ceps.y" // lalr1.cc:846
     {
-  ceps::ast::nlf_ptr((yystack_[2].value.ast_node))->children().push_back(new ceps::ast::Int{(yystack_[0].value.ival),ceps::ast::Unit_rep{}});
+  ceps::ast::nlf_ptr((yystack_[2].value.ast_node))->children().push_back(new ceps::ast::Int((yystack_[0].value.ival),ceps::ast::Unit_rep(),nullptr,nullptr,nullptr));
 
   (yylhs.value.ast_node) = (yystack_[2].value.ast_node);
 }
@@ -1063,7 +1063,7 @@ namespace ceps {
   case 78:
 #line 512 "../src/grammar/ceps.y" // lalr1.cc:846
     {
-  ceps::ast::nlf_ptr((yystack_[1].value.ast_node))->children().push_back(new ceps::ast::Double{(yystack_[0].value.fval),ceps::ast::Unit_rep{}});
+  ceps::ast::nlf_ptr((yystack_[1].value.ast_node))->children().push_back(new ceps::ast::Double((yystack_[0].value.fval),ceps::ast::Unit_rep(),nullptr,nullptr,nullptr));
   (yylhs.value.ast_node) = (yystack_[1].value.ast_node);
 }
 #line 1070 "ceps.tab.c" // lalr1.cc:846
@@ -1072,7 +1072,7 @@ namespace ceps {
   case 79:
 #line 517 "../src/grammar/ceps.y" // lalr1.cc:846
     {
-  ceps::ast::nlf_ptr((yystack_[2].value.ast_node))->children().push_back(new ceps::ast::Double{-1.0*(yystack_[0].value.fval),ceps::ast::Unit_rep{}});
+  ceps::ast::nlf_ptr((yystack_[2].value.ast_node))->children().push_back(new ceps::ast::Double(-1.0*(yystack_[0].value.fval),ceps::ast::Unit_rep(),nullptr,nullptr,nullptr));
   (yylhs.value.ast_node) = (yystack_[2].value.ast_node);
 }
 #line 1079 "ceps.tab.c" // lalr1.cc:846
@@ -1081,7 +1081,7 @@ namespace ceps {
   case 80:
 #line 523 "../src/grammar/ceps.y" // lalr1.cc:846
     {
-  ceps::ast::nlf_ptr((yystack_[2].value.ast_node))->children().push_back(new ceps::ast::Double{(yystack_[0].value.fval),ceps::ast::Unit_rep{}});
+  ceps::ast::nlf_ptr((yystack_[2].value.ast_node))->children().push_back(new ceps::ast::Double((yystack_[0].value.fval),ceps::ast::Unit_rep(),nullptr,nullptr,nullptr));
 
   (yylhs.value.ast_node) = (yystack_[2].value.ast_node);
 }
@@ -1091,7 +1091,7 @@ namespace ceps {
   case 81:
 #line 531 "../src/grammar/ceps.y" // lalr1.cc:846
     {
-  ceps::ast::nlf_ptr((yystack_[1].value.ast_node))->children().push_back(new ceps::ast::String{*(yystack_[0].value.sval)});
+  ceps::ast::nlf_ptr((yystack_[1].value.ast_node))->children().push_back(new ceps::ast::String(*(yystack_[0].value.sval),nullptr,nullptr,nullptr));
   delete (yystack_[0].value.sval);
   (yylhs.value.ast_node) = (yystack_[1].value.ast_node);
 }
