@@ -1,4 +1,4 @@
-/**
+/*
  The MIT License (MIT)
 
 Copyright (c) 2014 The authors of ceps
@@ -20,33 +20,60 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
- **/
+ */
+ 
+ 
+ /*
+  Demonstrates simple usage of for loops in ceps
+  Created 2014/08/26
+ */
 
-#ifndef CEPS_GLOBAL_DEFS_HH
-#define CEPS_GLOBAL_DEFS_HH
-#include <stdlib.h>
-#include <stdio.h>
-#include <string>
-
-#if (__GNUC__ >= 4 && __GNUC_MINOR__ >= 8  && __cplusplus)
- #define FULL_CPP11_COMPLIANT_COMPILER
-#endif
-
-#ifdef FULL_CPP11_COMPLIANT_COMPILER
-		#define TYPE_ALIAS(Type_A,Type_B) using Type_A = Type_B ;
-#else
-		#define TYPE_ALIAS(Type_A,Type_B) typedef Type_B Type_A ;
-#endif
-
-inline std::string mk_string(int j)
+/*testcase
 {
-	char buffer[64] = {0};
-	sprintf(buffer,"%d",j);
-	return buffer;
-}
+ author{"cepsdev";};
+ email{"cepsdev@hotmail.com";};
+ code_reference{core{src{"ceps_interpreter_loop.cpp";};};};
+ short{"Basic usage of for loops.";};
+};*/
 
-#define ERROR(x) throw std::runtime_error{\
-						std::string{" In module "} + std::string{__FILE__} + std::string{", at line "} + mk_string(__LINE__) + std::string{": "} + std::string{x} };
+val j = 1;
+
+for( i : j,j+1  k : i,i+1,i+2 )
+{
+ a{
+  vi{i;};
+  vk{k;};
+  };
+};
 
 
-#endif
+/*expectation{
+
+a{
+ vi{1;};
+ vk{1;};
+};
+a{
+ vi{1;};
+ vk{2;};
+};
+a{
+ vi{1;};
+ vk{3;};
+};
+a{
+ vi{2;};
+ vk{2;};
+};
+a{
+ vi{2;};
+ vk{3;};
+};
+a{
+ vi{2;};
+ vk{4;};
+};
+
+};
+*/
+

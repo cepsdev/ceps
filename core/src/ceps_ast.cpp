@@ -32,7 +32,7 @@ const char * ceps::ast::ast_node_kind_to_text[] = {	"ROOT","STRUCT","ID","STRING
 																	"PARAM","LAMBDA_BODY","RAWMAP","ATOMS",
 																	"VEC","NEG","SCOPE","FUNC_CALL",
 																	"CALL_PARAMETERS","INT64","UINT64",
-																	"KINDDEF","KIND","SYMBOL"};
+																	"KINDDEF","KIND","SYMBOL","FOR","FOR_HEAD"};
 
 const int ceps::ast::Nodebase::iword_index = std::ios_base::xalloc();
 

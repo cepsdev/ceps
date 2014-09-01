@@ -4,3 +4,7 @@
 src-gen/
 include/include-gen/
 *log
+workspace/
+eclipse/
+
+

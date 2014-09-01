@@ -125,7 +125,8 @@ namespace ceps {
         ID = 273,
         LITERAL = 274,
         METRIC_UNIT = 275,
-        FUNCCALL = 276
+        FUNCCALL = 276,
+        INDEXOP = 277
       };
     };
 
@@ -274,7 +275,7 @@ namespace ceps {
     /// \param yyvalue   the value to check
     static bool yy_table_value_is_error_ (int yyvalue);
 
-    static const signed char yypact_ninf_;
+    static const short int yypact_ninf_;
     static const signed char yytable_ninf_;
 
     /// Convert a scanner token number \a t to a symbol number.
@@ -291,7 +292,7 @@ namespace ceps {
   static const unsigned char yydefact_[];
 
   // YYPGOTO[NTERM-NUM].
-  static const signed char yypgoto_[];
+  static const short int yypgoto_[];
 
   // YYDEFGOTO[NTERM-NUM].
   static const signed char yydefgoto_[];
@@ -413,13 +414,13 @@ namespace ceps {
     enum
     {
       yyeof_ = 0,
-      yylast_ = 338,           //< Last index in yytable_.
-      yynnts_ = 24,  //< Number of nonterminal symbols.
+      yylast_ = 370,           //< Last index in yytable_.
+      yynnts_ = 26,  //< Number of nonterminal symbols.
       yyempty_ = -2,
       yyfinal_ = 3, //< Termination state number.
       yyterror_ = 1,
       yyerrcode_ = 256,
-      yyntokens_ = 35    //< Number of tokens.
+      yyntokens_ = 39    //< Number of tokens.
     };
 
 
@@ -430,7 +431,7 @@ namespace ceps {
 
 #line 31 "../src/grammar/ceps.y" // lalr1.cc:371
 } // ceps
-#line 434 "ceps.tab.h" // lalr1.cc:371
+#line 435 "ceps.tab.h" // lalr1.cc:371
 
 
 

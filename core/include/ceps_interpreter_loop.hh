@@ -22,31 +22,24 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
  **/
 
-#ifndef CEPS_GLOBAL_DEFS_HH
-#define CEPS_GLOBAL_DEFS_HH
-#include <stdlib.h>
-#include <stdio.h>
-#include <string>
 
-#if (__GNUC__ >= 4 && __GNUC_MINOR__ >= 8  && __cplusplus)
- #define FULL_CPP11_COMPLIANT_COMPILER
-#endif
 
-#ifdef FULL_CPP11_COMPLIANT_COMPILER
-		#define TYPE_ALIAS(Type_A,Type_B) using Type_A = Type_B ;
-#else
-		#define TYPE_ALIAS(Type_A,Type_B) typedef Type_B Type_A ;
-#endif
 
-inline std::string mk_string(int j)
+#ifndef CEPS_INTERPRETER_LOOP_HH
+#define CEPS_INTERPRETER_LOOP_HH
+
+#include "ceps_ast.hh"
+#include "ceps_interpreter.hh"
+
+
+namespace ceps
 {
-	char buffer[64] = {0};
-	sprintf(buffer,"%d",j);
-	return buffer;
+	namespace interpreter{
+		ceps::ast::Nodebase_ptr evaluate_loop(ceps::ast::Loop_ptr loop_node,
+										  ceps::parser_env::Symboltable & sym_table,
+										  ceps::interpreter::Environment& env);
+	}
 }
 
-#define ERROR(x) throw std::runtime_error{\
-						std::string{" In module "} + std::string{__FILE__} + std::string{", at line "} + mk_string(__LINE__) + std::string{": "} + std::string{x} };
-
-
 #endif
+

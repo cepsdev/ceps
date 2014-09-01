@@ -76,7 +76,9 @@ namespace ceps {
 		unsigned_long_literal,
 		kind_def,
 		kind,
-		symbol
+		symbol,
+		loop,
+		for_loop_head
 	};
 
  }
@@ -630,6 +632,11 @@ typedef ast_node<Ast_node_kind::scope> Scope;
 
 typedef ast_node<Ast_node_kind::func_call> Func_call;
 typedef ast_node<Ast_node_kind::call_parameters> Call_parameters;
+typedef ast_node<Ast_node_kind::loop> Loop;
+typedef ast_node<Ast_node_kind::for_loop_head> Loop_head;
+
+
+
 
 TYPE_ALIAS(Root_ptr , Root*)
 TYPE_ALIAS(Expression_ptr , Expression*)
@@ -652,6 +659,11 @@ TYPE_ALIAS(Rawmap_ptr , Rawmap*)
 TYPE_ALIAS(Atoms_ptr , Atoms*)
 TYPE_ALIAS(Scope_ptr , Scope*)
 TYPE_ALIAS(Vector_ptr , Vector*)
+TYPE_ALIAS(Loop_ptr , Loop*)
+TYPE_ALIAS(Loop_head_ptr , Loop_head*)
+
+
+
 
  inline Double_ptr as_double_ptr(Nodebase_ptr p)
  {
@@ -673,6 +685,32 @@ TYPE_ALIAS(Vector_ptr , Vector*)
   {
  	return *dynamic_cast<Identifier_ptr>(p);
   }
+
+ inline Identifier const  & as_id_ref_const(Nodebase_ptr p)
+   {
+  	return *dynamic_cast<Identifier const *>(p);
+   }
+
+
+ inline Loop_ptr as_loop_ptr(Nodebase_ptr p)
+  {
+   return dynamic_cast<Loop_ptr>(p);
+  }
+  inline Loop & as_loop_ref(Nodebase_ptr p)
+  {
+   return *as_loop_ptr(p);
+  }
+
+  inline Binary_operator* as_binop_ptr(Nodebase_ptr p)
+    {
+   	return dynamic_cast<Binary_operator*>(p);
+    }
+
+  inline Binary_operator & as_binop_ref(Nodebase_ptr p)
+    {
+   	return *as_binop_ptr(p);
+    }
+
  inline Struct_ptr as_struct_ptr(Nodebase_ptr p)
   {
  	return dynamic_cast<Struct_ptr>(p);
@@ -689,6 +727,17 @@ TYPE_ALIAS(Vector_ptr , Vector*)
   {
    	return *as_string_ptr(p);
   }
+
+  inline Stmts_ptr as_stmts_ptr(Nodebase_ptr p)
+   {
+    	return dynamic_cast<Stmts_ptr>(p);
+   }
+  inline Stmts & as_stmts_ref(Nodebase_ptr p)
+   {
+    	return *as_stmts_ptr(p);
+   }
+
+
 
   inline Rawmap_ptr as_rawmap_ptr(Nodebase_ptr p)
   {
@@ -707,6 +756,24 @@ TYPE_ALIAS(Vector_ptr , Vector*)
   {
    	return *dynamic_cast<Symbol*>(p);
   }
+
+
+  inline Loop_head & as_loop_head_ref(Nodebase_ptr p)
+  {
+   	return *dynamic_cast<Loop_head_ptr>(p);
+  }
+
+  inline Loop_head const & as_loop_head_ref_const(Nodebase_ptr p)
+   {
+    	return *dynamic_cast<Loop_head_ptr>(p);
+   }
+
+  inline Loop_head_ptr as_loop_head_ptr(Nodebase_ptr p)
+  {
+   	return dynamic_cast<Loop_head_ptr>(p);
+  }
+
+
 
  Nodebase_ptr box(int j);
  Nodebase_ptr box(unsigned int j);

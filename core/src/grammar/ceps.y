@@ -90,6 +90,7 @@ SOFTWARE.
 %token <sval> METRIC_UNIT // meter or m, second or s or sec,kilogram or kg
 %left '.'
 %right FUNCCALL
+%left INDEXOP
 
 %type <ast_node> cepsscript;
 %type <ast_node> expr
@@ -105,7 +106,11 @@ SOFTWARE.
 %type <ast_node> argument;
 %type <str_list> id_list;
 %type <sval> general_id;
-%expect 10
+%type <ast_node> for_loop;
+%type <ast_node> id_or_struct_id;
+%type <ast_node> for_loop_head;
+
+%expect 18
 
 %%
  
@@ -142,6 +147,12 @@ stmt :
  {
  	$$ = $1; //pass over result of decl
  }
+| 
+ for_loop
+ {
+  $$ = $1; //pass over result of for_loop
+ }
+
 | /*empty*/ 
  {
  	$$ = nullptr;
@@ -198,6 +209,14 @@ decl:
 	$$=nullptr;
 }
 | KIND ID
+{
+ auto symbol = driver.symboltable().lookup(*$2,true,true,false);
+ symbol->category = ceps::parser_env::Symbol::KIND;
+ //$$= new ceps::ast::Kind{*$2};
+ delete $2;
+ $$ = nullptr; 	
+}
+| KIND STRUCTID
 {
  auto symbol = driver.symboltable().lookup(*$2,true,true,false);
  symbol->category = ceps::parser_env::Symbol::KIND;
@@ -321,7 +340,12 @@ expr:
 |'('expr')' 
 {
 	$$ = $2;
-} 
+}
+| '[' expr ']' 
+{
+	$$ = $2;
+}
+
 | expr '(' argument_list ')'  %prec FUNCCALL
 {
  //std::cout << "FUNCTION!!" << std::endl;
@@ -337,6 +361,9 @@ expr:
 {
  //TODO: Function Definitions
 }
+| expr '[' expr ']' %prec INDEXOP
+
+
 ;
 
 func_body :
@@ -358,8 +385,46 @@ if_then_else:
  | IF '('expr')' func_stmts ELSE func_stmts
 ;
 
+id_or_struct_id:
+ ID
+ {
+    $$ = new ceps::ast::Identifier(*$1); 
+	delete $1;
+ }
+| STRUCTID
+{
+   $$ = new ceps::ast::Identifier(*$1); 
+	delete $1;
+}
+;
+
+for_loop_head :
+ id_or_struct_id ':' expr
+ {
+  auto head = new ceps::ast::Loop_head{};
+  head->children().push_back($1);
+  head->children().push_back($3);
+  $$ = head;
+ }
+| for_loop_head id_or_struct_id ':' expr
+ {
+  ceps::ast::Loop_head_ptr head = ceps::ast::as_loop_head_ptr($1);
+  head->children().push_back($2);
+  head->children().push_back($4);
+  $$ = head;
+ }
+;
+
+  
 for_loop:
- FOR '(' expr ';' expr ';' expr ')' '{' func_body '}'
+ FOR '('  for_loop_head  ')' '{' stmts '}'
+ {
+  auto temp = new ceps::ast::Loop{};
+
+  temp->children().push_back($3);
+  temp->children().push_back($6);
+  $$ = temp;
+ }
 ;
 
 

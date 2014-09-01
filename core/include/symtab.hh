@@ -34,6 +34,7 @@ SOFTWARE.
 #include <stdexcept>
 #include <iterator>
 #include <iostream>
+#include "global_defs.hh"
 
 // Yet Another Model Description Language
 namespace ceps
@@ -92,10 +93,6 @@ namespace ceps
  	 	 Symbol* insert(const std::string& name)
  	 	 {
 
- 	 		 /*auto p = name_to_symbol.emplace(name,Symbol{});
- 	 		 if (!p.second)
- 	 			throw std::runtime_error{std::string(__FILE__)+":"+std::to_string(__LINE__)};
- 	 		 return &p.first->second;*/
  	 		 name_to_symbol[name].name = name;
  	 		 return &name_to_symbol[name];
  	 	 }

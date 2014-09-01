@@ -26,7 +26,7 @@ SOFTWARE.
 #include "ceps_interpreter.hh"
 #include "symtab.hh"
 #include <cmath>
-
+#include "ceps_interpreter_loop.hh"
 
 
 int ceps::interpreter::Environment::lookup_kind(std::string const& k)
@@ -60,6 +60,9 @@ ceps::interpreter::Environment::Fn_binop_overload ceps::interpreter::Environment
 	 return it->second;
  return nullptr;
 }
+
+
+
 
 
 ceps::ast::Nodebase_ptr ceps::interpreter::evaluate(ceps::ast::Nodebase_ptr root_node,
@@ -109,7 +112,7 @@ ceps::ast::Nodebase_ptr ceps::interpreter::evaluate(ceps::ast::Nodebase_ptr root
 		 sym.category = Symbol::Category::VAR;
 		 sym.payload = rhs;//TODO: See comment in symtab.hh
 
-		 return nullptr;//Called because of side effect, no return value. Variable definitions end up in the symbol table and disapear from the tree.
+		 return nullptr;//Called because of side effect, no return value. Variable definitions end up in the symbol table and disappear from the tree.
 	 }
 	 case Kind::stmts:
 	 case Kind::root:
@@ -138,7 +141,7 @@ ceps::ast::Nodebase_ptr ceps::interpreter::evaluate(ceps::ast::Nodebase_ptr root
 			}
 
 		ceps::ast::Nodebase_ptr result = evaluate(nleaf.children()[0],sym_table,env);
-		nleaf.children().clear();
+		//nleaf.children().clear();
 		return result;
 	 }
 	 case Kind::unary_operator:
@@ -307,7 +310,7 @@ ceps::ast::Nodebase_ptr ceps::interpreter::evaluate(ceps::ast::Nodebase_ptr root
 		ceps::ast::Binary_operator& binop = *dynamic_cast<ceps::ast::Binary_operator*>(root_node);
 		if (binop.children().size() != 2)
 		{
-			throw semantic_exception{root_node,"Expecting 2 arguments, given " +std::to_string(binop.children().size())};
+			throw semantic_exception{root_node,"Expecting 2 arguments, given " +mk_string(binop.children().size())};
 		}
 		ceps::ast::Nodebase_ptr result;
 		if (op(binop) != '=')
@@ -483,6 +486,12 @@ ceps::ast::Nodebase_ptr ceps::interpreter::evaluate(ceps::ast::Nodebase_ptr root
 		 using namespace ceps::ast;
 		 String & v = as_string_ref(root_node);
 		 return new String{value(v)};
+	 }
+	 case Kind::loop:
+	 {
+		 return evaluate_loop(as_loop_ptr(root_node),
+				  	  	  	  sym_table,
+				  	  	  	  env);
 	 }
 	 default:
 		 ERROR("Internal error: Kind of node unknown.")
@@ -781,6 +790,8 @@ ceps::ast::Nodebase_ptr ceps::interpreter::handle_binop(	ceps::ast::Nodebase_ptr
 			return new Double{std::pow(value(lhs_ref),value(rhs_ref)),unit(lhs_ref)};
 		}
 	}// Power
+
+	return new Binary_operator{op,lhs,rhs};
 
 
 	return nullptr;

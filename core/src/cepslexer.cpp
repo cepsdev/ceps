@@ -240,7 +240,10 @@ ceps::Cepsparser::token_type yylex(
 		if (s == "else")
 					return ceps::Cepsparser::token::ELSE;
 		if (s == "for")
+		{
+
 					return ceps::Cepsparser::token::FOR;
+		}
 		if (s == "kind")
 		{
 					return ceps::Cepsparser::token::KIND;
@@ -262,7 +265,7 @@ ceps::Cepsparser::token_type yylex(
 		}
 
 
-		return ceps::Cepsparser::token::ID;
+		return ceps::Cepsparser::token::STRUCTID;
 	}
 	else if (std::isdigit(ch) || ch == '.')
 	{
