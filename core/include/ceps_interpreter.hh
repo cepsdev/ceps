@@ -67,7 +67,7 @@ namespace ceps{
  		 std::string msg_;
  	 public:
  		 semantic_exception(ceps::ast::Nodebase_ptr where, std::string const & what)
- 	 	 	 :loc_{where},msg_{what}
+ 	 	 	 :loc_(where),msg_(what)
  	 	 {}
  	 	ceps::ast::Nodebase_ptr where() const
  	 	{

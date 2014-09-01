@@ -267,10 +267,10 @@ namespace ceps
 		Ceps_Environment(	std::string ceps_init,
 							std::vector<bool (*) (ceps::ast::Nodeset const &)> const & pred_ = 
 							std::vector<bool (*) (ceps::ast::Nodeset const &)>{} )
-						:fragment_channel_{},
-						 symboltable_{},
-						 predicates_{pred_},
-						 universum_{new ceps::ast::Root{}}
+						:fragment_channel_(),
+						 symboltable_(),
+						 predicates_(pred_),
+						 universum_(new ceps::ast::Root())
 		{
 			symboltable_.push_scope();
 			std::stringstream is{ceps_init};

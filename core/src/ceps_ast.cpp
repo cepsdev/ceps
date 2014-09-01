@@ -83,40 +83,40 @@ std::ostream& ceps::ast::operator << (std::ostream & out, Nodebase const & n)
 
 ceps::ast::Nodebase_ptr ceps::ast::box(int j)
  {
-	 return  new Int(j,Unit_rep{});
+	return  new Int(j, Unit_rep(), nullptr, nullptr, nullptr);
  }
 
 ceps::ast::Nodebase_ptr ceps::ast::box(unsigned int j)
  {
-	 return  new Int((int)j,Unit_rep{});
+	return  new Int((int)j, Unit_rep(), nullptr, nullptr, nullptr);
  }
 
 
 ceps::ast::Nodebase_ptr ceps::ast::box(long j)
  {
-	 return  new Int64(j,Unit_rep{});
+	return  new Int64(j, Unit_rep(), nullptr, nullptr, nullptr);
  }
 
 ceps::ast::Nodebase_ptr ceps::ast::box(unsigned long j)
  {
-	 return  new Int64((long)j,Unit_rep{});
+	return  new Int64((long)j, Unit_rep(), nullptr, nullptr, nullptr);
  }
 
 ceps::ast::Nodebase_ptr ceps::ast::box(double d)
   {
- 	 return  new Double(d,Unit_rep{});
+	return  new Double(d, Unit_rep(), nullptr, nullptr, nullptr);
   }
 
 ceps::ast::Nodebase_ptr ceps::ast::box(std::string const & s)
    {
-  	 return  new String{s};
+	return  new String(s, nullptr, nullptr, nullptr);
    }
 
 
 
 Struct_ptr ceps::ast::make_struct(std::string const & name)
 {
-	return new Struct{name};
+	return new Struct(name, nullptr, nullptr, nullptr);
 }
 
 std::ostream& ceps::ast::operator << (std::ostream& out, strct & s)

@@ -378,7 +378,7 @@ template <Ast_node_kind what,typename T,typename... rest>
 		using Base = ast_node<what,rest...>;
 		using This_type = ast_node<what,T,rest...>;
 		ast_node(T val_1,rest... args,Nodebase_ptr child1=nullptr,Nodebase_ptr child2=nullptr,Nodebase_ptr child3=nullptr)
-			: ast_node<what,rest...>{args...,child1,child2,child3},x{val_1}
+			: Base{args...,child1,child2,child3},x{val_1}
 			{
 
 			}
@@ -408,7 +408,7 @@ template <Ast_node_kind what,typename... rest>
 		using Base = ast_node<what,rest...>;
 		using This_type = ast_node<what,std::string,rest...>;
 		ast_node(T val_1,rest... args,Nodebase_ptr child1=nullptr,Nodebase_ptr child2=nullptr,Nodebase_ptr child3=nullptr)
-			: ast_node<what,rest...>{args...,child1,child2,child3},x{val_1}
+			: Base(args...,child1,child2,child3),x(val_1)
 			{
 
 			}
@@ -929,16 +929,9 @@ private:
 /*************************** Utilities **********************************/
 
 
-struct mmbr
-{
-	Struct_ptr p;
-	mmbr(std::string const & name,int v){ p = new Struct{name,new Int{v,Unit_rep{} }};}
-	mmbr(std::string const & name,double v){ p = new Struct{name,new Double{v,Unit_rep{} }};}
-	mmbr(std::string const & name,std::string v){ p = new Struct{name,new String{v}};}
-	mmbr(std::string const & name,const char * sz):mmbr(name,std::string{sz}){}
-};
 
-TYPE_ALIAS(def , mmbr)
+
+
 
 
 
@@ -1168,16 +1161,6 @@ template<typename... Ts>
 
 
 
-template<typename... Ts>
-	Struct_ptr make_struct(std::string const & name, mmbr const &  member,Ts const &... args)
-	{
-
-		Struct_ptr p =  make_struct(name,args...);
-		p->children().insert(
-				p->children().begin(),
-				member.p);
-		return p;
-	}
 
 template<typename... Ts>
 	Struct_ptr make_struct(std::string const & name,  strct const & strct_,Ts... args)
@@ -1197,13 +1180,6 @@ template<typename... Ts>
 		{
 			p_strct = make_struct(name,args...);
 		}
-
-
-
-template<typename T>  mmbr decl (std::string const & varname, T const & default_value = T{})
-{
-	return mmbr{varname,default_value};
-}
 
 /****************************** I/O *************************************/
 std::ostream& operator << (std::ostream& out, strct & s);

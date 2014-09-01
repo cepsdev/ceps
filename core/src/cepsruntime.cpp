@@ -30,13 +30,19 @@ SOFTWARE.
 
 //UNIX Headers
 #include <sys/types.h>
-#include <unistd.h>
 #include <errno.h>
 #include <sys/stat.h>
 #include <fcntl.h>
+
+#ifdef _WIN32
+
+#else
+
+#include <unistd.h>
 #include <sys/un.h>
 #include <sys/socket.h>
 
+#endif
 
 const ceps::Ceps_ostream::endl_ ceps::Ceps_ostream::endl;
 bool ceps::INTERNAL_KILL_SIGNAL_RECEIVED = false;
@@ -58,6 +64,15 @@ void ceps::kill()
 }
 
 
+#ifdef _WIN32
+
+void ceps::Ceps_ostream::write(std::string const& fragment)
+{
+	throw std::runtime_error("Not Implemented.");
+}
+
+#else
+
 void ceps::Ceps_ostream::write(std::string const& fragment)
 {
 	sockaddr_un addr;
@@ -78,6 +93,8 @@ void ceps::Ceps_ostream::write(std::string const& fragment)
 
 	close(sfd);
 }
+
+#endif
 
 void ceps::ceps_main(ceps::Ceps_Environment& env)
 {
@@ -162,7 +179,10 @@ void ceps::ceps_start( void (*func) (ceps::ast::Nodeset&),
 	for(;!INTERNAL_KILL_SIGNAL_RECEIVED;)
 	{
 		using namespace ceps::parsetree;
+#ifdef _WIN32
+#else
 		usleep(intervall_u_sec < 0 ? 10 : intervall_u_sec); // sleep 10 msec.
+#endif
 
 		if(intervall_u_sec < 0 && !ceps_env->get_and_reset_signal_state())
 			continue;

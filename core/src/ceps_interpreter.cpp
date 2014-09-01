@@ -180,12 +180,12 @@ ceps::ast::Nodebase_ptr ceps::interpreter::evaluate(ceps::ast::Nodebase_ptr root
 				 if (arg_->kind() == Kind::float_literal)
 				 {
 					 ceps::ast::Double& arg = *dynamic_cast<ceps::ast::Double*>(arg_);
-					 return new ceps::ast::Double{std::sin(value(arg)),ceps:ast::all_zero_unit()};
+					 return new ceps::ast::Double(std::sin(value(arg)),ceps::ast::all_zero_unit(),nullptr,nullptr,nullptr);
 				 }
 				 else if (arg_->kind() == Kind::int_literal)
 				 {
 					 ceps::ast::Int& arg = *dynamic_cast<ceps::ast::Int*>(arg_);
-					 return new ceps::ast::Double{std::sin((double)value(arg)),ceps:ast::all_zero_unit()};
+					 return new ceps::ast::Double(std::sin((double)value(arg)), ceps::ast::all_zero_unit(), nullptr, nullptr, nullptr);
 				 }
 				 else
 					 throw semantic_exception{root_node,"sin: Expecting numerical value as argument"};
@@ -199,12 +199,12 @@ ceps::ast::Nodebase_ptr ceps::interpreter::evaluate(ceps::ast::Nodebase_ptr root
 				 if (arg_->kind() == Kind::float_literal)
 				 {
 					 ceps::ast::Double& arg = *dynamic_cast<ceps::ast::Double*>(arg_);
-					 return new ceps::ast::Double{std::cos(value(arg)),ceps:ast::all_zero_unit()};
+					 return new ceps::ast::Double(std::cos(value(arg)), ceps::ast::all_zero_unit(), nullptr, nullptr, nullptr);
 				 }
 				 else if (arg_->kind() == Kind::int_literal)
 				 {
 					 ceps::ast::Int& arg = *dynamic_cast<ceps::ast::Int*>(arg_);
-					 return new ceps::ast::Double{std::cos((double)value(arg)),ceps:ast::all_zero_unit()};
+					 return new ceps::ast::Double(std::cos((double)value(arg)), ceps::ast::all_zero_unit(), nullptr, nullptr, nullptr);
 				 }
 				 else
 					 throw semantic_exception{root_node,"cos: Expecting numerical value as argument"};
@@ -217,12 +217,12 @@ ceps::ast::Nodebase_ptr ceps::interpreter::evaluate(ceps::ast::Nodebase_ptr root
 				 if (arg_->kind() == Kind::float_literal)
 				 {
 					 ceps::ast::Double& arg = *dynamic_cast<ceps::ast::Double*>(arg_);
-					 return new ceps::ast::Double{std::tan(value(arg)),ceps:ast::all_zero_unit()};
+					 return new ceps::ast::Double( std::tan(value(arg)), ceps::ast::all_zero_unit(), nullptr, nullptr, nullptr);
 				 }
 				 else if (arg_->kind() == Kind::int_literal)
 				 {
 					 ceps::ast::Int& arg = *dynamic_cast<ceps::ast::Int*>(arg_);
-					 return new ceps::ast::Double{std::tan((double)value(arg)),ceps:ast::all_zero_unit()};
+					 return new ceps::ast::Double(std::tan((double)value(arg)), ceps::ast::all_zero_unit(), nullptr, nullptr, nullptr);
 				 }
 				 else
 					 throw semantic_exception{root_node,"tan: Expecting numerical value as argument"};
@@ -235,12 +235,12 @@ ceps::ast::Nodebase_ptr ceps::interpreter::evaluate(ceps::ast::Nodebase_ptr root
 				 if (arg_->kind() == Kind::float_literal)
 				 {
 					 ceps::ast::Double& arg = *dynamic_cast<ceps::ast::Double*>(arg_);
-					 return new ceps::ast::Double{std::atan(value(arg)),ceps:ast::all_zero_unit()};
+					 return new ceps::ast::Double(std::atan(value(arg)), ceps::ast::all_zero_unit(), nullptr, nullptr, nullptr);
 				 }
 				 else if (arg_->kind() == Kind::int_literal)
 				 {
 					 ceps::ast::Int& arg = *dynamic_cast<ceps::ast::Int*>(arg_);
-					 return new ceps::ast::Double{std::atan((double)value(arg)),ceps:ast::all_zero_unit()};
+					 return new ceps::ast::Double(std::atan((double)value(arg)), ceps::ast::all_zero_unit(), nullptr, nullptr, nullptr);
 				 }
 				 else
 					 throw semantic_exception{root_node,"atan: Expecting numerical value as argument"};
@@ -254,12 +254,12 @@ ceps::ast::Nodebase_ptr ceps::interpreter::evaluate(ceps::ast::Nodebase_ptr root
 				 if (arg_->kind() == Kind::float_literal)
 				 {
 					 ceps::ast::Double& arg = *dynamic_cast<ceps::ast::Double*>(arg_);
-					 return new ceps::ast::Double{std::acos(value(arg)),ceps:ast::all_zero_unit()};
+					 return new ceps::ast::Double(std::acos(value(arg)), ceps::ast::all_zero_unit(), nullptr, nullptr, nullptr);
 				 }
 				 else if (arg_->kind() == Kind::int_literal)
 				 {
 					 ceps::ast::Int& arg = *dynamic_cast<ceps::ast::Int*>(arg_);
-					 return new ceps::ast::Double{std::acos((double)value(arg)),ceps:ast::all_zero_unit()};
+					 return new ceps::ast::Double(std::acos((double)value(arg)), ceps::ast::all_zero_unit(), nullptr, nullptr, nullptr);
 				 }
 				 else
 					 throw semantic_exception{root_node,"acos: Expecting numerical value as argument"};
@@ -273,12 +273,12 @@ ceps::ast::Nodebase_ptr ceps::interpreter::evaluate(ceps::ast::Nodebase_ptr root
 				 if (arg_->kind() == Kind::float_literal)
 				 {
 					 ceps::ast::Double& arg = *dynamic_cast<ceps::ast::Double*>(arg_);
-					 return new ceps::ast::Double{std::asin(value(arg)),ceps:ast::all_zero_unit()};
+					 return new ceps::ast::Double(std::asin(value(arg)), ceps::ast::all_zero_unit(), nullptr, nullptr, nullptr);
 				 }
 				 else if (arg_->kind() == Kind::int_literal)
 				 {
 					 ceps::ast::Int& arg = *dynamic_cast<ceps::ast::Int*>(arg_);
-					 return new ceps::ast::Double{std::asin((double)value(arg)),ceps:ast::all_zero_unit()};
+					 return new ceps::ast::Double(std::asin((double)value(arg)), ceps::ast::all_zero_unit(), nullptr, nullptr, nullptr);
 				 }
 				 else
 					 throw semantic_exception{root_node,"asin: Expecting numerical value as argument"};
@@ -292,12 +292,12 @@ ceps::ast::Nodebase_ptr ceps::interpreter::evaluate(ceps::ast::Nodebase_ptr root
 				 if (arg_->kind() == Kind::float_literal)
 				 {
 					 ceps::ast::Double& arg = *dynamic_cast<ceps::ast::Double*>(arg_);
-					 return new ceps::ast::Double{std::log(value(arg)),ceps:ast::all_zero_unit()};
+					 return new ceps::ast::Double(std::log(value(arg)), ceps::ast::all_zero_unit(), nullptr, nullptr, nullptr);
 				 }
 				 else if (arg_->kind() == Kind::int_literal)
 				 {
 					 ceps::ast::Int& arg = *dynamic_cast<ceps::ast::Int*>(arg_);
-					 return new ceps::ast::Double{std::log((double)value(arg)),ceps:ast::all_zero_unit()};
+					 return new ceps::ast::Double( std::log((double)value(arg)), ceps::ast::all_zero_unit(), nullptr, nullptr, nullptr);
 				 }
 				 else
 					 throw semantic_exception{root_node,"ln: Expecting numerical value as argument"};
@@ -351,8 +351,7 @@ ceps::ast::Nodebase_ptr ceps::interpreter::evaluate(ceps::ast::Nodebase_ptr root
 				 else throw semantic_exception{root_node," Tree Rewrites not fully supported. "};
 			 }
 
-
-			 auto t = new ceps::ast::Binary_operator{ceps::ast::op(binop)};
+			 ceps::ast::Binary_operator* t = new ceps::ast::Binary_operator( ceps::ast::op(binop) , nullptr,nullptr,nullptr );
 			 t->children().push_back(lhs);
 			 t->children().push_back(rhs);
 			 return t;
@@ -376,31 +375,31 @@ ceps::ast::Nodebase_ptr ceps::interpreter::evaluate(ceps::ast::Nodebase_ptr root
 		ceps::ast::Identifier& id = *dynamic_cast<ceps::ast::Identifier*>(root_node);
 		if (name(id) == "m" || name(id) == "metre" || name(id) == "meter")
 		{
- 			return new ceps::ast::Int{1,ceps::ast::m_unit()};
+			return new ceps::ast::Int(1, ceps::ast::m_unit(), nullptr, nullptr, nullptr);
 		}
 		else if (name(id) == "s" || name(id) == "second")
 		{
- 			return new ceps::ast::Int{1,ceps::ast::s_unit()};
+			return new ceps::ast::Int(1, ceps::ast::s_unit(), nullptr, nullptr, nullptr);
 		}
 		else if (name(id) == "kg" || name(id) == "kilogram")
 		{
- 			return new ceps::ast::Int{1,ceps::ast::kg_unit()};
+			return new ceps::ast::Int(1, ceps::ast::kg_unit(), nullptr, nullptr, nullptr);
 		}
 		else if (name(id) == "celsius" || name(id) == "kelvin")
 		{
- 			return new ceps::ast::Int{1,ceps::ast::kelvin_unit()};
+			return new ceps::ast::Int(1, ceps::ast::kelvin_unit(), nullptr, nullptr, nullptr);
 		}
 		else if (name(id) == "ampere" )
 		{
- 			return new ceps::ast::Int{1,ceps::ast::ampere_unit()};
+			return new ceps::ast::Int(1, ceps::ast::ampere_unit(), nullptr, nullptr, nullptr);
 		}
 		else if (name(id) == "cd" || name(id) == "candela" )
 		{
- 			return new ceps::ast::Int{1,ceps::ast::candela_unit()};
+			return new ceps::ast::Int(1, ceps::ast::candela_unit(), nullptr, nullptr, nullptr);
 		}
 		else if (name(id) == "mol" || name(id) == "mole" )
 		{
- 			return new ceps::ast::Int{1,ceps::ast::mol_unit()};
+			return new ceps::ast::Int(1, ceps::ast::mol_unit(), nullptr, nullptr, nullptr);
 		}
 
 		//OK, let's take a look into the symboltable
@@ -414,7 +413,7 @@ ceps::ast::Nodebase_ptr ceps::interpreter::evaluate(ceps::ast::Nodebase_ptr root
 
 		 if (sym_ptr->category == Symbol::Category::SYMBOL)
 		 {
-			 return new ceps::ast::Symbol{name(id), ((ceps::parser_env::Symbol*)sym_ptr->payload)->name };
+			 return new ceps::ast::Symbol(name(id), ((ceps::parser_env::Symbol*)sym_ptr->payload)->name, nullptr, nullptr, nullptr);
 		 }
 
 
@@ -427,23 +426,23 @@ ceps::ast::Nodebase_ptr ceps::interpreter::evaluate(ceps::ast::Nodebase_ptr root
 		 if (node_ptr->kind() == ceps::ast::Ast_node_kind::float_literal)
 		 {
 			 ceps::ast::Double & v = *dynamic_cast<ceps::ast::Double*>(node_ptr);
-			 return new ceps::ast::Double{value(v),unit(v)};
+			 return new ceps::ast::Double(value(v), unit(v), nullptr, nullptr, nullptr);
 		 }
 		 if (node_ptr->kind() == ceps::ast::Ast_node_kind::int_literal)
 		 {
 			 ceps::ast::Int & v = *dynamic_cast<ceps::ast::Int*>(node_ptr);
-			 return new ceps::ast::Int{value(v),unit(v)};
+			 return new ceps::ast::Int( value(v), unit(v), nullptr, nullptr, nullptr );
 		 }
 		 if (node_ptr->kind() == ceps::ast::Ast_node_kind::string_literal)
 		 {
 			 ceps::ast::String & v = *dynamic_cast<ceps::ast::String*>(node_ptr);
-			 return new ceps::ast::String{value(v)};
+			 return new ceps::ast::String(value(v), nullptr, nullptr, nullptr);
 		 }
 		 if (node_ptr->kind() == ceps::ast::Ast_node_kind::symbol)
 		 {
 		 	 auto & v = as_symbol_ref(node_ptr);
 		 	 //std::cerr << v << std::endl;
-		 	return new ceps::ast::Symbol{name(v),kind(v)};
+			 return new ceps::ast::Symbol(name(v), kind(v), nullptr, nullptr, nullptr);
 
 		 }
 		 throw semantic_exception{root_node,"Variable '" + name(as_id_ref(root_node))+"' of unknown type."};
@@ -473,19 +472,19 @@ ceps::ast::Nodebase_ptr ceps::interpreter::evaluate(ceps::ast::Nodebase_ptr root
 	 {
 		 using namespace ceps::ast;
 		 Double & v = as_double_ref(root_node);
-		 return new Double{value(v),unit(v)};
+		 return new Double(value(v), unit(v), nullptr, nullptr, nullptr);
 	 }
 	 case Kind::int_literal:
 	 {
 		 using namespace ceps::ast;
 		 Int & v = as_int_ref(root_node);
-		 return new Int{value(v),unit(v)};
+		 return new Int( value(v), unit(v), nullptr, nullptr, nullptr);
 	 }
 	 case Kind::string_literal:
 	 {
 		 using namespace ceps::ast;
 		 String & v = as_string_ref(root_node);
-		 return new String{value(v)};
+		 return new String(value(v), nullptr, nullptr, nullptr);
 	 }
 	 case Kind::loop:
 	 {
@@ -536,12 +535,12 @@ ceps::ast::Nodebase_ptr ceps::interpreter::handle_binop(	ceps::ast::Nodebase_ptr
 	//Promotions / Coercions
 	if (lhs->kind() == Kind::float_literal && rhs->kind() == Kind::int_literal && op != '^')
 	{
-		Double_ptr temp = new Double{static_cast<double>(value(as_int_ref(rhs))),unit(as_int_ref(rhs))};
+		Double_ptr temp = new Double(static_cast<double>(value(as_int_ref(rhs))), unit(as_int_ref(rhs)), nullptr, nullptr, nullptr);
 		rhs = temp;
 	}
 	else if (lhs->kind() == Kind::int_literal && rhs->kind() == Kind::float_literal)
 	{
-		Double_ptr temp = new Double{static_cast<double>(value(as_int_ref(lhs))),unit(as_int_ref(lhs))};
+		Double_ptr temp = new Double( static_cast<double>(value(as_int_ref(lhs))), unit(as_int_ref(lhs)), nullptr, nullptr, nullptr);
 		lhs = temp;
 	}
 
@@ -552,7 +551,7 @@ ceps::ast::Nodebase_ptr ceps::interpreter::handle_binop(	ceps::ast::Nodebase_ptr
 		{
 			String lhs_ref = *dynamic_cast<String*>(lhs);
 			String rhs_ref = *dynamic_cast<String*>(rhs);
-			return new String{value(lhs_ref)+value(rhs_ref)};
+			return new String(value(lhs_ref) + value(rhs_ref), nullptr, nullptr, nullptr);
 		}
 
 		if (lhs->kind() == Kind::string_literal && rhs->kind() != Kind::string_literal)
@@ -560,14 +559,14 @@ ceps::ast::Nodebase_ptr ceps::interpreter::handle_binop(	ceps::ast::Nodebase_ptr
 			String & lhs_ref = *dynamic_cast<String*>(lhs);
 			std::stringstream os;
 			rhs->print_value(os);
-			return new String{value(lhs_ref)+os.str()};
+			return new String( value(lhs_ref) + os.str(), nullptr, nullptr, nullptr);
 		}
 		if (lhs->kind() != Kind::string_literal && rhs->kind() == Kind::string_literal)
 		{
 			String & rhs_ref = *dynamic_cast<String*>(rhs);
 			std::stringstream os;
 			lhs->print_value(os);
-			return new String{os.str()+value(rhs_ref)};
+			return new String(os.str() + value(rhs_ref), nullptr, nullptr, nullptr);
 		}
 		if (lhs->kind() == Kind::int_literal && rhs->kind() == Kind::int_literal)
 		{
@@ -577,7 +576,7 @@ ceps::ast::Nodebase_ptr ceps::interpreter::handle_binop(	ceps::ast::Nodebase_ptr
 			{
 				throw semantic_exception{&lhs_ref," Failed to apply '+': Incompatible units."};
 			}
-			return new Int{value(lhs_ref)+value(rhs_ref),unit(lhs_ref)};
+			return new Int( value(lhs_ref) + value(rhs_ref), unit(lhs_ref), nullptr, nullptr, nullptr);
 		}
 		if (lhs->kind() == Kind::float_literal && rhs->kind() == Kind::float_literal)
 		{
@@ -587,7 +586,7 @@ ceps::ast::Nodebase_ptr ceps::interpreter::handle_binop(	ceps::ast::Nodebase_ptr
 			{
 				throw semantic_exception{&lhs_ref," Failed to apply '+': Incompatible units."};
 			}
-			return new Double{value(lhs_ref)+value(rhs_ref),unit(lhs_ref)};
+			return new Double(value(lhs_ref) + value(rhs_ref), unit(lhs_ref), nullptr, nullptr, nullptr);
 		}
 	}// Addition
 
@@ -616,7 +615,7 @@ ceps::ast::Nodebase_ptr ceps::interpreter::handle_binop(	ceps::ast::Nodebase_ptr
 			{
 				throw semantic_exception{&lhs_ref," Failed to apply '-': Incompatible units."};
 			}
-			return new Int{value(lhs_ref)-value(rhs_ref),unit(lhs_ref)};
+			return new Int(value(lhs_ref) - value(rhs_ref), unit(lhs_ref), nullptr, nullptr, nullptr);
 		}
 		if (lhs->kind() == Kind::float_literal && rhs->kind() == Kind::float_literal)
 		{
@@ -626,7 +625,7 @@ ceps::ast::Nodebase_ptr ceps::interpreter::handle_binop(	ceps::ast::Nodebase_ptr
 			{
 				throw semantic_exception{&lhs_ref," Failed to apply '-': Incompatible units."};
 			}
-			return new Double{value(lhs_ref)-value(rhs_ref),unit(lhs_ref)};
+			return new Double(value(lhs_ref) - value(rhs_ref), unit(lhs_ref), nullptr, nullptr, nullptr);
 		}
 	}// Subtraction
 
@@ -643,23 +642,23 @@ ceps::ast::Nodebase_ptr ceps::interpreter::handle_binop(	ceps::ast::Nodebase_ptr
 		{
 			int j = value(*dynamic_cast<Int*>(rhs));
 			if (j <= 0)
-				return new String{""};
+				return new String("", nullptr, nullptr, nullptr);
 			std::string buffer;
 			std::string & s = value(*dynamic_cast<String*>(lhs));
 			for(int i = 0; i < j;++i)
 				buffer+= s;
-			return new String{buffer};
+			return new String(buffer, nullptr, nullptr, nullptr);
 		}
 		if (lhs->kind() == Kind::int_literal && rhs->kind() == Kind::string_literal)
 		{
 			int j = value(*dynamic_cast<Int*>(lhs));
 			if (j <= 0)
-				return new String{""};
+				return new String("", nullptr, nullptr, nullptr);
 			std::string buffer;
 			std::string & s = value(*dynamic_cast<String*>(rhs));
 			for(int i = 0; i < j;++i)
 				buffer+= s;
-			return new String{buffer};
+			return new String(buffer, nullptr, nullptr, nullptr);
 		}
 
 		if (
@@ -673,16 +672,17 @@ ceps::ast::Nodebase_ptr ceps::interpreter::handle_binop(	ceps::ast::Nodebase_ptr
 		{
 			Int lhs_ref = *dynamic_cast<Int*>(lhs);
 			Int rhs_ref = *dynamic_cast<Int*>(rhs);
-			return new Int{
+			return new Int(
 								value(lhs_ref)*value(rhs_ref), //multiply values
 								unit(lhs_ref)+unit(rhs_ref) // add units
-			};
+								, nullptr, nullptr, nullptr
+			);
 		}
 		if (lhs->kind() == Kind::float_literal && rhs->kind() == Kind::float_literal)
 		{
 			Double lhs_ref = *dynamic_cast<Double*>(lhs);
 			Double rhs_ref = *dynamic_cast<Double*>(rhs);
-			return new Double{value(lhs_ref)*value(rhs_ref),unit(lhs_ref)+unit(rhs_ref)};
+			return new Double(value(lhs_ref)*value(rhs_ref), unit(lhs_ref) + unit(rhs_ref), nullptr, nullptr, nullptr);
 		}
 	}// Multiplication
 
@@ -714,16 +714,17 @@ ceps::ast::Nodebase_ptr ceps::interpreter::handle_binop(	ceps::ast::Nodebase_ptr
 		{
 			Int lhs_ref = *dynamic_cast<Int*>(lhs);
 			Int rhs_ref = *dynamic_cast<Int*>(rhs);
-			return new Int{
+			return new Int(
 								value(lhs_ref)/value(rhs_ref), //multiply values
 								unit(lhs_ref)-unit(rhs_ref) // add units
-			};
+								, nullptr, nullptr, nullptr
+			);
 		}
 		if (lhs->kind() == Kind::float_literal && rhs->kind() == Kind::float_literal)
 		{
 			Double lhs_ref = *dynamic_cast<Double*>(lhs);
 			Double rhs_ref = *dynamic_cast<Double*>(rhs);
-			return new Double{value(lhs_ref)/value(rhs_ref),unit(lhs_ref)-unit(rhs_ref)};
+			return new Double(value(lhs_ref) / value(rhs_ref), unit(lhs_ref) - unit(rhs_ref), nullptr, nullptr, nullptr);
 		}
 	}// Division
 	/****** Power *******/
@@ -751,15 +752,16 @@ ceps::ast::Nodebase_ptr ceps::interpreter::handle_binop(	ceps::ast::Nodebase_ptr
 					for(int j = 0; j< rhs_v;++j)
 						result *= lhs_v;
 				}
-				return new Int{
+				return new Int(
 								result,
 								rhs_v*unit(lhs_ref)
-				};
+								, nullptr, nullptr, nullptr
+				);
 			}
-			else return new Double{
+			else return new Double(
 				std::pow((double)lhs_v,rhs_v),
-				rhs_v*unit(lhs_ref)
-			};
+				rhs_v*unit(lhs_ref), nullptr, nullptr, nullptr
+			);
 		}
 		if (lhs->kind() == Kind::float_literal && rhs->kind() == Kind::int_literal)
 		{
@@ -772,10 +774,10 @@ ceps::ast::Nodebase_ptr ceps::interpreter::handle_binop(	ceps::ast::Nodebase_ptr
 			int rhs_v = value(rhs_ref);
 			double lhs_v = value(lhs_ref);
 
-			return new Double{
+			return new Double(
 								std::pow(lhs_v,(double)rhs_v),
-								rhs_v*unit(lhs_ref)
-				};
+								rhs_v*unit(lhs_ref), nullptr, nullptr, nullptr
+				);
 		}
 
 		if (lhs->kind() == Kind::float_literal && rhs->kind() == Kind::float_literal)
@@ -787,7 +789,7 @@ ceps::ast::Nodebase_ptr ceps::interpreter::handle_binop(	ceps::ast::Nodebase_ptr
 				throw semantic_exception{binop_node," Incompatible operands. floating point operands in ^ - operation have to be scalar."};
 			}
 
-			return new Double{std::pow(value(lhs_ref),value(rhs_ref)),unit(lhs_ref)};
+			return new Double(std::pow(value(lhs_ref), value(rhs_ref)), unit(lhs_ref), nullptr, nullptr, nullptr);
 		}
 	}// Power
 
@@ -834,26 +836,26 @@ ceps::ast::Nodebase_ptr ceps::interpreter::evaluate(ceps::ast::Nonleafbase& root
 	}
 	else if (root_ptr->kind() == ceps::ast::Ast_node_kind::stmt)
 	{
-		Stmt* result = new Stmt{};
+		Stmt* result = new Stmt();
 		result->children() = v;
 		return result;
 	}
 	else if (root_ptr->kind() == ceps::ast::Ast_node_kind::structdef)
 	{
 		ceps::ast::Struct& s = *dynamic_cast<ceps::ast::Struct*>(&root);
-		Struct* result = new Struct{name(s)};
+		Struct* result = new Struct(name(s), nullptr, nullptr, nullptr);
 		result->children() = v;
 		return result;
 	}
 	else if (root_ptr->kind() == ceps::ast::Ast_node_kind::scope)
 	{
-		Scope* result = new Scope{};
+		Scope* result = new Scope();
 		result->children() = v;
 		return result;
 	}
 	else if (root_ptr->kind() == ceps::ast::Ast_node_kind::call_parameters)
 	{
-		Call_parameters* result = new Call_parameters{};
+		Call_parameters* result = new Call_parameters();
 		result->children() = v;
 		return result;
 	}

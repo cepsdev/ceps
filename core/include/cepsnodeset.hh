@@ -43,20 +43,20 @@ namespace ceps
 	struct first
 	{
 		std::string struct_name_;
-		first(std::string const & struct_name):struct_name_{struct_name}
+		first(std::string const & struct_name):struct_name_(struct_name)
 		{}
 	};
 	struct last
 	{
 		std::string struct_name_;
-		last(std::string const & struct_name):struct_name_{struct_name}
+		last(std::string const & struct_name):struct_name_(struct_name)
 		{}
 	};
 	struct nth
 	{
 		std::string struct_name_;
 		int i_;
-		nth(std::string const & struct_name,int i):struct_name_{struct_name},i_{i}
+		nth(std::string const & struct_name,int i):struct_name_(struct_name),i_(i)
 		{}
 		nth(int i):struct_name_{},i_{i}
 		{}
@@ -76,7 +76,7 @@ namespace ceps
 	struct all
 		{
 			std::string struct_name_;
-			all(std::string const & struct_name):struct_name_{struct_name}
+			all(std::string const & struct_name):struct_name_(struct_name)
 			{}
 		};
 	
@@ -157,7 +157,7 @@ namespace ceps
 		
 		Nodeset()
 		{}
-		Nodeset(std::vector<Nodebase_ptr> const & v):nodes_{v}
+		Nodeset(std::vector<Nodebase_ptr> const & v):nodes_(v)
 		{}
 	
 		Nodeset(Nodebase_ptr n)
@@ -172,7 +172,10 @@ namespace ceps
 			}
 			else nodes_.push_back(n);
 		}
-		Nodeset(strct const  & s):nodes_{s.p_strct}{}
+		Nodeset(strct const  & s)
+		{
+			nodes_ = s.p_strct->children();
+		}
 
 		void erase()
 		{
