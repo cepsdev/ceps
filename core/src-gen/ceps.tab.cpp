@@ -747,7 +747,7 @@ namespace ceps {
   case 27:
 #line 249 "../src/grammar/ceps.y" // lalr1.cc:846
     {
- (yylhs.value.ast_node) = new ceps::ast::Struct(*(yystack_[2].value.sval),new ceps::ast::Identifier{*(yystack_[1].value.sval)},(yystack_[0].value.ast_node),nullptr);
+ (yylhs.value.ast_node) = new ceps::ast::Struct(*(yystack_[2].value.sval),new ceps::ast::Identifier(*(yystack_[1].value.sval),nullptr,nullptr,nullptr),(yystack_[0].value.ast_node),nullptr);
 }
 #line 753 "ceps.tab.c" // lalr1.cc:846
     break;

@@ -247,7 +247,7 @@ STRUCTID {driver.symboltable().push_scope();} struct_initialization {driver.symb
 }
 |STRUCTID ID struct_initialization  
 {
- $$ = new ceps::ast::Struct(*$1,new ceps::ast::Identifier{*$2},$3,nullptr);
+ $$ = new ceps::ast::Struct(*$1,new ceps::ast::Identifier(*$2,nullptr,nullptr,nullptr),$3,nullptr);
 }
 ;
 
