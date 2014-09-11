@@ -27,6 +27,7 @@ SOFTWARE.
 #include "symtab.hh"
 #include <cmath>
 #include "ceps_interpreter_loop.hh"
+#include "ceps_interpreter_nodeset.hh"
 
 
 int ceps::interpreter::Environment::lookup_kind(std::string const& k)
@@ -63,6 +64,58 @@ ceps::interpreter::Environment::Fn_binop_overload ceps::interpreter::Environment
 
 
 
+/**
+ * evaluate ( A{B1;B2;B3;} ) = evaluate(B1);evaluate(B2);evaluate(B3);
+ *
+ */
+void ceps::interpreter::evaluate(	 ceps::ast::Nodeset & universe,
+									 ceps::ast::Nodebase_ptr root_,
+  		 	 	 	 	 	 	 	 ceps::parser_env::Symboltable & sym_table,
+  		 	 	 	 	 	 	 	 ceps::interpreter::Environment& env,
+  		 	 	 	 	 	 	 	 std::vector<ceps::ast::Nodebase_ptr>* generated_nodes
+  		 	 	 )
+{
+	if (root_ == nullptr) return;
+
+
+	auto root = ceps::ast::nlf_ptr(root_);
+	env.associated_universe() = &universe;
+
+	for(auto p : root->children())
+	{
+		if (p->kind() == Kind::stmts)
+		{
+			for(auto pp: as_stmts_ptr(p)->children() )
+			{
+				auto ev = evaluate(pp,sym_table,env);
+				if (ev  != nullptr && ev->kind() == Kind::nodeset)
+				{
+					universe.nodes().insert(universe.nodes().end(),as_ast_nodeset_ptr(ev)->children().begin(),as_ast_nodeset_ptr(ev)->children().end());
+					if (generated_nodes != nullptr)
+						generated_nodes->insert(generated_nodes->end(),as_ast_nodeset_ptr(ev)->children().begin(),as_ast_nodeset_ptr(ev)->children().end());
+
+				}
+				else if (ev != nullptr)
+				{
+					universe.nodes().push_back(ev);
+					if (generated_nodes != nullptr) generated_nodes->push_back(ev);
+				}
+			}//for
+			continue;
+		}
+		auto ev = evaluate(p,sym_table,env);
+		if (ev != nullptr && ev->kind() == Kind::nodeset)
+		{
+			universe.nodes().insert(universe.nodes().end(),as_ast_nodeset_ptr(ev)->children().begin(),as_ast_nodeset_ptr(ev)->children().end());
+			if (generated_nodes != nullptr)
+									generated_nodes->insert(generated_nodes->end(),as_ast_nodeset_ptr(ev)->children().begin(),as_ast_nodeset_ptr(ev)->children().end());
+		}
+		else if (ev != nullptr) {
+			universe.nodes().push_back(ev);
+			if (generated_nodes != nullptr) generated_nodes->push_back(ev);
+		}
+	}//for
+}//ceps::interpreter::evaluate
 
 
 ceps::ast::Nodebase_ptr ceps::interpreter::evaluate(ceps::ast::Nodebase_ptr root_node,
@@ -120,9 +173,12 @@ ceps::ast::Nodebase_ptr ceps::interpreter::evaluate(ceps::ast::Nodebase_ptr root
 	 case Kind::call_parameters:
 		 return evaluate(*dynamic_cast<ceps::ast::Nonleafbase*>(root_node),sym_table,env);
 	 case Kind::scope:
+	 {
 		 sym_table.push_scope();
-	 	 return evaluate(*dynamic_cast<ceps::ast::Nonleafbase*>(root_node),sym_table,env);
+	 	 auto r = evaluate(*dynamic_cast<ceps::ast::Nonleafbase*>(root_node),sym_table,env);
 	 	 sym_table.pop_scope();
+	 	 return r;
+	 }
 	 case Kind::structdef:
 	 {
 		sym_table.push_scope();
@@ -302,7 +358,25 @@ ceps::ast::Nodebase_ptr ceps::interpreter::evaluate(ceps::ast::Nodebase_ptr root
 				 else
 					 throw semantic_exception{root_node,"ln: Expecting numerical value as argument"};
 			 }
+			 if (name(id) == "value" )
+			 {
+				 //std::cout << ceps::ast::Nodeset{&params} << std::endl;
+				 //std::cout << params.children().size()  << std::endl;
+				 /*if (params.children().size() != 1)
+					 throw semantic_exception{root_node,"value: Expecting 1 argument"};
+				 ceps::ast::Nodebase_ptr arg_ = params.children()[0];
+				 if (!is_a_nodeset(arg_))
+					 throw semantic_exception{root_node,"value: wrong argument type, expecting a node set."};*/
 
+				 std::vector<ceps::ast::Nodebase_ptr> result;
+				 for ( auto & param : params.children() )
+				 {
+					 if (!ceps::ast::is_a_struct(param)) continue;
+					 for(auto & child: as_struct_ref(param).children())
+						 result.push_back(child);
+				 }
+				 return create_ast_nodeset(false , "", result);
+			 }
 		 }
 	 }
 	 case Kind::binary_operator:
@@ -356,7 +430,7 @@ ceps::ast::Nodebase_ptr ceps::interpreter::evaluate(ceps::ast::Nodebase_ptr root
 			 t->children().push_back(rhs);
 			 return t;
 		 }
-		 result = handle_binop(root_node,ceps::ast::op(binop),lhs,rhs,sym_table);
+		 result = handle_binop(root_node,ceps::ast::op(binop),lhs,rhs,sym_table,env);
 		}
 		else
 		{
@@ -364,7 +438,7 @@ ceps::ast::Nodebase_ptr ceps::interpreter::evaluate(ceps::ast::Nodebase_ptr root
 			 if (lhs->kind() != ceps::ast::Ast_node_kind::identifier)
 				 lhs = evaluate(binop.children()[0],sym_table,env);
 			 ceps::ast::Nodebase_ptr rhs = evaluate(binop.children()[1],sym_table,env);
-			 result  = handle_binop(root_node,ceps::ast::op(binop),lhs,rhs,sym_table);
+			 result  = handle_binop(root_node,ceps::ast::op(binop),lhs,rhs,sym_table,env);
 		}
 		return result;
 	 }
@@ -373,6 +447,7 @@ ceps::ast::Nodebase_ptr ceps::interpreter::evaluate(ceps::ast::Nodebase_ptr root
 		using namespace ceps::parser_env;
 
 		ceps::ast::Identifier& id = *dynamic_cast<ceps::ast::Identifier*>(root_node);
+
 		if (name(id) == "m" || name(id) == "metre" || name(id) == "meter")
 		{
 			return new ceps::ast::Int(1, ceps::ast::m_unit(), nullptr, nullptr, nullptr);
@@ -401,6 +476,8 @@ ceps::ast::Nodebase_ptr ceps::interpreter::evaluate(ceps::ast::Nodebase_ptr root
 		{
 			return new ceps::ast::Int(1, ceps::ast::mol_unit(), nullptr, nullptr, nullptr);
 		}
+		else if (name(id) == "root" && env.associated_universe() != nullptr)
+			return create_ast_nodeset(false,"", env.associated_universe()->nodes());
 
 		//OK, let's take a look into the symboltable
 
@@ -408,7 +485,8 @@ ceps::ast::Nodebase_ptr ceps::interpreter::evaluate(ceps::ast::Nodebase_ptr root
 
 		 if ( (sym_ptr = sym_table.lookup(name(id))) == nullptr)
 		 {
-			 throw semantic_exception{root_node,"Variable '" +name(id)+"' is not defined."};
+			 //throw semantic_exception{root_node,"Variable '" +name(id)+"' is not defined."};
+			 return new ceps::ast::Identifier(name(id));
 		 }
 
 		 if (sym_ptr->category == Symbol::Category::SYMBOL)
@@ -423,29 +501,32 @@ ceps::ast::Nodebase_ptr ceps::interpreter::evaluate(ceps::ast::Nodebase_ptr root
 
 		 ceps::ast::Nodebase_ptr node_ptr = reinterpret_cast<ceps::ast::Nodebase_ptr>(sym.payload);
 
+
 		 if (node_ptr->kind() == ceps::ast::Ast_node_kind::float_literal)
 		 {
 			 ceps::ast::Double & v = *dynamic_cast<ceps::ast::Double*>(node_ptr);
 			 return new ceps::ast::Double(value(v), unit(v), nullptr, nullptr, nullptr);
 		 }
-		 if (node_ptr->kind() == ceps::ast::Ast_node_kind::int_literal)
+		 else if (node_ptr->kind() == ceps::ast::Ast_node_kind::int_literal)
 		 {
 			 ceps::ast::Int & v = *dynamic_cast<ceps::ast::Int*>(node_ptr);
 			 return new ceps::ast::Int( value(v), unit(v), nullptr, nullptr, nullptr );
 		 }
-		 if (node_ptr->kind() == ceps::ast::Ast_node_kind::string_literal)
+		 else if (node_ptr->kind() == ceps::ast::Ast_node_kind::string_literal)
 		 {
 			 ceps::ast::String & v = *dynamic_cast<ceps::ast::String*>(node_ptr);
 			 return new ceps::ast::String(value(v), nullptr, nullptr, nullptr);
 		 }
-		 if (node_ptr->kind() == ceps::ast::Ast_node_kind::symbol)
+		 else if (node_ptr->kind() == ceps::ast::Ast_node_kind::symbol)
 		 {
 		 	 auto & v = as_symbol_ref(node_ptr);
 		 	 //std::cerr << v << std::endl;
 			 return new ceps::ast::Symbol(name(v), kind(v), nullptr, nullptr, nullptr);
 
 		 }
-		 throw semantic_exception{root_node,"Variable '" + name(as_id_ref(root_node))+"' of unknown type."};
+		 else
+			 return node_ptr;
+
 	 }
 	 case Kind::rawmap:
 	 {
@@ -501,7 +582,8 @@ ceps::ast::Nodebase_ptr ceps::interpreter::handle_binop(	ceps::ast::Nodebase_ptr
 															char op,
 															ceps::ast::Nodebase_ptr lhs,
 															ceps::ast::Nodebase_ptr rhs,
-															ceps::parser_env::Symboltable & sym_table
+															ceps::parser_env::Symboltable & sym_table,
+															Environment& env
 															)
 {
 	using namespace ceps::ast;
@@ -792,6 +874,15 @@ ceps::ast::Nodebase_ptr ceps::interpreter::handle_binop(	ceps::ast::Nodebase_ptr
 			return new Double(std::pow(value(lhs_ref), value(rhs_ref)), unit(lhs_ref), nullptr, nullptr, nullptr);
 		}
 	}// Power
+	if(op == '.')
+	{
+		if(lhs->kind() == Kind::nodeset)
+			return evaluate_nodeset_expr_dot(	lhs,
+												rhs ,
+												sym_table,
+												env
+											);
+	}
 
 	return new Binary_operator{op,lhs,rhs};
 
@@ -812,7 +903,7 @@ ceps::ast::Nodebase_ptr ceps::interpreter::evaluate(ceps::ast::Nonleafbase& root
 		{
 			continue;
 		}
-		if (r->kind() == Ast_node_kind::stmts || r->kind() == Ast_node_kind::scope)
+		if (r->kind() == Ast_node_kind::stmts || r->kind() == Ast_node_kind::scope || r->kind() == Ast_node_kind::nodeset)
 		{
 			for(Nodebase_ptr elem : nlf_ptr(r)->children())
 			{

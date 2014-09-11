@@ -29,25 +29,41 @@ SOFTWARE.
 
 
 
-void flatten(ceps::ast::Nodebase_ptr root, std::vector<ceps::ast::Nodebase_ptr>& acc)
+static void flatten(ceps::ast::Nodebase_ptr root, std::vector<ceps::ast::Nodebase_ptr>& acc)
 {
 
 	/*base cases*/
 	if (root == nullptr)
 		return;
-	if (root->kind() != ceps::ast::Ast_node_kind::binary_operator || op(as_binop_ref(root)) != ',' )
+	if (root->kind() == ceps::ast::Ast_node_kind::binary_operator && op(as_binop_ref(root)) == ',' )
 	{
-		acc.push_back(root);
-		return;
-	}
-	/*Induction case*/
-	auto & op = as_binop_ref(root);
-	flatten(op.children()[0],acc);
+		/*Induction case*/
+		auto & op = as_binop_ref(root);
+		flatten(op.children()[0],acc);
 
-	flatten(op.children()[1],acc);
+		flatten(op.children()[1],acc);
+
+	}
+	else if (ceps::ast::is_a_nodeset(root))
+	{
+		std::string last_identifier;
+		bool b;
+		if (b=apply_idx_op_flag(as_ast_nodeset_ref(root)))
+				last_identifier = apply_idx_op_operand(as_ast_nodeset_ref(root));
+
+		for (auto & e : ceps::ast::as_ast_nodeset_ref(root).children())
+		{
+			std::vector<ceps::ast::Nodebase_ptr> v;
+			v.push_back(e);
+			acc.push_back(ceps::ast::create_ast_nodeset(b,last_identifier,v));
+		}
+	}
+	else acc.push_back(root);
+
+
 }
 
-void loop( std::vector<ceps::ast::Nodebase_ptr>& result,
+static void loop( std::vector<ceps::ast::Nodebase_ptr>& result,
 		   ceps::ast::Nodebase_ptr body,
 		   ceps::ast::Loop_head const& loop_head,
 		   int i,

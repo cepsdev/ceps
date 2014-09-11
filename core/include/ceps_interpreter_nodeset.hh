@@ -1,4 +1,4 @@
-/*
+/**
  The MIT License (MIT)
 
 Copyright (c) 2014 The authors of ceps
@@ -20,53 +20,27 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
- */
- 
- 
- /*
-  Demonstrates simple usage of for loops in ceps
-  Created 2014/08/26
- */
+ **/
 
-testcase
+
+
+
+#ifndef CEPS_INTERPRETER_NODESET_HH
+#define CEPS_INTERPRETER_NODESET_HH
+
+#include "ceps_ast.hh"
+#include "ceps_interpreter.hh"
+
+
+namespace ceps
 {
- author{"cepsdev";};
- email{"cepsdev@hotmail.com";};
- code_reference{core{src{"ceps_interpreter_loop.cpp";};};};
- short{"Basic usage of for loops.";};
-};
+	namespace interpreter{
+		ceps::ast::Nodebase_ptr evaluate_nodeset_expr_dot(	ceps::ast::Nodebase_ptr lhs,
+															ceps::ast::Nodebase_ptr rhs ,
+															ceps::parser_env::Symboltable & sym_table,
+															ceps::interpreter::Environment& env);
+	}
+}
 
-
-
-val j = 1;
-
-test{
-	for( i : j,j+1  k : i,i+1)
-	{
-	 a{
-	  vi{i;};
-	  vk{k;};
-	  };
-	};
-};
-
-
-expectation{
-	a{
-	 vi{1;};
-	 vk{1;};
-	};
-	a{
-	 vi{1;};
-	 vk{2;};
-	};
-	a{
-	 vi{2;};
-	 vk{2;};
-	};
-	a{
-	 vi{2;};
-	 vk{3;};
-	};
-};
+#endif
 

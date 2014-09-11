@@ -1,0 +1,31 @@
+
+
+
+
+a.b.c.d => a{b{c{d{};};};};
+
+infix right associative .
+
+
+operator . (A,B) = A{B{};};
+
+a.b.c.d = op . (a,op . (b, op . (c,d))) =  op . (a,op . (b, c{d{};};)) = op . (a,b{c{d{};};};) = a{b{c{d{};};};};
+
+INHERIT{a{b{c{d{};};};};};
+
+
+INHERIT{ a.b.c.d; };
+
+func inherit( A ) = INHERIT{A{};};
+
+Product
+{
+ inherit(a.b.c.d);
+
+}; 
+
+op : (A,B) where A is in [Product,Productcoverage] = A{B{};};
+
+Product : inherit(a.b.c.d); 
+
+

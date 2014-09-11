@@ -119,10 +119,10 @@ namespace ceps {
         EOL = 267,
         RAWMAP = 268,
         KIND = 269,
-        KINDID = 270,
-        NEG = 271,
-        STRUCTID = 272,
-        ID = 273,
+        NEG = 270,
+        STRUCTID = 271,
+        ID = 272,
+        KINDID = 273,
         LITERAL = 274,
         METRIC_UNIT = 275,
         FUNCCALL = 276,
@@ -414,7 +414,7 @@ namespace ceps {
     enum
     {
       yyeof_ = 0,
-      yylast_ = 370,           //< Last index in yytable_.
+      yylast_ = 417,           //< Last index in yytable_.
       yynnts_ = 26,  //< Number of nonterminal symbols.
       yyempty_ = -2,
       yyfinal_ = 3, //< Termination state number.

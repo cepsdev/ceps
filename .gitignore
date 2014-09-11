@@ -1,10 +1,12 @@
 *~
 *.o
 *.a
-*log
-workspace/
+*.log
 eclipse/
 Debug/
 Release/
+.metadata/
+RemoteSystemsTempFiles/
+
 
 

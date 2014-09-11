@@ -74,7 +74,7 @@ SOFTWARE.
 %token EOL
 %token RAWMAP
 %token KIND
-%token KINDID
+//%token KINDID
 
 %left ','
 %right '='
@@ -82,13 +82,14 @@ SOFTWARE.
 %left '*'
 %right '/'
 %right '^'
+%left '.'
+
 %left NEG
 %token <sval> STRUCTID
 %token <sval> ID
 %token <sval> KINDID
 %token <sval> LITERAL
 %token <sval> METRIC_UNIT // meter or m, second or s or sec,kilogram or kg
-%left '.'
 %right FUNCCALL
 %left INDEXOP
 
@@ -110,7 +111,7 @@ SOFTWARE.
 %type <ast_node> id_or_struct_id;
 %type <ast_node> for_loop_head;
 
-%expect 18
+%expect 20
 
 %%
  
@@ -302,6 +303,7 @@ expr:
 	$$ = new ceps::ast::Unary_operator('-',$2,nullptr,nullptr); 
 }
 
+
 |expr ',' expr
 {
 	$$ = new ceps::ast::Binary_operator(',',$1,$3,nullptr); 
@@ -333,6 +335,11 @@ expr:
 {
 	$$ = new ceps::ast::Binary_operator('^',$1,$3,nullptr); 
 }
+|expr '.' expr
+{
+	$$ = new ceps::ast::Binary_operator('.',$1,$3,nullptr); 
+}
+
 | expr '=' expr 
 {
 	$$ = new ceps::ast::Binary_operator('=',$1,$3,nullptr);

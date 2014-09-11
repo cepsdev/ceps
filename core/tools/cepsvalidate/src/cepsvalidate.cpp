@@ -125,9 +125,18 @@ int main(int argc, char*argv[])
 			//ceps_env.eval_and_merge( driver.parsetree() , false);
 			if (evaluate)
 			{
-				ceps::ast::Nodebase_ptr p = ceps::interpreter::evaluate(	driver.parsetree().get_root(),
+				/*ceps::ast::Nodebase_ptr p = ceps::interpreter::evaluate(	driver.parsetree().get_root(),
 																			ceps_env.get_global_symboltable(),
-																			ceps_env.interpreter_env());
+																			ceps_env.interpreter_env());*/
+				Nodeset universe;
+
+				ceps::interpreter::evaluate(universe, driver.parsetree().get_root(),ceps_env.get_global_symboltable(),ceps_env.interpreter_env());
+
+				auto p = new Root();
+				p->children().insert(p->children().end(), universe.nodes().begin(), universe.nodes().end());
+
+
+
 				if (print_evaluated)
 				{
 					std::cout << "\n\nInterpreted Tree:\n"<<std::endl;

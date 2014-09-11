@@ -3,7 +3,7 @@
 includes := -Iinclude -Iinclude/include_gen
 cflags :=  -O0 -g3 -Wall -fmessage-length=0 -std=c++11
 OBJDIR := bin
-objfiles := ceps.tab.o symtab.o cepslexer.o cepsparserdriver.o cepsruntime.o ceps_ast.o ceps_interpreter.o ceps_serialize.o ceps_interpreter_loop.o
+objfiles := ceps.tab.o symtab.o cepslexer.o cepsparserdriver.o cepsruntime.o ceps_ast.o ceps_interpreter.o ceps_serialize.o ceps_interpreter_loop.o ceps_interpreter_nodeset.o 
 objfiles := $(patsubst %,$(OBJDIR)/%,$(objfiles))
 src := src
 inc := include
@@ -45,6 +45,8 @@ $(OBJDIR)/ceps_serialize.o: $(src)/ceps_serialize.cpp include/ceps_serialize.hh
 $(OBJDIR)/ceps_interpreter_loop.o: $(src)/ceps_interpreter_loop.cpp include/ceps_interpreter_loop.hh
 	g++ -c $(cflags) $(includes) $(src)/ceps_interpreter_loop.cpp -o $(OBJDIR)/ceps_interpreter_loop.o
 
+$(OBJDIR)/ceps_interpreter_nodeset.o: $(src)/ceps_interpreter_nodeset.cpp include/ceps_interpreter_nodeset.hh
+	g++ -c $(cflags) $(includes) $(src)/ceps_interpreter_nodeset.cpp -o $(OBJDIR)/ceps_interpreter_nodeset.o
 	
 src-gen/ceps.tab.cpp: src/grammar/ceps.y
 	cd $(BISONGENDIR);\

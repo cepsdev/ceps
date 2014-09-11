@@ -56,9 +56,12 @@ SOFTWARE.
 #include "symtab.hh"
 #include "cepsparserdriver.hh"
 #include "ceps_ast.hh"
+#include "cepsnodeset.hh"
 #include "global_defs.hh"
+
+
 #include <sstream>
-#include<map>
+#include <map>
 
 namespace ceps{
  namespace interpreter{
@@ -95,7 +98,8 @@ namespace ceps{
 		 int kind_to_id_map_ctr_{0};
 		 std::map< std::string, int> kind_to_id_map_;
 		 std::map< std::tuple<char,int,int>, ceps::interpreter::Environment::Fn_binop_overload >
-		  global_binop_overloads_;
+		 global_binop_overloads_;
+		 ceps::ast::Nodeset * associated_universe_ = nullptr;
  	  public:
 
 		int lookup_kind(std::string const&);
@@ -109,23 +113,36 @@ namespace ceps{
 				                                    std::string const & lhs_kind,
 													std::string const & rhs_kind);
 
+
+		 ceps::ast::Nodeset * & associated_universe() {return associated_universe_;}
  	 };
 
      using Symboltable = ceps::parser_env::Symboltable;
      using Kind = ceps::ast::Ast_node_kind;
 
-     ceps::ast::Nodebase_ptr evaluate(ceps::ast::Nonleafbase & root,
-    		 	 	 	 	 	 	   Symboltable & sym_table,
-    		 	 	 	 	 	 	   Environment& env);
+     ceps::ast::Nodebase_ptr evaluate(	ceps::ast::Nonleafbase & root,
+    		 	 	 	 	 	 	   	Symboltable & sym_table,
+    		 	 	 	 	 	 	   	Environment& env
+    		 	 	 	 	 	 	   );
+
+     void evaluate(	 ceps::ast::Nodeset & universe,
+    		 	 	 ceps::ast::Nodebase_ptr root,
+    		 	 	 Symboltable & sym_table,
+    		 	 	 Environment& env,
+    		 	 	 std::vector<ceps::ast::Nodebase_ptr>* generated_nodes = nullptr
+    		 	 	 );
 
      ceps::ast::Nodebase_ptr handle_binop(	ceps::ast::Nodebase_ptr binop_node,char op,
     		 	 	 	 	 	 	 	 	ceps::ast::Nodebase_ptr lhs,
     		 	 	 	 	 	 	 	 	ceps::ast::Nodebase_ptr rhs,
-    		 	 	 	 	 	 	 	 	Symboltable & sym_table);
+    		 	 	 	 	 	 	 	 	Symboltable & sym_table,
+    		 	 	 	 	 	 	 	 	Environment& env
+    		 	 	 	 	 	 	 	 	);
 
      ceps::ast::Nodebase_ptr evaluate(  ceps::ast::Nodebase_ptr root_node,
     		 	 	 	 	 	 	 	 Symboltable & sym_table,
-    		 	 	 	 	 	 	 	 Environment& env);
+    		 	 	 	 	 	 	 	 Environment& env
+    		 	 	 	 	 	 	 	 );
 
      ceps::ast::Nodebase_ptr evaluate_and_remove(ceps::ast::Nonleafbase& root);
      ceps::ast::Nodebase_ptr evaluate(ceps::ast::Stmt& stmt);

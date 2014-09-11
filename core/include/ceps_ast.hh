@@ -78,7 +78,9 @@ namespace ceps {
 		kind,
 		symbol,
 		loop,
-		for_loop_head
+		for_loop_head,
+		nodeset,
+		nodeset_path_expr
 	};
 
  }
@@ -634,6 +636,10 @@ typedef ast_node<Ast_node_kind::func_call> Func_call;
 typedef ast_node<Ast_node_kind::call_parameters> Call_parameters;
 typedef ast_node<Ast_node_kind::loop> Loop;
 typedef ast_node<Ast_node_kind::for_loop_head> Loop_head;
+typedef ast_node<Ast_node_kind::nodeset,bool,std::string> Ast_nodeset;
+typedef ast_node<Ast_node_kind::nodeset_path_expr> Nodeset_path_expr;
+
+
 
 
 
@@ -661,6 +667,8 @@ TYPE_ALIAS(Scope_ptr , Scope*)
 TYPE_ALIAS(Vector_ptr , Vector*)
 TYPE_ALIAS(Loop_ptr , Loop*)
 TYPE_ALIAS(Loop_head_ptr , Loop_head*)
+TYPE_ALIAS(Ast_nodeset_ptr, Ast_nodeset*)
+TYPE_ALIAS(Nodeset_path_expr_ptr, Nodeset_path_expr*)
 
 
 
@@ -773,7 +781,48 @@ TYPE_ALIAS(Loop_head_ptr , Loop_head*)
    	return dynamic_cast<Loop_head_ptr>(p);
   }
 
+ inline Ast_nodeset & as_ast_nodeset_ref(Nodebase_ptr p)
+  {
+   	return *dynamic_cast<Ast_nodeset_ptr>(p);
+  }
 
+
+ inline Ast_nodeset_ptr as_ast_nodeset_ptr(Nodebase_ptr p)
+  {
+	  return dynamic_cast<Ast_nodeset_ptr>(p);
+  }
+
+ inline Ast_nodeset_ptr create_ast_nodeset(bool apply_index_operator, std::string const& index_operator_argument,std::vector<Nodebase_ptr> const & children)
+ {
+	 auto t = new Ast_nodeset(apply_index_operator, index_operator_argument);
+	 t->children().insert(t->children().end(),children.begin(),children.end());
+	 return t;
+ }
+
+ inline Nodeset_path_expr & as_ast_nodeset_path_expr_ref(Nodebase_ptr p)
+   {
+    	return *dynamic_cast<Nodeset_path_expr_ptr>(p);
+   }
+
+
+  inline Nodeset_path_expr_ptr as_nodeset_path_expr_ptr(Nodebase_ptr p)
+   {
+ 	  return dynamic_cast<Nodeset_path_expr_ptr>(p);
+   }
+
+  inline bool is_a_nodeset(Nodebase_ptr p)
+  {
+	  return p->kind() == ceps::ast::Ast_node_kind::nodeset;
+  }
+
+  inline bool is_an_identifier(Nodebase_ptr p)
+  {
+  	  return p->kind() == ceps::ast::Ast_node_kind::identifier;
+  }
+  inline bool is_a_struct(Nodebase_ptr p)
+  {
+	  return p->kind() == ceps::ast::Ast_node_kind::structdef;
+  }
 
  Nodebase_ptr box(int j);
  Nodebase_ptr box(unsigned int j);
@@ -889,6 +938,16 @@ inline getNth_type<0,  Symbol >::type & name(Symbol& x)
 }
 
 inline getNth_type<1,  Symbol >::type & kind(Symbol& x)
+{
+	return get<1>(x);
+}
+
+inline getNth_type<0,  Ast_nodeset >::type & apply_idx_op_flag(Ast_nodeset& x)
+{
+	return get<0>(x);
+}
+
+inline getNth_type<1,  Ast_nodeset >::type & apply_idx_op_operand(Ast_nodeset& x)
 {
 	return get<1>(x);
 }

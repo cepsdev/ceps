@@ -23,50 +23,35 @@ SOFTWARE.
  */
  
  
- /*
-  Demonstrates simple usage of for loops in ceps
-  Created 2014/08/26
- */
+
 
 testcase
 {
  author{"cepsdev";};
  email{"cepsdev@hotmail.com";};
- code_reference{core{src{"ceps_interpreter_loop.cpp";};};};
- short{"Basic usage of for loops.";};
+ code_reference{core{src{"...";};};};
+ short{"Demonstrates simple usage of nodesets in ceps";};
+ id{"ceps-core-nodesets_1";};
+ creation{"2014/09/09";};
 };
 
 
-
-val j = 1;
-
-test{
-	for( i : j,j+1  k : i,i+1)
-	{
-	 a{
-	  vi{i;};
-	  vk{k;};
-	  };
-	};
+A{
+ B{title{"title1";};};
+ B{title{"title2";};};
+ B{title{"title3";};};
 };
 
 
-expectation{
-	a{
-	 vi{1;};
-	 vk{1;};
-	};
-	a{
-	 vi{1;};
-	 vk{2;};
-	};
-	a{
-	 vi{2;};
-	 vk{2;};
-	};
-	a{
-	 vi{2;};
-	 vk{3;};
-	};
+test
+{	
+	value(root.A.B.title);
 };
 
+
+expectation
+{
+ "title1";
+ "title2";
+ "title3";
+};

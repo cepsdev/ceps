@@ -269,6 +269,13 @@ ceps::Cepsparser::token_type yylex(
 	}
 	else if (std::isdigit(ch) || ch == '.')
 	{
+		if (ch == '.')
+		{
+			char temp;
+			in.get(temp);
+			in.putback(temp);
+			if (!std::isdigit(temp) ) return ceps::Cepsparser::token_type('.');
+		}
 		//NUMBER
 		/*Numeric literals can have one of the following form:
 		 *
