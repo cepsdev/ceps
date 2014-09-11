@@ -45,6 +45,9 @@
     <ClCompile Include="..\..\..\src-gen\ceps.tab.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\src\ceps_interpreter_nodeset.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\include\ceps_all.hh">

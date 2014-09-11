@@ -47,15 +47,13 @@ static void flatten(ceps::ast::Nodebase_ptr root, std::vector<ceps::ast::Nodebas
 	else if (ceps::ast::is_a_nodeset(root))
 	{
 		std::string last_identifier;
-		bool b;
-		if (b=apply_idx_op_flag(as_ast_nodeset_ref(root)))
-				last_identifier = apply_idx_op_operand(as_ast_nodeset_ref(root));
+		last_identifier = apply_idx_op_operand(as_ast_nodeset_ref(root));
 
 		for (auto & e : ceps::ast::as_ast_nodeset_ref(root).children())
 		{
 			std::vector<ceps::ast::Nodebase_ptr> v;
 			v.push_back(e);
-			acc.push_back(ceps::ast::create_ast_nodeset(b,last_identifier,v));
+			acc.push_back(ceps::ast::create_ast_nodeset(last_identifier,v));
 		}
 	}
 	else acc.push_back(root);

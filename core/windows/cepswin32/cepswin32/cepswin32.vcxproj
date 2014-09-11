@@ -86,6 +86,7 @@
     <ClCompile Include="..\..\..\src\ceps_ast.cpp" />
     <ClCompile Include="..\..\..\src\ceps_interpreter.cpp" />
     <ClCompile Include="..\..\..\src\ceps_interpreter_loop.cpp" />
+    <ClCompile Include="..\..\..\src\ceps_interpreter_nodeset.cpp" />
     <ClCompile Include="..\..\..\src\ceps_serialize.cpp" />
     <ClCompile Include="..\..\..\src\symtab.cpp" />
   </ItemGroup>

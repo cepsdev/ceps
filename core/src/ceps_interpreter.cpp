@@ -375,7 +375,7 @@ ceps::ast::Nodebase_ptr ceps::interpreter::evaluate(ceps::ast::Nodebase_ptr root
 					 for(auto & child: as_struct_ref(param).children())
 						 result.push_back(child);
 				 }
-				 return create_ast_nodeset(false , "", result);
+				 return create_ast_nodeset( "", result);
 			 }
 		 }
 	 }
@@ -477,7 +477,7 @@ ceps::ast::Nodebase_ptr ceps::interpreter::evaluate(ceps::ast::Nodebase_ptr root
 			return new ceps::ast::Int(1, ceps::ast::mol_unit(), nullptr, nullptr, nullptr);
 		}
 		else if (name(id) == "root" && env.associated_universe() != nullptr)
-			return create_ast_nodeset(false,"", env.associated_universe()->nodes());
+			return create_ast_nodeset("", env.associated_universe()->nodes());
 
 		//OK, let's take a look into the symboltable
 
@@ -486,7 +486,8 @@ ceps::ast::Nodebase_ptr ceps::interpreter::evaluate(ceps::ast::Nodebase_ptr root
 		 if ( (sym_ptr = sym_table.lookup(name(id))) == nullptr)
 		 {
 			 //throw semantic_exception{root_node,"Variable '" +name(id)+"' is not defined."};
-			 return new ceps::ast::Identifier(name(id));
+			 std::string id_name = name(id);
+			 return new ceps::ast::Identifier(id_name,nullptr,nullptr,nullptr);
 		 }
 
 		 if (sym_ptr->category == Symbol::Category::SYMBOL)

@@ -636,7 +636,7 @@ typedef ast_node<Ast_node_kind::func_call> Func_call;
 typedef ast_node<Ast_node_kind::call_parameters> Call_parameters;
 typedef ast_node<Ast_node_kind::loop> Loop;
 typedef ast_node<Ast_node_kind::for_loop_head> Loop_head;
-typedef ast_node<Ast_node_kind::nodeset,bool,std::string> Ast_nodeset;
+typedef ast_node<Ast_node_kind::nodeset,std::string> Ast_nodeset;
 typedef ast_node<Ast_node_kind::nodeset_path_expr> Nodeset_path_expr;
 
 
@@ -792,9 +792,9 @@ TYPE_ALIAS(Nodeset_path_expr_ptr, Nodeset_path_expr*)
 	  return dynamic_cast<Ast_nodeset_ptr>(p);
   }
 
- inline Ast_nodeset_ptr create_ast_nodeset(bool apply_index_operator, std::string const& index_operator_argument,std::vector<Nodebase_ptr> const & children)
+ inline Ast_nodeset_ptr create_ast_nodeset(std::string index_operator_argument,std::vector<Nodebase_ptr> const & children)
  {
-	 auto t = new Ast_nodeset(apply_index_operator, index_operator_argument);
+	 Ast_nodeset_ptr t = new ast_node<Ast_node_kind::nodeset,std::string>(index_operator_argument, nullptr, nullptr, nullptr);
 	 t->children().insert(t->children().end(),children.begin(),children.end());
 	 return t;
  }
@@ -942,14 +942,9 @@ inline getNth_type<1,  Symbol >::type & kind(Symbol& x)
 	return get<1>(x);
 }
 
-inline getNth_type<0,  Ast_nodeset >::type & apply_idx_op_flag(Ast_nodeset& x)
+inline getNth_type<0,  Ast_nodeset >::type & apply_idx_op_operand(Ast_nodeset& x)
 {
 	return get<0>(x);
-}
-
-inline getNth_type<1,  Ast_nodeset >::type & apply_idx_op_operand(Ast_nodeset& x)
-{
-	return get<1>(x);
 }
 
 /*

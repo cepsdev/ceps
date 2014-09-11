@@ -61,8 +61,7 @@ ceps::ast::Nodebase_ptr ceps::interpreter::evaluate_nodeset_expr_dot(	ceps::ast:
 	flatten(rhs,  acc);
 	ceps::ast::Nodeset result{as_ast_nodeset_ref(lhs).children()};
 	std::string last_identifier;
-	if (apply_idx_op_flag(as_ast_nodeset_ref(lhs)))
-		last_identifier = apply_idx_op_operand(as_ast_nodeset_ref(lhs));
+	last_identifier = apply_idx_op_operand(as_ast_nodeset_ref(lhs));
 
 	//std::cout << acc.size() << std::endl;
 
@@ -82,13 +81,7 @@ ceps::ast::Nodebase_ptr ceps::interpreter::evaluate_nodeset_expr_dot(	ceps::ast:
 		}
 	}//for
 
-	/*std::cout << "########" << std::endl;
-
-	std::cout << result << std::endl;
-
-	std::cout << "########" << std::endl;*/
-
-	return create_ast_nodeset(last_identifier.length() > 0 , last_identifier, result.nodes());
+	return create_ast_nodeset(last_identifier, result.nodes());
 }//ceps::interpreter::evaluate_nodeset_expr_dot
 
 
