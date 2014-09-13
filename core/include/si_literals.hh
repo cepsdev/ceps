@@ -30,6 +30,8 @@ SOFTWARE.
 
 namespace SI {
 
+#ifndef NO_USERDEFINED_LITERALS
+
 /*
 template <typename T>
 	constexpr Quantity<Metre,T> operator"" _m(T value)
@@ -38,80 +40,80 @@ template <typename T>
 	}
 */
 
- constexpr Quantity<SI::Metre> operator  ""  _m(long double value)
+	CONSTEXPR Quantity<SI::Metre> operator  ""  _m(long double value)
 	{
 		return Quantity<SI::Metre>{ static_cast<double>(value) };
 	}
 
- constexpr Quantity<SI::Metre,int> operator  ""  _m(unsigned long long value)
+	CONSTEXPR Quantity<SI::Metre, int> operator  ""  _m(unsigned long long value)
 	{
 		return Quantity<SI::Metre,int>{ static_cast<int>(value) };
 	}
 
 
- constexpr Quantity<SI::Kilogram> operator  ""  _kg(long double value)
+	CONSTEXPR Quantity<SI::Kilogram> operator  ""  _kg(long double value)
 	{
 		return Quantity<SI::Kilogram>{ static_cast<double>(value) };
 	}
 
- constexpr Quantity<SI::Kilogram,int> operator  ""  _kg(unsigned long long value)
+	CONSTEXPR Quantity<SI::Kilogram, int> operator  ""  _kg(unsigned long long value)
 	{
 		return Quantity<SI::Kilogram,int>{ static_cast<int>(value) };
 	}
 
  //Time
- constexpr Quantity<SI::Second> operator  ""  _s(long double value)
+	CONSTEXPR Quantity<SI::Second> operator  ""  _s(long double value)
  	{
  		return Quantity<SI::Second>{ static_cast<double>(value) };
  	}
 
-  constexpr Quantity<SI::Second,int> operator  ""  _s(unsigned long long value)
+	CONSTEXPR Quantity<SI::Second, int> operator  ""  _s(unsigned long long value)
  	{
  		return Quantity<SI::Second,int>{ static_cast<int>(value) };
  	}
   
   
   //Current
-  constexpr Quantity<SI::Ampere> operator  ""  _A(long double value)
+	CONSTEXPR Quantity<SI::Ampere> operator  ""  _A(long double value)
   	{
   		return Quantity<SI::Ampere>{ static_cast<double>(value) };
   	}
 
-   constexpr Quantity<SI::Ampere,int> operator  ""  _A(unsigned long long value)
+	CONSTEXPR Quantity<SI::Ampere, int> operator  ""  _A(unsigned long long value)
   	{
   		return Quantity<SI::Ampere,int>{ static_cast<int>(value) };
   	}
 
-   constexpr Quantity<SI::Kelvin> operator  ""  _K(long double value)
+	CONSTEXPR Quantity<SI::Kelvin> operator  ""  _K(long double value)
    	{
    		return Quantity<SI::Kelvin>{ static_cast<double>(value) };
    	}
 
-    constexpr Quantity<SI::Kelvin,int> operator  ""  _K(unsigned long long value)
+	CONSTEXPR Quantity<SI::Kelvin, int> operator  ""  _K(unsigned long long value)
    	{
    		return Quantity<SI::Kelvin,int>{ static_cast<int>(value) };
    	}
     
     
     
-    constexpr Quantity<SI::Mole> operator  ""  _mol(long double value)
+	CONSTEXPR Quantity<SI::Mole> operator  ""  _mol(long double value)
     	{
     		return Quantity<SI::Mole>{ static_cast<double>(value) };
     	}
 
-     constexpr Quantity<SI::Mole,int> operator  ""  _mol(unsigned long long value)
+	CONSTEXPR Quantity<SI::Mole, int> operator  ""  _mol(unsigned long long value)
     	{
     		return Quantity<SI::Mole,int>{ static_cast<int>(value) };
     	}
     
 
      
-     constexpr Quantity<SI::Candela> operator  ""  _cd(long double value)
+	CONSTEXPR Quantity<SI::Candela> operator  ""  _cd(long double value)
      	{
      		return Quantity<SI::Candela>{ static_cast<double>(value) };
      	}
 
-      constexpr Quantity<SI::Candela,int> operator  ""  _cd(unsigned long long value)
+	CONSTEXPR Quantity<SI::Candela, int> operator  ""  _cd(unsigned long long value)
      	{
      		return Quantity<SI::Candela,int>{ static_cast<int>(value) };
      	}
@@ -126,7 +128,8 @@ template <typename T>
  using Candela = Unit<0,0,0,0,0,0,1>;
  */
 	
-	
+#endif
+
 }
 
 #endif

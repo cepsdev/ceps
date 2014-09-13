@@ -36,15 +36,17 @@ SOFTWARE.
 #include <sstream>
 #include <fstream>
 
+#define VERSION_CEPSVALIDATE_MAJOR 0
+#define VERSION_CEPSVALIDATE_MINOR 4
 
 using namespace std;
 using namespace ceps::ast;
 
-constexpr bool DEBUG = false; 
+const bool DEBUG = false; 
 
 std::string help_text = 
 R"(
-Usage: cepsvalidate FILE [FILE...] [--evaluate|-e] [--print-evaluated|-pe] [--print-raw|-pr] [--pretty-print|-pp]
+Usage: cepsvalidate FILE [FILE...] [--evaluate|-e] [--print-evaluated|-pe] [--print-raw|-pr] [--pretty-print|-pp] [--version|-v]
 )";
 
 
@@ -56,6 +58,8 @@ int main(int argc, char*argv[])
 	bool print_evaluated = false;
 	bool print_raw = false;
 	bool print_pretty = false;
+	bool print_version = false;
+
 	std::vector<std::string> files;
 	if (argc == 1)
 	{
@@ -82,6 +86,11 @@ int main(int argc, char*argv[])
 		{
 			print_raw = true;
 		}
+		else if (arg == "-v" || arg == "--version")
+		{
+			print_version = true;
+		}
+
 		else {
 			
 			if (!ifstream{arg})
@@ -92,6 +101,35 @@ int main(int argc, char*argv[])
 			files.push_back(arg);
 		}
 	}
+
+	if (print_version)
+	{
+
+#ifdef __GNUC__
+		std::cout << "\n"
+			<< "VERSION " VERSION_CEPSVALIDATE_MAJOR << "." << VERSION_CEPSVALIDATE_MINOR << " (" __DATE__ << ") BUILT WITH GCC " << "" __VERSION__ "" << " on GNU/LINUX "
+#ifdef __LP64__
+			<< "64BIT"
+#else
+			<< "32BIT"
+#endif
+			<< "\n(C) BY THE AUTHORS OF ceps\n" << std::endl;
+#else 
+#ifdef _MSC_FULL_VER
+		std::cout << "\n"
+			<< "VERSION " << VERSION_CEPSVALIDATE_MAJOR << "." << VERSION_CEPSVALIDATE_MINOR << " (" __DATE__ << ") BUILT WITH MS VISUAL C++ " << _MSC_FULL_VER << " FOR WINDOWS "
+#ifdef _WIN64
+			<< "64BIT"
+#else
+			<< "32BIT"
+#endif
+			<< "\n(C) BY THE AUTHORS OF ceps\n" << std::endl;
+#endif
+#endif
+
+
+	}
+
 	ceps::Ceps_Environment ceps_env{""};
 	for(std::string const & filename : files)
 	{

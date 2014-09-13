@@ -136,7 +136,7 @@ inline const char * c_str(Ast_node_kind k);
 template<Ast_node_kind what>
 	struct type_map_is_leaf
 	{
-		static constexpr bool yes = false;
+		static const bool yes = false;
 	};
 
 /**
@@ -145,7 +145,7 @@ template<Ast_node_kind what>
 #define AST_NODE_IS_LEAF(kind_name) template<>\
 																		struct type_map_is_leaf<Ast_node_kind::kind_name>\
 																			{\
-																				static constexpr bool yes = true;\
+																				static const bool yes = true;\
 																			};
 
 #define AST_NODE_IS_NON_LEAF(kind_name)
@@ -160,8 +160,9 @@ AST_NODE_IS_LEAF(float_literal)
 /**
  * All AST nodesn are derived from Nodebase
  */
-struct Nodebase
+class Nodebase
 {
+public:
 	static const int PRETTY_PRINT_INDENT_STEP_SIZE = 2 ;//Indendation used for pretty printing
 	static const int iword_index; //Used by the pretty_print ostream manipulator, see chapter 15.6 in [Josuttis: "The C++ Standard Library, 2nd edition"]
 

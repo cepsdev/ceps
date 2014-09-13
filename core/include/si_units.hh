@@ -27,6 +27,22 @@ SOFTWARE.
 
 #include<ostream>
 
+#ifdef _MSC_VER
+
+#if MSC_VER > 1700
+#define CONSTEXPR constexpr
+#else
+#define NO_USERDEFINED_LITERALS
+#define CONSTEXPR 
+
+#endif
+
+#else
+
+#define CONSTEXPR constexpr
+
+#endif
+
 namespace SI
 {
 
@@ -163,10 +179,10 @@ namespace SI
   struct Quantity
   {
 	 Scalar_type value_;
-	 constexpr explicit Quantity(Scalar_type value) 
+	 CONSTEXPR explicit Quantity(Scalar_type value) 
 	 	 :value_{value} 
 	 {}	 
-	 constexpr Quantity() :value_{} 
+	 CONSTEXPR Quantity() : value_{}
 	 {}
 	 
 	 Quantity( Quantity<U,Scalar_type> const & rhs):value_{rhs.value_}
@@ -179,13 +195,13 @@ namespace SI
  struct Quantity<Unit<0,0,0,0,0,0,0>,T >
  {
 	 T value_;
-	 constexpr Quantity(T value) 
+	 CONSTEXPR Quantity(T value)
 	 	 :value_{value} 
 	 {}	 
-	 constexpr Quantity() :value_{} 
+	 CONSTEXPR Quantity() : value_{}
 	 {}
 
-	 constexpr inline operator T ()
+	 CONSTEXPR inline operator T ()
 	 		{
 	 			return value_;
 	 		}	 
@@ -262,49 +278,49 @@ template<typename U>
 
 
 template<typename U>
- constexpr Quantity<U> operator - (Quantity<U> q)
+CONSTEXPR Quantity<U> operator - (Quantity<U> q)
  {
 	 return Quantity<U>{ -1.0 *   q.value_};
  }
 
 template<typename U>
- constexpr Quantity<U,int> operator - (Quantity<U,int> q)
+CONSTEXPR Quantity<U, int> operator - (Quantity<U, int> q)
  {
 	 return Quantity<U,int>{ -1 *   q.value_};
  }
 
 template<typename U, typename Scalar_type>
- constexpr  bool operator == (Quantity<U,Scalar_type> lhs,Quantity<U,Scalar_type>rhs )
+CONSTEXPR  bool operator == (Quantity<U, Scalar_type> lhs, Quantity<U, Scalar_type>rhs)
  {
 	 return lhs.value_ == rhs.value_;
  }
 
 template<typename U, typename Scalar_type>
-  constexpr bool operator != (Quantity<U,Scalar_type> lhs,Quantity<U,Scalar_type>rhs )
+CONSTEXPR bool operator != (Quantity<U, Scalar_type> lhs, Quantity<U, Scalar_type>rhs)
  {
 	 return lhs.value_ != rhs.value_;
  }
 
 template<typename U, typename Scalar_type>
-  constexpr bool operator < (Quantity<U,Scalar_type> lhs,Quantity<U,Scalar_type>rhs )
+CONSTEXPR bool operator < (Quantity<U, Scalar_type> lhs, Quantity<U, Scalar_type>rhs)
  {
 	 return lhs.value_ < rhs.value_;
  }
 
 template<typename U, typename Scalar_type>
-  constexpr bool operator > (Quantity<U,Scalar_type> lhs,Quantity<U,Scalar_type>rhs )
+CONSTEXPR bool operator >(Quantity<U, Scalar_type> lhs, Quantity<U, Scalar_type>rhs)
  {
 	 return lhs.value_ > rhs.value_;
  }
 
 template<typename U, typename Scalar_type>
-  constexpr bool operator >= (Quantity<U,Scalar_type> lhs,Quantity<U,Scalar_type>rhs )
+CONSTEXPR bool operator >= (Quantity<U, Scalar_type> lhs, Quantity<U, Scalar_type>rhs)
  {
 	 return lhs.value_ >= rhs.value_;
  }
 
 template<typename U, typename Scalar_type>
- constexpr  bool operator <= (Quantity<U,Scalar_type> lhs,Quantity<U,Scalar_type>rhs )
+CONSTEXPR  bool operator <= (Quantity<U, Scalar_type> lhs, Quantity<U, Scalar_type>rhs)
  {
 	 return lhs.value_ <= rhs.value_;
  }

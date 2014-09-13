@@ -283,7 +283,7 @@ namespace ceps
 
 		Ceps_Environment(Ceps_Environment const &) = delete;
 		Ceps_Environment& operator = (Ceps_Environment const &) = delete;
-		Ceps_Environment(Ceps_Environment&& rhs) = default;
+		//Ceps_Environment(Ceps_Environment&& rhs) = default;
 
 		void unique(std::string const & s)
 		{
