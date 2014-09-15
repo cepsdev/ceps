@@ -143,7 +143,11 @@ ceps::ast::Nodebase_ptr ceps::interpreter::evaluate(ceps::ast::Nodebase_ptr root
 			 ceps::parser_env::Symbol* sym_ptr =
 			 				sym_table.lookup(ceps::ast::name(v),true);
 			 sym_ptr->category = Symbol::SYMBOL;
-			 sym_ptr->payload = sym_kind_ptr;
+			 ceps::parser_env::Symbol* copy_of_sym_kind_ptr = new ceps::parser_env::Symbol(Symbol::KIND);
+			 copy_of_sym_kind_ptr->name = sym_kind_ptr->name;
+			 copy_of_sym_kind_ptr->payload = nullptr;
+
+			 sym_ptr->payload = copy_of_sym_kind_ptr;
 		 }
 		 return nullptr;
 	 }
