@@ -584,7 +584,7 @@ ceps::ast::Nodebase_ptr ceps::interpreter::evaluate(ceps::ast::Nodebase_ptr root
 	 return nullptr;
  }
 ceps::ast::Nodebase_ptr ceps::interpreter::handle_binop(	ceps::ast::Nodebase_ptr binop_node,
-															char op,
+															int op,
 															ceps::ast::Nodebase_ptr lhs,
 															ceps::ast::Nodebase_ptr rhs,
 															ceps::parser_env::Symboltable & sym_table,

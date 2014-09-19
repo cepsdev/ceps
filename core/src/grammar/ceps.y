@@ -74,9 +74,12 @@ SOFTWARE.
 %token EOL
 %token RAWMAP
 %token KIND
+%token DOTDOT
 //%token KINDID
 
+
 %left ','
+%left DOTDOT
 %right '='
 %left '-' '+'
 %left '*'
@@ -111,7 +114,7 @@ SOFTWARE.
 %type <ast_node> id_or_struct_id;
 %type <ast_node> for_loop_head;
 
-%expect 20
+%expect 22
 
 %%
  
@@ -303,6 +306,10 @@ expr:
 	$$ = new ceps::ast::Unary_operator('-',$2,nullptr,nullptr); 
 }
 
+|expr DOTDOT expr
+{
+ $$ = new ceps::ast::Binary_operator(ceps::Cepsparser::token::DOTDOT,$1,$3,nullptr); 
+}
 
 |expr ',' expr
 {

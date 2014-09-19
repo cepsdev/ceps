@@ -40,6 +40,7 @@ SOFTWARE.
 #include "typefunc.hh" //We need some type functions used later on.
 #include "si_units.hh"
 #include "si_literals.hh"
+#include "include_gen/ceps.tab.hh"
 #include <cctype>
 namespace ceps {
  namespace ast {
@@ -393,7 +394,7 @@ template <Ast_node_kind what,typename T,typename... rest>
 
 		virtual void print_value(std::ostream& out) const override
 		{
-			out << x<< " ";Base::print_value(out);
+			out << x<< "";Base::print_value(out);
 		}
 
 		Nodebase* clone()
@@ -423,7 +424,7 @@ template <Ast_node_kind what,typename... rest>
 
 		virtual void print_value(std::ostream& out) const override
 		{
-			out <<"\""<< x<< "\" ";Base::print_value(out);
+			out <<"\""<< x<< "\"";Base::print_value(out);
 		}
 
 		Nodebase* clone()
@@ -432,6 +433,48 @@ template <Ast_node_kind what,typename... rest>
 		}
 
 	};
+
+
+template <typename... rest>
+	struct ast_node<Ast_node_kind::binary_operator,int,rest...>: public ast_node<Ast_node_kind::binary_operator,rest...>
+	{
+		using T = int;
+		T x;
+		using Base = ast_node<Ast_node_kind::binary_operator,rest...>;
+		using This_type = ast_node<Ast_node_kind::binary_operator,int,rest...>;
+		ast_node(T val_1,rest... args,Nodebase_ptr child1=nullptr,Nodebase_ptr child2=nullptr,Nodebase_ptr child3=nullptr)
+			: Base(args...,child1,child2,child3),x(val_1)
+			{
+
+			}
+		void print_content(std::ostream& out,bool pretty_print,int indent) const override
+			{
+			    if (x < ceps::Cepsparser::token::DOTDOT)
+				 out << (char)x << " ";
+			    else if (x == ceps::Cepsparser::token::DOTDOT)
+			     out << ".." << " ";
+
+			    Base::print_content(out,pretty_print,indent);
+			}
+
+
+		virtual void print_value(std::ostream& out) const override
+		{
+			if (x < ceps::Cepsparser::token::DOTDOT)
+			 out << (char)x << " ";
+			else if (x == ceps::Cepsparser::token::DOTDOT)
+			 out << ".." << "";
+
+			Base::print_value(out);
+		}
+
+		Nodebase* clone()
+		{
+			return new This_type(*this);
+		}
+
+	};
+
 
 template<int N,Ast_node_kind what,typename... Ts>
 	struct peel_off_base;
@@ -589,7 +632,7 @@ inline Unit_rep candela_unit()
 
 typedef ast_node<Ast_node_kind::root> Root;
 typedef ast_node<Ast_node_kind::expr> Expression;
-typedef ast_node<Ast_node_kind::binary_operator,char> Binary_operator;
+typedef ast_node<Ast_node_kind::binary_operator,int> Binary_operator;
 typedef ast_node<Ast_node_kind::unary_operator,char> Unary_operator;
 typedef ast_node<Ast_node_kind::structdef,std::string>  Struct;
 typedef ast_node<Ast_node_kind::identifier,std::string> Identifier;

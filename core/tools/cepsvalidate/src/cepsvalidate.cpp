@@ -107,7 +107,7 @@ int main(int argc, char*argv[])
 
 #ifdef __GNUC__
 		std::cout << "\n"
-			<< "VERSION " VERSION_CEPSVALIDATE_MAJOR << "." << VERSION_CEPSVALIDATE_MINOR << " (" __DATE__ << ") BUILT WITH GCC " << "" __VERSION__ "" << " on GNU/LINUX "
+			<< "VERSION " <<  VERSION_CEPSVALIDATE_MAJOR << "." << VERSION_CEPSVALIDATE_MINOR << " (" __DATE__ << ") BUILT WITH GCC " << "" __VERSION__ "" << " on GNU/LINUX "
 #ifdef __LP64__
 			<< "64BIT"
 #else

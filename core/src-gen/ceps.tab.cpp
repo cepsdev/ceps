@@ -551,7 +551,7 @@ namespace ceps {
         switch (yyn)
           {
   case 2:
-#line 120 "../src/grammar/ceps.y" // lalr1.cc:846
+#line 123 "../src/grammar/ceps.y" // lalr1.cc:846
     {
   ceps::ast::Root_ptr root_node = new ceps::ast::Root((yystack_[0].value.ast_node));
   driver.set_parsetree(ceps::ast::Parsetree{root_node});
@@ -561,7 +561,7 @@ namespace ceps {
     break;
 
   case 3:
-#line 129 "../src/grammar/ceps.y" // lalr1.cc:846
+#line 132 "../src/grammar/ceps.y" // lalr1.cc:846
     {
   if((yystack_[1].value.ast_node) != nullptr) 
   	ceps::ast::nlf_ptr((yystack_[2].value.ast_node))->children().push_back((yystack_[1].value.ast_node));
@@ -571,7 +571,7 @@ namespace ceps {
     break;
 
   case 4:
-#line 136 "../src/grammar/ceps.y" // lalr1.cc:846
+#line 139 "../src/grammar/ceps.y" // lalr1.cc:846
     {
 	(yylhs.value.ast_node) = new ceps::ast::Stmts{}; //create empty Statements-Node
 }
@@ -579,13 +579,13 @@ namespace ceps {
     break;
 
   case 5:
-#line 143 "../src/grammar/ceps.y" // lalr1.cc:846
+#line 146 "../src/grammar/ceps.y" // lalr1.cc:846
     { (yylhs.value.ast_node) = new ceps::ast::Scope{(yystack_[1].value.ast_node)};}
 #line 585 "ceps.tab.c" // lalr1.cc:846
     break;
 
   case 6:
-#line 148 "../src/grammar/ceps.y" // lalr1.cc:846
+#line 151 "../src/grammar/ceps.y" // lalr1.cc:846
     {
  	(yylhs.value.ast_node) = (yystack_[0].value.ast_node); //pass over result of decl
  }
@@ -593,7 +593,7 @@ namespace ceps {
     break;
 
   case 7:
-#line 153 "../src/grammar/ceps.y" // lalr1.cc:846
+#line 156 "../src/grammar/ceps.y" // lalr1.cc:846
     {
   (yylhs.value.ast_node) = (yystack_[0].value.ast_node); //pass over result of for_loop
  }
@@ -601,7 +601,7 @@ namespace ceps {
     break;
 
   case 8:
-#line 158 "../src/grammar/ceps.y" // lalr1.cc:846
+#line 161 "../src/grammar/ceps.y" // lalr1.cc:846
     {
  	(yylhs.value.ast_node) = nullptr;
  }
@@ -609,7 +609,7 @@ namespace ceps {
     break;
 
   case 12:
-#line 171 "../src/grammar/ceps.y" // lalr1.cc:846
+#line 174 "../src/grammar/ceps.y" // lalr1.cc:846
     {
   (yylhs.value.str_list) = new std::vector<std::string> {*(yystack_[0].value.sval)};
  }
@@ -617,7 +617,7 @@ namespace ceps {
     break;
 
   case 13:
-#line 175 "../src/grammar/ceps.y" // lalr1.cc:846
+#line 178 "../src/grammar/ceps.y" // lalr1.cc:846
     {
    (yystack_[2].value.str_list)->push_back(*(yystack_[0].value.sval));
    (yylhs.value.str_list) = (yystack_[2].value.str_list);
@@ -626,7 +626,7 @@ namespace ceps {
     break;
 
   case 14:
-#line 183 "../src/grammar/ceps.y" // lalr1.cc:846
+#line 186 "../src/grammar/ceps.y" // lalr1.cc:846
     {
  	(yylhs.value.ast_node) = (yystack_[0].value.ast_node); //pass over result 
  }
@@ -634,7 +634,7 @@ namespace ceps {
     break;
 
   case 15:
-#line 187 "../src/grammar/ceps.y" // lalr1.cc:846
+#line 190 "../src/grammar/ceps.y" // lalr1.cc:846
     {
 	(yylhs.value.ast_node) = (yystack_[1].value.ast_node); //pass over result
 }
@@ -642,7 +642,7 @@ namespace ceps {
     break;
 
   case 16:
-#line 191 "../src/grammar/ceps.y" // lalr1.cc:846
+#line 194 "../src/grammar/ceps.y" // lalr1.cc:846
     {
 	(yylhs.value.ast_node) = new ceps::ast::Valdef(*(yystack_[2].value.sval),(yystack_[0].value.ast_node));
 	delete (yystack_[2].value.sval);
@@ -651,7 +651,7 @@ namespace ceps {
     break;
 
   case 17:
-#line 196 "../src/grammar/ceps.y" // lalr1.cc:846
+#line 199 "../src/grammar/ceps.y" // lalr1.cc:846
     {
 	(yylhs.value.ast_node) = new ceps::ast::Valdef(*(yystack_[2].value.sval),(yystack_[0].value.ast_node));
 	delete (yystack_[2].value.sval);
@@ -660,7 +660,7 @@ namespace ceps {
     break;
 
   case 18:
-#line 202 "../src/grammar/ceps.y" // lalr1.cc:846
+#line 205 "../src/grammar/ceps.y" // lalr1.cc:846
     {
 	driver.symboltable().lookup(*(yystack_[0].value.sval),true,true,false);
 	delete (yystack_[0].value.sval); 
@@ -670,7 +670,7 @@ namespace ceps {
     break;
 
   case 19:
-#line 208 "../src/grammar/ceps.y" // lalr1.cc:846
+#line 211 "../src/grammar/ceps.y" // lalr1.cc:846
     {
 	delete (yystack_[0].value.sval);
 	(yylhs.value.ast_node)=nullptr;
@@ -679,7 +679,7 @@ namespace ceps {
     break;
 
   case 20:
-#line 213 "../src/grammar/ceps.y" // lalr1.cc:846
+#line 216 "../src/grammar/ceps.y" // lalr1.cc:846
     {
  auto symbol = driver.symboltable().lookup(*(yystack_[0].value.sval),true,true,false);
  symbol->category = ceps::parser_env::Symbol::KIND;
@@ -691,7 +691,7 @@ namespace ceps {
     break;
 
   case 21:
-#line 221 "../src/grammar/ceps.y" // lalr1.cc:846
+#line 224 "../src/grammar/ceps.y" // lalr1.cc:846
     {
  auto symbol = driver.symboltable().lookup(*(yystack_[0].value.sval),true,true,false);
  symbol->category = ceps::parser_env::Symbol::KIND;
@@ -703,7 +703,7 @@ namespace ceps {
     break;
 
   case 22:
-#line 229 "../src/grammar/ceps.y" // lalr1.cc:846
+#line 232 "../src/grammar/ceps.y" // lalr1.cc:846
     {
  auto r = new ceps::ast::Kinddef(*(yystack_[1].value.sval),nullptr,nullptr,nullptr);
  for (auto s : *(yystack_[0].value.str_list))
@@ -717,7 +717,7 @@ namespace ceps {
     break;
 
   case 23:
-#line 239 "../src/grammar/ceps.y" // lalr1.cc:846
+#line 242 "../src/grammar/ceps.y" // lalr1.cc:846
     {
 	(yylhs.value.ast_node) = new ceps::ast::Expression((yystack_[0].value.ast_node),nullptr,nullptr);
 }
@@ -725,19 +725,19 @@ namespace ceps {
     break;
 
   case 24:
-#line 245 "../src/grammar/ceps.y" // lalr1.cc:846
+#line 248 "../src/grammar/ceps.y" // lalr1.cc:846
     {driver.symboltable().push_scope();}
 #line 731 "ceps.tab.c" // lalr1.cc:846
     break;
 
   case 25:
-#line 245 "../src/grammar/ceps.y" // lalr1.cc:846
+#line 248 "../src/grammar/ceps.y" // lalr1.cc:846
     {driver.symboltable().pop_scope();}
 #line 737 "ceps.tab.c" // lalr1.cc:846
     break;
 
   case 26:
-#line 246 "../src/grammar/ceps.y" // lalr1.cc:846
+#line 249 "../src/grammar/ceps.y" // lalr1.cc:846
     {
  (yylhs.value.ast_node) = new ceps::ast::Struct(*(yystack_[3].value.sval),(yystack_[1].value.ast_node),nullptr,nullptr);
 }
@@ -745,7 +745,7 @@ namespace ceps {
     break;
 
   case 27:
-#line 250 "../src/grammar/ceps.y" // lalr1.cc:846
+#line 253 "../src/grammar/ceps.y" // lalr1.cc:846
     {
  (yylhs.value.ast_node) = new ceps::ast::Struct(*(yystack_[2].value.sval),new ceps::ast::Identifier(*(yystack_[1].value.sval),nullptr,nullptr,nullptr),(yystack_[0].value.ast_node),nullptr);
 }
@@ -753,7 +753,7 @@ namespace ceps {
     break;
 
   case 28:
-#line 257 "../src/grammar/ceps.y" // lalr1.cc:846
+#line 260 "../src/grammar/ceps.y" // lalr1.cc:846
     {
  	(yylhs.value.ast_node) = (yystack_[1].value.ast_node);
  }
@@ -761,7 +761,7 @@ namespace ceps {
     break;
 
   case 29:
-#line 265 "../src/grammar/ceps.y" // lalr1.cc:846
+#line 268 "../src/grammar/ceps.y" // lalr1.cc:846
     {
  	(yylhs.value.ast_node) = new ceps::ast::String(*(yystack_[0].value.sval),nullptr,nullptr,nullptr);
  	delete (yystack_[0].value.sval);
@@ -770,7 +770,7 @@ namespace ceps {
     break;
 
   case 30:
-#line 271 "../src/grammar/ceps.y" // lalr1.cc:846
+#line 274 "../src/grammar/ceps.y" // lalr1.cc:846
     {
     (yylhs.value.ast_node) = new ceps::ast::Identifier(*(yystack_[0].value.sval),nullptr,nullptr,nullptr);
     delete (yystack_[0].value.sval);
@@ -779,7 +779,7 @@ namespace ceps {
     break;
 
   case 31:
-#line 277 "../src/grammar/ceps.y" // lalr1.cc:846
+#line 280 "../src/grammar/ceps.y" // lalr1.cc:846
     {
 	(yylhs.value.ast_node) = new ceps::ast::Identifier(*(yystack_[0].value.sval),nullptr,nullptr,nullptr); 
 	delete (yystack_[0].value.sval);
@@ -788,7 +788,7 @@ namespace ceps {
     break;
 
   case 32:
-#line 282 "../src/grammar/ceps.y" // lalr1.cc:846
+#line 285 "../src/grammar/ceps.y" // lalr1.cc:846
     {
  //TODO:Handle kindid
 }
@@ -796,7 +796,7 @@ namespace ceps {
     break;
 
   case 33:
-#line 288 "../src/grammar/ceps.y" // lalr1.cc:846
+#line 291 "../src/grammar/ceps.y" // lalr1.cc:846
     {
 	(yylhs.value.ast_node) = new ceps::ast::Int((yystack_[0].value.ival),ceps::ast::Unit_rep(),nullptr,nullptr,nullptr);
 }
@@ -804,7 +804,7 @@ namespace ceps {
     break;
 
   case 34:
-#line 294 "../src/grammar/ceps.y" // lalr1.cc:846
+#line 297 "../src/grammar/ceps.y" // lalr1.cc:846
     {
 	(yylhs.value.ast_node) = new ceps::ast::Double((yystack_[0].value.fval),ceps::ast::Unit_rep{},nullptr,nullptr,nullptr);
 }
@@ -812,7 +812,7 @@ namespace ceps {
     break;
 
   case 35:
-#line 300 "../src/grammar/ceps.y" // lalr1.cc:846
+#line 303 "../src/grammar/ceps.y" // lalr1.cc:846
     {  
 	//ceps::ast::neg(*dynamic_cast<ceps::ast::Double*>($2));
 	//$$=$2;
@@ -822,79 +822,79 @@ namespace ceps {
     break;
 
   case 36:
-#line 308 "../src/grammar/ceps.y" // lalr1.cc:846
+#line 310 "../src/grammar/ceps.y" // lalr1.cc:846
     {
-	(yylhs.value.ast_node) = new ceps::ast::Binary_operator(',',(yystack_[2].value.ast_node),(yystack_[0].value.ast_node),nullptr); 
+ (yylhs.value.ast_node) = new ceps::ast::Binary_operator(ceps::Cepsparser::token::DOTDOT,(yystack_[2].value.ast_node),(yystack_[0].value.ast_node),nullptr); 
 }
 #line 830 "ceps.tab.c" // lalr1.cc:846
     break;
 
   case 37:
-#line 314 "../src/grammar/ceps.y" // lalr1.cc:846
+#line 315 "../src/grammar/ceps.y" // lalr1.cc:846
     {
-	(yylhs.value.ast_node) = new ceps::ast::Binary_operator('+',(yystack_[2].value.ast_node),(yystack_[0].value.ast_node),nullptr); 
+	(yylhs.value.ast_node) = new ceps::ast::Binary_operator(',',(yystack_[2].value.ast_node),(yystack_[0].value.ast_node),nullptr); 
 }
 #line 838 "ceps.tab.c" // lalr1.cc:846
     break;
 
   case 38:
-#line 319 "../src/grammar/ceps.y" // lalr1.cc:846
+#line 321 "../src/grammar/ceps.y" // lalr1.cc:846
     {
-	(yylhs.value.ast_node) = new ceps::ast::Binary_operator('-',(yystack_[2].value.ast_node),(yystack_[0].value.ast_node),nullptr);
+	(yylhs.value.ast_node) = new ceps::ast::Binary_operator('+',(yystack_[2].value.ast_node),(yystack_[0].value.ast_node),nullptr); 
 }
 #line 846 "ceps.tab.c" // lalr1.cc:846
     break;
 
   case 39:
-#line 325 "../src/grammar/ceps.y" // lalr1.cc:846
+#line 326 "../src/grammar/ceps.y" // lalr1.cc:846
     {
-	(yylhs.value.ast_node) = new ceps::ast::Binary_operator('*',(yystack_[2].value.ast_node),(yystack_[0].value.ast_node),nullptr);			
+	(yylhs.value.ast_node) = new ceps::ast::Binary_operator('-',(yystack_[2].value.ast_node),(yystack_[0].value.ast_node),nullptr);
 }
 #line 854 "ceps.tab.c" // lalr1.cc:846
     break;
 
   case 40:
-#line 330 "../src/grammar/ceps.y" // lalr1.cc:846
+#line 332 "../src/grammar/ceps.y" // lalr1.cc:846
     {
-	(yylhs.value.ast_node) = new ceps::ast::Binary_operator('/',(yystack_[2].value.ast_node),(yystack_[0].value.ast_node),nullptr); 
+	(yylhs.value.ast_node) = new ceps::ast::Binary_operator('*',(yystack_[2].value.ast_node),(yystack_[0].value.ast_node),nullptr);			
 }
 #line 862 "ceps.tab.c" // lalr1.cc:846
     break;
 
   case 41:
-#line 335 "../src/grammar/ceps.y" // lalr1.cc:846
+#line 337 "../src/grammar/ceps.y" // lalr1.cc:846
     {
-	(yylhs.value.ast_node) = new ceps::ast::Binary_operator('^',(yystack_[2].value.ast_node),(yystack_[0].value.ast_node),nullptr); 
+	(yylhs.value.ast_node) = new ceps::ast::Binary_operator('/',(yystack_[2].value.ast_node),(yystack_[0].value.ast_node),nullptr); 
 }
 #line 870 "ceps.tab.c" // lalr1.cc:846
     break;
 
   case 42:
-#line 339 "../src/grammar/ceps.y" // lalr1.cc:846
+#line 342 "../src/grammar/ceps.y" // lalr1.cc:846
     {
-	(yylhs.value.ast_node) = new ceps::ast::Binary_operator('.',(yystack_[2].value.ast_node),(yystack_[0].value.ast_node),nullptr); 
+	(yylhs.value.ast_node) = new ceps::ast::Binary_operator('^',(yystack_[2].value.ast_node),(yystack_[0].value.ast_node),nullptr); 
 }
 #line 878 "ceps.tab.c" // lalr1.cc:846
     break;
 
   case 43:
-#line 344 "../src/grammar/ceps.y" // lalr1.cc:846
+#line 346 "../src/grammar/ceps.y" // lalr1.cc:846
     {
-	(yylhs.value.ast_node) = new ceps::ast::Binary_operator('=',(yystack_[2].value.ast_node),(yystack_[0].value.ast_node),nullptr);
+	(yylhs.value.ast_node) = new ceps::ast::Binary_operator('.',(yystack_[2].value.ast_node),(yystack_[0].value.ast_node),nullptr); 
 }
 #line 886 "ceps.tab.c" // lalr1.cc:846
     break;
 
   case 44:
-#line 348 "../src/grammar/ceps.y" // lalr1.cc:846
+#line 351 "../src/grammar/ceps.y" // lalr1.cc:846
     {
-	(yylhs.value.ast_node) = (yystack_[1].value.ast_node);
+	(yylhs.value.ast_node) = new ceps::ast::Binary_operator('=',(yystack_[2].value.ast_node),(yystack_[0].value.ast_node),nullptr);
 }
 #line 894 "ceps.tab.c" // lalr1.cc:846
     break;
 
   case 45:
-#line 352 "../src/grammar/ceps.y" // lalr1.cc:846
+#line 355 "../src/grammar/ceps.y" // lalr1.cc:846
     {
 	(yylhs.value.ast_node) = (yystack_[1].value.ast_node);
 }
@@ -902,73 +902,81 @@ namespace ceps {
     break;
 
   case 46:
-#line 357 "../src/grammar/ceps.y" // lalr1.cc:846
+#line 359 "../src/grammar/ceps.y" // lalr1.cc:846
+    {
+	(yylhs.value.ast_node) = (yystack_[1].value.ast_node);
+}
+#line 910 "ceps.tab.c" // lalr1.cc:846
+    break;
+
+  case 47:
+#line 364 "../src/grammar/ceps.y" // lalr1.cc:846
     {
  //std::cout << "FUNCTION!!" << std::endl;
  (yylhs.value.ast_node) = new ceps::ast::Func_call{(yystack_[3].value.ast_node),(yystack_[1].value.ast_node)};
 }
-#line 911 "ceps.tab.c" // lalr1.cc:846
+#line 919 "ceps.tab.c" // lalr1.cc:846
     break;
 
-  case 47:
-#line 362 "../src/grammar/ceps.y" // lalr1.cc:846
+  case 48:
+#line 369 "../src/grammar/ceps.y" // lalr1.cc:846
     {
  //std::cout << "FUNCTION!!" << std::endl;
  (yylhs.value.ast_node) = new ceps::ast::Func_call((yystack_[2].value.ast_node),new  ceps::ast::Call_parameters(), nullptr);
 }
-#line 920 "ceps.tab.c" // lalr1.cc:846
-    break;
-
-  case 48:
-#line 368 "../src/grammar/ceps.y" // lalr1.cc:846
-    {
- //TODO: Function Definitions
-}
 #line 928 "ceps.tab.c" // lalr1.cc:846
     break;
 
-  case 60:
-#line 397 "../src/grammar/ceps.y" // lalr1.cc:846
+  case 49:
+#line 375 "../src/grammar/ceps.y" // lalr1.cc:846
+    {
+ //TODO: Function Definitions
+}
+#line 936 "ceps.tab.c" // lalr1.cc:846
+    break;
+
+  case 61:
+#line 404 "../src/grammar/ceps.y" // lalr1.cc:846
     {
     (yylhs.value.ast_node) = new ceps::ast::Identifier(*(yystack_[0].value.sval),nullptr,nullptr,nullptr); 
 	delete (yystack_[0].value.sval);
  }
-#line 937 "ceps.tab.c" // lalr1.cc:846
+#line 945 "ceps.tab.c" // lalr1.cc:846
     break;
 
-  case 61:
-#line 402 "../src/grammar/ceps.y" // lalr1.cc:846
+  case 62:
+#line 409 "../src/grammar/ceps.y" // lalr1.cc:846
     {
    (yylhs.value.ast_node) = new ceps::ast::Identifier(*(yystack_[0].value.sval),nullptr,nullptr,nullptr); 
 	delete (yystack_[0].value.sval);
 }
-#line 946 "ceps.tab.c" // lalr1.cc:846
+#line 954 "ceps.tab.c" // lalr1.cc:846
     break;
 
-  case 62:
-#line 410 "../src/grammar/ceps.y" // lalr1.cc:846
+  case 63:
+#line 417 "../src/grammar/ceps.y" // lalr1.cc:846
     {
   auto head = new ceps::ast::Loop_head();
   head->children().push_back((yystack_[2].value.ast_node));
   head->children().push_back((yystack_[0].value.ast_node));
   (yylhs.value.ast_node) = head;
  }
-#line 957 "ceps.tab.c" // lalr1.cc:846
+#line 965 "ceps.tab.c" // lalr1.cc:846
     break;
 
-  case 63:
-#line 417 "../src/grammar/ceps.y" // lalr1.cc:846
+  case 64:
+#line 424 "../src/grammar/ceps.y" // lalr1.cc:846
     {
   ceps::ast::Loop_head_ptr head = ceps::ast::as_loop_head_ptr((yystack_[3].value.ast_node));
   head->children().push_back((yystack_[2].value.ast_node));
   head->children().push_back((yystack_[0].value.ast_node));
   (yylhs.value.ast_node) = head;
  }
-#line 968 "ceps.tab.c" // lalr1.cc:846
+#line 976 "ceps.tab.c" // lalr1.cc:846
     break;
 
-  case 64:
-#line 428 "../src/grammar/ceps.y" // lalr1.cc:846
+  case 65:
+#line 435 "../src/grammar/ceps.y" // lalr1.cc:846
     {
   auto temp = new ceps::ast::Loop();
 
@@ -976,40 +984,32 @@ namespace ceps {
   temp->children().push_back((yystack_[1].value.ast_node));
   (yylhs.value.ast_node) = temp;
  }
-#line 980 "ceps.tab.c" // lalr1.cc:846
-    break;
-
-  case 69:
-#line 450 "../src/grammar/ceps.y" // lalr1.cc:846
-    {
-  (yylhs.value.ast_node) = new ceps::ast::Call_parameters((yystack_[0].value.ast_node),nullptr,nullptr);
- }
 #line 988 "ceps.tab.c" // lalr1.cc:846
     break;
 
   case 70:
-#line 455 "../src/grammar/ceps.y" // lalr1.cc:846
+#line 457 "../src/grammar/ceps.y" // lalr1.cc:846
+    {
+  (yylhs.value.ast_node) = new ceps::ast::Call_parameters((yystack_[0].value.ast_node),nullptr,nullptr);
+ }
+#line 996 "ceps.tab.c" // lalr1.cc:846
+    break;
+
+  case 71:
+#line 462 "../src/grammar/ceps.y" // lalr1.cc:846
     {
   if((yystack_[0].value.ast_node) != nullptr) 
   	ceps::ast::nlf_ptr((yystack_[2].value.ast_node))->children().push_back((yystack_[0].value.ast_node));
     
   (yylhs.value.ast_node) = (yystack_[2].value.ast_node);
  }
-#line 999 "ceps.tab.c" // lalr1.cc:846
-    break;
-
-  case 71:
-#line 465 "../src/grammar/ceps.y" // lalr1.cc:846
-    {
-  (yylhs.value.ast_node) = (yystack_[0].value.ast_node);
- }
 #line 1007 "ceps.tab.c" // lalr1.cc:846
     break;
 
   case 72:
-#line 476 "../src/grammar/ceps.y" // lalr1.cc:846
+#line 472 "../src/grammar/ceps.y" // lalr1.cc:846
     {
- 	(yylhs.value.ast_node)=(yystack_[0].value.ast_node);
+  (yylhs.value.ast_node) = (yystack_[0].value.ast_node);
  }
 #line 1015 "ceps.tab.c" // lalr1.cc:846
     break;
@@ -1017,97 +1017,105 @@ namespace ceps {
   case 73:
 #line 483 "../src/grammar/ceps.y" // lalr1.cc:846
     {
- 	(yylhs.value.ast_node) = new ceps::ast::Rawmap();
+ 	(yylhs.value.ast_node)=(yystack_[0].value.ast_node);
  }
 #line 1023 "ceps.tab.c" // lalr1.cc:846
     break;
 
   case 74:
-#line 487 "../src/grammar/ceps.y" // lalr1.cc:846
+#line 490 "../src/grammar/ceps.y" // lalr1.cc:846
+    {
+ 	(yylhs.value.ast_node) = new ceps::ast::Rawmap();
+ }
+#line 1031 "ceps.tab.c" // lalr1.cc:846
+    break;
+
+  case 75:
+#line 494 "../src/grammar/ceps.y" // lalr1.cc:846
     { 
  	if (!ceps::ast::nlf_ptr((yystack_[0].value.ast_node))->empty()) 
  	 ceps::ast::nlf_ptr((yystack_[1].value.ast_node))->children().push_back((yystack_[0].value.ast_node)); 
  	(yylhs.value.ast_node) = (yystack_[1].value.ast_node);
  }
-#line 1033 "ceps.tab.c" // lalr1.cc:846
-    break;
-
-  case 75:
-#line 496 "../src/grammar/ceps.y" // lalr1.cc:846
-    {
-	(yylhs.value.ast_node) = new ceps::ast::Atoms();
-}
 #line 1041 "ceps.tab.c" // lalr1.cc:846
     break;
 
   case 76:
-#line 500 "../src/grammar/ceps.y" // lalr1.cc:846
+#line 503 "../src/grammar/ceps.y" // lalr1.cc:846
+    {
+	(yylhs.value.ast_node) = new ceps::ast::Atoms();
+}
+#line 1049 "ceps.tab.c" // lalr1.cc:846
+    break;
+
+  case 77:
+#line 507 "../src/grammar/ceps.y" // lalr1.cc:846
     {
   ceps::ast::nlf_ptr((yystack_[1].value.ast_node))->children().push_back(new ceps::ast::Int((yystack_[0].value.ival),ceps::ast::Unit_rep(),nullptr,nullptr,nullptr));
   (yylhs.value.ast_node) = (yystack_[1].value.ast_node);
 }
-#line 1050 "ceps.tab.c" // lalr1.cc:846
+#line 1058 "ceps.tab.c" // lalr1.cc:846
     break;
 
-  case 77:
-#line 505 "../src/grammar/ceps.y" // lalr1.cc:846
+  case 78:
+#line 512 "../src/grammar/ceps.y" // lalr1.cc:846
     {
   ceps::ast::nlf_ptr((yystack_[2].value.ast_node))->children().push_back(new ceps::ast::Int(-1 * (yystack_[0].value.ival),ceps::ast::Unit_rep(),nullptr,nullptr,nullptr));
   (yylhs.value.ast_node) = (yystack_[2].value.ast_node);
 }
-#line 1059 "ceps.tab.c" // lalr1.cc:846
+#line 1067 "ceps.tab.c" // lalr1.cc:846
     break;
 
-  case 78:
-#line 511 "../src/grammar/ceps.y" // lalr1.cc:846
+  case 79:
+#line 518 "../src/grammar/ceps.y" // lalr1.cc:846
     {
   ceps::ast::nlf_ptr((yystack_[2].value.ast_node))->children().push_back(new ceps::ast::Int((yystack_[0].value.ival),ceps::ast::Unit_rep(),nullptr,nullptr,nullptr));
 
   (yylhs.value.ast_node) = (yystack_[2].value.ast_node);
 }
-#line 1069 "ceps.tab.c" // lalr1.cc:846
+#line 1077 "ceps.tab.c" // lalr1.cc:846
     break;
 
-  case 79:
-#line 519 "../src/grammar/ceps.y" // lalr1.cc:846
+  case 80:
+#line 526 "../src/grammar/ceps.y" // lalr1.cc:846
     {
   ceps::ast::nlf_ptr((yystack_[1].value.ast_node))->children().push_back(new ceps::ast::Double((yystack_[0].value.fval),ceps::ast::Unit_rep(),nullptr,nullptr,nullptr));
   (yylhs.value.ast_node) = (yystack_[1].value.ast_node);
 }
-#line 1078 "ceps.tab.c" // lalr1.cc:846
+#line 1086 "ceps.tab.c" // lalr1.cc:846
     break;
 
-  case 80:
-#line 524 "../src/grammar/ceps.y" // lalr1.cc:846
+  case 81:
+#line 531 "../src/grammar/ceps.y" // lalr1.cc:846
     {
   ceps::ast::nlf_ptr((yystack_[2].value.ast_node))->children().push_back(new ceps::ast::Double(-1.0*(yystack_[0].value.fval),ceps::ast::Unit_rep(),nullptr,nullptr,nullptr));
   (yylhs.value.ast_node) = (yystack_[2].value.ast_node);
 }
-#line 1087 "ceps.tab.c" // lalr1.cc:846
+#line 1095 "ceps.tab.c" // lalr1.cc:846
     break;
 
-  case 81:
-#line 530 "../src/grammar/ceps.y" // lalr1.cc:846
+  case 82:
+#line 537 "../src/grammar/ceps.y" // lalr1.cc:846
     {
   ceps::ast::nlf_ptr((yystack_[2].value.ast_node))->children().push_back(new ceps::ast::Double((yystack_[0].value.fval),ceps::ast::Unit_rep(),nullptr,nullptr,nullptr));
 
   (yylhs.value.ast_node) = (yystack_[2].value.ast_node);
 }
-#line 1097 "ceps.tab.c" // lalr1.cc:846
+#line 1105 "ceps.tab.c" // lalr1.cc:846
     break;
 
-  case 82:
-#line 538 "../src/grammar/ceps.y" // lalr1.cc:846
+  case 83:
+#line 545 "../src/grammar/ceps.y" // lalr1.cc:846
     {
   ceps::ast::nlf_ptr((yystack_[1].value.ast_node))->children().push_back(new ceps::ast::String(*(yystack_[0].value.sval),nullptr,nullptr,nullptr));
   delete (yystack_[0].value.sval);
   (yylhs.value.ast_node) = (yystack_[1].value.ast_node);
 }
-#line 1107 "ceps.tab.c" // lalr1.cc:846
+#line 1115 "ceps.tab.c" // lalr1.cc:846
     break;
 
 
-#line 1111 "ceps.tab.c" // lalr1.cc:846
+#line 1119 "ceps.tab.c" // lalr1.cc:846
           default:
             break;
           }
@@ -1273,195 +1281,197 @@ namespace ceps {
   }
 
 
-  const short int Cepsparser::yypact_ninf_ = -129;
+  const signed char Cepsparser::yypact_ninf_ = -86;
 
   const signed char Cepsparser::yytable_ninf_ = -25;
 
   const short int
   Cepsparser::yypact_[] =
   {
-    -129,    15,    59,  -129,  -129,  -129,   -12,    43,   -11,     7,
-       8,    50,   239,   -14,  -129,     9,  -129,  -129,   239,   239,
-      40,  -129,  -129,   360,  -129,  -129,  -129,    86,    90,    85,
-      53,     8,    79,  -129,  -129,  -129,  -129,     6,    80,    80,
-    -129,  -129,  -129,  -129,    98,   121,   292,   261,  -129,   239,
-     239,   239,   239,   239,   239,   239,   239,     2,   239,   239,
-     239,  -129,    81,   100,  -129,  -129,    82,   -21,  -129,  -129,
-    -129,  -129,  -129,     9,  -129,  -129,  -129,   381,   381,    60,
-      60,    67,    67,    83,     6,  -129,   360,   -13,  -129,   269,
-     360,   360,    89,    85,   239,    97,    92,   103,   106,   155,
-    -129,  -129,   239,  -129,  -129,   223,  -129,   360,  -129,   239,
-    -129,  -129,    42,  -129,  -129,   108,   239,   107,   223,   300,
-     104,  -129,  -129,  -129,   189,   360,  -129,  -129,    27,   105,
-    -129,   123,   322,   239,   109,   223,  -129,  -129,  -129,  -129,
-    -129,  -129,   239,   223,   330,  -129,  -129,   352,  -129,   223,
-     223,   133,  -129,   223,  -129
+     -86,     9,     0,   -86,   -86,   -86,    35,    60,   -23,   -20,
+      17,    65,   211,     8,   -86,    42,   -86,   -86,   211,   211,
+     -11,   -86,   -86,   354,   -86,   -86,   -86,    14,    22,    19,
+      67,    17,    39,   -86,   -86,   -86,   -86,     5,    49,    49,
+     -86,   -86,   -86,   -86,    71,    70,   267,   234,   -86,   211,
+     211,   211,   211,   211,   211,   211,   211,   211,   198,   211,
+     211,   211,   -86,    72,    90,   -86,   -86,    75,    -6,   -86,
+     -86,   -86,   -86,   -86,    42,   -86,   -86,   -86,   384,   363,
+     384,   373,   373,   117,   117,     1,     5,   -86,   354,   -14,
+     -86,   243,   354,   354,    82,    19,   211,    84,    79,    85,
+     108,   123,   -86,   -86,   211,   -86,   -86,   171,   -86,   354,
+     -86,   211,   -86,   -86,    61,   -86,   -86,    95,   211,    87,
+     171,   276,    89,   -86,   -86,   -86,   158,   354,   -86,   -86,
+     107,   109,   -86,   114,   299,   211,    98,   171,   -86,   -86,
+     -86,   -86,   -86,   -86,   211,   171,   322,   -86,   -86,   331,
+     -86,   171,   171,   125,   -86,   171,   -86
   };
 
   const unsigned char
   Cepsparser::yydefact_[] =
   {
        4,     0,     2,     1,    33,    34,     0,     0,     0,     0,
-      83,     0,     0,    31,    30,    32,    29,     4,     0,     0,
-       0,     6,    14,    23,     7,    19,    18,     0,     0,    65,
-       0,    83,     0,    21,    20,    31,    32,    35,     0,     0,
+      84,     0,     0,    31,    30,    32,    29,     4,     0,     0,
+       0,     6,    14,    23,     7,    19,    18,     0,     0,    66,
+       0,    84,     0,    21,    20,    31,    32,    35,     0,     0,
       10,     9,    11,    12,    22,     8,     0,     0,     3,     0,
        0,     0,     0,     0,     0,     0,     0,     0,     0,     0,
-       0,    68,     0,    66,    61,    60,     0,     0,    84,    73,
-       4,    27,    25,     0,     5,    44,    45,    36,    43,    38,
-      37,    39,    40,    41,    42,    47,    71,     0,    69,     0,
-      17,    16,     0,    65,     0,     0,     0,     0,    72,     8,
-      26,    13,     0,    46,    49,    50,    67,    62,     4,     0,
-      15,    75,    74,    28,    70,     0,     0,     0,    50,     0,
-       0,    51,    55,    56,     8,    63,    76,    79,     0,     0,
-      82,     0,     0,     0,     0,    50,    48,    64,    77,    80,
-      78,    81,     0,    50,     0,    57,    52,     0,    54,     0,
-      50,    58,    53,     0,    59
+       0,     0,    69,     0,    67,    62,    61,     0,     0,    85,
+      74,     4,    27,    25,     0,     5,    45,    46,    36,    37,
+      44,    39,    38,    40,    41,    42,    43,    48,    72,     0,
+      70,     0,    17,    16,     0,    66,     0,     0,     0,     0,
+      73,     8,    26,    13,     0,    47,    50,    51,    68,    63,
+       4,     0,    15,    76,    75,    28,    71,     0,     0,     0,
+      51,     0,     0,    52,    56,    57,     8,    64,    77,    80,
+       0,     0,    83,     0,     0,     0,     0,    51,    49,    65,
+      78,    81,    79,    82,     0,    51,     0,    58,    53,     0,
+      55,     0,    51,    59,    54,     0,    60
   };
 
-  const short int
+  const signed char
   Cepsparser::yypgoto_[] =
   {
-    -129,  -129,    -9,  -129,    71,  -129,  -129,  -129,  -129,  -129,
-     110,    -2,  -111,  -128,  -129,    84,  -129,    -1,    57,  -129,
-    -129,    54,  -129,  -129,  -129,   132
+     -86,   -86,    -9,   -86,    69,   -86,   -86,   -86,   -86,   -86,
+     105,    -2,   -74,   -85,   -86,    77,   -86,    -1,    51,   -86,
+     -86,    43,   -86,   -86,   -86,   122
   };
 
   const signed char
   Cepsparser::yydefgoto_[] =
   {
-      -1,     1,     2,    20,    43,    44,    21,    22,    39,   100,
-      71,   119,   120,   121,   122,    66,    67,   123,    62,    63,
-      87,    88,    97,    98,   112,    32
+      -1,     1,     2,    20,    43,    44,    21,    22,    39,   102,
+      72,   121,   122,   123,   124,    67,    68,   125,    63,    64,
+      89,    90,    99,   100,   114,    32
   };
 
   const short int
   Cepsparser::yytable_[] =
   {
-      23,    24,   102,    64,    65,     4,     5,   134,    45,     8,
-      37,    38,    25,    26,    95,     3,    46,    47,   -24,    12,
-      31,   151,   103,    29,   146,   154,    35,    14,    36,    16,
-     138,   139,   148,    40,    41,    42,    18,    85,    19,   152,
-      57,    30,    58,    23,    24,   126,   127,    77,    78,    79,
-      80,    81,    82,    83,    84,    86,    89,    90,    91,   128,
-     129,    99,     4,     5,     6,     7,     8,    27,    28,   130,
-       9,    48,    10,    11,    33,    34,    12,    64,    65,    53,
-      54,    55,    56,    13,    14,    15,    16,    54,    55,    56,
-      -8,    17,   107,    18,    57,    19,    58,    23,    24,   124,
-      86,    57,    59,    58,    55,    56,    60,   125,   140,   141,
-      61,    69,    70,    73,   132,    93,    92,    57,   111,    58,
-      94,   105,    23,    24,     4,     5,     6,     7,     8,   108,
-     109,   144,     9,   131,    10,    11,   110,   136,    12,   142,
-     147,   133,   145,   153,   101,    13,    14,    15,    16,    72,
-     106,    96,     0,    17,    74,    18,   114,    19,     4,     5,
-       6,     7,     8,    68,     0,     0,     9,     0,    10,    11,
-       0,     0,    12,     0,     0,     0,     0,     0,     0,    13,
-      14,    15,    16,     0,     0,     0,     0,    17,   113,    18,
-       0,    19,     4,     5,     6,     7,     8,     0,     0,     0,
-       9,     0,    10,    11,     0,     0,    12,     0,     0,     0,
-       0,     0,     0,    13,    14,    15,    16,     0,     0,     0,
-       0,    17,   137,    18,     0,    19,     4,     5,     0,   115,
-       8,   116,   117,     0,     9,     0,     0,     0,     0,     0,
-      12,     0,     4,     5,     0,     0,     8,    35,    14,    36,
-      16,     0,     0,     0,     0,   118,    12,    18,     0,    19,
-       0,     0,     0,    35,    14,    36,    16,     0,     0,     0,
-       0,     0,     0,    18,     0,    19,    49,    50,    51,    52,
-      53,    54,    55,    56,    49,    50,    51,    52,    53,    54,
-      55,    56,     0,     0,     0,    57,     0,    58,    76,     0,
-       0,     0,     0,    57,     0,    58,   104,    49,    50,    51,
-      52,    53,    54,    55,    56,    49,    50,    51,    52,    53,
-      54,    55,    56,     0,     0,     0,    57,    75,    58,     0,
-       0,   135,     0,     0,    57,     0,    58,    49,    50,    51,
-      52,    53,    54,    55,    56,    49,    50,    51,    52,    53,
-      54,    55,    56,   143,     0,     0,    57,     0,    58,     0,
-       0,     0,     0,     0,    57,   149,    58,    49,    50,    51,
-      52,    53,    54,    55,    56,    49,    50,    51,    52,    53,
-      54,    55,    56,   150,     0,     0,    57,     0,    58,     0,
-       0,     0,     0,     0,    57,     0,    58,    50,    51,    52,
-      53,    54,    55,    56,     0,     0,     0,     0,     0,     0,
-       0,     0,     0,     0,     0,    57,     0,    58
+      23,    24,   104,     4,     5,     6,     7,     8,    45,     3,
+      37,     9,    29,    10,    11,    30,    46,    47,    12,    65,
+      66,    48,   105,    56,    57,    13,    14,    15,    16,    31,
+      97,    60,    -8,    17,    38,    18,    58,    19,    59,    61,
+      58,   -24,    59,    23,    24,    62,   136,    78,    79,    80,
+      81,    82,    83,    84,    85,    86,    88,    91,    92,    93,
+      25,    26,   101,   148,   128,   129,   153,    40,    41,    42,
+     156,   150,    70,     4,     5,     6,     7,     8,   154,   130,
+     131,     9,    71,    10,    11,    27,    28,    74,    12,   132,
+      33,    34,    65,    66,   109,    13,    14,    15,    16,    23,
+      24,   126,    88,    17,    75,    18,    95,    19,    94,   127,
+     140,   141,   142,   143,    96,   107,   134,   110,   111,   112,
+     113,   133,   135,   138,    23,    24,     4,     5,     6,     7,
+       8,   144,   147,   146,     9,   155,    10,    11,    55,    56,
+      57,    12,   149,   103,    73,    98,   108,   116,    13,    14,
+      15,    16,    58,    69,    59,     0,    17,   115,    18,     0,
+      19,     4,     5,     6,     7,     8,     0,     0,     0,     9,
+       0,    10,    11,     0,     4,     5,    12,   117,     8,   118,
+     119,     0,     9,    13,    14,    15,    16,     0,     0,    12,
+       0,    17,   139,    18,     0,    19,    35,    14,    36,    16,
+       0,     4,     5,     0,   120,     8,    18,     0,    19,     0,
+       0,     0,     0,     0,     4,     5,    12,     0,     8,     0,
+       0,     0,     0,    35,    14,    36,    16,     0,     0,    12,
+       0,     0,     0,    18,    87,    19,    35,    14,    36,    16,
+       0,     0,     0,     0,     0,     0,    18,     0,    19,    49,
+      50,    51,    52,    53,    54,    55,    56,    57,    49,    50,
+      51,    52,    53,    54,    55,    56,    57,     0,     0,    58,
+       0,    59,    77,     0,     0,     0,     0,     0,    58,     0,
+      59,   106,    49,    50,    51,    52,    53,    54,    55,    56,
+      57,    49,    50,    51,    52,    53,    54,    55,    56,    57,
+       0,     0,    58,    76,    59,     0,     0,     0,   137,     0,
+       0,    58,     0,    59,    49,    50,    51,    52,    53,    54,
+      55,    56,    57,     0,     0,     0,     0,     0,     0,     0,
+       0,   145,     0,     0,    58,     0,    59,    49,    50,    51,
+      52,    53,    54,    55,    56,    57,    49,    50,    51,    52,
+      53,    54,    55,    56,    57,     0,     0,    58,   151,    59,
+       0,     0,     0,   152,     0,     0,    58,     0,    59,    49,
+      50,    51,    52,    53,    54,    55,    56,    57,    49,     0,
+      51,    52,    53,    54,    55,    56,    57,     0,     0,    58,
+       0,    59,     0,    54,    55,    56,    57,     0,    58,     0,
+      59,    51,    52,    53,    54,    55,    56,    57,    58,     0,
+      59,     0,     0,     0,     0,     0,     0,     0,     0,    58,
+       0,    59
   };
 
   const short int
   Cepsparser::yycheck_[] =
   {
-       2,     2,    15,    24,    25,     3,     4,   118,    17,     7,
-      12,    25,    24,    25,    35,     0,    18,    19,    32,    17,
-      12,   149,    35,    34,   135,   153,    24,    25,    26,    27,
-       3,     4,   143,    24,    25,    26,    34,    35,    36,   150,
-      34,    34,    36,    45,    45,     3,     4,    49,    50,    51,
-      52,    53,    54,    55,    56,    57,    58,    59,    60,    17,
-      18,    70,     3,     4,     5,     6,     7,    24,    25,    27,
-      11,    31,    13,    14,    24,    25,    17,    24,    25,    19,
-      20,    21,    22,    24,    25,    26,    27,    20,    21,    22,
-      31,    32,    94,    34,    34,    36,    36,    99,    99,   108,
-     102,    34,    16,    36,    21,    22,    16,   109,     3,     4,
-      25,    32,    32,    15,   116,    15,    35,    34,    12,    36,
-      38,    32,   124,   124,     3,     4,     5,     6,     7,    32,
-      38,   133,    11,    25,    13,    14,    33,    33,    17,    16,
-     142,    34,    33,    10,    73,    24,    25,    26,    27,    39,
-      93,    67,    -1,    32,    33,    34,   102,    36,     3,     4,
-       5,     6,     7,    31,    -1,    -1,    11,    -1,    13,    14,
-      -1,    -1,    17,    -1,    -1,    -1,    -1,    -1,    -1,    24,
-      25,    26,    27,    -1,    -1,    -1,    -1,    32,    33,    34,
-      -1,    36,     3,     4,     5,     6,     7,    -1,    -1,    -1,
-      11,    -1,    13,    14,    -1,    -1,    17,    -1,    -1,    -1,
-      -1,    -1,    -1,    24,    25,    26,    27,    -1,    -1,    -1,
-      -1,    32,    33,    34,    -1,    36,     3,     4,    -1,     6,
-       7,     8,     9,    -1,    11,    -1,    -1,    -1,    -1,    -1,
-      17,    -1,     3,     4,    -1,    -1,     7,    24,    25,    26,
-      27,    -1,    -1,    -1,    -1,    32,    17,    34,    -1,    36,
-      -1,    -1,    -1,    24,    25,    26,    27,    -1,    -1,    -1,
-      -1,    -1,    -1,    34,    -1,    36,    15,    16,    17,    18,
-      19,    20,    21,    22,    15,    16,    17,    18,    19,    20,
-      21,    22,    -1,    -1,    -1,    34,    -1,    36,    37,    -1,
-      -1,    -1,    -1,    34,    -1,    36,    37,    15,    16,    17,
-      18,    19,    20,    21,    22,    15,    16,    17,    18,    19,
-      20,    21,    22,    -1,    -1,    -1,    34,    35,    36,    -1,
-      -1,    31,    -1,    -1,    34,    -1,    36,    15,    16,    17,
-      18,    19,    20,    21,    22,    15,    16,    17,    18,    19,
-      20,    21,    22,    31,    -1,    -1,    34,    -1,    36,    -1,
-      -1,    -1,    -1,    -1,    34,    35,    36,    15,    16,    17,
-      18,    19,    20,    21,    22,    15,    16,    17,    18,    19,
-      20,    21,    22,    31,    -1,    -1,    34,    -1,    36,    -1,
-      -1,    -1,    -1,    -1,    34,    -1,    36,    16,    17,    18,
-      19,    20,    21,    22,    -1,    -1,    -1,    -1,    -1,    -1,
-      -1,    -1,    -1,    -1,    -1,    34,    -1,    36
+       2,     2,    16,     3,     4,     5,     6,     7,    17,     0,
+      12,    11,    35,    13,    14,    35,    18,    19,    18,    25,
+      26,    32,    36,    22,    23,    25,    26,    27,    28,    12,
+      36,    17,    32,    33,    26,    35,    35,    37,    37,    17,
+      35,    33,    37,    45,    45,    26,   120,    49,    50,    51,
+      52,    53,    54,    55,    56,    57,    58,    59,    60,    61,
+      25,    26,    71,   137,     3,     4,   151,    25,    26,    27,
+     155,   145,    33,     3,     4,     5,     6,     7,   152,    18,
+      19,    11,    33,    13,    14,    25,    26,    16,    18,    28,
+      25,    26,    25,    26,    96,    25,    26,    27,    28,   101,
+     101,   110,   104,    33,    34,    35,    16,    37,    36,   111,
+       3,     4,     3,     4,    39,    33,   118,    33,    39,    34,
+      12,    26,    35,    34,   126,   126,     3,     4,     5,     6,
+       7,    17,    34,   135,    11,    10,    13,    14,    21,    22,
+      23,    18,   144,    74,    39,    68,    95,   104,    25,    26,
+      27,    28,    35,    31,    37,    -1,    33,    34,    35,    -1,
+      37,     3,     4,     5,     6,     7,    -1,    -1,    -1,    11,
+      -1,    13,    14,    -1,     3,     4,    18,     6,     7,     8,
+       9,    -1,    11,    25,    26,    27,    28,    -1,    -1,    18,
+      -1,    33,    34,    35,    -1,    37,    25,    26,    27,    28,
+      -1,     3,     4,    -1,    33,     7,    35,    -1,    37,    -1,
+      -1,    -1,    -1,    -1,     3,     4,    18,    -1,     7,    -1,
+      -1,    -1,    -1,    25,    26,    27,    28,    -1,    -1,    18,
+      -1,    -1,    -1,    35,    36,    37,    25,    26,    27,    28,
+      -1,    -1,    -1,    -1,    -1,    -1,    35,    -1,    37,    15,
+      16,    17,    18,    19,    20,    21,    22,    23,    15,    16,
+      17,    18,    19,    20,    21,    22,    23,    -1,    -1,    35,
+      -1,    37,    38,    -1,    -1,    -1,    -1,    -1,    35,    -1,
+      37,    38,    15,    16,    17,    18,    19,    20,    21,    22,
+      23,    15,    16,    17,    18,    19,    20,    21,    22,    23,
+      -1,    -1,    35,    36,    37,    -1,    -1,    -1,    32,    -1,
+      -1,    35,    -1,    37,    15,    16,    17,    18,    19,    20,
+      21,    22,    23,    -1,    -1,    -1,    -1,    -1,    -1,    -1,
+      -1,    32,    -1,    -1,    35,    -1,    37,    15,    16,    17,
+      18,    19,    20,    21,    22,    23,    15,    16,    17,    18,
+      19,    20,    21,    22,    23,    -1,    -1,    35,    36,    37,
+      -1,    -1,    -1,    32,    -1,    -1,    35,    -1,    37,    15,
+      16,    17,    18,    19,    20,    21,    22,    23,    15,    -1,
+      17,    18,    19,    20,    21,    22,    23,    -1,    -1,    35,
+      -1,    37,    -1,    20,    21,    22,    23,    -1,    35,    -1,
+      37,    17,    18,    19,    20,    21,    22,    23,    35,    -1,
+      37,    -1,    -1,    -1,    -1,    -1,    -1,    -1,    -1,    35,
+      -1,    37
   };
 
   const unsigned char
   Cepsparser::yystos_[] =
   {
-       0,    40,    41,     0,     3,     4,     5,     6,     7,    11,
-      13,    14,    17,    24,    25,    26,    27,    32,    34,    36,
-      42,    45,    46,    50,    56,    24,    25,    24,    25,    34,
-      34,    12,    64,    24,    25,    24,    26,    50,    25,    47,
-      24,    25,    26,    43,    44,    41,    50,    50,    31,    15,
-      16,    17,    18,    19,    20,    21,    22,    34,    36,    16,
-      16,    25,    57,    58,    24,    25,    54,    55,    64,    32,
-      32,    49,    49,    15,    33,    35,    37,    50,    50,    50,
-      50,    50,    50,    50,    50,    35,    50,    59,    60,    50,
-      50,    50,    35,    15,    38,    35,    54,    61,    62,    41,
-      48,    43,    15,    35,    37,    32,    57,    50,    32,    38,
-      33,    12,    63,    33,    60,     6,     8,     9,    32,    50,
-      51,    52,    53,    56,    41,    50,     3,     4,    17,    18,
-      27,    25,    50,    34,    51,    31,    33,    33,     3,     4,
-       3,     4,    16,    31,    50,    33,    51,    50,    51,    35,
-      31,    52,    51,    10,    52
+       0,    41,    42,     0,     3,     4,     5,     6,     7,    11,
+      13,    14,    18,    25,    26,    27,    28,    33,    35,    37,
+      43,    46,    47,    51,    57,    25,    26,    25,    26,    35,
+      35,    12,    65,    25,    26,    25,    27,    51,    26,    48,
+      25,    26,    27,    44,    45,    42,    51,    51,    32,    15,
+      16,    17,    18,    19,    20,    21,    22,    23,    35,    37,
+      17,    17,    26,    58,    59,    25,    26,    55,    56,    65,
+      33,    33,    50,    50,    16,    34,    36,    38,    51,    51,
+      51,    51,    51,    51,    51,    51,    51,    36,    51,    60,
+      61,    51,    51,    51,    36,    16,    39,    36,    55,    62,
+      63,    42,    49,    44,    16,    36,    38,    33,    58,    51,
+      33,    39,    34,    12,    64,    34,    61,     6,     8,     9,
+      33,    51,    52,    53,    54,    57,    42,    51,     3,     4,
+      18,    19,    28,    26,    51,    35,    52,    32,    34,    34,
+       3,     4,     3,     4,    17,    32,    51,    34,    52,    51,
+      52,    36,    32,    53,    52,    10,    53
   };
 
   const unsigned char
   Cepsparser::yyr1_[] =
   {
-       0,    39,    40,    41,    41,    42,    42,    42,    42,    43,
-      43,    43,    44,    44,    45,    45,    45,    45,    45,    45,
-      45,    45,    45,    45,    47,    48,    46,    46,    49,    50,
-      50,    50,    50,    50,    50,    50,    50,    50,    50,    50,
-      50,    50,    50,    50,    50,    50,    50,    50,    50,    50,
-      51,    51,    52,    52,    52,    52,    52,    52,    53,    53,
-      54,    54,    55,    55,    56,    57,    57,    57,    58,    59,
-      59,    60,    61,    62,    62,    63,    63,    63,    63,    63,
-      63,    63,    63,    64,    64
+       0,    40,    41,    42,    42,    43,    43,    43,    43,    44,
+      44,    44,    45,    45,    46,    46,    46,    46,    46,    46,
+      46,    46,    46,    46,    48,    49,    47,    47,    50,    51,
+      51,    51,    51,    51,    51,    51,    51,    51,    51,    51,
+      51,    51,    51,    51,    51,    51,    51,    51,    51,    51,
+      51,    52,    52,    53,    53,    53,    53,    53,    53,    54,
+      54,    55,    55,    56,    56,    57,    58,    58,    58,    59,
+      60,    60,    61,    62,    63,    63,    64,    64,    64,    64,
+      64,    64,    64,    64,    65,    65
   };
 
   const unsigned char
@@ -1471,11 +1481,11 @@ namespace ceps {
        1,     1,     1,     3,     1,     5,     4,     4,     2,     2,
        2,     2,     2,     1,     0,     0,     4,     3,     3,     1,
        1,     1,     1,     1,     1,     2,     3,     3,     3,     3,
-       3,     3,     3,     3,     3,     3,     4,     3,     7,     4,
-       0,     1,     3,     6,     4,     1,     1,     3,     5,     7,
-       1,     1,     3,     4,     7,     0,     1,     3,     1,     1,
-       3,     1,     1,     0,     2,     1,     2,     3,     3,     2,
-       3,     3,     2,     0,     2
+       3,     3,     3,     3,     3,     3,     3,     4,     3,     7,
+       4,     0,     1,     3,     6,     4,     1,     1,     3,     5,
+       7,     1,     1,     3,     4,     7,     0,     1,     3,     1,
+       1,     3,     1,     1,     0,     2,     1,     2,     3,     3,
+       2,     3,     3,     2,     0,     2
   };
 
 
@@ -1486,30 +1496,30 @@ namespace ceps {
   const Cepsparser::yytname_[] =
   {
   "END", "error", "$undefined", "INTNUM", "FLOATNUM", "STRUCT", "VAL",
-  "FUN", "RET", "IF", "ELSE", "FOR", "EOL", "RAWMAP", "KIND", "','", "'='",
-  "'-'", "'+'", "'*'", "'/'", "'^'", "'.'", "NEG", "STRUCTID", "ID",
-  "KINDID", "LITERAL", "METRIC_UNIT", "FUNCCALL", "INDEXOP", "';'", "'{'",
-  "'}'", "'('", "')'", "'['", "']'", "':'", "$accept", "cepsscript",
-  "stmts", "stmt", "general_id", "id_list", "decl", "struct_decl", "$@1",
-  "$@2", "struct_initialization", "expr", "func_body", "func_stmts",
-  "if_then_else", "id_or_struct_id", "for_loop_head", "for_loop",
-  "parameter_list", "parameter", "argument_list", "argument", "raw_map",
-  "raw_lines", "raw_line", "eols", YY_NULL
+  "FUN", "RET", "IF", "ELSE", "FOR", "EOL", "RAWMAP", "KIND", "DOTDOT",
+  "','", "'='", "'-'", "'+'", "'*'", "'/'", "'^'", "'.'", "NEG",
+  "STRUCTID", "ID", "KINDID", "LITERAL", "METRIC_UNIT", "FUNCCALL",
+  "INDEXOP", "';'", "'{'", "'}'", "'('", "')'", "'['", "']'", "':'",
+  "$accept", "cepsscript", "stmts", "stmt", "general_id", "id_list",
+  "decl", "struct_decl", "$@1", "$@2", "struct_initialization", "expr",
+  "func_body", "func_stmts", "if_then_else", "id_or_struct_id",
+  "for_loop_head", "for_loop", "parameter_list", "parameter",
+  "argument_list", "argument", "raw_map", "raw_lines", "raw_line", "eols", YY_NULL
   };
 
 
   const unsigned short int
   Cepsparser::yyrline_[] =
   {
-       0,   119,   119,   128,   136,   143,   147,   152,   158,   164,
-     165,   166,   170,   174,   182,   186,   190,   195,   201,   207,
-     212,   220,   228,   238,   245,   245,   245,   249,   256,   264,
-     270,   275,   281,   286,   292,   298,   307,   312,   317,   323,
-     328,   333,   338,   343,   347,   351,   356,   361,   367,   371,
-     376,   378,   382,   383,   384,   385,   386,   387,   391,   392,
-     396,   401,   409,   416,   427,   438,   440,   441,   445,   449,
-     454,   464,   475,   483,   486,   495,   499,   504,   510,   518,
-     523,   529,   537,   547,   549
+       0,   122,   122,   131,   139,   146,   150,   155,   161,   167,
+     168,   169,   173,   177,   185,   189,   193,   198,   204,   210,
+     215,   223,   231,   241,   248,   248,   248,   252,   259,   267,
+     273,   278,   284,   289,   295,   301,   309,   314,   319,   324,
+     330,   335,   340,   345,   350,   354,   358,   363,   368,   374,
+     378,   383,   385,   389,   390,   391,   392,   393,   394,   398,
+     399,   403,   408,   416,   423,   434,   445,   447,   448,   452,
+     456,   461,   471,   482,   490,   493,   502,   506,   511,   517,
+     525,   530,   536,   544,   554,   556
   };
 
   // Print the state stack on the debug stream.
@@ -1554,15 +1564,15 @@ namespace ceps {
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
-      34,    35,    19,    18,    15,    17,    22,    20,     2,     2,
-       2,     2,     2,     2,     2,     2,     2,     2,    38,    31,
-       2,    16,     2,     2,     2,     2,     2,     2,     2,     2,
+      35,    36,    20,    19,    16,    18,    23,    21,     2,     2,
+       2,     2,     2,     2,     2,     2,     2,     2,    39,    32,
+       2,    17,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
-       2,    36,     2,    37,    21,     2,     2,     2,     2,     2,
+       2,    37,     2,    38,    22,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
-       2,     2,     2,    32,     2,    33,     2,     2,     2,     2,
+       2,     2,     2,    33,     2,    34,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
@@ -1577,9 +1587,9 @@ namespace ceps {
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     1,     2,     3,     4,
        5,     6,     7,     8,     9,    10,    11,    12,    13,    14,
-      23,    24,    25,    26,    27,    28,    29,    30
+      15,    24,    25,    26,    27,    28,    29,    30,    31
     };
-    const unsigned int user_token_number_max_ = 277;
+    const unsigned int user_token_number_max_ = 278;
     const token_number_type undef_token_ = 2;
 
     if (static_cast<int>(t) <= yyeof_)
@@ -1592,8 +1602,8 @@ namespace ceps {
 
 #line 31 "../src/grammar/ceps.y" // lalr1.cc:1156
 } // ceps
-#line 1596 "ceps.tab.c" // lalr1.cc:1156
-#line 552 "../src/grammar/ceps.y" // lalr1.cc:1157
+#line 1606 "ceps.tab.c" // lalr1.cc:1156
+#line 559 "../src/grammar/ceps.y" // lalr1.cc:1157
 
 
 void ceps::Cepsparser::error (const ceps::Cepsparser::location_type& l, const std::string& m)

@@ -26,24 +26,35 @@ SOFTWARE.
 #include "cepsnodeset.hh"
 #include "symtab.hh"
 
+#include "include_gen/ceps.tab.hh"
 
 
 
-static void flatten(ceps::ast::Nodebase_ptr root, std::vector<ceps::ast::Nodebase_ptr>& acc)
+
+static void flatten(ceps::ast::Nodebase_ptr root, std::vector<ceps::ast::Nodebase_ptr>& acc,bool& is_range)
 {
 
+	is_range = false;
 	/*base cases*/
 	if (root == nullptr)
 		return;
 	if (root->kind() == ceps::ast::Ast_node_kind::binary_operator && op(as_binop_ref(root)) == ',' )
 	{
 		/*Induction case*/
+		bool t;
 		auto & op = as_binop_ref(root);
-		flatten(op.children()[0],acc);
+		flatten(op.children()[0],acc,t);
 
-		flatten(op.children()[1],acc);
+		flatten(op.children()[1],acc,t);
 
 	}
+	else if (root->kind() == ceps::ast::Ast_node_kind::binary_operator && op(as_binop_ref(root)) == ceps::Cepsparser::token::DOTDOT )
+		{
+			auto & op = as_binop_ref(root);
+			acc.push_back(op.children()[0]);
+			acc.push_back(op.children()[1]);
+			is_range = true;
+		}
 	else if (ceps::ast::is_a_nodeset(root))
 	{
 		std::string last_identifier;
@@ -71,6 +82,7 @@ static void loop( std::vector<ceps::ast::Nodebase_ptr>& result,
 	using namespace ceps::parser_env;
 
 
+	bool is_range_loop = false;
 	bool last_head = i*2 +1 == loop_head.children().size() - 1;
 	ceps::ast::Identifier& id  = ceps::ast::as_id_ref(loop_head.children()[2*i]);
 	ceps::ast::Nodebase_ptr coll_  = evaluate(loop_head.children()[2*i+1],sym_table,env);
@@ -79,7 +91,7 @@ static void loop( std::vector<ceps::ast::Nodebase_ptr>& result,
 
 
 
-	flatten(coll_,collection);
+	flatten(coll_,collection,is_range_loop);
 
 	sym_table.push_scope();
 
@@ -93,7 +105,37 @@ static void loop( std::vector<ceps::ast::Nodebase_ptr>& result,
 
 	sym_ptr->category = Symbol::Category::VAR;
 
-	for(auto col_node : collection)
+	if (is_range_loop)
+	{
+		int from = value(as_int_ref(collection[0]));
+		int to = value(as_int_ref(collection[1]));
+		int step = 1;
+		if (from > to) step *= -1;
+		ceps::ast::Int counter_node( from , ceps::ast::all_zero_unit(), nullptr, nullptr, nullptr);
+		sym_ptr->payload = &counter_node;
+
+		for(int h = from; step*h <= step*to ; h += step)
+		{
+			value(counter_node) = h;
+			if (last_head)
+			{
+				auto new_node = evaluate(body,sym_table,env);
+				if (new_node != nullptr)
+				{
+					if (new_node->kind() == ceps::ast::Ast_node_kind::stmts)
+					{
+						for (auto const & e : as_stmts_ref(new_node).children() )
+							result.push_back(e);
+					}
+					else result.push_back(new_node);
+				}
+
+			} else loop (result,body,loop_head,i+1,sym_table,env);
+
+		}
+
+	}
+	else for(auto col_node : collection)
 	{
 		sym_ptr->payload = col_node;//TODO: See comment in symtab.hh
 
@@ -101,10 +143,8 @@ static void loop( std::vector<ceps::ast::Nodebase_ptr>& result,
 
 		if (last_head)
 		{
-			//std::cout << "EVAL BODY" << std::endl;
-			//std::cout << ceps::ast::Nodeset{body} << std::endl;
+
 			auto new_node = evaluate(body,sym_table,env);
-			//std::cout << "EVAL BODY_END" << std::endl;
 			if (new_node != nullptr)
 			{
 				if (new_node->kind() == ceps::ast::Ast_node_kind::stmts)
@@ -141,6 +181,8 @@ ceps::ast::Nodebase_ptr  ceps::interpreter::evaluate_loop(ceps::ast::Loop_ptr lo
 {
 	const auto for_loop_head = 0;
 	const auto for_loop_body = 1;
+
+
 
 	auto const& loop_head =  as_loop_head_ref_const(loop_node->children()[for_loop_head]);
 	ceps::ast::Nodebase_ptr body = loop_node->children()[for_loop_body];

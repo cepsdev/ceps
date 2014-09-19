@@ -40,10 +40,11 @@ testcase
 
 
 test{
-	for( i : 1..10 )
+	for( i : 1 .. 10 )
 	{
 	 a{
 	  vi{i;};
+	  vs{"Iteration #"+i+".";};
 	  };
 	};
 };
@@ -82,3 +83,4 @@ expectation{
 	};
 };
 
+1 .. 2;

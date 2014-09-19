@@ -132,7 +132,8 @@ namespace ceps{
     		 	 	 std::vector<ceps::ast::Nodebase_ptr>* generated_nodes = nullptr
     		 	 	 );
 
-     ceps::ast::Nodebase_ptr handle_binop(	ceps::ast::Nodebase_ptr binop_node,char op,
+     ceps::ast::Nodebase_ptr handle_binop(	ceps::ast::Nodebase_ptr binop_node,
+    		 	 	 	 	 	 	 	 	int op,
     		 	 	 	 	 	 	 	 	ceps::ast::Nodebase_ptr lhs,
     		 	 	 	 	 	 	 	 	ceps::ast::Nodebase_ptr rhs,
     		 	 	 	 	 	 	 	 	Symboltable & sym_table,
