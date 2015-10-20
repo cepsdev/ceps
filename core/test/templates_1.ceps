@@ -1,7 +1,7 @@
 /*
  The MIT License (MIT)
 
-Copyright (c) 2014 The authors of ceps
+Copyright (c) 2014,2015 The authors of ceps
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -23,64 +23,39 @@ SOFTWARE.
  */
  
  
- /*
-  Demonstrates simple loops with ranges in ceps
-  Created 2014/09/19
- */
+
+1+1;
+
+testcase{1;};
 
 testcase
 {
  author{"cepsdev";};
  email{"cepsdev@hotmail.com";};
- code_reference{core{src{"ceps_interpreter_loop.cpp";};};};
- short{"Basic usage of for loops (ranges).";};
+ code_reference{core{src{"...";};};};
+ short{"Demonstrates simple usage of templates in ceps";};
+ id{"ceps-core-templates_1";};
+ creation{"2015/07/01";};
+};
+
+template Title(T) {
+  B{title{T;};};
 };
 
 
-
-
-test{
-	for( i : 1 .. 10 )
-	{
-	 a{
-	  vi{i;};
-	  vs{"Iteration #"+i+".";};
-	  };
-	};
+test{ 
+ A{
+  /*Title("tile1";);
+  Title("tile2";);
+  Title("tile3";);*/
+ };
 };
 
-
-expectation{
-	a{
-	 vi{1;};
-	};
-	a{
-	 vi{2;};
-	};
-	a{
-	 vi{3;};
-	};
-	a{
-	 vi{4;};
-	};
-	a{
-	 vi{5;};
-	};
-	a{
-	 vi{6;};
-	};
-	a{
-	 vi{7;};
-	};
-	a{
-	 vi{8;};
-	};
-	a{
-	 vi{9;};
-	};
-	a{
-	 vi{10;};
-	};
+expectation
+{
+ A{
+  B{title{"tile1";};};
+  B{title{"tile2";};};
+  B{title{"tile3";};};
+ };
 };
-
-1 .. 2;

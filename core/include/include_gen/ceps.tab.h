@@ -120,14 +120,24 @@ namespace ceps {
         RAWMAP = 268,
         KIND = 269,
         DOTDOT = 270,
-        NEG = 271,
-        STRUCTID = 272,
-        ID = 273,
-        KINDID = 274,
-        LITERAL = 275,
-        METRIC_UNIT = 276,
-        FUNCCALL = 277,
-        INDEXOP = 278
+        TEMPLATE = 271,
+        TEMPLATE_ID = 272,
+        TEMPLATE_PARAM = 273,
+        REL_OP_GT = 274,
+        REL_OP_LT = 275,
+        REL_OP_EQ = 276,
+        REL_OP_NEQ = 277,
+        REL_OP_LT_EQ = 278,
+        REL_OP_GT_EQ = 279,
+        NEG = 280,
+        NOT = 281,
+        STRUCTID = 282,
+        ID = 283,
+        KINDID = 284,
+        LITERAL = 285,
+        METRIC_UNIT = 286,
+        FUNCCALL = 287,
+        INDEXOP = 288
       };
     };
 
@@ -276,7 +286,7 @@ namespace ceps {
     /// \param yyvalue   the value to check
     static bool yy_table_value_is_error_ (int yyvalue);
 
-    static const signed char yypact_ninf_;
+    static const short int yypact_ninf_;
     static const signed char yytable_ninf_;
 
     /// Convert a scanner token number \a t to a symbol number.
@@ -293,10 +303,10 @@ namespace ceps {
   static const unsigned char yydefact_[];
 
   // YYPGOTO[NTERM-NUM].
-  static const signed char yypgoto_[];
+  static const short int yypgoto_[];
 
   // YYDEFGOTO[NTERM-NUM].
-  static const signed char yydefgoto_[];
+  static const short int yydefgoto_[];
 
   // YYTABLE[YYPACT[STATE-NUM]] -- What to do in state STATE-NUM.  If
   // positive, shift that token.  If negative, reduce the rule whose
@@ -415,13 +425,13 @@ namespace ceps {
     enum
     {
       yyeof_ = 0,
-      yylast_ = 421,           //< Last index in yytable_.
-      yynnts_ = 26,  //< Number of nonterminal symbols.
+      yylast_ = 939,           //< Last index in yytable_.
+      yynnts_ = 28,  //< Number of nonterminal symbols.
       yyempty_ = -2,
       yyfinal_ = 3, //< Termination state number.
       yyterror_ = 1,
       yyerrcode_ = 256,
-      yyntokens_ = 40    //< Number of tokens.
+      yyntokens_ = 53    //< Number of tokens.
     };
 
 
@@ -432,7 +442,7 @@ namespace ceps {
 
 #line 31 "../src/grammar/ceps.y" // lalr1.cc:371
 } // ceps
-#line 436 "ceps.tab.h" // lalr1.cc:371
+#line 446 "ceps.tab.h" // lalr1.cc:371
 
 
 

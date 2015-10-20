@@ -236,7 +236,7 @@ ceps::Cepsparser::token_type yylex(
 		if (s == "return")
 				return ceps::Cepsparser::token::RET;
 		if (s == "if")
-					return ceps::Cepsparser::token::IF;
+					{return ceps::Cepsparser::token::IF;}
 		if (s == "else")
 					return ceps::Cepsparser::token::ELSE;
 		if (s == "for")
@@ -253,6 +253,7 @@ ceps::Cepsparser::token_type yylex(
 					driver.set_raw_mode(true);
 					return ceps::Cepsparser::token::RAWMAP;
 		}
+		if (s == "template") return ceps::Cepsparser::token::TEMPLATE;
 
 
 		auto symbol = driver.symboltable().lookup(s,false,false,false);
@@ -390,6 +391,30 @@ ceps::Cepsparser::token_type yylex(
 	{
 		if (ch == '}' && driver.raw_mode())
 			driver.set_raw_mode(false);
+		if (ch == '|' || ch == '&'){
+			char t;in.get(t);
+			if (t == ch) return ceps::Cepsparser::token_type(ch);
+			in.unget();
+		} else if (ch == '>')	{
+			char t;in.get(t);
+			if (t == '=') return ceps::Cepsparser::token::REL_OP_GT_EQ;
+			in.unget();
+			return ceps::Cepsparser::token::REL_OP_GT;
+		} else if (ch == '<')	{
+			char t;in.get(t);
+			if (t == '=') return ceps::Cepsparser::token::REL_OP_LT_EQ;
+			in.unget();
+			return ceps::Cepsparser::token::REL_OP_LT;
+		} else if (ch == '!')	{
+			char t;in.get(t);
+			if (t == '=') return ceps::Cepsparser::token::REL_OP_NEQ;
+			in.unget();return ceps::Cepsparser::token_type(ch);
+		} else if (ch == '='){
+			char t;in.get(t);
+			if (t == '=') return ceps::Cepsparser::token::REL_OP_EQ;
+			in.unget();return ceps::Cepsparser::token_type(ch);
+		}
+
 		return ceps::Cepsparser::token_type(ch);
 	}
 	return ceps::Cepsparser::token::END;

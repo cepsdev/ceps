@@ -1,0 +1,86 @@
+/*
+ The MIT License (MIT)
+
+Copyright (c) 2014 The authors of ceps
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+ */
+ 
+ 
+ /*
+  Demonstrates simple loops with ranges in ceps
+  Created 2014/09/19
+ */
+
+testcase
+{
+ author{"cepsdev";};
+ email{"cepsdev@hotmail.com";};
+ code_reference{core{src{"ceps_interpreter_loop.cpp";};};};
+ short{"Basic usage of for loops (ranges).";};
+};
+
+
+
+
+test{
+	for( i : 1 .. 10000000 )
+	{
+	 a{
+	  vi{i;};
+	  vs{"Iteration #"+i+".";};
+	  };
+	};
+};
+
+
+expectation{
+	a{
+	 vi{1;};
+	};
+	a{
+	 vi{2;};
+	};
+	a{
+	 vi{3;};
+	};
+	a{
+	 vi{4;};
+	};
+	a{
+	 vi{5;};
+	};
+	a{
+	 vi{6;};
+	};
+	a{
+	 vi{7;};
+	};
+	a{
+	 vi{8;};
+	};
+	a{
+	 vi{9;};
+	};
+	a{
+	 vi{10;};
+	};
+};
+
+1 .. 2;

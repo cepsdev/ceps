@@ -1,0 +1,454 @@
+%ignore_ws
+%%
+
+
+lexer read_and_ignore_id_list{
+ ident : => rewind exit .
+ ident => .
+ else => exit.
+}
+
+lexer read_id_list{
+ ident : => rewind exit .
+ VAL_TABLE_ => rewind exit .
+ BO_ => rewind exit.
+ SG_ => rewind exit.
+ BA_DEF_ => rewind exit.
+ ident , => $0; .
+ ident => $0; .
+ else => exit.
+}
+
+lexer read_value_description{
+ integer string => value_description{value{$0;}; description{$1;};}; endl .
+ ; => exit .
+}
+
+lexer read_signal{
+ SG_ any   : any \| any   @ any any ( any , any ) [ any \| any ]  any  => 
+  signal{ 
+    start_bit{$3;}; 
+    size{$5;};
+    byte_order{/if($7==0)return "little endian";else return "big endian";/;};
+    sign{/if($8=="+") return "unsigned"; else return "signed";/;};
+    factor{$10;};
+    offset{$12;}; 
+    min{$15;};
+    max{$17;};
+    unit{$19;};receiver{call  read_id_list };
+  }; endl .
+ else => exit.
+}
+
+lexer read_attr_value_type{
+ INT any any => type{integer;param1{$1;};param2{$2;};}; .
+ HEX any any => type{hex;param1{$1;};param2{$2;};}; .
+ FLOAT any any => type{float;param1{$1;};param2{$2;};}; .
+ STRING => type{string;}; .
+ ENUM string => type{enum;value{$1;}; /enum_read=1;/.
+ , string => value{$1;}; .
+ ; | enum_read => /enum_read=0;/ }; exit.
+ ; => exit.
+}
+
+BEGIN{
+ VERSION string  => version { $1; };endl .
+ NS_: => call read_and_ignore_id_list .
+ BS_: => .
+ BU_ : => nodes{call read_id_list}; endl .
+ VAL_TABLE_ any => value_table{name{$1;}; endl call read_value_description }; endl .
+ BO_ any any : any any => message{endl id{$1;}; name{$2;}; size{$4;}; transmitter{$5;};endl call read_signal  }; endl.
+
+ // Environment Variable Definitions
+
+// Environment Variable Value Descriptions
+
+ VAL_ any  any => signal_value_encoding{ message_id{$1;};  signal_id{$2;};endl call read_value_description }; endl. 
+
+ //Comment Definitions
+ CM_ string ; => comment{text{$0;};};.
+ CM_ BU_ any string ; => comment{node{$2};text{$3;};};.
+ CM_ BO_ any string ; => comment{message_id{$2};text{$3;};};.
+ CM_ SG_ any any string ; => comment{message_id{$2};signal{$3};text{$4;};};.
+
+ //User defined Attribute Definitions
+ //Attribute Definitions
+ BA_DEF_ string =>attribute_definition{name{$1;}; attr_value_type{call read_attr_value_type}; }; endl .
+ BA_DEF_ BU_ string =>attribute_definition{ name{$2;};type{BU;};  attr_value_type{call read_attr_value_type}; }; endl .
+ BA_DEF_ BO_ string =>attribute_definition{name{$2;};type{BO;}; attr_value_type{call read_attr_value_type}; }; endl.
+ BA_DEF_ SG_ string =>attribute_definition{name{$2;};type{SG;}; attr_value_type{call read_attr_value_type}; }; endl.
+ BA_DEF_ EV_ string =>attribute_definition{name{$2;};type{EV;}; attr_value_type{call read_attr_value_type}; }; endl.
+
+ //Attribute Defaults
+ BA_DEF_DEF_ string any ; => attibute_default{name{$1;};value{$2;};}; endl.
+
+ //Attribute Values 
+ BA_ any any ; => attribute_value_for_object{ type{attr;};name{$1;};value{$2;}; }; endl.
+ BA_ any BU_ any any ; => attribute_value_for_object{ type{node;};name{$1;};node{$3;};value{$4;}; }; endl.
+ BA_ any BO_ any any ; => attribute_value_for_object{ type{msg;};name{$1;};message_id{$3;};value{$4;}; }; endl.
+ BA_ any SG_ any any any; => attribute_value_for_object{ type{signal;};name{$1;};message_id{$3;};signal_name{$4;};value{$5;}; }; endl.
+ BA_ any EV_ any any ; => attribute_value_for_object{ type{env;};name{$1;};env_var_name{$3;};value{$4;}; }; endl.
+
+}
+%%
+
+
+
+VERSION ""
+
+
+
+NS_ : 
+	NS_DESC_
+	CM_
+	BA_DEF_
+	BA_
+	VAL_
+	CAT_DEF_
+	CAT_
+	FILTER
+	BA_DEF_DEF_
+	EV_DATA_
+	ENVVAR_DATA_
+	SGTYPE_
+	SGTYPE_VAL_
+	BA_DEF_SGTYPE_
+	BA_SGTYPE_
+	SIG_TYPE_REF_
+	VAL_TABLE_
+	SIG_GROUP_
+	SIG_VALTYPE_
+	SIGTYPE_VALTYPE_
+	BO_TX_BU_
+	BA_DEF_REL_
+	BA_REL_
+	BA_DEF_DEF_REL_
+	BU_SG_REL_
+	BU_EV_REL_
+	BU_BO_REL_
+	SG_MUL_VAL_
+
+BS_:
+
+BU_: CBAG_60 CFBP_10
+
+VAL_TABLE_ Status_BTS441 3 "Open Load" 2 "Übertemperatur, Kurzschluss" 1 "Ein" 0 "Aus" ;
+
+
+BO_ 912 Node10_RxPDO_3: 8 CBAG_60 
+ SG_ DigOutStatus_095 : 62|2@1+ (1,0) [0|0] ""  CFBP_10
+ SG_ DigOutStatus_094 : 60|2@1+ (1,0) [0|0] ""  CFBP_10
+ SG_ DigOutStatus_093 : 58|2@1+ (1,0) [0|0] ""  CFBP_10
+ SG_ DigOutStatus_092 : 56|2@1+ (1,0) [0|0] ""  CFBP_10
+ SG_ DigOutStatus_091 : 54|2@1+ (1,0) [0|0] ""  CFBP_10/*
+ SG_ DigOutStatus_090 : 52|2@1+ (1,0) [0|0] ""  CFBP_10
+ SG_ DigOutStatus_089 : 50|2@1+ (1,0) [0|0] ""  CFBP_10
+ SG_ DigOutStatus_088 : 48|2@1+ (1,0) [0|0] ""  CFBP_10
+ SG_ DigOutStatus_087 : 46|2@1+ (1,0) [0|0] ""  CFBP_10
+ SG_ DigOutStatus_086 : 44|2@1+ (1,0) [0|0] ""  CFBP_10
+ SG_ DigOutStatus_085 : 42|2@1+ (1,0) [0|0] ""  CFBP_10
+ SG_ DigOutStatus_084 : 40|2@1+ (1,0) [0|0] ""  CFBP_10
+ SG_ DigOutStatus_083 : 38|2@1+ (1,0) [0|0] ""  CFBP_10
+ SG_ DigOutStatus_082 : 36|2@1+ (1,0) [0|0] ""  CFBP_10
+ SG_ DigOutStatus_081 : 34|2@1+ (1,0) [0|0] ""  CFBP_10
+ SG_ DigOutStatus_080 : 32|2@1+ (1,0) [0|0] ""  CFBP_10
+ SG_ DigOutStatus_079 : 30|2@1+ (1,0) [0|0] ""  CFBP_10
+ SG_ DigOutStatus_078 : 28|2@1+ (1,0) [0|0] ""  CFBP_10
+ SG_ DigOutStatus_077 : 26|2@1+ (1,0) [0|0] ""  CFBP_10
+ SG_ DigOutStatus_076 : 24|2@1+ (1,0) [0|0] ""  CFBP_10
+ SG_ DigOutStatus_075 : 22|2@1+ (1,0) [0|0] ""  CFBP_10
+ SG_ DigOutStatus_074 : 20|2@1+ (1,0) [0|0] ""  CFBP_10
+ SG_ DigOutStatus_073 : 18|2@1+ (1,0) [0|0] ""  CFBP_10
+ SG_ DigOutStatus_072 : 16|2@1+ (1,0) [0|0] ""  CFBP_10
+ SG_ DigOutStatus_071 : 14|2@1+ (1,0) [0|0] ""  CFBP_10
+ SG_ DigOutStatus_070 : 12|2@1+ (1,0) [0|0] ""  CFBP_10
+ SG_ DigOutStatus_069 : 10|2@1+ (1,0) [0|0] ""  CFBP_10
+ SG_ DigOutStatus_068 : 8|2@1+ (1,0) [0|0] ""  CFBP_10
+ SG_ DigOutStatus_067 : 6|2@1+ (1,0) [0|0] ""  CFBP_10
+ SG_ DigOutStatus_066 : 4|2@1+ (1,0) [0|0] ""  CFBP_10
+ SG_ DigOutStatus_065 : 2|2@1+ (1,0) [0|0] ""  CFBP_10
+ SG_ DigOutStatus_064 : 0|2@1+ (1,0) [0|0] ""  CFBP_10*/
+
+BO_ 656 Node10_RxPDO_2: 8 CBAG_60
+ SG_ DigOutStatus_063 : 62|2@1+ (1,0) [0|0] ""  CFBP_10
+ SG_ DigOutStatus_062 : 60|2@1+ (1,0) [0|0] ""  CFBP_10
+ SG_ DigOutStatus_061 : 58|2@1+ (1,0) [0|0] ""  CFBP_10/*
+ SG_ DigOutStatus_060 : 56|2@1+ (1,0) [0|0] ""  CFBP_10
+ SG_ DigOutStatus_059 : 54|2@1+ (1,0) [0|0] ""  CFBP_10
+ SG_ DigOutStatus_058 : 52|2@1+ (1,0) [0|0] ""  CFBP_10
+ SG_ DigOutStatus_057 : 50|2@1+ (1,0) [0|0] ""  CFBP_10
+ SG_ DigOutStatus_056 : 48|2@1+ (1,0) [0|0] ""  CFBP_10
+ SG_ DigOutStatus_055 : 46|2@1+ (1,0) [0|0] ""  CFBP_10
+ SG_ DigOutStatus_054 : 44|2@1+ (1,0) [0|0] ""  CFBP_10
+ SG_ DigOutStatus_053 : 42|2@1+ (1,0) [0|0] ""  CFBP_10
+ SG_ DigOutStatus_052 : 40|2@1+ (1,0) [0|0] ""  CFBP_10
+ SG_ DigOutStatus_051 : 38|2@1+ (1,0) [0|0] ""  CFBP_10
+ SG_ DigOutStatus_050 : 36|2@1+ (1,0) [0|0] ""  CFBP_10
+ SG_ DigOutStatus_049 : 34|2@1+ (1,0) [0|0] ""  CFBP_10
+ SG_ DigOutStatus_048 : 32|2@1+ (1,0) [0|0] ""  CFBP_10
+ SG_ DigOutStatus_047 : 30|2@1+ (1,0) [0|0] ""  CFBP_10
+ SG_ DigOutStatus_046 : 28|2@1+ (1,0) [0|0] ""  CFBP_10
+ SG_ DigOutStatus_045 : 26|2@1+ (1,0) [0|0] ""  CFBP_10
+ SG_ DigOutStatus_044 : 24|2@1+ (1,0) [0|0] ""  CFBP_10
+ SG_ DigOutStatus_043 : 22|2@1+ (1,0) [0|0] ""  CFBP_10
+ SG_ DigOutStatus_042 : 20|2@1+ (1,0) [0|0] ""  CFBP_10
+ SG_ DigOutStatus_041 : 18|2@1+ (1,0) [0|0] ""  CFBP_10
+ SG_ DigOutStatus_040 : 16|2@1+ (1,0) [0|0] ""  CFBP_10
+ SG_ DigOutStatus_039 : 14|2@1+ (1,0) [0|0] ""  CFBP_10
+ SG_ DigOutStatus_038 : 12|2@1+ (1,0) [0|0] ""  CFBP_10
+ SG_ DigOutStatus_037 : 10|2@1+ (1,0) [0|0] ""  CFBP_10
+ SG_ DigOutStatus_036 : 8|2@1+ (1,0) [0|0] ""  CFBP_10
+ SG_ DigOutStatus_035 : 6|2@1+ (1,0) [0|0] ""  CFBP_10
+ SG_ DigOutStatus_034 : 4|2@1+ (1,0) [0|0] ""  CFBP_10
+ SG_ DigOutStatus_033 : 2|2@1+ (1,0) [0|0] ""  CFBP_10
+ SG_ DigOutStatus_032 : 0|2@1+ (1,0) [0|0] ""  CFBP_10
+
+BO_ 400 Node10_RxPDO_1: 8 CBAG_60
+ SG_ DigOutStatus_031 : 62|2@1+ (1,0) [0|0] ""  CFBP_10
+ SG_ DigOutStatus_030 : 60|2@1+ (1,0) [0|0] ""  CFBP_10
+ SG_ DigOutStatus_029 : 58|2@1+ (1,0) [0|0] ""  CFBP_10
+ SG_ DigOutStatus_028 : 56|2@1+ (1,0) [0|0] ""  CFBP_10
+ SG_ DigOutStatus_027 : 54|2@1+ (1,0) [0|0] ""  CFBP_10
+ SG_ DigOutStatus_026 : 52|2@1+ (1,0) [0|0] ""  CFBP_10
+ SG_ DigOutStatus_025 : 50|2@1+ (1,0) [0|0] ""  CFBP_10
+ SG_ DigOutStatus_024 : 48|2@1+ (1,0) [0|0] ""  CFBP_10
+ SG_ DigOutStatus_023 : 46|2@1+ (1,0) [0|0] ""  CFBP_10
+ SG_ DigOutStatus_022 : 44|2@1+ (1,0) [0|0] ""  CFBP_10
+ SG_ DigOutStatus_021 : 42|2@1+ (1,0) [0|0] ""  CFBP_10
+ SG_ DigOutStatus_020 : 40|2@1+ (1,0) [0|0] ""  CFBP_10
+ SG_ DigOutStatus_019 : 38|2@1+ (1,0) [0|0] ""  CFBP_10
+ SG_ DigOutStatus_018 : 36|2@1+ (1,0) [0|0] ""  CFBP_10
+ SG_ DigOutStatus_017 : 34|2@1+ (1,0) [0|0] ""  CFBP_10
+ SG_ DigOutStatus_016 : 32|2@1+ (1,0) [0|0] ""  CFBP_10
+ SG_ DigOutStatus_015 : 30|2@1+ (1,0) [0|0] ""  CFBP_10
+ SG_ DigOutStatus_014 : 28|2@1+ (1,0) [0|0] ""  CFBP_10
+ SG_ DigOutStatus_013 : 26|2@1+ (1,0) [0|0] ""  CFBP_10
+ SG_ DigOutStatus_012 : 24|2@1+ (1,0) [0|0] ""  CFBP_10
+ SG_ DigOutStatus_011 : 22|2@1+ (1,0) [0|0] ""  CFBP_10
+ SG_ DigOutStatus_010 : 20|2@1+ (1,0) [0|0] ""  CFBP_10
+ SG_ DigOutStatus_009 : 18|2@1+ (1,0) [0|0] ""  CFBP_10
+ SG_ DigOutStatus_008 : 16|2@1+ (1,0) [0|0] ""  CFBP_10
+ SG_ DigOutStatus_007 : 14|2@1+ (1,0) [0|0] ""  CFBP_10
+ SG_ DigOutStatus_006 : 12|2@1+ (1,0) [0|0] ""  CFBP_10
+ SG_ DigOutStatus_005 : 10|2@1+ (1,0) [0|0] ""  CFBP_10
+ SG_ DigOutStatus_004 : 8|2@1+ (1,0) [0|0] ""  CFBP_10
+ SG_ DigOutStatus_003 : 6|2@1+ (1,0) [0|0] ""  CFBP_10
+ SG_ DigOutStatus_002 : 4|2@1+ (1,0) [0|0] ""  CFBP_10
+ SG_ DigOutStatus_001 : 2|2@1+ (1,0) [0|0] ""  CFBP_10
+ SG_ DigOutStatus_000 : 0|2@1+ (1,0) [0|0] ""  CFBP_10*/
+
+
+
+BA_DEF_ SG_  "GenSigSendType" ENUM  "Cyclic","OnWrite","OnWriteWithRepetition","OnChange","OnChangeWithRepetition","IfActive","IfActiveWithRepetition","NoSigSendType";
+BA_DEF_ SG_  "GenSigInactiveValue" INT 0 0;
+BA_DEF_ BO_  "GenMsgCycleTime" INT 0 0;
+BA_DEF_ BO_  "GenMsgSendType" ENUM  "Cyclic","not_used","not_used","not_used","not_used","Cyclic","not_used","IfActive","NoMsgSendType";
+BA_DEF_ BU_  "NmStationAddress" HEX 0 0;
+BA_DEF_  "DBName" STRING ;
+BA_DEF_  "BusType" STRING ;
+BA_DEF_DEF_  "GenSigSendType" "Cyclic";
+BA_DEF_DEF_  "GenSigInactiveValue" 0;
+BA_DEF_DEF_  "GenMsgCycleTime" 0;
+BA_DEF_DEF_  "GenMsgSendType" "NoMsgSendType";
+BA_DEF_DEF_  "NmStationAddress" 0;
+BA_DEF_DEF_  "DBName" "";
+BA_DEF_DEF_  "BusType" "CAN";
+
+BA_ "DBName" "CANopen";
+BA_ "NmStationAddress" BU_ CBAG_60 96;
+BA_ "NmStationAddress" BU_ CFBP_10 16;
+BA_ "GenSigInactiveValue" SG_ 912 DigOutStatus_095 0;
+BA_ "GenSigInactiveValue" SG_ 912 DigOutStatus_094 0;
+BA_ "GenSigInactiveValue" SG_ 912 DigOutStatus_093 0;
+/*BA_ "GenSigInactiveValue" SG_ 912 DigOutStatus_092 0;
+BA_ "GenSigInactiveValue" SG_ 912 DigOutStatus_091 0;
+BA_ "GenSigInactiveValue" SG_ 912 DigOutStatus_090 0;
+BA_ "GenSigInactiveValue" SG_ 912 DigOutStatus_089 0;
+BA_ "GenSigInactiveValue" SG_ 912 DigOutStatus_088 0;
+BA_ "GenSigInactiveValue" SG_ 912 DigOutStatus_087 0;
+BA_ "GenSigInactiveValue" SG_ 912 DigOutStatus_086 0;
+BA_ "GenSigInactiveValue" SG_ 912 DigOutStatus_085 0;
+BA_ "GenSigInactiveValue" SG_ 912 DigOutStatus_084 0;
+BA_ "GenSigInactiveValue" SG_ 912 DigOutStatus_083 0;
+BA_ "GenSigInactiveValue" SG_ 912 DigOutStatus_082 0;
+BA_ "GenSigInactiveValue" SG_ 912 DigOutStatus_081 0;
+BA_ "GenSigInactiveValue" SG_ 912 DigOutStatus_080 0;
+BA_ "GenSigInactiveValue" SG_ 912 DigOutStatus_079 0;
+BA_ "GenSigInactiveValue" SG_ 912 DigOutStatus_078 0;
+BA_ "GenSigInactiveValue" SG_ 912 DigOutStatus_077 0;
+BA_ "GenSigInactiveValue" SG_ 912 DigOutStatus_076 0;
+BA_ "GenSigInactiveValue" SG_ 912 DigOutStatus_075 0;
+BA_ "GenSigInactiveValue" SG_ 912 DigOutStatus_074 0;
+BA_ "GenSigInactiveValue" SG_ 912 DigOutStatus_073 0;
+BA_ "GenSigInactiveValue" SG_ 912 DigOutStatus_072 0;
+BA_ "GenSigInactiveValue" SG_ 912 DigOutStatus_071 0;
+BA_ "GenSigInactiveValue" SG_ 912 DigOutStatus_070 0;
+BA_ "GenSigInactiveValue" SG_ 912 DigOutStatus_069 0;
+BA_ "GenSigInactiveValue" SG_ 912 DigOutStatus_068 0;
+BA_ "GenSigInactiveValue" SG_ 912 DigOutStatus_067 0;
+BA_ "GenSigInactiveValue" SG_ 912 DigOutStatus_066 0;
+BA_ "GenSigInactiveValue" SG_ 912 DigOutStatus_065 0;
+BA_ "GenSigInactiveValue" SG_ 912 DigOutStatus_064 0;
+BA_ "GenSigInactiveValue" SG_ 656 DigOutStatus_063 0;
+BA_ "GenSigInactiveValue" SG_ 656 DigOutStatus_062 0;
+BA_ "GenSigInactiveValue" SG_ 656 DigOutStatus_061 0;
+BA_ "GenSigInactiveValue" SG_ 656 DigOutStatus_059 0;
+BA_ "GenSigInactiveValue" SG_ 656 DigOutStatus_058 0;
+BA_ "GenSigInactiveValue" SG_ 656 DigOutStatus_057 0;
+BA_ "GenSigInactiveValue" SG_ 656 DigOutStatus_056 0;
+BA_ "GenSigInactiveValue" SG_ 656 DigOutStatus_055 0;
+BA_ "GenSigInactiveValue" SG_ 656 DigOutStatus_054 0;
+BA_ "GenSigInactiveValue" SG_ 656 DigOutStatus_053 0;
+BA_ "GenSigInactiveValue" SG_ 656 DigOutStatus_052 0;
+BA_ "GenSigInactiveValue" SG_ 656 DigOutStatus_051 0;
+BA_ "GenSigInactiveValue" SG_ 656 DigOutStatus_050 0;
+BA_ "GenSigInactiveValue" SG_ 656 DigOutStatus_049 0;
+BA_ "GenSigInactiveValue" SG_ 656 DigOutStatus_048 0;
+BA_ "GenSigInactiveValue" SG_ 656 DigOutStatus_047 0;
+BA_ "GenSigInactiveValue" SG_ 656 DigOutStatus_046 0;
+BA_ "GenSigInactiveValue" SG_ 656 DigOutStatus_045 0;
+BA_ "GenSigInactiveValue" SG_ 656 DigOutStatus_044 0;
+BA_ "GenSigInactiveValue" SG_ 656 DigOutStatus_043 0;
+BA_ "GenSigInactiveValue" SG_ 656 DigOutStatus_042 0;
+BA_ "GenSigInactiveValue" SG_ 656 DigOutStatus_041 0;
+BA_ "GenSigInactiveValue" SG_ 656 DigOutStatus_040 0;
+BA_ "GenSigInactiveValue" SG_ 656 DigOutStatus_039 0;
+BA_ "GenSigInactiveValue" SG_ 656 DigOutStatus_038 0;
+BA_ "GenSigInactiveValue" SG_ 656 DigOutStatus_037 0;
+BA_ "GenSigInactiveValue" SG_ 656 DigOutStatus_036 0;
+BA_ "GenSigInactiveValue" SG_ 656 DigOutStatus_035 0;
+BA_ "GenSigInactiveValue" SG_ 656 DigOutStatus_034 0;
+BA_ "GenSigInactiveValue" SG_ 656 DigOutStatus_033 0;
+BA_ "GenSigInactiveValue" SG_ 656 DigOutStatus_032 0;
+BA_ "GenSigInactiveValue" SG_ 400 DigOutStatus_031 0;
+BA_ "GenSigInactiveValue" SG_ 400 DigOutStatus_030 0;
+BA_ "GenSigInactiveValue" SG_ 400 DigOutStatus_029 0;
+BA_ "GenSigInactiveValue" SG_ 400 DigOutStatus_028 0;
+BA_ "GenSigInactiveValue" SG_ 400 DigOutStatus_027 0;
+BA_ "GenSigInactiveValue" SG_ 400 DigOutStatus_026 0;
+BA_ "GenSigInactiveValue" SG_ 400 DigOutStatus_025 0;
+BA_ "GenSigInactiveValue" SG_ 400 DigOutStatus_024 0;
+BA_ "GenSigInactiveValue" SG_ 400 DigOutStatus_023 0;
+BA_ "GenSigInactiveValue" SG_ 400 DigOutStatus_022 0;
+BA_ "GenSigInactiveValue" SG_ 400 DigOutStatus_021 0;
+BA_ "GenSigInactiveValue" SG_ 400 DigOutStatus_020 0;
+BA_ "GenSigInactiveValue" SG_ 400 DigOutStatus_019 0;
+BA_ "GenSigInactiveValue" SG_ 400 DigOutStatus_018 0;
+BA_ "GenSigInactiveValue" SG_ 400 DigOutStatus_017 0;
+BA_ "GenSigInactiveValue" SG_ 400 DigOutStatus_016 0;
+BA_ "GenSigInactiveValue" SG_ 400 DigOutStatus_015 0;
+BA_ "GenSigInactiveValue" SG_ 400 DigOutStatus_014 0;
+BA_ "GenSigInactiveValue" SG_ 400 DigOutStatus_013 0;
+BA_ "GenSigInactiveValue" SG_ 400 DigOutStatus_012 0;
+BA_ "GenSigInactiveValue" SG_ 400 DigOutStatus_011 0;
+BA_ "GenSigInactiveValue" SG_ 400 DigOutStatus_010 0;
+BA_ "GenSigInactiveValue" SG_ 400 DigOutStatus_009 0;
+BA_ "GenSigInactiveValue" SG_ 400 DigOutStatus_008 0;
+BA_ "GenSigInactiveValue" SG_ 400 DigOutStatus_007 0;
+BA_ "GenSigInactiveValue" SG_ 400 DigOutStatus_006 0;
+BA_ "GenSigInactiveValue" SG_ 400 DigOutStatus_005 0;
+BA_ "GenSigInactiveValue" SG_ 400 DigOutStatus_004 0;
+BA_ "GenSigInactiveValue" SG_ 400 DigOutStatus_003 0;
+BA_ "GenSigInactiveValue" SG_ 400 DigOutStatus_002 0;
+BA_ "GenSigInactiveValue" SG_ 400 DigOutStatus_001 0;
+BA_ "GenSigInactiveValue" SG_ 400 DigOutStatus_000 0;*/
+
+VAL_ 656 DigOutStatus_063 3 "Open Load" 2 "Übertemperatur, Kurzschluss" 1 "Ein" 0 "Aus" ;
+VAL_ 912 DigOutStatus_095 3 "Open Load" 2 "Übertemperatur, Kurzschluss" 1 "Ein" 0 "Aus" ;
+/*VAL_ 912 DigOutStatus_094 3 "Open Load" 2 "Übertemperatur, Kurzschluss" 1 "Ein" 0 "Aus" ;
+VAL_ 912 DigOutStatus_093 3 "Open Load" 2 "Übertemperatur, Kurzschluss" 1 "Ein" 0 "Aus" ;
+VAL_ 912 DigOutStatus_092 3 "Open Load" 2 "Übertemperatur, Kurzschluss" 1 "Ein" 0 "Aus" ;
+VAL_ 912 DigOutStatus_091 3 "Open Load" 2 "Übertemperatur, Kurzschluss" 1 "Ein" 0 "Aus" ;
+VAL_ 912 DigOutStatus_090 3 "Open Load" 2 "Übertemperatur, Kurzschluss" 1 "Ein" 0 "Aus" ;
+VAL_ 912 DigOutStatus_089 3 "Open Load" 2 "Übertemperatur, Kurzschluss" 1 "Ein" 0 "Aus" ;
+VAL_ 912 DigOutStatus_088 3 "Open Load" 2 "Übertemperatur, Kurzschluss" 1 "Ein" 0 "Aus" ;
+VAL_ 912 DigOutStatus_087 3 "Open Load" 2 "Übertemperatur, Kurzschluss" 1 "Ein" 0 "Aus" ;
+VAL_ 912 DigOutStatus_086 3 "Open Load" 2 "Übertemperatur, Kurzschluss" 1 "Ein" 0 "Aus" ;
+VAL_ 912 DigOutStatus_085 3 "Open Load" 2 "Übertemperatur, Kurzschluss" 1 "Ein" 0 "Aus" ;
+VAL_ 912 DigOutStatus_084 3 "Open Load" 2 "Übertemperatur, Kurzschluss" 1 "Ein" 0 "Aus" ;
+VAL_ 912 DigOutStatus_083 3 "Open Load" 2 "Übertemperatur, Kurzschluss" 1 "Ein" 0 "Aus" ;
+VAL_ 912 DigOutStatus_082 3 "Open Load" 2 "Übertemperatur, Kurzschluss" 1 "Ein" 0 "Aus" ;
+VAL_ 912 DigOutStatus_081 3 "Open Load" 2 "Übertemperatur, Kurzschluss" 1 "Ein" 0 "Aus" ;
+VAL_ 912 DigOutStatus_080 3 "Open Load" 2 "Übertemperatur, Kurzschluss" 1 "Ein" 0 "Aus" ;
+VAL_ 912 DigOutStatus_079 3 "Open Load" 2 "Übertemperatur, Kurzschluss" 1 "Ein" 0 "Aus" ;
+VAL_ 912 DigOutStatus_078 3 "Open Load" 2 "Übertemperatur, Kurzschluss" 1 "Ein" 0 "Aus" ;
+VAL_ 912 DigOutStatus_077 3 "Open Load" 2 "Übertemperatur, Kurzschluss" 1 "Ein" 0 "Aus" ;
+VAL_ 912 DigOutStatus_076 3 "Open Load" 2 "Übertemperatur, Kurzschluss" 1 "Ein" 0 "Aus" ;
+VAL_ 912 DigOutStatus_075 3 "Open Load" 2 "Übertemperatur, Kurzschluss" 1 "Ein" 0 "Aus" ;
+VAL_ 912 DigOutStatus_074 3 "Open Load" 2 "Übertemperatur, Kurzschluss" 1 "Ein" 0 "Aus" ;
+VAL_ 912 DigOutStatus_073 3 "Open Load" 2 "Übertemperatur, Kurzschluss" 1 "Ein" 0 "Aus" ;
+VAL_ 912 DigOutStatus_072 3 "Open Load" 2 "Übertemperatur, Kurzschluss" 1 "Ein" 0 "Aus" ;
+VAL_ 912 DigOutStatus_071 3 "Open Load" 2 "Übertemperatur, Kurzschluss" 1 "Ein" 0 "Aus" ;
+VAL_ 912 DigOutStatus_070 3 "Open Load" 2 "Übertemperatur, Kurzschluss" 1 "Ein" 0 "Aus" ;
+VAL_ 912 DigOutStatus_069 3 "Open Load" 2 "Übertemperatur, Kurzschluss" 1 "Ein" 0 "Aus" ;
+VAL_ 912 DigOutStatus_068 3 "Open Load" 2 "Übertemperatur, Kurzschluss" 1 "Ein" 0 "Aus" ;
+VAL_ 912 DigOutStatus_067 3 "Open Load" 2 "Übertemperatur, Kurzschluss" 1 "Ein" 0 "Aus" ;
+VAL_ 912 DigOutStatus_066 3 "Open Load" 2 "Übertemperatur, Kurzschluss" 1 "Ein" 0 "Aus" ;
+VAL_ 912 DigOutStatus_065 3 "Open Load" 2 "Übertemperatur, Kurzschluss" 1 "Ein" 0 "Aus" ;
+VAL_ 912 DigOutStatus_064 3 "Open Load" 2 "Übertemperatur, Kurzschluss" 1 "Ein" 0 "Aus" ;
+VAL_ 656 DigOutStatus_063 3 "Open Load" 2 "Übertemperatur, Kurzschluss" 1 "Ein" 0 "Aus" ;
+VAL_ 656 DigOutStatus_062 3 "Open Load" 2 "Übertemperatur, Kurzschluss" 1 "Ein" 0 "Aus" ;
+VAL_ 656 DigOutStatus_061 3 "Open Load" 2 "Übertemperatur, Kurzschluss" 1 "Ein" 0 "Aus" ;
+VAL_ 656 DigOutStatus_060 3 "Open Load" 2 "Übertemperatur, Kurzschluss" 1 "Ein" 0 "Aus" ;
+VAL_ 656 DigOutStatus_059 3 "Open Load" 2 "Übertemperatur, Kurzschluss" 1 "Ein" 0 "Aus" ;
+VAL_ 656 DigOutStatus_058 3 "Open Load" 2 "Übertemperatur, Kurzschluss" 1 "Ein" 0 "Aus" ;
+VAL_ 656 DigOutStatus_057 3 "Open Load" 2 "Übertemperatur, Kurzschluss" 1 "Ein" 0 "Aus" ;
+VAL_ 656 DigOutStatus_056 3 "Open Load" 2 "Übertemperatur, Kurzschluss" 1 "Ein" 0 "Aus" ;
+VAL_ 656 DigOutStatus_055 3 "Open Load" 2 "Übertemperatur, Kurzschluss" 1 "Ein" 0 "Aus" ;
+VAL_ 656 DigOutStatus_054 3 "Open Load" 2 "Übertemperatur, Kurzschluss" 1 "Ein" 0 "Aus" ;
+VAL_ 656 DigOutStatus_053 3 "Open Load" 2 "Übertemperatur, Kurzschluss" 1 "Ein" 0 "Aus" ;
+VAL_ 656 DigOutStatus_052 3 "Open Load" 2 "Übertemperatur, Kurzschluss" 1 "Ein" 0 "Aus" ;
+VAL_ 656 DigOutStatus_051 3 "Open Load" 2 "Übertemperatur, Kurzschluss" 1 "Ein" 0 "Aus" ;
+VAL_ 656 DigOutStatus_050 3 "Open Load" 2 "Übertemperatur, Kurzschluss" 1 "Ein" 0 "Aus" ;
+VAL_ 656 DigOutStatus_049 3 "Open Load" 2 "Übertemperatur, Kurzschluss" 1 "Ein" 0 "Aus" ;
+VAL_ 656 DigOutStatus_048 3 "Open Load" 2 "Übertemperatur, Kurzschluss" 1 "Ein" 0 "Aus" ;
+VAL_ 656 DigOutStatus_047 3 "Open Load" 2 "Übertemperatur, Kurzschluss" 1 "Ein" 0 "Aus" ;
+VAL_ 656 DigOutStatus_046 3 "Open Load" 2 "Übertemperatur, Kurzschluss" 1 "Ein" 0 "Aus" ;
+VAL_ 656 DigOutStatus_045 3 "Open Load" 2 "Übertemperatur, Kurzschluss" 1 "Ein" 0 "Aus" ;
+VAL_ 656 DigOutStatus_044 3 "Open Load" 2 "Übertemperatur, Kurzschluss" 1 "Ein" 0 "Aus" ;
+VAL_ 656 DigOutStatus_043 3 "Open Load" 2 "Übertemperatur, Kurzschluss" 1 "Ein" 0 "Aus" ;
+VAL_ 656 DigOutStatus_042 3 "Open Load" 2 "Übertemperatur, Kurzschluss" 1 "Ein" 0 "Aus" ;
+VAL_ 656 DigOutStatus_041 3 "Open Load" 2 "Übertemperatur, Kurzschluss" 1 "Ein" 0 "Aus" ;
+VAL_ 656 DigOutStatus_040 3 "Open Load" 2 "Übertemperatur, Kurzschluss" 1 "Ein" 0 "Aus" ;
+VAL_ 656 DigOutStatus_039 3 "Open Load" 2 "Übertemperatur, Kurzschluss" 1 "Ein" 0 "Aus" ;
+VAL_ 656 DigOutStatus_038 3 "Open Load" 2 "Übertemperatur, Kurzschluss" 1 "Ein" 0 "Aus" ;
+VAL_ 656 DigOutStatus_037 3 "Open Load" 2 "Übertemperatur, Kurzschluss" 1 "Ein" 0 "Aus" ;
+VAL_ 656 DigOutStatus_036 3 "Open Load" 2 "Übertemperatur, Kurzschluss" 1 "Ein" 0 "Aus" ;
+VAL_ 656 DigOutStatus_035 3 "Open Load" 2 "Übertemperatur, Kurzschluss" 1 "Ein" 0 "Aus" ;
+VAL_ 656 DigOutStatus_034 3 "Open Load" 2 "Übertemperatur, Kurzschluss" 1 "Ein" 0 "Aus" ;
+VAL_ 656 DigOutStatus_033 3 "Open Load" 2 "Übertemperatur, Kurzschluss" 1 "Ein" 0 "Aus" ;
+VAL_ 656 DigOutStatus_032 3 "Open Load" 2 "Übertemperatur, Kurzschluss" 1 "Ein" 0 "Aus" ;
+VAL_ 400 DigOutStatus_031 3 "Open Load" 2 "Übertemperatur, Kurzschluss" 1 "Ein" 0 "Aus" ;
+VAL_ 400 DigOutStatus_030 3 "Open Load" 2 "Übertemperatur, Kurzschluss" 1 "Ein" 0 "Aus" ;
+VAL_ 400 DigOutStatus_029 3 "Open Load" 2 "Übertemperatur, Kurzschluss" 1 "Ein" 0 "Aus" ;
+VAL_ 400 DigOutStatus_028 3 "Open Load" 2 "Übertemperatur, Kurzschluss" 1 "Ein" 0 "Aus" ;
+VAL_ 400 DigOutStatus_027 3 "Open Load" 2 "Übertemperatur, Kurzschluss" 1 "Ein" 0 "Aus" ;
+VAL_ 400 DigOutStatus_026 3 "Open Load" 2 "Übertemperatur, Kurzschluss" 1 "Ein" 0 "Aus" ;
+VAL_ 400 DigOutStatus_025 3 "Open Load" 2 "Übertemperatur, Kurzschluss" 1 "Ein" 0 "Aus" ;
+VAL_ 400 DigOutStatus_024 3 "Open Load" 2 "Übertemperatur, Kurzschluss" 1 "Ein" 0 "Aus" ;
+VAL_ 400 DigOutStatus_023 3 "Open Load" 2 "Übertemperatur, Kurzschluss" 1 "Ein" 0 "Aus" ;
+VAL_ 400 DigOutStatus_022 3 "Open Load" 2 "Übertemperatur, Kurzschluss" 1 "Ein" 0 "Aus" ;
+VAL_ 400 DigOutStatus_021 3 "Open Load" 2 "Übertemperatur, Kurzschluss" 1 "Ein" 0 "Aus" ;
+VAL_ 400 DigOutStatus_020 3 "Open Load" 2 "Übertemperatur, Kurzschluss" 1 "Ein" 0 "Aus" ;
+VAL_ 400 DigOutStatus_019 3 "Open Load" 2 "Übertemperatur, Kurzschluss" 1 "Ein" 0 "Aus" ;
+VAL_ 400 DigOutStatus_018 3 "Open Load" 2 "Übertemperatur, Kurzschluss" 1 "Ein" 0 "Aus" ;
+VAL_ 400 DigOutStatus_017 3 "Open Load" 2 "Übertemperatur, Kurzschluss" 1 "Ein" 0 "Aus" ;
+VAL_ 400 DigOutStatus_016 3 "Open Load" 2 "Übertemperatur, Kurzschluss" 1 "Ein" 0 "Aus" ;
+VAL_ 400 DigOutStatus_015 3 "Open Load" 2 "Übertemperatur, Kurzschluss" 1 "Ein" 0 "Aus" ;
+VAL_ 400 DigOutStatus_014 3 "Open Load" 2 "Übertemperatur, Kurzschluss" 1 "Ein" 0 "Aus" ;
+VAL_ 400 DigOutStatus_013 3 "Open Load" 2 "Übertemperatur, Kurzschluss" 1 "Ein" 0 "Aus" ;
+VAL_ 400 DigOutStatus_012 3 "Open Load" 2 "Übertemperatur, Kurzschluss" 1 "Ein" 0 "Aus" ;
+VAL_ 400 DigOutStatus_011 3 "Open Load" 2 "Übertemperatur, Kurzschluss" 1 "Ein" 0 "Aus" ;
+VAL_ 400 DigOutStatus_010 3 "Open Load" 2 "Übertemperatur, Kurzschluss" 1 "Ein" 0 "Aus" ;
+VAL_ 400 DigOutStatus_009 3 "Open Load" 2 "Übertemperatur, Kurzschluss" 1 "Ein" 0 "Aus" ;
+VAL_ 400 DigOutStatus_008 3 "Open Load" 2 "Übertemperatur, Kurzschluss" 1 "Ein" 0 "Aus" ;
+VAL_ 400 DigOutStatus_007 3 "Open Load" 2 "Übertemperatur, Kurzschluss" 1 "Ein" 0 "Aus" ;
+VAL_ 400 DigOutStatus_006 3 "Open Load" 2 "Übertemperatur, Kurzschluss" 1 "Ein" 0 "Aus" ;
+VAL_ 400 DigOutStatus_005 3 "Open Load" 2 "Übertemperatur, Kurzschluss" 1 "Ein" 0 "Aus" ;
+VAL_ 400 DigOutStatus_004 3 "Open Load" 2 "Übertemperatur, Kurzschluss" 1 "Ein" 0 "Aus" ;
+VAL_ 400 DigOutStatus_003 3 "Open Load" 2 "Übertemperatur, Kurzschluss" 1 "Ein" 0 "Aus" ;
+VAL_ 400 DigOutStatus_002 3 "Open Load" 2 "Übertemperatur, Kurzschluss" 1 "Ein" 0 "Aus" ;
+VAL_ 400 DigOutStatus_001 3 "Open Load" 2 "Übertemperatur, Kurzschluss" 1 "Ein" 0 "Aus" ;
+VAL_ 400 DigOutStatus_000 3 "Open Load" 2 "Übertemperatur, Kurzschluss" 1 "Ein" 0 "Aus" ;
+*/
+

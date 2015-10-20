@@ -1,7 +1,7 @@
 
 
 includes := -Iinclude -Iinclude/include_gen
-cflags :=  -O0 -g3 -Wall -fmessage-length=0 -std=c++11
+cflags :=  -O0 -g3 -Wall -fmessage-length=0 -std=c++11 -fPIC
 OBJDIR := bin
 objfiles := ceps.tab.o symtab.o cepslexer.o cepsparserdriver.o cepsruntime.o ceps_ast.o ceps_interpreter.o ceps_serialize.o ceps_interpreter_loop.o ceps_interpreter_nodeset.o 
 objfiles := $(patsubst %,$(OBJDIR)/%,$(objfiles))

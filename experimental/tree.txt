@@ -1,0 +1,754 @@
+
+
+Interpreted Tree:
+
+(ROOT 
+  (STRUCT "version" 
+    (STRING "" )
+  )
+  (STRUCT "nodes" 
+    (ID "CBAG_60" 
+    )
+    (ID "CFBP_10" 
+    )
+  )
+  (STRUCT "value_table" 
+    (STRUCT "name" 
+      (ID "Status_BTS441" 
+      )
+    )
+    (STRUCT "value_description" 
+      (STRUCT "value" 
+        (INT 3  )
+      )
+      (STRUCT "description" 
+        (STRING "Open Load" )
+      )
+    )
+    (STRUCT "value_description" 
+      (STRUCT "value" 
+        (INT 2  )
+      )
+      (STRUCT "description" 
+        (STRING "Übertemperatur, Kurzschluss" )
+      )
+    )
+    (STRUCT "value_description" 
+      (STRUCT "value" 
+        (INT 1  )
+      )
+      (STRUCT "description" 
+        (STRING "Ein" )
+      )
+    )
+    (STRUCT "value_description" 
+      (STRUCT "value" 
+        (INT 0  )
+      )
+      (STRUCT "description" 
+        (STRING "Aus" )
+      )
+    )
+  )
+  (STRUCT "message" 
+    (STRUCT "id" 
+      (INT 912  )
+    )
+    (STRUCT "name" 
+      (ID "Node10_RxPDO_3" 
+      )
+    )
+    (STRUCT "size" 
+      (INT 8  )
+    )
+    (STRUCT "transmitter" 
+      (ID "CBAG_60" 
+      )
+    )
+    (STRUCT "signal" 
+      (STRUCT "start_bit" 
+        (INT 62  )
+      )
+      (STRUCT "size" 
+        (INT 2  )
+      )
+      (STRUCT "byte_order" 
+        (STRING "big endian" )
+      )
+      (STRUCT "sign" 
+        (STRING "unsigned" )
+      )
+      (STRUCT "factor" 
+        (INT 1  )
+      )
+      (STRUCT "offset" 
+        (INT 0  )
+      )
+      (STRUCT "min" 
+        (INT 0  )
+      )
+      (STRUCT "max" 
+        (INT 0  )
+      )
+      (STRUCT "unit" 
+        (STRING "" )
+      )
+      (STRUCT "receiver" 
+        (ID "CFBP_10" 
+        )
+      )
+    )
+    (STRUCT "signal" 
+      (STRUCT "start_bit" 
+        (INT 60  )
+      )
+      (STRUCT "size" 
+        (INT 2  )
+      )
+      (STRUCT "byte_order" 
+        (STRING "big endian" )
+      )
+      (STRUCT "sign" 
+        (STRING "unsigned" )
+      )
+      (STRUCT "factor" 
+        (INT 1  )
+      )
+      (STRUCT "offset" 
+        (INT 0  )
+      )
+      (STRUCT "min" 
+        (INT 0  )
+      )
+      (STRUCT "max" 
+        (INT 0  )
+      )
+      (STRUCT "unit" 
+        (STRING "" )
+      )
+      (STRUCT "receiver" 
+        (ID "CFBP_10" 
+        )
+      )
+    )
+    (STRUCT "signal" 
+      (STRUCT "start_bit" 
+        (INT 58  )
+      )
+      (STRUCT "size" 
+        (INT 2  )
+      )
+      (STRUCT "byte_order" 
+        (STRING "big endian" )
+      )
+      (STRUCT "sign" 
+        (STRING "unsigned" )
+      )
+      (STRUCT "factor" 
+        (INT 1  )
+      )
+      (STRUCT "offset" 
+        (INT 0  )
+      )
+      (STRUCT "min" 
+        (INT 0  )
+      )
+      (STRUCT "max" 
+        (INT 0  )
+      )
+      (STRUCT "unit" 
+        (STRING "" )
+      )
+      (STRUCT "receiver" 
+        (ID "CFBP_10" 
+        )
+      )
+    )
+    (STRUCT "signal" 
+      (STRUCT "start_bit" 
+        (INT 56  )
+      )
+      (STRUCT "size" 
+        (INT 2  )
+      )
+      (STRUCT "byte_order" 
+        (STRING "big endian" )
+      )
+      (STRUCT "sign" 
+        (STRING "unsigned" )
+      )
+      (STRUCT "factor" 
+        (INT 1  )
+      )
+      (STRUCT "offset" 
+        (INT 0  )
+      )
+      (STRUCT "min" 
+        (INT 0  )
+      )
+      (STRUCT "max" 
+        (INT 0  )
+      )
+      (STRUCT "unit" 
+        (STRING "" )
+      )
+      (STRUCT "receiver" 
+        (ID "CFBP_10" 
+        )
+      )
+    )
+    (STRUCT "signal" 
+      (STRUCT "start_bit" 
+        (INT 54  )
+      )
+      (STRUCT "size" 
+        (INT 2  )
+      )
+      (STRUCT "byte_order" 
+        (STRING "big endian" )
+      )
+      (STRUCT "sign" 
+        (STRING "unsigned" )
+      )
+      (STRUCT "factor" 
+        (INT 1  )
+      )
+      (STRUCT "offset" 
+        (INT 0  )
+      )
+      (STRUCT "min" 
+        (INT 0  )
+      )
+      (STRUCT "max" 
+        (INT 0  )
+      )
+      (STRUCT "unit" 
+        (STRING "" )
+      )
+      (STRUCT "receiver" 
+        (ID "CFBP_10" 
+        )
+      )
+    )
+  )
+  (STRUCT "message" 
+    (STRUCT "id" 
+      (INT 656  )
+    )
+    (STRUCT "name" 
+      (ID "Node10_RxPDO_2" 
+      )
+    )
+    (STRUCT "size" 
+      (INT 8  )
+    )
+    (STRUCT "transmitter" 
+      (ID "CBAG_60" 
+      )
+    )
+    (STRUCT "signal" 
+      (STRUCT "start_bit" 
+        (INT 62  )
+      )
+      (STRUCT "size" 
+        (INT 2  )
+      )
+      (STRUCT "byte_order" 
+        (STRING "big endian" )
+      )
+      (STRUCT "sign" 
+        (STRING "unsigned" )
+      )
+      (STRUCT "factor" 
+        (INT 1  )
+      )
+      (STRUCT "offset" 
+        (INT 0  )
+      )
+      (STRUCT "min" 
+        (INT 0  )
+      )
+      (STRUCT "max" 
+        (INT 0  )
+      )
+      (STRUCT "unit" 
+        (STRING "" )
+      )
+      (STRUCT "receiver" 
+        (ID "CFBP_10" 
+        )
+      )
+    )
+    (STRUCT "signal" 
+      (STRUCT "start_bit" 
+        (INT 60  )
+      )
+      (STRUCT "size" 
+        (INT 2  )
+      )
+      (STRUCT "byte_order" 
+        (STRING "big endian" )
+      )
+      (STRUCT "sign" 
+        (STRING "unsigned" )
+      )
+      (STRUCT "factor" 
+        (INT 1  )
+      )
+      (STRUCT "offset" 
+        (INT 0  )
+      )
+      (STRUCT "min" 
+        (INT 0  )
+      )
+      (STRUCT "max" 
+        (INT 0  )
+      )
+      (STRUCT "unit" 
+        (STRING "" )
+      )
+      (STRUCT "receiver" 
+        (ID "CFBP_10" 
+        )
+      )
+    )
+    (STRUCT "signal" 
+      (STRUCT "start_bit" 
+        (INT 58  )
+      )
+      (STRUCT "size" 
+        (INT 2  )
+      )
+      (STRUCT "byte_order" 
+        (STRING "big endian" )
+      )
+      (STRUCT "sign" 
+        (STRING "unsigned" )
+      )
+      (STRUCT "factor" 
+        (INT 1  )
+      )
+      (STRUCT "offset" 
+        (INT 0  )
+      )
+      (STRUCT "min" 
+        (INT 0  )
+      )
+      (STRUCT "max" 
+        (INT 0  )
+      )
+      (STRUCT "unit" 
+        (STRING "" )
+      )
+      (STRUCT "receiver" 
+        (ID "CFBP_10" 
+        )
+      )
+    )
+  )
+  (STRUCT "attribute_definition" 
+    (STRUCT "name" 
+      (STRING "GenSigSendType" )
+    )
+    (STRUCT "type" 
+      (ID "SG" 
+      )
+    )
+    (STRUCT "attr_value_type" 
+      (STRUCT "type" 
+        (ID "enum" 
+        )
+        (STRUCT "value" 
+          (STRING "Cyclic" )
+        )
+        (STRUCT "value" 
+          (STRING "OnWrite" )
+        )
+        (STRUCT "value" 
+          (STRING "OnWriteWithRepetition" )
+        )
+        (STRUCT "value" 
+          (STRING "OnChange" )
+        )
+        (STRUCT "value" 
+          (STRING "OnChangeWithRepetition" )
+        )
+        (STRUCT "value" 
+          (STRING "IfActive" )
+        )
+        (STRUCT "value" 
+          (STRING "IfActiveWithRepetition" )
+        )
+        (STRUCT "value" 
+          (STRING "NoSigSendType" )
+        )
+      )
+    )
+  )
+  (STRUCT "attribute_definition" 
+    (STRUCT "name" 
+      (STRING "GenSigInactiveValue" )
+    )
+    (STRUCT "type" 
+      (ID "SG" 
+      )
+    )
+    (STRUCT "attr_value_type" 
+      (STRUCT "type" 
+        (ID "integer" 
+        )
+        (STRUCT "param1" 
+          (INT 0  )
+        )
+        (STRUCT "param2" 
+          (INT 0  )
+        )
+      )
+    )
+  )
+  (STRUCT "attribute_definition" 
+    (STRUCT "name" 
+      (STRING "GenMsgCycleTime" )
+    )
+    (STRUCT "type" 
+      (ID "BO" 
+      )
+    )
+    (STRUCT "attr_value_type" 
+      (STRUCT "type" 
+        (ID "integer" 
+        )
+        (STRUCT "param1" 
+          (INT 0  )
+        )
+        (STRUCT "param2" 
+          (INT 0  )
+        )
+      )
+    )
+  )
+  (STRUCT "attribute_definition" 
+    (STRUCT "name" 
+      (STRING "GenMsgSendType" )
+    )
+    (STRUCT "type" 
+      (ID "BO" 
+      )
+    )
+    (STRUCT "attr_value_type" 
+      (STRUCT "type" 
+        (ID "enum" 
+        )
+        (STRUCT "value" 
+          (STRING "Cyclic" )
+        )
+        (STRUCT "value" 
+          (STRING "not_used" )
+        )
+        (STRUCT "value" 
+          (STRING "not_used" )
+        )
+        (STRUCT "value" 
+          (STRING "not_used" )
+        )
+        (STRUCT "value" 
+          (STRING "not_used" )
+        )
+        (STRUCT "value" 
+          (STRING "Cyclic" )
+        )
+        (STRUCT "value" 
+          (STRING "not_used" )
+        )
+        (STRUCT "value" 
+          (STRING "IfActive" )
+        )
+        (STRUCT "value" 
+          (STRING "NoMsgSendType" )
+        )
+      )
+    )
+  )
+  (STRUCT "attribute_definition" 
+    (STRUCT "name" 
+      (STRING "NmStationAddress" )
+    )
+    (STRUCT "type" 
+      (ID "BU" 
+      )
+    )
+    (STRUCT "attr_value_type" 
+      (STRUCT "type" 
+        (ID "hex" 
+        )
+        (STRUCT "param1" 
+          (INT 0  )
+        )
+        (STRUCT "param2" 
+          (INT 0  )
+        )
+      )
+    )
+  )
+  (STRUCT "attribute_definition" 
+    (STRUCT "name" 
+      (STRING "DBName" )
+    )
+    (STRUCT "attr_value_type" 
+      (STRUCT "type" 
+        (ID "string" 
+        )
+      )
+    )
+  )
+  (STRUCT "attribute_definition" 
+    (STRUCT "name" 
+      (STRING "BusType" )
+    )
+    (STRUCT "attr_value_type" 
+      (STRUCT "type" 
+        (ID "string" 
+        )
+      )
+    )
+  )
+  (STRUCT "attibute_default" 
+    (STRUCT "name" 
+      (STRING "GenSigSendType" )
+    )
+    (STRUCT "value" 
+      (STRING "Cyclic" )
+    )
+  )
+  (STRUCT "attibute_default" 
+    (STRUCT "name" 
+      (STRING "GenSigInactiveValue" )
+    )
+    (STRUCT "value" 
+      (INT 0  )
+    )
+  )
+  (STRUCT "attibute_default" 
+    (STRUCT "name" 
+      (STRING "GenMsgCycleTime" )
+    )
+    (STRUCT "value" 
+      (INT 0  )
+    )
+  )
+  (STRUCT "attibute_default" 
+    (STRUCT "name" 
+      (STRING "GenMsgSendType" )
+    )
+    (STRUCT "value" 
+      (STRING "NoMsgSendType" )
+    )
+  )
+  (STRUCT "attibute_default" 
+    (STRUCT "name" 
+      (STRING "NmStationAddress" )
+    )
+    (STRUCT "value" 
+      (INT 0  )
+    )
+  )
+  (STRUCT "attibute_default" 
+    (STRUCT "name" 
+      (STRING "DBName" )
+    )
+    (STRUCT "value" 
+      (STRING "" )
+    )
+  )
+  (STRUCT "attibute_default" 
+    (STRUCT "name" 
+      (STRING "BusType" )
+    )
+    (STRUCT "value" 
+      (STRING "CAN" )
+    )
+  )
+  (STRUCT "attribute_value_for_object" 
+    (STRUCT "type" 
+      (ID "attr" 
+      )
+    )
+    (STRUCT "name" 
+      (STRING "DBName" )
+    )
+    (STRUCT "value" 
+      (STRING "CANopen" )
+    )
+  )
+  (STRUCT "attribute_value_for_object" 
+    (STRUCT "type" 
+      (ID "node" 
+      )
+    )
+    (STRUCT "name" 
+      (STRING "NmStationAddress" )
+    )
+    (STRUCT "node" 
+      (ID "CBAG_60" 
+      )
+    )
+    (STRUCT "value" 
+      (INT 96  )
+    )
+  )
+  (STRUCT "attribute_value_for_object" 
+    (STRUCT "type" 
+      (ID "node" 
+      )
+    )
+    (STRUCT "name" 
+      (STRING "NmStationAddress" )
+    )
+    (STRUCT "node" 
+      (ID "CFBP_10" 
+      )
+    )
+    (STRUCT "value" 
+      (INT 16  )
+    )
+  )
+  (STRUCT "attribute_value_for_object" 
+    (STRUCT "type" 
+      (ID "signal" 
+      )
+    )
+    (STRUCT "name" 
+      (STRING "GenSigInactiveValue" )
+    )
+    (STRUCT "message_id" 
+      (INT 912  )
+    )
+    (STRUCT "signal_name" 
+      (ID "DigOutStatus_095" 
+      )
+    )
+    (STRUCT "value" 
+      (INT 0  )
+    )
+  )
+  (STRUCT "attribute_value_for_object" 
+    (STRUCT "type" 
+      (ID "signal" 
+      )
+    )
+    (STRUCT "name" 
+      (STRING "GenSigInactiveValue" )
+    )
+    (STRUCT "message_id" 
+      (INT 912  )
+    )
+    (STRUCT "signal_name" 
+      (ID "DigOutStatus_094" 
+      )
+    )
+    (STRUCT "value" 
+      (INT 0  )
+    )
+  )
+  (STRUCT "attribute_value_for_object" 
+    (STRUCT "type" 
+      (ID "signal" 
+      )
+    )
+    (STRUCT "name" 
+      (STRING "GenSigInactiveValue" )
+    )
+    (STRUCT "message_id" 
+      (INT 912  )
+    )
+    (STRUCT "signal_name" 
+      (ID "DigOutStatus_093" 
+      )
+    )
+    (STRUCT "value" 
+      (INT 0  )
+    )
+  )
+  (STRUCT "signal_value_encoding" 
+    (STRUCT "message_id" 
+      (INT 656  )
+    )
+    (STRUCT "signal_id" 
+      (ID "DigOutStatus_063" 
+      )
+    )
+    (STRUCT "value_description" 
+      (STRUCT "value" 
+        (INT 3  )
+      )
+      (STRUCT "description" 
+        (STRING "Open Load" )
+      )
+    )
+    (STRUCT "value_description" 
+      (STRUCT "value" 
+        (INT 2  )
+      )
+      (STRUCT "description" 
+        (STRING "Übertemperatur, Kurzschluss" )
+      )
+    )
+    (STRUCT "value_description" 
+      (STRUCT "value" 
+        (INT 1  )
+      )
+      (STRUCT "description" 
+        (STRING "Ein" )
+      )
+    )
+    (STRUCT "value_description" 
+      (STRUCT "value" 
+        (INT 0  )
+      )
+      (STRUCT "description" 
+        (STRING "Aus" )
+      )
+    )
+  )
+  (STRUCT "signal_value_encoding" 
+    (STRUCT "message_id" 
+      (INT 912  )
+    )
+    (STRUCT "signal_id" 
+      (ID "DigOutStatus_095" 
+      )
+    )
+    (STRUCT "value_description" 
+      (STRUCT "value" 
+        (INT 3  )
+      )
+      (STRUCT "description" 
+        (STRING "Open Load" )
+      )
+    )
+    (STRUCT "value_description" 
+      (STRUCT "value" 
+        (INT 2  )
+      )
+      (STRUCT "description" 
+        (STRING "Übertemperatur, Kurzschluss" )
+      )
+    )
+    (STRUCT "value_description" 
+      (STRUCT "value" 
+        (INT 1  )
+      )
+      (STRUCT "description" 
+        (STRING "Ein" )
+      )
+    )
+    (STRUCT "value_description" 
+      (STRUCT "value" 
+        (INT 0  )
+      )
+      (STRUCT "description" 
+        (STRING "Aus" )
+      )
+    )
+  )
+)

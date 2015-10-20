@@ -77,11 +77,16 @@ namespace ceps {
 		unsigned_long_literal,
 		kind_def,
 		kind,
-		symbol,
+		symbol, /*27*/
 		loop,
 		for_loop_head,
 		nodeset,
-		nodeset_path_expr
+		nodeset_path_expr,
+		template_definition,
+		template_id,
+		ifelse,
+		ret,
+		user_defined = 5000
 	};
 
  }
@@ -434,6 +439,43 @@ template <Ast_node_kind what,typename... rest>
 
 	};
 
+template <Ast_node_kind what,typename... rest>
+	struct ast_node<what,std::vector<std::string>,rest...>: public ast_node<what,rest...>
+	{
+		using T = std::vector<std::string>;
+		T x;
+		using Base = ast_node<what,rest...>;
+		using This_type = ast_node<what,std::vector<std::string>,rest...>;
+		ast_node(T val_1,rest... args,Nodebase_ptr child1=nullptr,Nodebase_ptr child2=nullptr,Nodebase_ptr child3=nullptr)
+			: Base(args...,child1,child2,child3),x(val_1)
+			{
+
+			}
+		void print_content(std::ostream& out,bool pretty_print,int indent) const override
+			{
+				for(auto const & s : x)
+				{
+					out << "\""<< s <<"\" ";
+				}
+				Base::print_content(out,pretty_print,indent);
+			}
+
+
+		virtual void print_value(std::ostream& out) const override
+		{
+			for(auto const & s : x)
+			{
+				out << "\""<< s <<"\" ";
+			}
+			Base::print_value(out);
+		}
+
+		Nodebase* clone()
+		{
+			return new This_type(*this);
+		}
+
+	};
 
 template <typename... rest>
 	struct ast_node<Ast_node_kind::binary_operator,int,rest...>: public ast_node<Ast_node_kind::binary_operator,rest...>
@@ -453,7 +495,18 @@ template <typename... rest>
 				 out << (char)x << " ";
 			    else if (x == ceps::Cepsparser::token::DOTDOT)
 			     out << ".." << " ";
-
+			    else if (x == ceps::Cepsparser::token::REL_OP_EQ)
+			     out << "==" << " ";
+			    else if (x == ceps::Cepsparser::token::REL_OP_NEQ)
+			   	 out << "!=" << " ";
+			    else if (x == ceps::Cepsparser::token::REL_OP_GT)
+			   	 out << ">" << " ";
+			    else if (x == ceps::Cepsparser::token::REL_OP_LT)
+			   	 out << "<" << " ";
+			    else if (x == ceps::Cepsparser::token::REL_OP_GT_EQ)
+			   	 out << ">=" << " ";
+			    else if (x == ceps::Cepsparser::token::REL_OP_LT_EQ)
+			   	 out << "<=" << " ";
 			    Base::print_content(out,pretty_print,indent);
 			}
 
@@ -464,6 +517,18 @@ template <typename... rest>
 			 out << (char)x << " ";
 			else if (x == ceps::Cepsparser::token::DOTDOT)
 			 out << ".." << "";
+		    else if (x == ceps::Cepsparser::token::REL_OP_EQ)
+		     out << "==" << " ";
+		    else if (x == ceps::Cepsparser::token::REL_OP_NEQ)
+		   	 out << "!=" << " ";
+		    else if (x == ceps::Cepsparser::token::REL_OP_GT)
+		   	 out << ">" << " ";
+		    else if (x == ceps::Cepsparser::token::REL_OP_LT)
+		   	 out << "<" << " ";
+		    else if (x == ceps::Cepsparser::token::REL_OP_GT_EQ)
+		   	 out << ">=" << " ";
+		    else if (x == ceps::Cepsparser::token::REL_OP_LT_EQ)
+		   	 out << "<=" << " ";
 
 			Base::print_value(out);
 		}
@@ -683,6 +748,12 @@ typedef ast_node<Ast_node_kind::for_loop_head> Loop_head;
 typedef ast_node<Ast_node_kind::nodeset,std::string> Ast_nodeset;
 typedef ast_node<Ast_node_kind::nodeset_path_expr> Nodeset_path_expr;
 
+typedef ast_node<Ast_node_kind::template_definition,std::string,std::vector<std::string>> Template_defintion;
+typedef ast_node<Ast_node_kind::template_id,std::string> Template_id;
+typedef ast_node<Ast_node_kind::ifelse> Ifelse;
+typedef ast_node<Ast_node_kind::ret> Return;
+typedef ast_node<Ast_node_kind::user_defined,int,void*> User_defined;
+
 
 
 
@@ -714,8 +785,33 @@ TYPE_ALIAS(Loop_head_ptr , Loop_head*)
 TYPE_ALIAS(Ast_nodeset_ptr, Ast_nodeset*)
 TYPE_ALIAS(Nodeset_path_expr_ptr, Nodeset_path_expr*)
 
+inline Return* as_return_ptr(Nodebase_ptr p)
+ {
+	return dynamic_cast<Return*>(p);
+ }
+ inline Return & as_return_ref(Nodebase_ptr p)
+ {
+	return *as_return_ptr(p);
+ }
 
 
+ inline User_defined* as_user_defined_ptr(Nodebase_ptr p)
+  {
+ 	return dynamic_cast<User_defined*>(p);
+  }
+ inline User_defined & as_user_defined_ref(Nodebase_ptr p)
+  {
+ 	return *as_user_defined_ptr(p);
+  }
+
+inline Ifelse* as_ifelse_ptr(Nodebase_ptr p)
+ {
+	return dynamic_cast<Ifelse*>(p);
+ }
+ inline Ifelse & as_ifelse_ref(Nodebase_ptr p)
+ {
+	return *as_ifelse_ptr(p);
+ }
 
  inline Double_ptr as_double_ptr(Nodebase_ptr p)
  {
@@ -743,15 +839,34 @@ TYPE_ALIAS(Nodeset_path_expr_ptr, Nodeset_path_expr*)
   	return *dynamic_cast<Identifier const *>(p);
    }
 
+ inline Template_defintion* as_template_definition_ptr(Nodebase_ptr p)
+ {
+   return dynamic_cast<Template_defintion*>(p);
+ }
+
+ inline Template_defintion& as_template_definition_ref(Nodebase_ptr p)
+ {
+   return *as_template_definition_ptr(p);
+ }
+
+ inline Template_id* as_template_id_ptr(Nodebase_ptr p)
+ {
+   return dynamic_cast<Template_id*>(p);
+ }
+
+ inline Template_id& as_template_id_ref(Nodebase_ptr p)
+ {
+   return *as_template_id_ptr(p);
+ }
 
  inline Loop_ptr as_loop_ptr(Nodebase_ptr p)
-  {
-   return dynamic_cast<Loop_ptr>(p);
-  }
-  inline Loop & as_loop_ref(Nodebase_ptr p)
-  {
-   return *as_loop_ptr(p);
-  }
+ {
+  return dynamic_cast<Loop_ptr>(p);
+ }
+ inline Loop & as_loop_ref(Nodebase_ptr p)
+ {
+  return *as_loop_ptr(p);
+ }
 
   inline Binary_operator* as_binop_ptr(Nodebase_ptr p)
     {
@@ -927,6 +1042,11 @@ inline getNth_type<0,  Binary_operator >::type & op(Binary_operator& x)
 	return get<0>(x);
 }
 inline getNth_type<0,  Unary_operator >::type & op(Unary_operator& x)
+{
+	return get<0>(x);
+}
+
+inline getNth_type<0,  User_defined >::type & id(User_defined& x)
 {
 	return get<0>(x);
 }

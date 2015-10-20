@@ -75,12 +75,26 @@ SOFTWARE.
 %token RAWMAP
 %token KIND
 %token DOTDOT
+%token TEMPLATE
+%token TEMPLATE_ID
+%token TEMPLATE_PARAM
+
+
 //%token KINDID
 
 
 %left ','
+
 %left DOTDOT
 %right '='
+%left '|'
+%left '&'
+%left REL_OP_GT
+%left REL_OP_LT
+%left REL_OP_EQ
+%left REL_OP_NEQ
+%left REL_OP_LT_EQ
+%left REL_OP_GT_EQ
 %left '-' '+'
 %left '*'
 %right '/'
@@ -88,6 +102,7 @@ SOFTWARE.
 %left '.'
 
 %left NEG
+%left NOT
 %token <sval> STRUCTID
 %token <sval> ID
 %token <sval> KINDID
@@ -111,10 +126,12 @@ SOFTWARE.
 %type <str_list> id_list;
 %type <sval> general_id;
 %type <ast_node> for_loop;
+%type <ast_node> template;
 %type <ast_node> id_or_struct_id;
 %type <ast_node> for_loop_head;
+%type <ast_node> ifthenelse;
 
-%expect 22
+%expect 41
 
 %%
  
@@ -128,7 +145,7 @@ cepsscript:
 ;
  
 stmts :
- stmts stmt ';'
+ stmts stmt 
  {
   if($2 != nullptr) 
   	ceps::ast::nlf_ptr($1)->children().push_back($2);
@@ -144,10 +161,17 @@ stmts :
 stmt :
 
  '{' stmts '}' { $$ = new ceps::ast::Scope{$2};}
-
+| RET expr ';'
+{
+ $$ = new ceps::ast::Return($2,nullptr,nullptr);
+}
+| ifthenelse
+{
+  $$ = $1;
+}
 |
  
- decl 
+ decl ';'
  {
  	$$ = $1; //pass over result of decl
  }
@@ -156,12 +180,29 @@ stmt :
  {
   $$ = $1; //pass over result of for_loop
  }
-
-| /*empty*/ 
+ 
+| 
+ template ';'
  {
+  $$ = $1;
+ }
+| ';' 
+{
  	$$ = nullptr;
  }
 ;
+
+ifthenelse:
+ IF '(' expr ')' stmt
+{
+ $$ = new ceps::ast::Ifelse($3,$5);
+}
+| IF '('expr')' stmt ELSE stmt
+{
+$$ = new ceps::ast::Ifelse($3,$5,$7);
+}
+;
+
 
 general_id :
  ID
@@ -305,6 +346,12 @@ expr:
 	//$$=$2;
 	$$ = new ceps::ast::Unary_operator('-',$2,nullptr,nullptr); 
 }
+|'!' expr %prec NEG
+
+{  
+	
+	$$ = new ceps::ast::Unary_operator('!',$2,nullptr,nullptr); 
+}
 
 |expr DOTDOT expr
 {
@@ -314,6 +361,15 @@ expr:
 |expr ',' expr
 {
 	$$ = new ceps::ast::Binary_operator(',',$1,$3,nullptr); 
+}
+
+|expr '|' expr
+{
+	$$ = new ceps::ast::Binary_operator('|',$1,$3,nullptr); 
+}
+|expr '&' expr
+{
+	$$ = new ceps::ast::Binary_operator('&',$1,$3,nullptr); 
 }
 
 |expr '+' expr 
@@ -351,6 +407,30 @@ expr:
 {
 	$$ = new ceps::ast::Binary_operator('=',$1,$3,nullptr);
 } 
+| expr REL_OP_EQ expr 
+{
+	$$ = new ceps::ast::Binary_operator(ceps::Cepsparser::token::REL_OP_EQ,$1,$3,nullptr);
+}
+| expr REL_OP_LT expr 
+{
+	$$ = new ceps::ast::Binary_operator(ceps::Cepsparser::token::REL_OP_LT,$1,$3,nullptr);
+}
+| expr REL_OP_GT expr 
+{
+	$$ = new ceps::ast::Binary_operator(ceps::Cepsparser::token::REL_OP_GT,$1,$3,nullptr);
+} 
+| expr REL_OP_LT_EQ expr 
+{
+	$$ = new ceps::ast::Binary_operator(ceps::Cepsparser::token::REL_OP_LT_EQ,$1,$3,nullptr);
+}
+| expr REL_OP_GT_EQ expr 
+{
+	$$ = new ceps::ast::Binary_operator(ceps::Cepsparser::token::REL_OP_GT_EQ,$1,$3,nullptr);
+}
+| expr REL_OP_NEQ expr 
+{
+	$$ = new ceps::ast::Binary_operator(ceps::Cepsparser::token::REL_OP_NEQ,$1,$3,nullptr);
+}
 |'('expr')' 
 {
 	$$ = $2;
@@ -376,8 +456,9 @@ expr:
  //TODO: Function Definitions
 }
 | expr '[' expr ']' %prec INDEXOP
-
-
+/*
+| TEMPLATE_ID '(' stmts ')'
+| TEMPLATE_PARAM*/
 ;
 
 func_body :
@@ -439,6 +520,22 @@ for_loop:
   temp->children().push_back($6);
   $$ = temp;
  }
+;
+
+template:
+ TEMPLATE general_id '(' id_list ')' '{' stmts '}'
+{
+  auto temp = new ceps::ast::Template_defintion(*$2,*$4,nullptr,nullptr,nullptr);
+  
+}
+|
+ TEMPLATE general_id  '{' stmts '}'
+{
+}
+|
+TEMPLATE general_id '(' ')' '{' stmts '}'
+{
+}
 ;
 
 

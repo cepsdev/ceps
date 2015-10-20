@@ -203,7 +203,7 @@ void ceps::ceps_start( void (*func) (ceps::ast::Nodeset&),
 void ceps::Ceps_Environment::eval_and_merge(ceps::ast::Parsetree pt,bool ignore_predicates,bool dont_evaluate)
 {
 	std::lock_guard<std::mutex> lk{mut_};
-	ceps::ast::Nodebase_ptr p = dont_evaluate ? pt.get_root(): ceps::interpreter::evaluate(pt.get_root(),symboltable_,interpreter_env());
+	ceps::ast::Nodebase_ptr p = dont_evaluate ? pt.get_root(): ceps::interpreter::evaluate(pt.get_root(),symboltable_,interpreter_env(),nullptr);
 	if (p == nullptr) return;
 	if (!ignore_predicates && !signal_)
 	{
@@ -277,7 +277,7 @@ void ceps::execute_script(std::istream & script,
 
 		ceps::ast::Nodebase_ptr p = ceps::interpreter::evaluate(driver.parsetree().get_root(),
 																  ceps_env.get_global_symboltable(),
-																  ceps_env.interpreter_env());
+																  ceps_env.interpreter_env(),nullptr);
 		ceps::ast::Nodeset ns{p};
 		callback(ns);
 	} catch (ceps::interpreter::semantic_exception & se)

@@ -1,0 +1,25 @@
+%ignore_ws
+%%
+
+lexer A
+{
+ integer  => $0;  .
+ else => exit .
+}
+
+lexer B
+{
+ integer  => $0;  .
+ else => exit .
+}	
+
+BEGIN{
+ n  => numbers {  call B }; . 
+}
+%%
+
+n 1 2 3 4 5 6 7 8 9 10 a b c d e f g h i j
+
+
+
+

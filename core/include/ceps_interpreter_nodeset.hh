@@ -38,7 +38,8 @@ namespace ceps
 		ceps::ast::Nodebase_ptr evaluate_nodeset_expr_dot(	ceps::ast::Nodebase_ptr lhs,
 															ceps::ast::Nodebase_ptr rhs ,
 															ceps::parser_env::Symboltable & sym_table,
-															ceps::interpreter::Environment& env);
+															ceps::interpreter::Environment& env,
+															ceps::ast::Nodebase_ptr );
 	}
 }
 

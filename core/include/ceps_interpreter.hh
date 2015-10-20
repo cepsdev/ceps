@@ -91,18 +91,62 @@ namespace ceps{
 
  	 };
 
+	 struct Environment;
+	 using Symboltable = ceps::parser_env::Symboltable;
+	 using Kind = ceps::ast::Ast_node_kind;
+
+	 ceps::ast::Nodebase_ptr evaluate(ceps::ast::Nonleafbase & root,
+		 Symboltable & sym_table,
+		 Environment& env, ceps::ast::Nodebase_ptr parent_node
+		 );
+
  	 struct Environment
  	 {
  		using Fn_binop_overload = ceps::ast::Nodebase_ptr (*)(ceps::ast::Nodebase_ptr , ceps::ast::Nodebase_ptr);
- 	  private:
+#ifndef _MSC_VER
+	 private:
+#endif
 		 int kind_to_id_map_ctr_{0};
 		 std::map< std::string, int> kind_to_id_map_;
 		 std::map< std::tuple<char,int,int>, ceps::interpreter::Environment::Fn_binop_overload >
 		 global_binop_overloads_;
 		 ceps::ast::Nodeset * associated_universe_ = nullptr;
+		 std::map<std::string, std::map<std::string,ceps::ast::Nodebase_ptr >* > symbol_mapping_;
+		 typedef ceps::ast::Nodebase_ptr (*func_callback_t)(std::string const & , ceps::ast::Call_parameters*, void *);
+		 typedef ceps::ast::Nodebase_ptr (*func_binop_resolver_t)(ceps::ast::Binary_operator_ptr binop,
+				 	 	 	 	 	 	 	 	 	 	 	 	  ceps::ast::Nodebase_ptr lhs ,
+				 	 	 	 	 	 	 	 	 	 	 	 	  ceps::ast::Nodebase_ptr rhs,
+				 	 	 	 	 	 	 	 	 	 	 	 	  void* cxt,
+				 	 	 	 	 	 	 	 	 	 	 	 	  ceps::ast::Nodebase_ptr parent_node);
+
+		 func_callback_t func_callback_ = nullptr;
+		 func_binop_resolver_t global_binop_resolver_ = nullptr;
+
+		 void * func_callback_context_data_ = nullptr;
+		 void * func_binop_resolver_context_data_ = nullptr;
+
+		 ceps::ast::Nodebase_ptr call_func_callback(std::string const & id, ceps::ast::Call_parameters* params)
+		 {
+			 if (func_callback_ == nullptr) return nullptr;
+			 return func_callback_(id,params,func_callback_context_data_);
+		 }
+		 ceps::ast::Nodebase_ptr call_binop_resolver(ceps::ast::Binary_operator_ptr binop,
+				                                     ceps::ast::Nodebase_ptr lhs ,
+				                                     ceps::ast::Nodebase_ptr rhs,
+				                                     ceps::ast::Nodebase_ptr parent_node)
+		 {
+		 	 if (global_binop_resolver_ == nullptr) return nullptr;
+		 	 return global_binop_resolver_(binop,lhs,rhs,func_binop_resolver_context_data_,parent_node);
+		 }
  	  public:
 
+		 std::map<std::string, std::map<std::string,ceps::ast::Nodebase_ptr >* >& symbol_mapping() {return symbol_mapping_;}
+		 std::map<std::string, std::map<std::string,ceps::ast::Nodebase_ptr >* > const & symbol_mapping() const {return symbol_mapping_;}
+
 		int lookup_kind(std::string const&);
+
+		void set_func_callback(func_callback_t f,void * func_callback_context_data){func_callback_ = f;func_callback_context_data_ = func_callback_context_data;}
+		void set_binop_resolver(func_binop_resolver_t f,void * cxt){global_binop_resolver_ = f;func_binop_resolver_context_data_ = cxt;}
 
 		void register_global_binop_overload( 	ceps::interpreter::Environment::Fn_binop_overload fn,
 												char op,
@@ -115,15 +159,16 @@ namespace ceps{
 
 
 		 ceps::ast::Nodeset * & associated_universe() {return associated_universe_;}
+#ifndef _MSC_VER
+		 friend ceps::ast::Nodebase_ptr ceps::interpreter::evaluate(ceps::ast::Nodebase_ptr,
+				  ceps::parser_env::Symboltable & ,
+				  ceps::interpreter::Environment&,ceps::ast::Nodebase_ptr);
+#endif
  	 };
 
-     using Symboltable = ceps::parser_env::Symboltable;
-     using Kind = ceps::ast::Ast_node_kind;
+    
 
-     ceps::ast::Nodebase_ptr evaluate(	ceps::ast::Nonleafbase & root,
-    		 	 	 	 	 	 	   	Symboltable & sym_table,
-    		 	 	 	 	 	 	   	Environment& env
-    		 	 	 	 	 	 	   );
+  
 
      void evaluate(	 ceps::ast::Nodeset & universe,
     		 	 	 ceps::ast::Nodebase_ptr root,
@@ -137,12 +182,12 @@ namespace ceps{
     		 	 	 	 	 	 	 	 	ceps::ast::Nodebase_ptr lhs,
     		 	 	 	 	 	 	 	 	ceps::ast::Nodebase_ptr rhs,
     		 	 	 	 	 	 	 	 	Symboltable & sym_table,
-    		 	 	 	 	 	 	 	 	Environment& env
+    		 	 	 	 	 	 	 	 	Environment& env,ceps::ast::Nodebase_ptr parent_node
     		 	 	 	 	 	 	 	 	);
 
      ceps::ast::Nodebase_ptr evaluate(  ceps::ast::Nodebase_ptr root_node,
     		 	 	 	 	 	 	 	 Symboltable & sym_table,
-    		 	 	 	 	 	 	 	 Environment& env
+    		 	 	 	 	 	 	 	 Environment& env,ceps::ast::Nodebase_ptr parent_node
     		 	 	 	 	 	 	 	 );
 
      ceps::ast::Nodebase_ptr evaluate_and_remove(ceps::ast::Nonleafbase& root);

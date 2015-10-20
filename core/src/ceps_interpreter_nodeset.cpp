@@ -51,7 +51,7 @@ static void flatten(ceps::ast::Nodebase_ptr root, std::vector<ceps::ast::Nodebas
 ceps::ast::Nodebase_ptr ceps::interpreter::evaluate_nodeset_expr_dot(	ceps::ast::Nodebase_ptr lhs,
 															ceps::ast::Nodebase_ptr rhs ,
 															ceps::parser_env::Symboltable & sym_table,
-															ceps::interpreter::Environment& env)
+															ceps::interpreter::Environment& env,ceps::ast::Nodebase_ptr )
 {
 	//INVARIANT: lhs is a nodeset
 

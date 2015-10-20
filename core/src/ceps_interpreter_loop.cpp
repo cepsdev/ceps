@@ -85,7 +85,7 @@ static void loop( std::vector<ceps::ast::Nodebase_ptr>& result,
 	bool is_range_loop = false;
 	bool last_head = i*2 +1 == loop_head.children().size() - 1;
 	ceps::ast::Identifier& id  = ceps::ast::as_id_ref(loop_head.children()[2*i]);
-	ceps::ast::Nodebase_ptr coll_  = evaluate(loop_head.children()[2*i+1],sym_table,env);
+	ceps::ast::Nodebase_ptr coll_  = evaluate(loop_head.children()[2*i+1],sym_table,env,nullptr);
 	std::vector<ceps::ast::Nodebase_ptr> collection;
 
 
@@ -119,7 +119,7 @@ static void loop( std::vector<ceps::ast::Nodebase_ptr>& result,
 			value(counter_node) = h;
 			if (last_head)
 			{
-				auto new_node = evaluate(body,sym_table,env);
+				auto new_node = evaluate(body,sym_table,env,nullptr);
 				if (new_node != nullptr)
 				{
 					if (new_node->kind() == ceps::ast::Ast_node_kind::stmts)
@@ -144,7 +144,7 @@ static void loop( std::vector<ceps::ast::Nodebase_ptr>& result,
 		if (last_head)
 		{
 
-			auto new_node = evaluate(body,sym_table,env);
+			auto new_node = evaluate(body,sym_table,env,nullptr);
 			if (new_node != nullptr)
 			{
 				if (new_node->kind() == ceps::ast::Ast_node_kind::stmts)
@@ -177,7 +177,7 @@ static void loop( std::vector<ceps::ast::Nodebase_ptr>& result,
  * */
 ceps::ast::Nodebase_ptr  ceps::interpreter::evaluate_loop(ceps::ast::Loop_ptr loop_node,
 									  ceps::parser_env::Symboltable & sym_table,
-									  ceps::interpreter::Environment& env)
+									  ceps::interpreter::Environment& env,ceps::ast::Nodebase_ptr)
 {
 	const auto for_loop_head = 0;
 	const auto for_loop_body = 1;

@@ -1,0 +1,12 @@
+
+
+kind Constant;
+kind Variable;
+kind Polynom;
+
+Variable x;
+Constant c_0, c_1;
+Polynom v;
+
+v(x) = c_0 + c_1 * x;
+[1,2,3] * 2, (3,4) ;

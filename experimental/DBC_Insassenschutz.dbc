@@ -1,0 +1,1468 @@
+VERSION ""                                   
+                                             
+                                             
+NS_ :                                        
+ NS_DESC_                                    
+ CM_                                         
+ BA_DEF_                                     
+ BA_                                         
+ VAL_                                        
+ CAT_DEF_                                    
+ CAT_                                        
+ FILTER                                      
+ BA_DEF_DEF_                                 
+ EV_DATA_                                    
+ ENVVAR_DATA_                                
+ SGTYPE_                                     
+ SGTYPE_VAL_                                 
+ BA_DEF_SGTYPE_                              
+ BA_SGTYPE_                                  
+ SIG_TYPE_REF_                               
+ VAL_TABLE_                                  
+ SIG_GROUP_                                  
+ SIG_VALTYPE_                                
+ SIGTYPE_VALTYPE_                            
+ BO_TX_BU_                                   
+ BA_DEF_REL_                                 
+ BA_REL_                                     
+ BA_DEF_DEF_REL_                             
+ BU_SG_REL_                                  
+ BU_EV_REL_                                  
+ BU_BO_REL_                                  
+ SG_MUL_VAL_                                 
+                                             
+BS_:                                         
+                                             
+BU_: STRG IDA
+VAL_TABLE_ Fahrt_Status 5 " Nachlauf " 4 " Abwärts anhalten " 3 " Abwärts fahren " 2 " Aufwärts anhalten " 1 " Aufwärts fahren " 0 " Stillstand " ;
+VAL_TABLE_ Notab_Ausloeser 1 " ROPS " 0 " Keine ";
+VAL_TABLE_ Notab_Ausloeser_2 1 " Notab-Taster " 0 " Keine ";
+BO_ 1808 PDO0_0x710 : 1 STRG
+ SG_ Bootup_message_Strg : 0|8@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+BO_ 400 PDO1_0x190 : 8 STRG
+ SG_ Alive_Counter : 0|8@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Motortemperatur : 8|8@1- (1.00000000000,0) [0|0] "°C" Vector__XXX
+ SG_ _6113_Positionssensor_Mittelabgriff_in_mV : 16|16@1+ (1.00000000000,0) [0|0] "mV" Vector__XXX
+ SG_ _6000_24V_Versorgung_an_K12_in_0_112V_Bit : 32|8@1+ (0.11200000000,0) [0|0] "V" Vector__XXX
+ SG_ _6099_Spannung_UltraCap_C2_in_0_074V_Bit : 40|8@1+ (0.07400000000,0) [0|0] "V" Vector__XXX
+ SG_ _6067_6069_6070_Spannung_UltraCap_C1_in_0_288V_Bit : 48|8@1+ (0.28800000000,0) [0|0] "V" Vector__XXX
+ SG_ Release_Nummer : 56|8@1+ (1.00000000000,0) [0|0] "x.xx" Vector__XXX
+BO_ 656 PDO2_0x290 : 8 STRG
+ SG_ nc : 7|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ nc : 6|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ nc : 5|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ nc : 4|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ _6078_Status_T1 : 3|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ _6159_BSW2 : 2|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ _6160_BSW1 : 1|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ _6161_BSW0 : 0|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ _6111_UT_Schalter : 15|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ _6108_OT_Schalter : 14|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ _6184_Ueberwachung_Taster_Auf_Ab_E2_Auf : 13|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ _6183_Ueberwachung_Taster_Auf_Ab_E2_Ab : 12|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ _6179_Taster_AUF_AB_EB_1_Auf : 11|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ _6180_Taster_AUF_AB_EB_1_Ab : 10|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ _6018_Remote_LED : 9|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ _6017_Key_Switch_DMC : 8|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ nc : 23|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ nc : 22|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ nc : 21|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ nc : 20|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ _6080_Ueberwachung_C1_X1_2 : 19|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ _6165_Notabtaster_no1 : 18|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ _6164_Notabtaster_nc1 : 17|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ nc : 16|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ _6120_Fanghakenschalter_S3_NO2 : 31|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ _6119_Fanghakenschalter_S3_NC2 : 30|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ __Ueberwachung_K5_2 : 29|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ _6158_Ueberwachung_BSW_Ebene1_Stufe_2 : 28|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ _6157_Ueberwachung_BSW_Ebene1_Stufe_1 : 27|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ _6156_Ueberwachung_BSW_Ebene1_Stufe_0 : 26|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ _6176_Wartungsschalter_NC_21 : 25|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ _6175_Wartungsschalter_NO_13 : 24|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ nc : 39|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ nc : 38|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ nc : 37|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ toggeln_d036_2 : 36|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ _6060_Ueberwachung_von_K1_K4_K8_Komparatorfenster : 35|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ _6096_Ueberwachung_Spulen_von_K10__K7 : 34|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ _6118_Ueberwachung_S3_no_1 : 33|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ _6096_Fanghaken_S3_com_1 : 32|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ _6060_Ueberwachung_von_K1_K4_K8_Lowside : 47|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ _6019_DMC_M1 : 46|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ _6020_DMC_M3 : 45|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ _6063_Motorueberwachung_D036_2 : 44|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ _6063_Motorueberwachung_D036_1 : 43|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ _6066_Motorueberwachung_D035 : 42|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ _6092_Bremsenueberwachung_D033_2 : 41|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ _6117_Ueberwachung_ROPS__R1__R2__K6 : 40|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ __K8D_10_D49 : 55|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ _6092_Ueberwachung_Bremse_D033_1 : 54|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ __K7G : 53|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ __K7F : 52|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ __K6G_nc : 51|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ __K6F_no : 50|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ __K8G : 49|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ __K8F : 48|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ nc : 63|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ nc : 62|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ nc : 61|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ nc : 60|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ nc : 59|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ nc : 58|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ nc : 57|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ _6011_Einschalt_Missionsmodul_Schalter_X2_T_PK1_87 : 56|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+BO_ 912 PDO3_0x390 : 8 STRG
+ SG_ OT_Grenzwert_aktuell : 0|16@1+ (0.00100000000,0) [0|0] "V" Vector__XXX
+ SG_ UT_Grenzwert_aktuell : 16|16@1+ (0.00100000000,0) [0|0] "V" Vector__XXX
+ SG_ OT_Grenzwert_gespeichert : 32|16@1+ (0.00100000000,0) [0|0] "V" Vector__XXX
+ SG_ UT_Grenzwert_gespeichert : 48|16@1+ (0.00100000000,0) [0|0] "V" Vector__XXX
+BO_ 1168 PDO4_0x490 : 8 STRG
+ SG_ Anzahl_Notabfahrten_mit_Notab_Taster_Ausloesung : 0|16@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Anzahl_Notabfahrten_mit_ROPS_Ausloesung : 16|16@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Anzahl_Auf_Ab_Fahrzyklen : 32|16@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ nc : 55|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ nc : 54|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ nc : 53|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ nc : 52|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ nc : 51|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ nc : 50|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ nc : 49|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Freigabe_zur_Speicherung : 48|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Servicecounter_Anzahl_Notabfahrten_ : 56|8@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+BO_ 913 PDO7_0x391 : 8 STRG
+ SG_ Wert_des_Positionssensors_bei_Ausloesung : 0|16@1+ (0.00100000000,0) [0|0] "V" Vector__XXX
+ SG_ Wert_des_Positionssensors_bei_1__alternativen_Ausloesung : 16|16@1+ (0.00100000000,0) [0|0] "V" Vector__XXX
+ SG_ nc : 39|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ nc : 38|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ nc : 37|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ nc : 36|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ nc : 35|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ nc : 34|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Ausloeser_der_Notabfahrt : 33|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Ausloeser_der_Notabfahrt_2 : 32|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Fehlernummer__die_die_DMC_LED_anzeigt : 40|8@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Ladestatus_USV12V_in__ : 48|8@1+ (1.00000000000,0) [0|0] "%" Vector__XXX
+ SG_ Ladestatus_USV48V_in__ : 56|8@1+ (1.00000000000,0) [0|0] "%" Vector__XXX
+BO_ 1169 PDO8_0x491 : 8 STRG
+ SG_ Stand_Betriebsstundenzaehler_bei_Ausloesung : 0|32@1+ (1.00000000000,0) [0|0] "5 Minuten/Bit" Vector__XXX
+ SG_ Zeit_1__alternativen_Ausloesung : 32|16@1+ (1.00000000000,0) [0|0] "ms" Vector__XXX
+ SG_ Ausloesung_bis_zur_Betaetigung_des_Fanghakenschalter : 48|16@1+ (1.00000000000,0) [0|0] "ms" Vector__XXX
+BO_ 402 PDO9_0x192 : 8 STRG
+ SG_ Interner_Fehler_63 : 63|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Interner_Fehler_62 : 62|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Interner_Fehler_61 : 61|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Interner_Fehler_60 : 60|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Interner_Fehler_59 : 59|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Interner_Fehler_58 : 58|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Interner_Fehler_57 : 57|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Interner_Fehler_56 : 56|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Interner_Fehler_55 : 55|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Interner_Fehler_54 : 54|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Interner_Fehler_53 : 53|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Interner_Fehler_52 : 52|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Interner_Fehler_51 : 51|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Interner_Fehler_50 : 50|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Interner_Fehler_49 : 49|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Interner_Fehler_48 : 48|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Interner_Fehler_47 : 47|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Interner_Fehler_46 : 46|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Interner_Fehler_45 : 45|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Interner_Fehler_44 : 44|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Interner_Fehler_43 : 43|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Interner_Fehler_42 : 42|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Interner_Fehler_41 : 41|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Interner_Fehler_40 : 40|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Interner_Fehler_39 : 39|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Interner_Fehler_38 : 38|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Interner_Fehler_37 : 37|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Interner_Fehler_36 : 36|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Interner_Fehler_35 : 35|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Interner_Fehler_34 : 34|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Interner_Fehler_33 : 33|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Interner_Fehler_32 : 32|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Interner_Fehler_31 : 31|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Interner_Fehler_30 : 30|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Interner_Fehler_29 : 29|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Interner_Fehler_28 : 28|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Interner_Fehler_27 : 27|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Interner_Fehler_26 : 26|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Interner_Fehler_25 : 25|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Interner_Fehler_24 : 24|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Interner_Fehler_23 : 23|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Interner_Fehler_22 : 22|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Interner_Fehler_21 : 21|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Interner_Fehler_20 : 20|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Interner_Fehler_19 : 19|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Interner_Fehler_18 : 18|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Interner_Fehler_17 : 17|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Interner_Fehler_16 : 16|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Interner_Fehler_15 : 15|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Interner_Fehler_14 : 14|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Interner_Fehler_13 : 13|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Interner_Fehler_12 : 12|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Interner_Fehler_11 : 11|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Interner_Fehler_10 : 10|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Interner_Fehler_9 : 9|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Interner_Fehler_8 : 8|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Interner_Fehler_7 : 7|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Interner_Fehler_6 : 6|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Interner_Fehler_5 : 5|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Interner_Fehler_4 : 4|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Interner_Fehler_3 : 3|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Interner_Fehler_2 : 2|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Interner_Fehler_1 : 1|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Interner_Fehler_0 : 0|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+BO_ 658 PDO10_0x292 : 8 STRG
+ SG_ Interner_Fehler_127 : 63|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Interner_Fehler_126 : 62|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Interner_Fehler_125 : 61|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Interner_Fehler_124 : 60|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Interner_Fehler_123 : 59|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Interner_Fehler_122 : 58|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Interner_Fehler_121 : 57|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Interner_Fehler_120 : 56|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Interner_Fehler_119 : 55|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Interner_Fehler_118 : 54|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Interner_Fehler_117 : 53|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Interner_Fehler_116 : 52|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Interner_Fehler_115 : 51|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Interner_Fehler_114 : 50|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Interner_Fehler_113 : 49|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Interner_Fehler_112 : 48|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Interner_Fehler_111 : 47|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Interner_Fehler_110 : 46|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Interner_Fehler_109 : 45|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Interner_Fehler_108 : 44|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Interner_Fehler_107 : 43|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Interner_Fehler_106 : 42|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Interner_Fehler_105 : 41|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Interner_Fehler_104 : 40|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Interner_Fehler_103 : 39|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Interner_Fehler_102 : 38|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Interner_Fehler_101 : 37|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Interner_Fehler_100 : 36|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Interner_Fehler_99 : 35|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Interner_Fehler_98 : 34|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Interner_Fehler_97 : 33|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Interner_Fehler_96 : 32|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Interner_Fehler_95 : 31|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Interner_Fehler_94 : 30|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Interner_Fehler_93 : 29|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Interner_Fehler_92 : 28|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Interner_Fehler_91 : 27|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Interner_Fehler_90 : 26|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Interner_Fehler_89 : 25|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Interner_Fehler_88 : 24|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Interner_Fehler_87 : 23|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Interner_Fehler_86 : 22|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Interner_Fehler_85 : 21|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Interner_Fehler_84 : 20|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Interner_Fehler_83 : 19|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Interner_Fehler_82 : 18|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Interner_Fehler_81 : 17|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Interner_Fehler_80 : 16|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Interner_Fehler_79 : 15|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Interner_Fehler_78 : 14|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Interner_Fehler_77 : 13|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Interner_Fehler_76 : 12|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Interner_Fehler_75 : 11|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Interner_Fehler_74 : 10|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Interner_Fehler_73 : 9|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Interner_Fehler_72 : 8|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Interner_Fehler_71 : 7|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Interner_Fehler_70 : 6|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Interner_Fehler_69 : 5|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Interner_Fehler_68 : 4|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Interner_Fehler_67 : 3|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Interner_Fehler_66 : 2|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Interner_Fehler_65 : 1|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Interner_Fehler_64 : 0|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+BO_ 914 PDO11_0x392 : 8 STRG
+ SG_ Fehlbedienung_263 : 63|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Fehlbedienung_262 : 62|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Fehlbedienung_261 : 61|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Fehlbedienung_260 : 60|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Fehlbedienung_259 : 59|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Fehlbedienung_258 : 58|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Fehlbedienung_257 : 57|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Fehlbedienung_256 : 56|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Fehlbedienung_255 : 55|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Fehlbedienung_254 : 54|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Fehlbedienung_253 : 53|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Fehlbedienung_252 : 52|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Fehlbedienung_251 : 51|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Fehlbedienung_250 : 50|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Fehlbedienung_249 : 49|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Fehlbedienung_248 : 48|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Fehlbedienung_247 : 47|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Fehlbedienung_246 : 46|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Fehlbedienung_245 : 45|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Fehlbedienung_244 : 44|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Fehlbedienung_243 : 43|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Fehlbedienung_242 : 42|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Fehlbedienung_241 : 41|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Fehlbedienung_240 : 40|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Fehlbedienung_239 : 39|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Fehlbedienung_238 : 38|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Fehlbedienung_237 : 37|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Fehlbedienung_236 : 36|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Fehlbedienung_235 : 35|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Fehlbedienung_234 : 34|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Fehlbedienung_233 : 33|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Fehlbedienung_232 : 32|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Fehlbedienung_231 : 31|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Fehlbedienung_230 : 30|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Fehlbedienung_229 : 29|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Fehlbedienung_228 : 28|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Fehlbedienung_227 : 27|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Fehlbedienung_226 : 26|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Fehlbedienung_225 : 25|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Fehlbedienung_224 : 24|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Fehlbedienung_223 : 23|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Fehlbedienung_222 : 22|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Fehlbedienung_221 : 21|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Fehlbedienung_220 : 20|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Fehlbedienung_219 : 19|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Fehlbedienung_218 : 18|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Fehlbedienung_217 : 17|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Fehlbedienung_216 : 16|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Fehlbedienung_215 : 15|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Fehlbedienung_214 : 14|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Fehlbedienung_213 : 13|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Fehlbedienung_212 : 12|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Fehlbedienung_211 : 11|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Fehlbedienung_210 : 10|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Fehlbedienung_209 : 9|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Fehlbedienung_208 : 8|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Fehlbedienung_207 : 7|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Fehlbedienung_206 : 6|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Fehlbedienung_205 : 5|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Fehlbedienung_204 : 4|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Fehlbedienung_203 : 3|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Fehlbedienung_202 : 2|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Fehlbedienung_201 : 1|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Fehlbedienung_200 : 0|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+BO_ 1170 PDO12_0x492 : 8 STRG
+ SG_ Bedienhinweis_463 : 63|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Bedienhinweis_462 : 62|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Bedienhinweis_461 : 61|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Bedienhinweis_460 : 60|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Bedienhinweis_459 : 59|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Bedienhinweis_458 : 58|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Bedienhinweis_457 : 57|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Bedienhinweis_456 : 56|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Bedienhinweis_455 : 55|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Bedienhinweis_454 : 54|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Bedienhinweis_453 : 53|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Bedienhinweis_452 : 52|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Bedienhinweis_451 : 51|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Bedienhinweis_450 : 50|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Bedienhinweis_449 : 49|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Bedienhinweis_448 : 48|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Bedienhinweis_447 : 47|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Bedienhinweis_446 : 46|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Bedienhinweis_445 : 45|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Bedienhinweis_444 : 44|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Bedienhinweis_443 : 43|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Bedienhinweis_442 : 42|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Bedienhinweis_441 : 41|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Bedienhinweis_440 : 40|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Bedienhinweis_439 : 39|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Bedienhinweis_438 : 38|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Bedienhinweis_437 : 37|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Bedienhinweis_436 : 36|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Bedienhinweis_435 : 35|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Bedienhinweis_434 : 34|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Bedienhinweis_433 : 33|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Bedienhinweis_432 : 32|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Bedienhinweis_431 : 31|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Bedienhinweis_430 : 30|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Bedienhinweis_429 : 29|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Bedienhinweis_428 : 28|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Bedienhinweis_427 : 27|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Bedienhinweis_426 : 26|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Bedienhinweis_425 : 25|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Bedienhinweis_424 : 24|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Bedienhinweis_423 : 23|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Bedienhinweis_422 : 22|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Bedienhinweis_421 : 21|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Bedienhinweis_420 : 20|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Bedienhinweis_419 : 19|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Bedienhinweis_418 : 18|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Bedienhinweis_417 : 17|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Bedienhinweis_416 : 16|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Bedienhinweis_415 : 15|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Bedienhinweis_414 : 14|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Bedienhinweis_413 : 13|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Bedienhinweis_412 : 12|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Bedienhinweis_411 : 11|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Bedienhinweis_410 : 10|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Bedienhinweis_409 : 9|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Bedienhinweis_408 : 8|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Bedienhinweis_407 : 7|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Bedienhinweis_406 : 6|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Bedienhinweis_405 : 5|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Bedienhinweis_404 : 4|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Bedienhinweis_403 : 3|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Bedienhinweis_402 : 2|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Bedienhinweis_401 : 1|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Bedienhinweis_400 : 0|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+BO_ 403 PDO13_0x193 : 8 STRG
+ SG_ Ausloesung_Notab_Interner_Fehler_63 : 63|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Ausloesung_Notab_Interner_Fehler_62 : 62|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Ausloesung_Notab_Interner_Fehler_61 : 61|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Ausloesung_Notab_Interner_Fehler_60 : 60|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Ausloesung_Notab_Interner_Fehler_59 : 59|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Ausloesung_Notab_Interner_Fehler_58 : 58|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Ausloesung_Notab_Interner_Fehler_57 : 57|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Ausloesung_Notab_Interner_Fehler_56 : 56|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Ausloesung_Notab_Interner_Fehler_55 : 55|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Ausloesung_Notab_Interner_Fehler_54 : 54|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Ausloesung_Notab_Interner_Fehler_53 : 53|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Ausloesung_Notab_Interner_Fehler_52 : 52|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Ausloesung_Notab_Interner_Fehler_51 : 51|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Ausloesung_Notab_Interner_Fehler_50 : 50|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Ausloesung_Notab_Interner_Fehler_49 : 49|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Ausloesung_Notab_Interner_Fehler_48 : 48|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Ausloesung_Notab_Interner_Fehler_47 : 47|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Ausloesung_Notab_Interner_Fehler_46 : 46|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Ausloesung_Notab_Interner_Fehler_45 : 45|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Ausloesung_Notab_Interner_Fehler_44 : 44|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Ausloesung_Notab_Interner_Fehler_43 : 43|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Ausloesung_Notab_Interner_Fehler_42 : 42|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Ausloesung_Notab_Interner_Fehler_41 : 41|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Ausloesung_Notab_Interner_Fehler_40 : 40|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Ausloesung_Notab_Interner_Fehler_39 : 39|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Ausloesung_Notab_Interner_Fehler_38 : 38|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Ausloesung_Notab_Interner_Fehler_37 : 37|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Ausloesung_Notab_Interner_Fehler_36 : 36|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Ausloesung_Notab_Interner_Fehler_35 : 35|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Ausloesung_Notab_Interner_Fehler_34 : 34|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Ausloesung_Notab_Interner_Fehler_33 : 33|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Ausloesung_Notab_Interner_Fehler_32 : 32|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Ausloesung_Notab_Interner_Fehler_31 : 31|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Ausloesung_Notab_Interner_Fehler_30 : 30|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Ausloesung_Notab_Interner_Fehler_29 : 29|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Ausloesung_Notab_Interner_Fehler_28 : 28|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Ausloesung_Notab_Interner_Fehler_27 : 27|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Ausloesung_Notab_Interner_Fehler_26 : 26|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Ausloesung_Notab_Interner_Fehler_25 : 25|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Ausloesung_Notab_Interner_Fehler_24 : 24|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Ausloesung_Notab_Interner_Fehler_23 : 23|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Ausloesung_Notab_Interner_Fehler_22 : 22|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Ausloesung_Notab_Interner_Fehler_21 : 21|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Ausloesung_Notab_Interner_Fehler_20 : 20|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Ausloesung_Notab_Interner_Fehler_19 : 19|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Ausloesung_Notab_Interner_Fehler_18 : 18|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Ausloesung_Notab_Interner_Fehler_17 : 17|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Ausloesung_Notab_Interner_Fehler_16 : 16|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Ausloesung_Notab_Interner_Fehler_15 : 15|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Ausloesung_Notab_Interner_Fehler_14 : 14|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Ausloesung_Notab_Interner_Fehler_13 : 13|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Ausloesung_Notab_Interner_Fehler_12 : 12|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Ausloesung_Notab_Interner_Fehler_11 : 11|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Ausloesung_Notab_Interner_Fehler_10 : 10|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Ausloesung_Notab_Interner_Fehler_9 : 9|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Ausloesung_Notab_Interner_Fehler_8 : 8|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Ausloesung_Notab_Interner_Fehler_7 : 7|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Ausloesung_Notab_Interner_Fehler_6 : 6|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Ausloesung_Notab_Interner_Fehler_5 : 5|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Ausloesung_Notab_Interner_Fehler_4 : 4|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Ausloesung_Notab_Interner_Fehler_3 : 3|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Ausloesung_Notab_Interner_Fehler_2 : 2|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Ausloesung_Notab_Interner_Fehler_1 : 1|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Ausloesung_Notab_Interner_Fehler_0 : 0|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+BO_ 659 PDO14_0x293 : 8 STRG
+ SG_ Ausloesung_Notab_Interner_Fehler_127 : 63|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Ausloesung_Notab_Interner_Fehler_126 : 62|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Ausloesung_Notab_Interner_Fehler_125 : 61|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Ausloesung_Notab_Interner_Fehler_124 : 60|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Ausloesung_Notab_Interner_Fehler_123 : 59|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Ausloesung_Notab_Interner_Fehler_122 : 58|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Ausloesung_Notab_Interner_Fehler_121 : 57|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Ausloesung_Notab_Interner_Fehler_120 : 56|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Ausloesung_Notab_Interner_Fehler_119 : 55|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Ausloesung_Notab_Interner_Fehler_118 : 54|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Ausloesung_Notab_Interner_Fehler_117 : 53|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Ausloesung_Notab_Interner_Fehler_116 : 52|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Ausloesung_Notab_Interner_Fehler_115 : 51|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Ausloesung_Notab_Interner_Fehler_114 : 50|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Ausloesung_Notab_Interner_Fehler_113 : 49|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Ausloesung_Notab_Interner_Fehler_112 : 48|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Ausloesung_Notab_Interner_Fehler_111 : 47|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Ausloesung_Notab_Interner_Fehler_110 : 46|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Ausloesung_Notab_Interner_Fehler_109 : 45|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Ausloesung_Notab_Interner_Fehler_108 : 44|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Ausloesung_Notab_Interner_Fehler_107 : 43|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Ausloesung_Notab_Interner_Fehler_106 : 42|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Ausloesung_Notab_Interner_Fehler_105 : 41|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Ausloesung_Notab_Interner_Fehler_104 : 40|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Ausloesung_Notab_Interner_Fehler_103 : 39|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Ausloesung_Notab_Interner_Fehler_102 : 38|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Ausloesung_Notab_Interner_Fehler_101 : 37|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Ausloesung_Notab_Interner_Fehler_100 : 36|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Ausloesung_Notab_Interner_Fehler_99 : 35|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Ausloesung_Notab_Interner_Fehler_98 : 34|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Ausloesung_Notab_Interner_Fehler_97 : 33|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Ausloesung_Notab_Interner_Fehler_96 : 32|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Ausloesung_Notab_Interner_Fehler_95 : 31|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Ausloesung_Notab_Interner_Fehler_94 : 30|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Ausloesung_Notab_Interner_Fehler_93 : 29|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Ausloesung_Notab_Interner_Fehler_92 : 28|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Ausloesung_Notab_Interner_Fehler_91 : 27|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Ausloesung_Notab_Interner_Fehler_90 : 26|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Ausloesung_Notab_Interner_Fehler_89 : 25|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Ausloesung_Notab_Interner_Fehler_88 : 24|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Ausloesung_Notab_Interner_Fehler_87 : 23|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Ausloesung_Notab_Interner_Fehler_86 : 22|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Ausloesung_Notab_Interner_Fehler_85 : 21|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Ausloesung_Notab_Interner_Fehler_84 : 20|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Ausloesung_Notab_Interner_Fehler_83 : 19|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Ausloesung_Notab_Interner_Fehler_82 : 18|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Ausloesung_Notab_Interner_Fehler_81 : 17|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Ausloesung_Notab_Interner_Fehler_80 : 16|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Ausloesung_Notab_Interner_Fehler_79 : 15|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Ausloesung_Notab_Interner_Fehler_78 : 14|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Ausloesung_Notab_Interner_Fehler_77 : 13|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Ausloesung_Notab_Interner_Fehler_76 : 12|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Ausloesung_Notab_Interner_Fehler_75 : 11|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Ausloesung_Notab_Interner_Fehler_74 : 10|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Ausloesung_Notab_Interner_Fehler_73 : 9|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Ausloesung_Notab_Interner_Fehler_72 : 8|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Ausloesung_Notab_Interner_Fehler_71 : 7|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Ausloesung_Notab_Interner_Fehler_70 : 6|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Ausloesung_Notab_Interner_Fehler_69 : 5|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Ausloesung_Notab_Interner_Fehler_68 : 4|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Ausloesung_Notab_Interner_Fehler_67 : 3|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Ausloesung_Notab_Interner_Fehler_66 : 2|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Ausloesung_Notab_Interner_Fehler_65 : 1|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Ausloesung_Notab_Interner_Fehler_64 : 0|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+BO_ 915 PDO15_0x393 : 8 STRG
+ SG_ Ausloesung_Notab_Interner_Fehlbedienung_263 : 63|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Ausloesung_Notab_Interner_Fehlbedienung_262 : 62|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Ausloesung_Notab_Interner_Fehlbedienung_261 : 61|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Ausloesung_Notab_Interner_Fehlbedienung_260 : 60|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Ausloesung_Notab_Interner_Fehlbedienung_259 : 59|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Ausloesung_Notab_Interner_Fehlbedienung_258 : 58|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Ausloesung_Notab_Interner_Fehlbedienung_257 : 57|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Ausloesung_Notab_Interner_Fehlbedienung_256 : 56|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Ausloesung_Notab_Interner_Fehlbedienung_255 : 55|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Ausloesung_Notab_Interner_Fehlbedienung_254 : 54|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Ausloesung_Notab_Interner_Fehlbedienung_253 : 53|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Ausloesung_Notab_Interner_Fehlbedienung_252 : 52|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Ausloesung_Notab_Interner_Fehlbedienung_251 : 51|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Ausloesung_Notab_Interner_Fehlbedienung_250 : 50|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Ausloesung_Notab_Interner_Fehlbedienung_249 : 49|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Ausloesung_Notab_Interner_Fehlbedienung_248 : 48|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Ausloesung_Notab_Interner_Fehlbedienung_247 : 47|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Ausloesung_Notab_Interner_Fehlbedienung_246 : 46|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Ausloesung_Notab_Interner_Fehlbedienung_245 : 45|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Ausloesung_Notab_Interner_Fehlbedienung_244 : 44|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Ausloesung_Notab_Interner_Fehlbedienung_243 : 43|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Ausloesung_Notab_Interner_Fehlbedienung_242 : 42|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Ausloesung_Notab_Interner_Fehlbedienung_241 : 41|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Ausloesung_Notab_Interner_Fehlbedienung_240 : 40|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Ausloesung_Notab_Interner_Fehlbedienung_239 : 39|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Ausloesung_Notab_Interner_Fehlbedienung_238 : 38|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Ausloesung_Notab_Interner_Fehlbedienung_237 : 37|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Ausloesung_Notab_Interner_Fehlbedienung_236 : 36|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Ausloesung_Notab_Interner_Fehlbedienung_235 : 35|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Ausloesung_Notab_Interner_Fehlbedienung_234 : 34|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Ausloesung_Notab_Interner_Fehlbedienung_233 : 33|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Ausloesung_Notab_Interner_Fehlbedienung_232 : 32|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Ausloesung_Notab_Interner_Fehlbedienung_231 : 31|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Ausloesung_Notab_Interner_Fehlbedienung_230 : 30|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Ausloesung_Notab_Interner_Fehlbedienung_229 : 29|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Ausloesung_Notab_Interner_Fehlbedienung_228 : 28|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Ausloesung_Notab_Interner_Fehlbedienung_227 : 27|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Ausloesung_Notab_Interner_Fehlbedienung_226 : 26|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Ausloesung_Notab_Interner_Fehlbedienung_225 : 25|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Ausloesung_Notab_Interner_Fehlbedienung_224 : 24|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Ausloesung_Notab_Interner_Fehlbedienung_223 : 23|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Ausloesung_Notab_Interner_Fehlbedienung_222 : 22|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Ausloesung_Notab_Interner_Fehlbedienung_221 : 21|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Ausloesung_Notab_Interner_Fehlbedienung_220 : 20|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Ausloesung_Notab_Interner_Fehlbedienung_219 : 19|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Ausloesung_Notab_Interner_Fehlbedienung_218 : 18|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Ausloesung_Notab_Interner_Fehlbedienung_217 : 17|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Ausloesung_Notab_Interner_Fehlbedienung_216 : 16|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Ausloesung_Notab_Interner_Fehlbedienung_215 : 15|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Ausloesung_Notab_Interner_Fehlbedienung_214 : 14|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Ausloesung_Notab_Interner_Fehlbedienung_213 : 13|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Ausloesung_Notab_Interner_Fehlbedienung_212 : 12|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Ausloesung_Notab_Interner_Fehlbedienung_211 : 11|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Ausloesung_Notab_Interner_Fehlbedienung_210 : 10|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Ausloesung_Notab_Interner_Fehlbedienung_209 : 9|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Ausloesung_Notab_Interner_Fehlbedienung_208 : 8|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Ausloesung_Notab_Interner_Fehlbedienung_207 : 7|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Ausloesung_Notab_Interner_Fehlbedienung_206 : 6|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Ausloesung_Notab_Interner_Fehlbedienung_205 : 5|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Ausloesung_Notab_Interner_Fehlbedienung_204 : 4|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Ausloesung_Notab_Interner_Fehlbedienung_203 : 3|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Ausloesung_Notab_Interner_Fehlbedienung_202 : 2|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Ausloesung_Notab_Interner_Fehlbedienung_201 : 1|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Ausloesung_Notab_Interner_Fehlbedienung_200 : 0|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+BO_ 1171 PDO16_0x493 : 8 STRG
+ SG_ Zurueckgelegte_Wegstrecke_des_Systems_in_V : 0|32@1+ (1.00000000000,0) [0|0] "V" Vector__XXX
+ SG_ Adresse_Abort_Register_R13 : 32|32@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+BO_ 404 PDO17_0x194 : 8 STRG
+ SG_ Adresse_Abort_Register_R14 : 0|32@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Adresse_Abort_Register_Reserve : 32|32@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+BO_ 660 PDO18_0x294 : 8 STRG
+ SG_ _6098_12VnachK11 : 0|16@1+ (0.00464919700,0) [0|0] "V" Vector__XXX
+ SG_ _6187_AusgangT2 : 16|16@1+ (0.00464919700,0) [0|0] "V" Vector__XXX
+ SG_ _6154_BSW_com1_1_24V : 32|16@1+ (0.00860480700,0) [0|0] "V" Vector__XXX
+ SG_ _6156_BSW__0____24V : 48|16@1+ (0.00860480700,0) [0|0] "V" Vector__XXX
+BO_ 916 PDO19_0x394 : 8 STRG
+ SG_ _6157_BSW_1___24V : 0|16@1+ (0.00860480700,0) [0|0] "V" Vector__XXX
+ SG_ _6160_BSW_1___48V : 16|16@1+ (0.01343101300,0) [0|0] "V" Vector__XXX
+ SG_ _6158_BSW___2____48V : 32|16@1+ (0.00860480700,0) [0|0] "V" Vector__XXX
+ SG_ _6163_BSW_com2_1_48V : 48|16@1+ (0.01343101300,0) [0|0] "V" Vector__XXX
+BO_ 1172 PDO20_0x494 : 8 STRG
+ SG_ _6161_BSW__0____48V : 0|16@1+ (0.01343101300,0) [0|0] "V" Vector__XXX
+ SG_ _6185_TemperaturMotor : 16|16@1+ (0.00122100100,0) [0|0] "V" Vector__XXX
+ SG_ _6076_T1_Ist_Spannung_Out : 32|16@1+ (0.00122100100,0) [0|0] "V" Vector__XXX
+ SG_ _6077_T1_Ist_Strom_Out : 48|16@1+ (0.00122100100,0) [0|0] "V" Vector__XXX
+BO_ 405 PDO21_0x195 : 8 STRG
+ SG_ _6082_C1_Temperatur : 0|16@1+ (0.00122070300,0) [0|0] "V" Vector__XXX
+ SG_ _6069_48V_nach_F10_102 : 16|16@1+ (0.01343101300,0) [0|0] "V" Vector__XXX
+ SG_ _6070_48V_nach_F11_103 : 32|16@1+ (0.01343101300,0) [0|0] "V" Vector__XXX
+ SG_ _6061_BG1_K3_87b : 48|16@1+ (0.01343101300,0) [0|0] "V" Vector__XXX
+BO_ 661 PDO22_0x295 : 8 STRG
+ SG_ _6088_Notabtaster_com1 : 0|16@1+ (0.00464919700,0) [0|0] "V" Vector__XXX
+ SG_ _6166_Notabtaster_nc1_Funktion : 16|16@1+ (0.00464919700,0) [0|0] "V" Vector__XXX
+ SG_ _6167_Notabtaster_no2_Funktion : 32|16@1+ (0.00464919700,0) [0|0] "V" Vector__XXX
+ SG_ _6009_Versorgung_28V_fuer_T1 : 48|16@1+ (0.00860480700,0) [0|0] "V" Vector__XXX
+BO_ 917 PDO23_0x395 : 8 STRG
+ SG_ _6089_Versorgung_28V_fuer_T2 : 0|16@1+ (0.00860480700,0) [0|0] "V" Vector__XXX
+ SG_ _6088_12V_nach_F13_301 : 16|16@1+ (0.00464919700,0) [0|0] "V" Vector__XXX
+ SG_ _6087_12V_nach_F12_300 : 32|16@1+ (0.00464919700,0) [0|0] "V" Vector__XXX
+ SG_ _6099_12V_am_C2 : 48|16@1+ (0.00464919700,0) [0|0] "V" Vector__XXX
+BO_ 1173 PDO24_0x495 : 8 STRG
+ SG_ _6007_Ueberwachung_PK2_86 : 0|16@1+ (0.00860480700,0) [0|0] "V" Vector__XXX
+ SG_ _6159_BSW___2____48V : 16|16@1+ (0.01343101300,0) [0|0] "V" Vector__XXX
+ SG_ _6067_48V_Versorgung_Motor : 32|16@1+ (0.01343101300,0) [0|0] "V" Vector__XXX
+ SG_ _6053_BSW___1_an_K5 : 48|16@1+ (0.00860480700,0) [0|0] "V" Vector__XXX
+BO_ 406 PDO25_0x196 : 8 STRG
+ SG_ _6056_K1_86 : 0|16@1+ (0.01343101300,0) [0|0] "V" Vector__XXX
+ SG_ _6068_48V_Versorgung_Bremse__im_ISB : 16|16@1+ (0.01343101300,0) [0|0] "V" Vector__XXX
+ SG_ _6055_BG1_K1_87b : 32|16@1+ (0.00860480700,0) [0|0] "V" Vector__XXX
+ SG_ __Vers__IDA : 48|16@1+ (0.00860480700,0) [0|0] "V" Vector__XXX
+BO_ 662 PDO26_0x296 : 8 STRG
+ SG_ _6112_ulPotiPin1Vcc : 0|16@1+ (0.00100000000,0) [0|0] "V" Vector__XXX
+ SG_ _6113_ulPotiPin2Schleifer : 16|16@1+ (0.00100000000,0) [0|0] "V" Vector__XXX
+ SG_ _6005_ulVersorgungBremse : 32|16@1+ (0.00704733700,0) [0|0] "V" Vector__XXX
+ SG_ _6000_ulUeberwK12 : 48|16@1+ (0.00704733700,0) [0|0] "V" Vector__XXX
+BO_ 918 PDO27_0x396 : 8 STRG
+ SG_ _6115_ulK6_Rollover : 0|16@1+ (0.00000000000,0) [0|0] "V" Vector__XXX
+ SG_ _6092_ulUebBremse : 16|16@1+ (0.00100000000,0) [0|0] "V" Vector__XXX
+ SG_ _6066_ulUebMotor : 32|16@1+ (0.01100000000,0) [0|0] "V" Vector__XXX
+BO_ 1174 PDO28_0x496 : 8 STRG
+ SG_ _6006_Selbsthaltung_Batterierelais : 7|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ _6009_LadewandlerT1 : 6|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ _6013_DMC_RW : 5|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ _6012_DMC_FW : 4|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ _6014_DMC_FS : 3|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ _6015_DMC_Seat : 2|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ _6095_Testsignal_Out : 1|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ _6178_Hupe : 0|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ nc : 15|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ nc : 14|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ nc : 13|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ nc : 12|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ nc : 11|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ __Bremse : 10|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ _6171_LED_Gruen : 9|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ _6170_LED_Rot : 8|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ __AufwBed_7_D036_2_low_Motorueberwachung : 23|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ __AufwBed_6_Versorgung_DMC : 22|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ __AufwBed_5_Spulenwiderstand_Bremse : 21|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ __AufwBed_4_Versorgungsspannung_Bremse : 20|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ __AufwBed_3_Keyswitch_D016 : 19|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ __AufwBed_2_Fanghakenschalter : 18|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ __AufwBed_1_Endschalter_OT_UT_FHS : 17|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ __AufwBed_0_Taster_Auf : 16|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ __AufwBed_15_Auflastung : 31|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ __AufwBed_14_Fehlermeldungen_erlauben_Komfortfahrt : 30|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ __AufwBed_13_BSW_Plausibilitaet : 29|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ __AufwBed_12_DMC_LED : 28|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ __AufwBed_11_Timeout : 27|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ __AufwBed_10_Einmessfahrt_abgeschlossen : 26|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ __AufwBed_9_OT_nicht_ueberschritten : 25|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ __AufwBed_8_Motortemp_ok : 24|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ nc : 32|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ __AbwBed_7_D036_2_low_Motorueberwachung : 47|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ __AbwBed_6_Versorgung_DMC : 46|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ __AbwBed_5_Spulenwiderstand_Bremse : 45|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ __AbwBed_4_Versorgungsspannung_Bremse : 44|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ __AbwBed_3_Keyswitch_D016 : 43|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ __AbwBed_2_Fanghakenschalter : 42|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ __AbwBed_1_Endschalter_OT_UT_FHS : 41|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ __AbwBed_0_Taster_Ab : 40|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ __AbwBed_15_Auflastung : 55|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ __AbwBed_14_Fehlermeldungen_erlauben_Komfortfahrt : 54|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ __AbwBed_13_BSW_Plausibilitaet : 53|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ __AbwBed_12_DMC_LED : 52|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ __AbwBed_11_Timeout : 51|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ __AbwBed_10_Einmessfahrt_abgeschlossen : 50|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ __AbwBed_9_OT_nicht_ueberschritten : 49|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ __AbwBed_8_Motortemp_ok : 48|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ nc : 56|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+BO_ 407 PDO29_0x197 : 8 STRG
+ SG_ __c_StartStop : 0|8@1- (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ FMC_Fehler_Adresse : 8|32@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ __Temp_C1 : 40|8@1- (1.00000000000,0) [0|0] "°C" Vector__XXX
+BO_ 663 PDO30_0x297 : 8 STRG
+ SG_ ul_SPI_Error_Counter : 0|32@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ __DAC_DMC_Geschwindigkeit : 32|16@1+ (0.00100000000,0) [0|0] "V" Vector__XXX
+ SG_ __Mainloop_Durchlaufzeit_in_us : 48|16@1+ (1.00000000000,0) [0|0] "us" Vector__XXX
+BO_ 1824 PDO0_0x720 : 8 IDA
+ SG_ Bootup_message_IDA : 0|8@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+BO_ 416 PDO1_0x1A0 : 8 IDA
+ SG_ Alive_Counter : 0|8@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Status_Sitz_4 : 15|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Status_Sitz_3 : 12|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Status_Sitz_2 : 10|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Status_Sitz_1 : 8|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Ruecksetzen_Servicecounter_Notab : 23|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Ruecksetzen_Fehlerspeicher : 22|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ aktuelle_UT_OT_Grenzwerte_speichern : 21|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Langsamfahrt : 20|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ nc : 19|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Alive_fuer_alle_IDA_Knoten : 18|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Alive_Getriebe : 17|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Getriebe_laeuft : 16|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Sitz_1_belegt : 24|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Sitz_2_belegt : 25|1@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ Betriebsstunden : 32|32@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+BO_ 672 PDO2_0x2A0 : 8 IDA
+ SG_ uc_Sollwert_Servicecounter : 0|8@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ nc : 8|8@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ nc : 16|8@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ nc : 24|8@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ nc : 32|8@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ nc : 40|8@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ nc : 48|8@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+ SG_ nc : 56|8@1+ (1.00000000000,0) [0|0] "" Vector__XXX
+
+
+CM_ SG_ 1808 Bootup_message_Strg "[] [] [] [0=Bootup, 5=Alive] Bootup message 0x00, dann Alive 0x05";
+CM_ SG_ 400 Alive_Counter "[] [] [] [Inkrement mit 2Hz] Alive Counterwird mit 2 Hz inkrementiert, auf 255 folgt 1; 0 = Initialisierungszustand; 1-255 Betriebszustand";
+CM_ SG_ 400 Motortemperatur "[] [] [] [] Motortemperatur in 1°C/Bit";
+CM_ SG_ 400 _6113_Positionssensor_Mittelabgriff_in_mV "[6113] [] [X11.11] [] Positionssensor Mittelabgriff in mV";
+CM_ SG_ 400 _6000_24V_Versorgung_an_K12_in_0_112V_Bit "[6000] [A014] [X3.46] [24V] 24V Versorgung an K12 in 0,112V/Bit";
+CM_ SG_ 400 _6099_Spannung_UltraCap_C2_in_0_074V_Bit "[6099] [A013] [X5.8] [[mV], 12V] Spannung UltraCap C2 in 0,074V/Bit";
+CM_ SG_ 400 _6067_6069_6070_Spannung_UltraCap_C1_in_0_288V_Bit "[6067_6069_6070] [] [] [] Spannung UltraCap C1 in 0,288V/Bit";
+CM_ SG_ 400 Release_Nummer "[] [] [] [] Release Nummer";
+CM_ SG_ 656 nc "[] [] [] [] nc";
+CM_ SG_ 656 nc "[] [] [] [] nc";
+CM_ SG_ 656 nc "[] [] [] [] nc";
+CM_ SG_ 656 nc "[] [] [] [] nc";
+CM_ SG_ 656 _6078_Status_T1 "[6078] [D002] [X5.16] [0=Fehler] Status T1, 0=Fehler";
+CM_ SG_ 656 _6159_BSW2 "[6159] [D025] [X6.4, X3.41, X4.7, X4.8] [1=aktiv] BSW2, 1=Aktiv";
+CM_ SG_ 656 _6160_BSW1 "[6160] [D024] [X3.40] [1=aktiv] BSW1, 1=Aktiv";
+CM_ SG_ 656 _6161_BSW0 "[6161] [D023] [X3.39] [1=aktiv] BSW0, 1=Aktiv";
+CM_ SG_ 656 _6111_UT_Schalter "[6111] [] [X11.9] [1=aktiv] UT Schalter, 1=Aktiv";
+CM_ SG_ 656 _6108_OT_Schalter "[6108] [] [X3.27] [1=aktiv] OT Schalter, 1=Aktiv";
+CM_ SG_ 656 _6184_Ueberwachung_Taster_Auf_Ab_E2_Auf "[6184] [] [X3.42] [0=aktiv] Überwachung Taster Auf/Ab E2 Auf, 0=Aktiv";
+CM_ SG_ 656 _6183_Ueberwachung_Taster_Auf_Ab_E2_Ab "[6183] [] [X3.44] [0=aktiv] Überwachung Taster Auf/Ab E2 Ab, 0=Aktiv";
+CM_ SG_ 656 _6179_Taster_AUF_AB_EB_1_Auf "[6179] [] [X3.24] [0=aktiv] Taster AUF/AB EB 1 Auf, 0=Aktiv";
+CM_ SG_ 656 _6180_Taster_AUF_AB_EB_1_Ab "[6180] [] [X3.22] [0=aktiv] Taster AUF/AB EB 1 Ab, 0=Aktiv";
+CM_ SG_ 656 _6018_Remote_LED "[6018] [] [X3.7] [0=LED Ein] Remote LED";
+CM_ SG_ 656 _6017_Key_Switch_DMC "[6017] [] [X3.1] [1=DMC Ein] Key Switch (DMC)";
+CM_ SG_ 656 nc "[] [] [] [] nc";
+CM_ SG_ 656 nc "[] [] [] [] nc";
+CM_ SG_ 656 nc "[] [] [] [] nc";
+CM_ SG_ 656 nc "[] [] [] [] nc";
+CM_ SG_ 656 _6080_Ueberwachung_C1_X1_2 "[6080] [D006] [X5.18] [0=UC Überspannung] Ueberwachung C1:X1.2, 0=Überspannung";
+CM_ SG_ 656 _6165_Notabtaster_no1 "[6165] [D041] [X4.3] [1=S2 nicht aktiv] Notabtaster no1, 0=Aktiv";
+CM_ SG_ 656 _6164_Notabtaster_nc1 "[6164] [D040] [X4.2] [0=S2 nicht aktiv] Notabtaster nc1, 0=Aktiv";
+CM_ SG_ 656 nc "[] [] [] [] nc";
+CM_ SG_ 656 _6120_Fanghakenschalter_S3_NO2 "[6120] [] [X3.30] [1=S3 nicht UT Notab] Fanghakenschalter S3 NO2, 0=Aktiv";
+CM_ SG_ 656 _6119_Fanghakenschalter_S3_NC2 "[6119] [] [X3.29] [0=S3 nicht UT Notab] Fanghakenschalter S3 NC2, 0=Aktiv";
+CM_ SG_ 656 __Ueberwachung_K5_2 "[] [D015] [-] [0=K5.2 angest.] Überwachung K5.2";
+CM_ SG_ 656 _6158_Ueberwachung_BSW_Ebene1_Stufe_2 "[6158] [D020] [X3.38] [1=aktiv] Überwachung BSW Ebene1 Stufe 2, 1=Aktiv";
+CM_ SG_ 656 _6157_Ueberwachung_BSW_Ebene1_Stufe_1 "[6157] [D019] [X3.37, X3.11, X3.12] [1=aktiv] Überwachung BSW Ebene1 Stufe 1, 1=Aktiv";
+CM_ SG_ 656 _6156_Ueberwachung_BSW_Ebene1_Stufe_0 "[6156] [D018] [X3.36] [1=aktiv] Überwachung BSW Ebene1 Stufe 0, 1=Aktiv";
+CM_ SG_ 656 _6176_Wartungsschalter_NC_21 "[6176] [] [X3.16] [1=aktiv] Wartungsschalter NC.21, 0=Aktiv";
+CM_ SG_ 656 _6175_Wartungsschalter_NO_13 "[6175] [] [X3.18] [0=aktiv] Wartungsschalter NO.13, 0=Aktiv";
+CM_ SG_ 656 nc "[] [] [] [] nc";
+CM_ SG_ 656 nc "[] [] [] [] nc";
+CM_ SG_ 656 nc "[] [] [] [] nc";
+CM_ SG_ 656 toggeln_d036_2 "[] [] [] [] toggeln_d036_2";
+CM_ SG_ 656 _6060_Ueberwachung_von_K1_K4_K8_Komparatorfenster "[6060] [D027.1] [X6.8] [0=K3.87y geschl. K2.87y geschl.] Überwachung von K1,K4,K8 Komparatorfenster";
+CM_ SG_ 656 _6096_Ueberwachung_Spulen_von_K10__K7 "[6096] [D046] [X7.3, X5.3, X5.4] [0=S3 nicht UT Notab] Überwachung Spulen von K10, K7";
+CM_ SG_ 656 _6118_Ueberwachung_S3_no_1 "[6118] [D048] [X7.4] [1=S3 nicht UT Notab] Überwachung S3 no 1";
+CM_ SG_ 656 _6096_Fanghaken_S3_com_1 "[6096] [D046] [X7.3, X5.3, X5.4] [0=S3 nicht UT Notab] Fanghaken S3 com 1";
+CM_ SG_ 656 _6060_Ueberwachung_von_K1_K4_K8_Lowside "[6060] [D027.2] [X6.8] [1=Spule K7,K10 i.O.] Überwachung von K1,K4,K8 Lowside";
+CM_ SG_ 656 _6019_DMC_M1 "[6019] [D038] [X6.14] [1=K3.88 geschl.] DMC M1, 1=K2.88 geschlossen";
+CM_ SG_ 656 _6020_DMC_M3 "[6020] [D037] [X6.13] [1=K2.88 geschl.] DMC M3, 1=K3.88 geschlossen";
+CM_ SG_ 656 _6063_Motorueberwachung_D036_2 "[6063] [D036.2] [X6.7] [1=Motor hat durchgang] Motorüberwachung D036.2, 1=Motor hat Durchgang";
+CM_ SG_ 656 _6063_Motorueberwachung_D036_1 "[6063] [D036.1] [X6.7] [BSW=2: 0=K4.88 geschl.] Motorüberwachung D036.1, in BSW2: 0=K4.88 geschlossen";
+CM_ SG_ 656 _6066_Motorueberwachung_D035 "[6066] [D035] [X6.6] [BSW=2: 0=Motor hat Durchgang] Motorüberwachung D035, in BSW2: 0=Motor hat Durchgang";
+CM_ SG_ 656 _6092_Bremsenueberwachung_D033_2 "[6092] [D033.2] [X10.A3] [1=K10 N.C closed] Bremsenüberwachung D033.2, 1=K10 N.C. geschlossen";
+CM_ SG_ 656 _6117_Ueberwachung_ROPS__R1__R2__K6 "[6117] [D050] [X7.2] [1=Fehler] Überwachung ROPS, R1, R2, K6, 1=Fehler";
+CM_ SG_ 656 __K8D_10_D49 "[] [D049] [-] [BSW=2: 1=K8 aktiv] K8D.10 D49";
+CM_ SG_ 656 _6092_Ueberwachung_Bremse_D033_1 "[6092] [D033.1] [X10.A3] [] Überwachung Bremse D033.1";
+CM_ SG_ 656 __K7G "[] [D061] [-] [] K7G";
+CM_ SG_ 656 __K7F "[] [D062] [-] [] K7F";
+CM_ SG_ 656 __K6G_nc "[] [D054] [-] [] K6G_nc";
+CM_ SG_ 656 __K6F_no "[] [D052] [-] [] K6F_no";
+CM_ SG_ 656 __K8G "[] [D059] [-] [] K8G";
+CM_ SG_ 656 __K8F "[] [D060] [-] [] K8F";
+CM_ SG_ 656 nc "[] [] [] [] nc";
+CM_ SG_ 656 nc "[] [] [] [] nc";
+CM_ SG_ 656 nc "[] [] [] [] nc";
+CM_ SG_ 656 nc "[] [] [] [] nc";
+CM_ SG_ 656 nc "[] [] [] [] nc";
+CM_ SG_ 656 nc "[] [] [] [] nc";
+CM_ SG_ 656 nc "[] [] [] [] nc";
+CM_ SG_ 656 _6011_Einschalt_Missionsmodul_Schalter_X2_T_PK1_87 "[6011] [] [X3.49] [1=MM ist EIN] Einschalt Missionsmodul Schalter (X2.T) PK1.87, 1=Ein";
+CM_ SG_ 912 OT_Grenzwert_aktuell "[] [] [] [] OT Grenzwert aktuell in mV";
+CM_ SG_ 912 UT_Grenzwert_aktuell "[] [] [] [] UT Grenzwert aktuell in mV";
+CM_ SG_ 912 OT_Grenzwert_gespeichert "[] [] [] [] OT Grenzwert gespeichert in mV";
+CM_ SG_ 912 UT_Grenzwert_gespeichert "[] [] [] [] UT Grenzwert gespeichert in mV";
+CM_ SG_ 1168 Anzahl_Notabfahrten_mit_Notab_Taster_Ausloesung "[] [] [] [] Anzahl Notabfahrten mit Notab-Taster Auslösung";
+CM_ SG_ 1168 Anzahl_Notabfahrten_mit_ROPS_Ausloesung "[] [] [] [] Anzahl Notabfahrten mit ROPS-Auslösung";
+CM_ SG_ 1168 Anzahl_Auf_Ab_Fahrzyklen "[] [] [] [] Anzahl Auf/Ab Fahrzyklen";
+CM_ SG_ 1168 nc "[] [] [] [] nc";
+CM_ SG_ 1168 nc "[] [] [] [] nc";
+CM_ SG_ 1168 nc "[] [] [] [] nc";
+CM_ SG_ 1168 nc "[] [] [] [] nc";
+CM_ SG_ 1168 nc "[] [] [] [] nc";
+CM_ SG_ 1168 nc "[] [] [] [] nc";
+CM_ SG_ 1168 nc "[] [] [] [] nc";
+CM_ SG_ 1168 Freigabe_zur_Speicherung "[] [] [] [] Freigabe zur Speicherung von OT/UT Grenzwert nach Auf/Ab in Langsamfahrt. 0=keine Freigabe, 1=Freigabe ";
+CM_ SG_ 1168 Servicecounter_Anzahl_Notabfahrten_ "[] [] [] [] Servicecounter Anzahl Notabfahrten ";
+CM_ SG_ 913 Wert_des_Positionssensors_bei_Ausloesung "[] [] [] [] Wert des Positionssensors bei Auslösung der Notabfahrt in mV, 0xFFFF=ungültig";
+CM_ SG_ 913 Wert_des_Positionssensors_bei_1__alternativen_Ausloesung "[] [] [] [] Wert des Positionssensors bei 1. alternativen Auslösung in mV, 0xFFFF=ungültig";
+CM_ SG_ 913 nc "[] [] [] [] nc";
+CM_ SG_ 913 nc "[] [] [] [] nc";
+CM_ SG_ 913 nc "[] [] [] [] nc";
+CM_ SG_ 913 nc "[] [] [] [] nc";
+CM_ SG_ 913 nc "[] [] [] [] nc";
+CM_ SG_ 913 nc "[] [] [] [] nc";
+CM_ SG_ 913 Ausloeser_der_Notabfahrt "[] [] [] [ 0=keine Auslösung, 1=ROPS] Auslöser der Notabfahrt Bit 0..1: 0=keine Auslösung, 1=ROPS";
+CM_ SG_ 913 Ausloeser_der_Notabfahrt_2 "[] [] [] [ 0=keine Auslösung, 1=Notab-Taster] Auslöser der Notabfahrt Bit 0..1: 0=keine Auslösung, 1=Notab-Taster";
+CM_ SG_ 913 Fehlernummer__die_die_DMC_LED_anzeigt "[] [] [] [] Fehlernummer, die die DMC LED anzeigt";
+CM_ SG_ 913 Ladestatus_USV12V_in__ "[] [] [] [] Ladestatus USV12V in %";
+CM_ SG_ 913 Ladestatus_USV48V_in__ "[] [] [] [] Ladestatus USV48V in %";
+CM_ SG_ 1169 Stand_Betriebsstundenzaehler_bei_Ausloesung "[] [] [] [] Stand Betriebsstundenzähler bei Auslösung, 5 Minuten/Bit";
+CM_ SG_ 1169 Zeit_1__alternativen_Ausloesung "[] [] [] [] Verstrichene Zeit von Auslösung bis zur 1. alternativen Auslösung in Millisekunden, 0xFFFF=ungültig";
+CM_ SG_ 1169 Ausloesung_bis_zur_Betaetigung_des_Fanghakenschalter "[] [] [] [] Verstrichene Zeit von Auslösung bis zur Betätigung des Fanghakenschalters in Millisekunden, 0xFFFF=ungültig";
+CM_ SG_ 402 Interner_Fehler_63 "[] [] [] [1=Fehler aktiv] Interner Fehler Nr. 63";
+CM_ SG_ 402 Interner_Fehler_62 "[] [] [] [1=Fehler aktiv] Interner Fehler Nr. 62";
+CM_ SG_ 402 Interner_Fehler_61 "[] [] [] [1=Fehler aktiv] Interner Fehler Nr. 61";
+CM_ SG_ 402 Interner_Fehler_60 "[] [] [] [1=Fehler aktiv] Interner Fehler Nr. 60";
+CM_ SG_ 402 Interner_Fehler_59 "[] [] [] [1=Fehler aktiv] Interner Fehler Nr. 59";
+CM_ SG_ 402 Interner_Fehler_58 "[] [] [] [1=Fehler aktiv] Interner Fehler Nr. 58";
+CM_ SG_ 402 Interner_Fehler_57 "[] [] [] [1=Fehler aktiv] Interner Fehler Nr. 57";
+CM_ SG_ 402 Interner_Fehler_56 "[] [] [] [1=Fehler aktiv] Interner Fehler Nr. 56";
+CM_ SG_ 402 Interner_Fehler_55 "[] [] [] [1=Fehler aktiv] Interner Fehler Nr. 55";
+CM_ SG_ 402 Interner_Fehler_54 "[] [] [] [1=Fehler aktiv] Interner Fehler Nr. 54";
+CM_ SG_ 402 Interner_Fehler_53 "[] [] [] [1=Fehler aktiv] Interner Fehler Nr. 53";
+CM_ SG_ 402 Interner_Fehler_52 "[] [] [] [1=Fehler aktiv] Interner Fehler Nr. 52";
+CM_ SG_ 402 Interner_Fehler_51 "[] [] [] [1=Fehler aktiv] Interner Fehler Nr. 51";
+CM_ SG_ 402 Interner_Fehler_50 "[] [] [] [1=Fehler aktiv] Interner Fehler Nr. 50";
+CM_ SG_ 402 Interner_Fehler_49 "[] [] [] [1=Fehler aktiv] Interner Fehler Nr. 49";
+CM_ SG_ 402 Interner_Fehler_48 "[] [] [] [1=Fehler aktiv] Interner Fehler Nr. 48";
+CM_ SG_ 402 Interner_Fehler_47 "[] [] [] [1=Fehler aktiv] Interner Fehler Nr. 47";
+CM_ SG_ 402 Interner_Fehler_46 "[] [] [] [1=Fehler aktiv] Interner Fehler Nr. 46";
+CM_ SG_ 402 Interner_Fehler_45 "[] [] [] [1=Fehler aktiv] Interner Fehler Nr. 45";
+CM_ SG_ 402 Interner_Fehler_44 "[] [] [] [1=Fehler aktiv] Interner Fehler Nr. 44";
+CM_ SG_ 402 Interner_Fehler_43 "[] [] [] [1=Fehler aktiv] Interner Fehler Nr. 43";
+CM_ SG_ 402 Interner_Fehler_42 "[] [] [] [1=Fehler aktiv] Interner Fehler Nr. 42";
+CM_ SG_ 402 Interner_Fehler_41 "[] [] [] [1=Fehler aktiv] Interner Fehler Nr. 41";
+CM_ SG_ 402 Interner_Fehler_40 "[] [] [] [1=Fehler aktiv] Interner Fehler Nr. 40";
+CM_ SG_ 402 Interner_Fehler_39 "[] [] [] [1=Fehler aktiv] Interner Fehler Nr. 39";
+CM_ SG_ 402 Interner_Fehler_38 "[] [] [] [1=Fehler aktiv] Interner Fehler Nr. 38";
+CM_ SG_ 402 Interner_Fehler_37 "[] [] [] [1=Fehler aktiv] Interner Fehler Nr. 37";
+CM_ SG_ 402 Interner_Fehler_36 "[] [] [] [1=Fehler aktiv] Interner Fehler Nr. 36";
+CM_ SG_ 402 Interner_Fehler_35 "[] [] [] [1=Fehler aktiv] Interner Fehler Nr. 35";
+CM_ SG_ 402 Interner_Fehler_34 "[] [] [] [1=Fehler aktiv] Interner Fehler Nr. 34";
+CM_ SG_ 402 Interner_Fehler_33 "[] [] [] [1=Fehler aktiv] Interner Fehler Nr. 33";
+CM_ SG_ 402 Interner_Fehler_32 "[] [] [] [1=Fehler aktiv] Interner Fehler Nr. 32";
+CM_ SG_ 402 Interner_Fehler_31 "[] [] [] [1=Fehler aktiv] Interner Fehler Nr. 31";
+CM_ SG_ 402 Interner_Fehler_30 "[] [] [] [1=Fehler aktiv] Interner Fehler Nr. 30";
+CM_ SG_ 402 Interner_Fehler_29 "[] [] [] [1=Fehler aktiv] Interner Fehler Nr. 29";
+CM_ SG_ 402 Interner_Fehler_28 "[] [] [] [1=Fehler aktiv] Interner Fehler Nr. 28";
+CM_ SG_ 402 Interner_Fehler_27 "[] [] [] [1=Fehler aktiv] Interner Fehler Nr. 27";
+CM_ SG_ 402 Interner_Fehler_26 "[] [] [] [1=Fehler aktiv] Interner Fehler Nr. 26";
+CM_ SG_ 402 Interner_Fehler_25 "[] [] [] [1=Fehler aktiv] Interner Fehler Nr. 25";
+CM_ SG_ 402 Interner_Fehler_24 "[] [] [] [1=Fehler aktiv] Interner Fehler Nr. 24";
+CM_ SG_ 402 Interner_Fehler_23 "[] [] [] [1=Fehler aktiv] Interner Fehler Nr. 23";
+CM_ SG_ 402 Interner_Fehler_22 "[] [] [] [1=Fehler aktiv] Interner Fehler Nr. 22";
+CM_ SG_ 402 Interner_Fehler_21 "[] [] [] [1=Fehler aktiv] Interner Fehler Nr. 21";
+CM_ SG_ 402 Interner_Fehler_20 "[] [] [] [1=Fehler aktiv] Interner Fehler Nr. 20";
+CM_ SG_ 402 Interner_Fehler_19 "[] [] [] [1=Fehler aktiv] Interner Fehler Nr. 19";
+CM_ SG_ 402 Interner_Fehler_18 "[] [] [] [1=Fehler aktiv] Interner Fehler Nr. 18";
+CM_ SG_ 402 Interner_Fehler_17 "[] [] [] [1=Fehler aktiv] Interner Fehler Nr. 17";
+CM_ SG_ 402 Interner_Fehler_16 "[] [] [] [1=Fehler aktiv] Interner Fehler Nr. 16";
+CM_ SG_ 402 Interner_Fehler_15 "[] [] [] [1=Fehler aktiv] Interner Fehler Nr. 15";
+CM_ SG_ 402 Interner_Fehler_14 "[] [] [] [1=Fehler aktiv] Interner Fehler Nr. 14";
+CM_ SG_ 402 Interner_Fehler_13 "[] [] [] [1=Fehler aktiv] Interner Fehler Nr. 13";
+CM_ SG_ 402 Interner_Fehler_12 "[] [] [] [1=Fehler aktiv] Interner Fehler Nr. 12";
+CM_ SG_ 402 Interner_Fehler_11 "[] [] [] [1=Fehler aktiv] Interner Fehler Nr. 11";
+CM_ SG_ 402 Interner_Fehler_10 "[] [] [] [1=Fehler aktiv] Interner Fehler Nr. 10";
+CM_ SG_ 402 Interner_Fehler_9 "[] [] [] [1=Fehler aktiv] Interner Fehler Nr. 9";
+CM_ SG_ 402 Interner_Fehler_8 "[] [] [] [1=Fehler aktiv] Interner Fehler Nr. 8";
+CM_ SG_ 402 Interner_Fehler_7 "[] [] [] [1=Fehler aktiv] Interner Fehler Nr. 7";
+CM_ SG_ 402 Interner_Fehler_6 "[] [] [] [1=Fehler aktiv] Interner Fehler Nr. 6";
+CM_ SG_ 402 Interner_Fehler_5 "[] [] [] [1=Fehler aktiv] Interner Fehler Nr. 5";
+CM_ SG_ 402 Interner_Fehler_4 "[] [] [] [1=Fehler aktiv] Interner Fehler Nr. 4";
+CM_ SG_ 402 Interner_Fehler_3 "[] [] [] [1=Fehler aktiv] Interner Fehler Nr. 3";
+CM_ SG_ 402 Interner_Fehler_2 "[] [] [] [1=Fehler aktiv] Interner Fehler Nr. 2";
+CM_ SG_ 402 Interner_Fehler_1 "[] [] [] [1=Fehler aktiv] Interner Fehler Nr. 1";
+CM_ SG_ 402 Interner_Fehler_0 "[] [] [] [1=Fehler aktiv] Interner Fehler Nr. 0";
+CM_ SG_ 658 Interner_Fehler_127 "[] [] [] [1=Fehler aktiv] Interner Fehler Nr. 127";
+CM_ SG_ 658 Interner_Fehler_126 "[] [] [] [1=Fehler aktiv] Interner Fehler Nr. 126";
+CM_ SG_ 658 Interner_Fehler_125 "[] [] [] [1=Fehler aktiv] Interner Fehler Nr. 125";
+CM_ SG_ 658 Interner_Fehler_124 "[] [] [] [1=Fehler aktiv] Interner Fehler Nr. 124";
+CM_ SG_ 658 Interner_Fehler_123 "[] [] [] [1=Fehler aktiv] Interner Fehler Nr. 123";
+CM_ SG_ 658 Interner_Fehler_122 "[] [] [] [1=Fehler aktiv] Interner Fehler Nr. 122";
+CM_ SG_ 658 Interner_Fehler_121 "[] [] [] [1=Fehler aktiv] Interner Fehler Nr. 121";
+CM_ SG_ 658 Interner_Fehler_120 "[] [] [] [1=Fehler aktiv] Interner Fehler Nr. 120";
+CM_ SG_ 658 Interner_Fehler_119 "[] [] [] [1=Fehler aktiv] Interner Fehler Nr. 119";
+CM_ SG_ 658 Interner_Fehler_118 "[] [] [] [1=Fehler aktiv] Interner Fehler Nr. 118";
+CM_ SG_ 658 Interner_Fehler_117 "[] [] [] [1=Fehler aktiv] Interner Fehler Nr. 117";
+CM_ SG_ 658 Interner_Fehler_116 "[] [] [] [1=Fehler aktiv] Interner Fehler Nr. 116";
+CM_ SG_ 658 Interner_Fehler_115 "[] [] [] [1=Fehler aktiv] Interner Fehler Nr. 115";
+CM_ SG_ 658 Interner_Fehler_114 "[] [] [] [1=Fehler aktiv] Interner Fehler Nr. 114";
+CM_ SG_ 658 Interner_Fehler_113 "[] [] [] [1=Fehler aktiv] Interner Fehler Nr. 113";
+CM_ SG_ 658 Interner_Fehler_112 "[] [] [] [1=Fehler aktiv] Interner Fehler Nr. 112";
+CM_ SG_ 658 Interner_Fehler_111 "[] [] [] [1=Fehler aktiv] Interner Fehler Nr. 111";
+CM_ SG_ 658 Interner_Fehler_110 "[] [] [] [1=Fehler aktiv] Interner Fehler Nr. 110";
+CM_ SG_ 658 Interner_Fehler_109 "[] [] [] [1=Fehler aktiv] Interner Fehler Nr. 109";
+CM_ SG_ 658 Interner_Fehler_108 "[] [] [] [1=Fehler aktiv] Interner Fehler Nr. 108";
+CM_ SG_ 658 Interner_Fehler_107 "[] [] [] [1=Fehler aktiv] Interner Fehler Nr. 107";
+CM_ SG_ 658 Interner_Fehler_106 "[] [] [] [1=Fehler aktiv] Interner Fehler Nr. 106";
+CM_ SG_ 658 Interner_Fehler_105 "[] [] [] [1=Fehler aktiv] Interner Fehler Nr. 105";
+CM_ SG_ 658 Interner_Fehler_104 "[] [] [] [1=Fehler aktiv] Interner Fehler Nr. 104";
+CM_ SG_ 658 Interner_Fehler_103 "[] [] [] [1=Fehler aktiv] Interner Fehler Nr. 103";
+CM_ SG_ 658 Interner_Fehler_102 "[] [] [] [1=Fehler aktiv] Interner Fehler Nr. 102";
+CM_ SG_ 658 Interner_Fehler_101 "[] [] [] [1=Fehler aktiv] Interner Fehler Nr. 101";
+CM_ SG_ 658 Interner_Fehler_100 "[] [] [] [1=Fehler aktiv] Interner Fehler Nr. 100";
+CM_ SG_ 658 Interner_Fehler_99 "[] [] [] [1=Fehler aktiv] Interner Fehler Nr. 99";
+CM_ SG_ 658 Interner_Fehler_98 "[] [] [] [1=Fehler aktiv] Interner Fehler Nr. 98";
+CM_ SG_ 658 Interner_Fehler_97 "[] [] [] [1=Fehler aktiv] Interner Fehler Nr. 97";
+CM_ SG_ 658 Interner_Fehler_96 "[] [] [] [1=Fehler aktiv] Interner Fehler Nr. 96";
+CM_ SG_ 658 Interner_Fehler_95 "[] [] [] [1=Fehler aktiv] Interner Fehler Nr. 95";
+CM_ SG_ 658 Interner_Fehler_94 "[] [] [] [1=Fehler aktiv] Interner Fehler Nr. 94";
+CM_ SG_ 658 Interner_Fehler_93 "[] [] [] [1=Fehler aktiv] Interner Fehler Nr. 93";
+CM_ SG_ 658 Interner_Fehler_92 "[] [] [] [1=Fehler aktiv] Interner Fehler Nr. 92";
+CM_ SG_ 658 Interner_Fehler_91 "[] [] [] [1=Fehler aktiv] Interner Fehler Nr. 91";
+CM_ SG_ 658 Interner_Fehler_90 "[] [] [] [1=Fehler aktiv] Interner Fehler Nr. 90";
+CM_ SG_ 658 Interner_Fehler_89 "[] [] [] [1=Fehler aktiv] Interner Fehler Nr. 89";
+CM_ SG_ 658 Interner_Fehler_88 "[] [] [] [1=Fehler aktiv] Interner Fehler Nr. 88";
+CM_ SG_ 658 Interner_Fehler_87 "[] [] [] [1=Fehler aktiv] Interner Fehler Nr. 87";
+CM_ SG_ 658 Interner_Fehler_86 "[] [] [] [1=Fehler aktiv] Interner Fehler Nr. 86";
+CM_ SG_ 658 Interner_Fehler_85 "[] [] [] [1=Fehler aktiv] Interner Fehler Nr. 85";
+CM_ SG_ 658 Interner_Fehler_84 "[] [] [] [1=Fehler aktiv] Interner Fehler Nr. 84";
+CM_ SG_ 658 Interner_Fehler_83 "[] [] [] [1=Fehler aktiv] Interner Fehler Nr. 83";
+CM_ SG_ 658 Interner_Fehler_82 "[] [] [] [1=Fehler aktiv] Interner Fehler Nr. 82";
+CM_ SG_ 658 Interner_Fehler_81 "[] [] [] [1=Fehler aktiv] Interner Fehler Nr. 81";
+CM_ SG_ 658 Interner_Fehler_80 "[] [] [] [1=Fehler aktiv] Interner Fehler Nr. 80";
+CM_ SG_ 658 Interner_Fehler_79 "[] [] [] [1=Fehler aktiv] Interner Fehler Nr. 79";
+CM_ SG_ 658 Interner_Fehler_78 "[] [] [] [1=Fehler aktiv] Interner Fehler Nr. 78";
+CM_ SG_ 658 Interner_Fehler_77 "[] [] [] [1=Fehler aktiv] Interner Fehler Nr. 77";
+CM_ SG_ 658 Interner_Fehler_76 "[] [] [] [1=Fehler aktiv] Interner Fehler Nr. 76";
+CM_ SG_ 658 Interner_Fehler_75 "[] [] [] [1=Fehler aktiv] Interner Fehler Nr. 75";
+CM_ SG_ 658 Interner_Fehler_74 "[] [] [] [1=Fehler aktiv] Interner Fehler Nr. 74";
+CM_ SG_ 658 Interner_Fehler_73 "[] [] [] [1=Fehler aktiv] Interner Fehler Nr. 73";
+CM_ SG_ 658 Interner_Fehler_72 "[] [] [] [1=Fehler aktiv] Interner Fehler Nr. 72";
+CM_ SG_ 658 Interner_Fehler_71 "[] [] [] [1=Fehler aktiv] Interner Fehler Nr. 71";
+CM_ SG_ 658 Interner_Fehler_70 "[] [] [] [1=Fehler aktiv] Interner Fehler Nr. 70";
+CM_ SG_ 658 Interner_Fehler_69 "[] [] [] [1=Fehler aktiv] Interner Fehler Nr. 69";
+CM_ SG_ 658 Interner_Fehler_68 "[] [] [] [1=Fehler aktiv] Interner Fehler Nr. 68";
+CM_ SG_ 658 Interner_Fehler_67 "[] [] [] [1=Fehler aktiv] Interner Fehler Nr. 67";
+CM_ SG_ 658 Interner_Fehler_66 "[] [] [] [1=Fehler aktiv] Interner Fehler Nr. 66";
+CM_ SG_ 658 Interner_Fehler_65 "[] [] [] [1=Fehler aktiv] Interner Fehler Nr. 65";
+CM_ SG_ 658 Interner_Fehler_64 "[] [] [] [1=Fehler aktiv] Interner Fehler Nr. 64";
+CM_ SG_ 914 Fehlbedienung_263 "[] [] [] [1=Fehler aktiv] Fehlbedienung Nr. 263";
+CM_ SG_ 914 Fehlbedienung_262 "[] [] [] [1=Fehler aktiv] Fehlbedienung Nr. 262";
+CM_ SG_ 914 Fehlbedienung_261 "[] [] [] [1=Fehler aktiv] Fehlbedienung Nr. 261";
+CM_ SG_ 914 Fehlbedienung_260 "[] [] [] [1=Fehler aktiv] Fehlbedienung Nr. 260";
+CM_ SG_ 914 Fehlbedienung_259 "[] [] [] [1=Fehler aktiv] Fehlbedienung Nr. 259";
+CM_ SG_ 914 Fehlbedienung_258 "[] [] [] [1=Fehler aktiv] Fehlbedienung Nr. 258";
+CM_ SG_ 914 Fehlbedienung_257 "[] [] [] [1=Fehler aktiv] Fehlbedienung Nr. 257";
+CM_ SG_ 914 Fehlbedienung_256 "[] [] [] [1=Fehler aktiv] Fehlbedienung Nr. 256";
+CM_ SG_ 914 Fehlbedienung_255 "[] [] [] [1=Fehler aktiv] Fehlbedienung Nr. 255";
+CM_ SG_ 914 Fehlbedienung_254 "[] [] [] [1=Fehler aktiv] Fehlbedienung Nr. 254";
+CM_ SG_ 914 Fehlbedienung_253 "[] [] [] [1=Fehler aktiv] Fehlbedienung Nr. 253";
+CM_ SG_ 914 Fehlbedienung_252 "[] [] [] [1=Fehler aktiv] Fehlbedienung Nr. 252";
+CM_ SG_ 914 Fehlbedienung_251 "[] [] [] [1=Fehler aktiv] Fehlbedienung Nr. 251";
+CM_ SG_ 914 Fehlbedienung_250 "[] [] [] [1=Fehler aktiv] Fehlbedienung Nr. 250";
+CM_ SG_ 914 Fehlbedienung_249 "[] [] [] [1=Fehler aktiv] Fehlbedienung Nr. 249";
+CM_ SG_ 914 Fehlbedienung_248 "[] [] [] [1=Fehler aktiv] Fehlbedienung Nr. 248";
+CM_ SG_ 914 Fehlbedienung_247 "[] [] [] [1=Fehler aktiv] Fehlbedienung Nr. 247";
+CM_ SG_ 914 Fehlbedienung_246 "[] [] [] [1=Fehler aktiv] Fehlbedienung Nr. 246";
+CM_ SG_ 914 Fehlbedienung_245 "[] [] [] [1=Fehler aktiv] Fehlbedienung Nr. 245";
+CM_ SG_ 914 Fehlbedienung_244 "[] [] [] [1=Fehler aktiv] Fehlbedienung Nr. 244";
+CM_ SG_ 914 Fehlbedienung_243 "[] [] [] [1=Fehler aktiv] Fehlbedienung Nr. 243";
+CM_ SG_ 914 Fehlbedienung_242 "[] [] [] [1=Fehler aktiv] Fehlbedienung Nr. 242";
+CM_ SG_ 914 Fehlbedienung_241 "[] [] [] [1=Fehler aktiv] Fehlbedienung Nr. 241";
+CM_ SG_ 914 Fehlbedienung_240 "[] [] [] [1=Fehler aktiv] Fehlbedienung Nr. 240";
+CM_ SG_ 914 Fehlbedienung_239 "[] [] [] [1=Fehler aktiv] Fehlbedienung Nr. 239";
+CM_ SG_ 914 Fehlbedienung_238 "[] [] [] [1=Fehler aktiv] Fehlbedienung Nr. 238";
+CM_ SG_ 914 Fehlbedienung_237 "[] [] [] [1=Fehler aktiv] Fehlbedienung Nr. 237";
+CM_ SG_ 914 Fehlbedienung_236 "[] [] [] [1=Fehler aktiv] Fehlbedienung Nr. 236";
+CM_ SG_ 914 Fehlbedienung_235 "[] [] [] [1=Fehler aktiv] Fehlbedienung Nr. 235";
+CM_ SG_ 914 Fehlbedienung_234 "[] [] [] [1=Fehler aktiv] Fehlbedienung Nr. 234";
+CM_ SG_ 914 Fehlbedienung_233 "[] [] [] [1=Fehler aktiv] Fehlbedienung Nr. 233";
+CM_ SG_ 914 Fehlbedienung_232 "[] [] [] [1=Fehler aktiv] Fehlbedienung Nr. 232";
+CM_ SG_ 914 Fehlbedienung_231 "[] [] [] [1=Fehler aktiv] Fehlbedienung Nr. 231";
+CM_ SG_ 914 Fehlbedienung_230 "[] [] [] [1=Fehler aktiv] Fehlbedienung Nr. 230";
+CM_ SG_ 914 Fehlbedienung_229 "[] [] [] [1=Fehler aktiv] Fehlbedienung Nr. 229";
+CM_ SG_ 914 Fehlbedienung_228 "[] [] [] [1=Fehler aktiv] Fehlbedienung Nr. 228";
+CM_ SG_ 914 Fehlbedienung_227 "[] [] [] [1=Fehler aktiv] Fehlbedienung Nr. 227";
+CM_ SG_ 914 Fehlbedienung_226 "[] [] [] [1=Fehler aktiv] Fehlbedienung Nr. 226";
+CM_ SG_ 914 Fehlbedienung_225 "[] [] [] [1=Fehler aktiv] Fehlbedienung Nr. 225";
+CM_ SG_ 914 Fehlbedienung_224 "[] [] [] [1=Fehler aktiv] Fehlbedienung Nr. 224";
+CM_ SG_ 914 Fehlbedienung_223 "[] [] [] [1=Fehler aktiv] Fehlbedienung Nr. 223";
+CM_ SG_ 914 Fehlbedienung_222 "[] [] [] [1=Fehler aktiv] Fehlbedienung Nr. 222";
+CM_ SG_ 914 Fehlbedienung_221 "[] [] [] [1=Fehler aktiv] Fehlbedienung Nr. 221";
+CM_ SG_ 914 Fehlbedienung_220 "[] [] [] [1=Fehler aktiv] Fehlbedienung Nr. 220";
+CM_ SG_ 914 Fehlbedienung_219 "[] [] [] [1=Fehler aktiv] Fehlbedienung Nr. 219";
+CM_ SG_ 914 Fehlbedienung_218 "[] [] [] [1=Fehler aktiv] Fehlbedienung Nr. 218";
+CM_ SG_ 914 Fehlbedienung_217 "[] [] [] [1=Fehler aktiv] Fehlbedienung Nr. 217";
+CM_ SG_ 914 Fehlbedienung_216 "[] [] [] [1=Fehler aktiv] Fehlbedienung Nr. 216";
+CM_ SG_ 914 Fehlbedienung_215 "[] [] [] [1=Fehler aktiv] Fehlbedienung Nr. 215";
+CM_ SG_ 914 Fehlbedienung_214 "[] [] [] [1=Fehler aktiv] Fehlbedienung Nr. 214";
+CM_ SG_ 914 Fehlbedienung_213 "[] [] [] [1=Fehler aktiv] Fehlbedienung Nr. 213";
+CM_ SG_ 914 Fehlbedienung_212 "[] [] [] [1=Fehler aktiv] Fehlbedienung Nr. 212";
+CM_ SG_ 914 Fehlbedienung_211 "[] [] [] [1=Fehler aktiv] Fehlbedienung Nr. 211";
+CM_ SG_ 914 Fehlbedienung_210 "[] [] [] [1=Fehler aktiv] Fehlbedienung Nr. 210";
+CM_ SG_ 914 Fehlbedienung_209 "[] [] [] [1=Fehler aktiv] Fehlbedienung Nr. 209";
+CM_ SG_ 914 Fehlbedienung_208 "[] [] [] [1=Fehler aktiv] Fehlbedienung Nr. 208";
+CM_ SG_ 914 Fehlbedienung_207 "[] [] [] [1=Fehler aktiv] Fehlbedienung Nr. 207";
+CM_ SG_ 914 Fehlbedienung_206 "[] [] [] [1=Fehler aktiv] Fehlbedienung Nr. 206";
+CM_ SG_ 914 Fehlbedienung_205 "[] [] [] [1=Fehler aktiv] Fehlbedienung Nr. 205";
+CM_ SG_ 914 Fehlbedienung_204 "[] [] [] [1=Fehler aktiv] Fehlbedienung Nr. 204";
+CM_ SG_ 914 Fehlbedienung_203 "[] [] [] [1=Fehler aktiv] Fehlbedienung Nr. 203";
+CM_ SG_ 914 Fehlbedienung_202 "[] [] [] [1=Fehler aktiv] Fehlbedienung Nr. 202";
+CM_ SG_ 914 Fehlbedienung_201 "[] [] [] [1=Fehler aktiv] Fehlbedienung Nr. 201";
+CM_ SG_ 914 Fehlbedienung_200 "[] [] [] [1=Fehler aktiv] Fehlbedienung Nr. 200";
+CM_ SG_ 1170 Bedienhinweis_463 "[] [] [] [1=Fehler aktiv] Bedienhinweis Nr. 463";
+CM_ SG_ 1170 Bedienhinweis_462 "[] [] [] [1=Fehler aktiv] Bedienhinweis Nr. 462";
+CM_ SG_ 1170 Bedienhinweis_461 "[] [] [] [1=Fehler aktiv] Bedienhinweis Nr. 461";
+CM_ SG_ 1170 Bedienhinweis_460 "[] [] [] [1=Fehler aktiv] Bedienhinweis Nr. 460";
+CM_ SG_ 1170 Bedienhinweis_459 "[] [] [] [1=Fehler aktiv] Bedienhinweis Nr. 459";
+CM_ SG_ 1170 Bedienhinweis_458 "[] [] [] [1=Fehler aktiv] Bedienhinweis Nr. 458";
+CM_ SG_ 1170 Bedienhinweis_457 "[] [] [] [1=Fehler aktiv] Bedienhinweis Nr. 457";
+CM_ SG_ 1170 Bedienhinweis_456 "[] [] [] [1=Fehler aktiv] Bedienhinweis Nr. 456";
+CM_ SG_ 1170 Bedienhinweis_455 "[] [] [] [1=Fehler aktiv] Bedienhinweis Nr. 455";
+CM_ SG_ 1170 Bedienhinweis_454 "[] [] [] [1=Fehler aktiv] Bedienhinweis Nr. 454";
+CM_ SG_ 1170 Bedienhinweis_453 "[] [] [] [1=Fehler aktiv] Bedienhinweis Nr. 453";
+CM_ SG_ 1170 Bedienhinweis_452 "[] [] [] [1=Fehler aktiv] Bedienhinweis Nr. 452";
+CM_ SG_ 1170 Bedienhinweis_451 "[] [] [] [1=Fehler aktiv] Bedienhinweis Nr. 451";
+CM_ SG_ 1170 Bedienhinweis_450 "[] [] [] [1=Fehler aktiv] Bedienhinweis Nr. 450";
+CM_ SG_ 1170 Bedienhinweis_449 "[] [] [] [1=Fehler aktiv] Bedienhinweis Nr. 449";
+CM_ SG_ 1170 Bedienhinweis_448 "[] [] [] [1=Fehler aktiv] Bedienhinweis Nr. 448";
+CM_ SG_ 1170 Bedienhinweis_447 "[] [] [] [1=Fehler aktiv] Bedienhinweis Nr. 447";
+CM_ SG_ 1170 Bedienhinweis_446 "[] [] [] [1=Fehler aktiv] Bedienhinweis Nr. 446";
+CM_ SG_ 1170 Bedienhinweis_445 "[] [] [] [1=Fehler aktiv] Bedienhinweis Nr. 445";
+CM_ SG_ 1170 Bedienhinweis_444 "[] [] [] [1=Fehler aktiv] Bedienhinweis Nr. 444";
+CM_ SG_ 1170 Bedienhinweis_443 "[] [] [] [1=Fehler aktiv] Bedienhinweis Nr. 443";
+CM_ SG_ 1170 Bedienhinweis_442 "[] [] [] [1=Fehler aktiv] Bedienhinweis Nr. 442";
+CM_ SG_ 1170 Bedienhinweis_441 "[] [] [] [1=Fehler aktiv] Bedienhinweis Nr. 441";
+CM_ SG_ 1170 Bedienhinweis_440 "[] [] [] [1=Fehler aktiv] Bedienhinweis Nr. 440";
+CM_ SG_ 1170 Bedienhinweis_439 "[] [] [] [1=Fehler aktiv] Bedienhinweis Nr. 439";
+CM_ SG_ 1170 Bedienhinweis_438 "[] [] [] [1=Fehler aktiv] Bedienhinweis Nr. 438";
+CM_ SG_ 1170 Bedienhinweis_437 "[] [] [] [1=Fehler aktiv] Bedienhinweis Nr. 437";
+CM_ SG_ 1170 Bedienhinweis_436 "[] [] [] [1=Fehler aktiv] Bedienhinweis Nr. 436";
+CM_ SG_ 1170 Bedienhinweis_435 "[] [] [] [1=Fehler aktiv] Bedienhinweis Nr. 435";
+CM_ SG_ 1170 Bedienhinweis_434 "[] [] [] [1=Fehler aktiv] Bedienhinweis Nr. 434";
+CM_ SG_ 1170 Bedienhinweis_433 "[] [] [] [1=Fehler aktiv] Bedienhinweis Nr. 433";
+CM_ SG_ 1170 Bedienhinweis_432 "[] [] [] [1=Fehler aktiv] Bedienhinweis Nr. 432";
+CM_ SG_ 1170 Bedienhinweis_431 "[] [] [] [1=Fehler aktiv] Bedienhinweis Nr. 431";
+CM_ SG_ 1170 Bedienhinweis_430 "[] [] [] [1=Fehler aktiv] Bedienhinweis Nr. 430";
+CM_ SG_ 1170 Bedienhinweis_429 "[] [] [] [1=Fehler aktiv] Bedienhinweis Nr. 429";
+CM_ SG_ 1170 Bedienhinweis_428 "[] [] [] [1=Fehler aktiv] Bedienhinweis Nr. 428";
+CM_ SG_ 1170 Bedienhinweis_427 "[] [] [] [1=Fehler aktiv] Bedienhinweis Nr. 427";
+CM_ SG_ 1170 Bedienhinweis_426 "[] [] [] [1=Fehler aktiv] Bedienhinweis Nr. 426";
+CM_ SG_ 1170 Bedienhinweis_425 "[] [] [] [1=Fehler aktiv] Bedienhinweis Nr. 425";
+CM_ SG_ 1170 Bedienhinweis_424 "[] [] [] [1=Fehler aktiv] Bedienhinweis Nr. 424";
+CM_ SG_ 1170 Bedienhinweis_423 "[] [] [] [1=Fehler aktiv] Bedienhinweis Nr. 423";
+CM_ SG_ 1170 Bedienhinweis_422 "[] [] [] [1=Fehler aktiv] Bedienhinweis Nr. 422";
+CM_ SG_ 1170 Bedienhinweis_421 "[] [] [] [1=Fehler aktiv] Bedienhinweis Nr. 421";
+CM_ SG_ 1170 Bedienhinweis_420 "[] [] [] [1=Fehler aktiv] Bedienhinweis Nr. 420";
+CM_ SG_ 1170 Bedienhinweis_419 "[] [] [] [1=Fehler aktiv] Bedienhinweis Nr. 419";
+CM_ SG_ 1170 Bedienhinweis_418 "[] [] [] [1=Fehler aktiv] Bedienhinweis Nr. 418";
+CM_ SG_ 1170 Bedienhinweis_417 "[] [] [] [1=Fehler aktiv] Bedienhinweis Nr. 417";
+CM_ SG_ 1170 Bedienhinweis_416 "[] [] [] [1=Fehler aktiv] Bedienhinweis Nr. 416";
+CM_ SG_ 1170 Bedienhinweis_415 "[] [] [] [1=Fehler aktiv] Bedienhinweis Nr. 415";
+CM_ SG_ 1170 Bedienhinweis_414 "[] [] [] [1=Fehler aktiv] Bedienhinweis Nr. 414";
+CM_ SG_ 1170 Bedienhinweis_413 "[] [] [] [1=Fehler aktiv] Bedienhinweis Nr. 413";
+CM_ SG_ 1170 Bedienhinweis_412 "[] [] [] [1=Fehler aktiv] Bedienhinweis Nr. 412";
+CM_ SG_ 1170 Bedienhinweis_411 "[] [] [] [1=Fehler aktiv] Bedienhinweis Nr. 411";
+CM_ SG_ 1170 Bedienhinweis_410 "[] [] [] [1=Fehler aktiv] Bedienhinweis Nr. 410";
+CM_ SG_ 1170 Bedienhinweis_409 "[] [] [] [1=Fehler aktiv] Bedienhinweis Nr. 409";
+CM_ SG_ 1170 Bedienhinweis_408 "[] [] [] [1=Fehler aktiv] Bedienhinweis Nr. 408";
+CM_ SG_ 1170 Bedienhinweis_407 "[] [] [] [1=Fehler aktiv] Bedienhinweis Nr. 407";
+CM_ SG_ 1170 Bedienhinweis_406 "[] [] [] [1=Fehler aktiv] Bedienhinweis Nr. 406";
+CM_ SG_ 1170 Bedienhinweis_405 "[] [] [] [1=Fehler aktiv] Bedienhinweis Nr. 405";
+CM_ SG_ 1170 Bedienhinweis_404 "[] [] [] [1=Fehler aktiv] Bedienhinweis Nr. 404";
+CM_ SG_ 1170 Bedienhinweis_403 "[] [] [] [1=Fehler aktiv] Bedienhinweis Nr. 403";
+CM_ SG_ 1170 Bedienhinweis_402 "[] [] [] [1=Fehler aktiv] Bedienhinweis Nr. 402";
+CM_ SG_ 1170 Bedienhinweis_401 "[] [] [] [1=Fehler aktiv] Bedienhinweis Nr. 401";
+CM_ SG_ 1170 Bedienhinweis_400 "[] [] [] [1=Fehler aktiv] Bedienhinweis Nr. 400";
+CM_ SG_ 403 Ausloesung_Notab_Interner_Fehler_63 "[] [] [] [1=Fehler aktiv] Ausloesung Notab Interner Fehler 63";
+CM_ SG_ 403 Ausloesung_Notab_Interner_Fehler_62 "[] [] [] [1=Fehler aktiv] Ausloesung Notab Interner Fehler 62";
+CM_ SG_ 403 Ausloesung_Notab_Interner_Fehler_61 "[] [] [] [1=Fehler aktiv] Ausloesung Notab Interner Fehler 61";
+CM_ SG_ 403 Ausloesung_Notab_Interner_Fehler_60 "[] [] [] [1=Fehler aktiv] Ausloesung Notab Interner Fehler 60";
+CM_ SG_ 403 Ausloesung_Notab_Interner_Fehler_59 "[] [] [] [1=Fehler aktiv] Ausloesung Notab Interner Fehler 59";
+CM_ SG_ 403 Ausloesung_Notab_Interner_Fehler_58 "[] [] [] [1=Fehler aktiv] Ausloesung Notab Interner Fehler 58";
+CM_ SG_ 403 Ausloesung_Notab_Interner_Fehler_57 "[] [] [] [1=Fehler aktiv] Ausloesung Notab Interner Fehler 57";
+CM_ SG_ 403 Ausloesung_Notab_Interner_Fehler_56 "[] [] [] [1=Fehler aktiv] Ausloesung Notab Interner Fehler 56";
+CM_ SG_ 403 Ausloesung_Notab_Interner_Fehler_55 "[] [] [] [1=Fehler aktiv] Ausloesung Notab Interner Fehler 55";
+CM_ SG_ 403 Ausloesung_Notab_Interner_Fehler_54 "[] [] [] [1=Fehler aktiv] Ausloesung Notab Interner Fehler 54";
+CM_ SG_ 403 Ausloesung_Notab_Interner_Fehler_53 "[] [] [] [1=Fehler aktiv] Ausloesung Notab Interner Fehler 53";
+CM_ SG_ 403 Ausloesung_Notab_Interner_Fehler_52 "[] [] [] [1=Fehler aktiv] Ausloesung Notab Interner Fehler 52";
+CM_ SG_ 403 Ausloesung_Notab_Interner_Fehler_51 "[] [] [] [1=Fehler aktiv] Ausloesung Notab Interner Fehler 51";
+CM_ SG_ 403 Ausloesung_Notab_Interner_Fehler_50 "[] [] [] [1=Fehler aktiv] Ausloesung Notab Interner Fehler 50";
+CM_ SG_ 403 Ausloesung_Notab_Interner_Fehler_49 "[] [] [] [1=Fehler aktiv] Ausloesung Notab Interner Fehler 49";
+CM_ SG_ 403 Ausloesung_Notab_Interner_Fehler_48 "[] [] [] [1=Fehler aktiv] Ausloesung Notab Interner Fehler 48";
+CM_ SG_ 403 Ausloesung_Notab_Interner_Fehler_47 "[] [] [] [1=Fehler aktiv] Ausloesung Notab Interner Fehler 47";
+CM_ SG_ 403 Ausloesung_Notab_Interner_Fehler_46 "[] [] [] [1=Fehler aktiv] Ausloesung Notab Interner Fehler 46";
+CM_ SG_ 403 Ausloesung_Notab_Interner_Fehler_45 "[] [] [] [1=Fehler aktiv] Ausloesung Notab Interner Fehler 45";
+CM_ SG_ 403 Ausloesung_Notab_Interner_Fehler_44 "[] [] [] [1=Fehler aktiv] Ausloesung Notab Interner Fehler 44";
+CM_ SG_ 403 Ausloesung_Notab_Interner_Fehler_43 "[] [] [] [1=Fehler aktiv] Ausloesung Notab Interner Fehler 43";
+CM_ SG_ 403 Ausloesung_Notab_Interner_Fehler_42 "[] [] [] [1=Fehler aktiv] Ausloesung Notab Interner Fehler 42";
+CM_ SG_ 403 Ausloesung_Notab_Interner_Fehler_41 "[] [] [] [1=Fehler aktiv] Ausloesung Notab Interner Fehler 41";
+CM_ SG_ 403 Ausloesung_Notab_Interner_Fehler_40 "[] [] [] [1=Fehler aktiv] Ausloesung Notab Interner Fehler 40";
+CM_ SG_ 403 Ausloesung_Notab_Interner_Fehler_39 "[] [] [] [1=Fehler aktiv] Ausloesung Notab Interner Fehler 39";
+CM_ SG_ 403 Ausloesung_Notab_Interner_Fehler_38 "[] [] [] [1=Fehler aktiv] Ausloesung Notab Interner Fehler 38";
+CM_ SG_ 403 Ausloesung_Notab_Interner_Fehler_37 "[] [] [] [1=Fehler aktiv] Ausloesung Notab Interner Fehler 37";
+CM_ SG_ 403 Ausloesung_Notab_Interner_Fehler_36 "[] [] [] [1=Fehler aktiv] Ausloesung Notab Interner Fehler 36";
+CM_ SG_ 403 Ausloesung_Notab_Interner_Fehler_35 "[] [] [] [1=Fehler aktiv] Ausloesung Notab Interner Fehler 35";
+CM_ SG_ 403 Ausloesung_Notab_Interner_Fehler_34 "[] [] [] [1=Fehler aktiv] Ausloesung Notab Interner Fehler 34";
+CM_ SG_ 403 Ausloesung_Notab_Interner_Fehler_33 "[] [] [] [1=Fehler aktiv] Ausloesung Notab Interner Fehler 33";
+CM_ SG_ 403 Ausloesung_Notab_Interner_Fehler_32 "[] [] [] [1=Fehler aktiv] Ausloesung Notab Interner Fehler 32";
+CM_ SG_ 403 Ausloesung_Notab_Interner_Fehler_31 "[] [] [] [1=Fehler aktiv] Ausloesung Notab Interner Fehler 31";
+CM_ SG_ 403 Ausloesung_Notab_Interner_Fehler_30 "[] [] [] [1=Fehler aktiv] Ausloesung Notab Interner Fehler 30";
+CM_ SG_ 403 Ausloesung_Notab_Interner_Fehler_29 "[] [] [] [1=Fehler aktiv] Ausloesung Notab Interner Fehler 29";
+CM_ SG_ 403 Ausloesung_Notab_Interner_Fehler_28 "[] [] [] [1=Fehler aktiv] Ausloesung Notab Interner Fehler 28";
+CM_ SG_ 403 Ausloesung_Notab_Interner_Fehler_27 "[] [] [] [1=Fehler aktiv] Ausloesung Notab Interner Fehler 27";
+CM_ SG_ 403 Ausloesung_Notab_Interner_Fehler_26 "[] [] [] [1=Fehler aktiv] Ausloesung Notab Interner Fehler 26";
+CM_ SG_ 403 Ausloesung_Notab_Interner_Fehler_25 "[] [] [] [1=Fehler aktiv] Ausloesung Notab Interner Fehler 25";
+CM_ SG_ 403 Ausloesung_Notab_Interner_Fehler_24 "[] [] [] [1=Fehler aktiv] Ausloesung Notab Interner Fehler 24";
+CM_ SG_ 403 Ausloesung_Notab_Interner_Fehler_23 "[] [] [] [1=Fehler aktiv] Ausloesung Notab Interner Fehler 23";
+CM_ SG_ 403 Ausloesung_Notab_Interner_Fehler_22 "[] [] [] [1=Fehler aktiv] Ausloesung Notab Interner Fehler 22";
+CM_ SG_ 403 Ausloesung_Notab_Interner_Fehler_21 "[] [] [] [1=Fehler aktiv] Ausloesung Notab Interner Fehler 21";
+CM_ SG_ 403 Ausloesung_Notab_Interner_Fehler_20 "[] [] [] [1=Fehler aktiv] Ausloesung Notab Interner Fehler 20";
+CM_ SG_ 403 Ausloesung_Notab_Interner_Fehler_19 "[] [] [] [1=Fehler aktiv] Ausloesung Notab Interner Fehler 19";
+CM_ SG_ 403 Ausloesung_Notab_Interner_Fehler_18 "[] [] [] [1=Fehler aktiv] Ausloesung Notab Interner Fehler 18";
+CM_ SG_ 403 Ausloesung_Notab_Interner_Fehler_17 "[] [] [] [1=Fehler aktiv] Ausloesung Notab Interner Fehler 17";
+CM_ SG_ 403 Ausloesung_Notab_Interner_Fehler_16 "[] [] [] [1=Fehler aktiv] Ausloesung Notab Interner Fehler 16";
+CM_ SG_ 403 Ausloesung_Notab_Interner_Fehler_15 "[] [] [] [1=Fehler aktiv] Ausloesung Notab Interner Fehler 15";
+CM_ SG_ 403 Ausloesung_Notab_Interner_Fehler_14 "[] [] [] [1=Fehler aktiv] Ausloesung Notab Interner Fehler 14";
+CM_ SG_ 403 Ausloesung_Notab_Interner_Fehler_13 "[] [] [] [1=Fehler aktiv] Ausloesung Notab Interner Fehler 13";
+CM_ SG_ 403 Ausloesung_Notab_Interner_Fehler_12 "[] [] [] [1=Fehler aktiv] Ausloesung Notab Interner Fehler 12";
+CM_ SG_ 403 Ausloesung_Notab_Interner_Fehler_11 "[] [] [] [1=Fehler aktiv] Ausloesung Notab Interner Fehler 11";
+CM_ SG_ 403 Ausloesung_Notab_Interner_Fehler_10 "[] [] [] [1=Fehler aktiv] Ausloesung Notab Interner Fehler 10";
+CM_ SG_ 403 Ausloesung_Notab_Interner_Fehler_9 "[] [] [] [1=Fehler aktiv] Ausloesung Notab Interner Fehler 9";
+CM_ SG_ 403 Ausloesung_Notab_Interner_Fehler_8 "[] [] [] [1=Fehler aktiv] Ausloesung Notab Interner Fehler 8";
+CM_ SG_ 403 Ausloesung_Notab_Interner_Fehler_7 "[] [] [] [1=Fehler aktiv] Ausloesung Notab Interner Fehler 7";
+CM_ SG_ 403 Ausloesung_Notab_Interner_Fehler_6 "[] [] [] [1=Fehler aktiv] Ausloesung Notab Interner Fehler 6";
+CM_ SG_ 403 Ausloesung_Notab_Interner_Fehler_5 "[] [] [] [1=Fehler aktiv] Ausloesung Notab Interner Fehler 5";
+CM_ SG_ 403 Ausloesung_Notab_Interner_Fehler_4 "[] [] [] [1=Fehler aktiv] Ausloesung Notab Interner Fehler 4";
+CM_ SG_ 403 Ausloesung_Notab_Interner_Fehler_3 "[] [] [] [1=Fehler aktiv] Ausloesung Notab Interner Fehler 3";
+CM_ SG_ 403 Ausloesung_Notab_Interner_Fehler_2 "[] [] [] [1=Fehler aktiv] Ausloesung Notab Interner Fehler 2";
+CM_ SG_ 403 Ausloesung_Notab_Interner_Fehler_1 "[] [] [] [1=Fehler aktiv] Ausloesung Notab Interner Fehler 1";
+CM_ SG_ 403 Ausloesung_Notab_Interner_Fehler_0 "[] [] [] [1=Fehler aktiv] Ausloesung Notab Interner Fehler 0";
+CM_ SG_ 659 Ausloesung_Notab_Interner_Fehler_127 "[] [] [] [1=Fehler aktiv] Ausloesung Notab Interner Fehler 127";
+CM_ SG_ 659 Ausloesung_Notab_Interner_Fehler_126 "[] [] [] [1=Fehler aktiv] Ausloesung Notab Interner Fehler 126";
+CM_ SG_ 659 Ausloesung_Notab_Interner_Fehler_125 "[] [] [] [1=Fehler aktiv] Ausloesung Notab Interner Fehler 125";
+CM_ SG_ 659 Ausloesung_Notab_Interner_Fehler_124 "[] [] [] [1=Fehler aktiv] Ausloesung Notab Interner Fehler 124";
+CM_ SG_ 659 Ausloesung_Notab_Interner_Fehler_123 "[] [] [] [1=Fehler aktiv] Ausloesung Notab Interner Fehler 123";
+CM_ SG_ 659 Ausloesung_Notab_Interner_Fehler_122 "[] [] [] [1=Fehler aktiv] Ausloesung Notab Interner Fehler 122";
+CM_ SG_ 659 Ausloesung_Notab_Interner_Fehler_121 "[] [] [] [1=Fehler aktiv] Ausloesung Notab Interner Fehler 121";
+CM_ SG_ 659 Ausloesung_Notab_Interner_Fehler_120 "[] [] [] [1=Fehler aktiv] Ausloesung Notab Interner Fehler 120";
+CM_ SG_ 659 Ausloesung_Notab_Interner_Fehler_119 "[] [] [] [1=Fehler aktiv] Ausloesung Notab Interner Fehler 119";
+CM_ SG_ 659 Ausloesung_Notab_Interner_Fehler_118 "[] [] [] [1=Fehler aktiv] Ausloesung Notab Interner Fehler 118";
+CM_ SG_ 659 Ausloesung_Notab_Interner_Fehler_117 "[] [] [] [1=Fehler aktiv] Ausloesung Notab Interner Fehler 117";
+CM_ SG_ 659 Ausloesung_Notab_Interner_Fehler_116 "[] [] [] [1=Fehler aktiv] Ausloesung Notab Interner Fehler 116";
+CM_ SG_ 659 Ausloesung_Notab_Interner_Fehler_115 "[] [] [] [1=Fehler aktiv] Ausloesung Notab Interner Fehler 115";
+CM_ SG_ 659 Ausloesung_Notab_Interner_Fehler_114 "[] [] [] [1=Fehler aktiv] Ausloesung Notab Interner Fehler 114";
+CM_ SG_ 659 Ausloesung_Notab_Interner_Fehler_113 "[] [] [] [1=Fehler aktiv] Ausloesung Notab Interner Fehler 113";
+CM_ SG_ 659 Ausloesung_Notab_Interner_Fehler_112 "[] [] [] [1=Fehler aktiv] Ausloesung Notab Interner Fehler 112";
+CM_ SG_ 659 Ausloesung_Notab_Interner_Fehler_111 "[] [] [] [1=Fehler aktiv] Ausloesung Notab Interner Fehler 111";
+CM_ SG_ 659 Ausloesung_Notab_Interner_Fehler_110 "[] [] [] [1=Fehler aktiv] Ausloesung Notab Interner Fehler 110";
+CM_ SG_ 659 Ausloesung_Notab_Interner_Fehler_109 "[] [] [] [1=Fehler aktiv] Ausloesung Notab Interner Fehler 109";
+CM_ SG_ 659 Ausloesung_Notab_Interner_Fehler_108 "[] [] [] [1=Fehler aktiv] Ausloesung Notab Interner Fehler 108";
+CM_ SG_ 659 Ausloesung_Notab_Interner_Fehler_107 "[] [] [] [1=Fehler aktiv] Ausloesung Notab Interner Fehler 107";
+CM_ SG_ 659 Ausloesung_Notab_Interner_Fehler_106 "[] [] [] [1=Fehler aktiv] Ausloesung Notab Interner Fehler 106";
+CM_ SG_ 659 Ausloesung_Notab_Interner_Fehler_105 "[] [] [] [1=Fehler aktiv] Ausloesung Notab Interner Fehler 105";
+CM_ SG_ 659 Ausloesung_Notab_Interner_Fehler_104 "[] [] [] [1=Fehler aktiv] Ausloesung Notab Interner Fehler 104";
+CM_ SG_ 659 Ausloesung_Notab_Interner_Fehler_103 "[] [] [] [1=Fehler aktiv] Ausloesung Notab Interner Fehler 103";
+CM_ SG_ 659 Ausloesung_Notab_Interner_Fehler_102 "[] [] [] [1=Fehler aktiv] Ausloesung Notab Interner Fehler 102";
+CM_ SG_ 659 Ausloesung_Notab_Interner_Fehler_101 "[] [] [] [1=Fehler aktiv] Ausloesung Notab Interner Fehler 101";
+CM_ SG_ 659 Ausloesung_Notab_Interner_Fehler_100 "[] [] [] [1=Fehler aktiv] Ausloesung Notab Interner Fehler 100";
+CM_ SG_ 659 Ausloesung_Notab_Interner_Fehler_99 "[] [] [] [1=Fehler aktiv] Ausloesung Notab Interner Fehler 99";
+CM_ SG_ 659 Ausloesung_Notab_Interner_Fehler_98 "[] [] [] [1=Fehler aktiv] Ausloesung Notab Interner Fehler 98";
+CM_ SG_ 659 Ausloesung_Notab_Interner_Fehler_97 "[] [] [] [1=Fehler aktiv] Ausloesung Notab Interner Fehler 97";
+CM_ SG_ 659 Ausloesung_Notab_Interner_Fehler_96 "[] [] [] [1=Fehler aktiv] Ausloesung Notab Interner Fehler 96";
+CM_ SG_ 659 Ausloesung_Notab_Interner_Fehler_95 "[] [] [] [1=Fehler aktiv] Ausloesung Notab Interner Fehler 95";
+CM_ SG_ 659 Ausloesung_Notab_Interner_Fehler_94 "[] [] [] [1=Fehler aktiv] Ausloesung Notab Interner Fehler 94";
+CM_ SG_ 659 Ausloesung_Notab_Interner_Fehler_93 "[] [] [] [1=Fehler aktiv] Ausloesung Notab Interner Fehler 93";
+CM_ SG_ 659 Ausloesung_Notab_Interner_Fehler_92 "[] [] [] [1=Fehler aktiv] Ausloesung Notab Interner Fehler 92";
+CM_ SG_ 659 Ausloesung_Notab_Interner_Fehler_91 "[] [] [] [1=Fehler aktiv] Ausloesung Notab Interner Fehler 91";
+CM_ SG_ 659 Ausloesung_Notab_Interner_Fehler_90 "[] [] [] [1=Fehler aktiv] Ausloesung Notab Interner Fehler 90";
+CM_ SG_ 659 Ausloesung_Notab_Interner_Fehler_89 "[] [] [] [1=Fehler aktiv] Ausloesung Notab Interner Fehler 89";
+CM_ SG_ 659 Ausloesung_Notab_Interner_Fehler_88 "[] [] [] [1=Fehler aktiv] Ausloesung Notab Interner Fehler 88";
+CM_ SG_ 659 Ausloesung_Notab_Interner_Fehler_87 "[] [] [] [1=Fehler aktiv] Ausloesung Notab Interner Fehler 87";
+CM_ SG_ 659 Ausloesung_Notab_Interner_Fehler_86 "[] [] [] [1=Fehler aktiv] Ausloesung Notab Interner Fehler 86";
+CM_ SG_ 659 Ausloesung_Notab_Interner_Fehler_85 "[] [] [] [1=Fehler aktiv] Ausloesung Notab Interner Fehler 85";
+CM_ SG_ 659 Ausloesung_Notab_Interner_Fehler_84 "[] [] [] [1=Fehler aktiv] Ausloesung Notab Interner Fehler 84";
+CM_ SG_ 659 Ausloesung_Notab_Interner_Fehler_83 "[] [] [] [1=Fehler aktiv] Ausloesung Notab Interner Fehler 83";
+CM_ SG_ 659 Ausloesung_Notab_Interner_Fehler_82 "[] [] [] [1=Fehler aktiv] Ausloesung Notab Interner Fehler 82";
+CM_ SG_ 659 Ausloesung_Notab_Interner_Fehler_81 "[] [] [] [1=Fehler aktiv] Ausloesung Notab Interner Fehler 81";
+CM_ SG_ 659 Ausloesung_Notab_Interner_Fehler_80 "[] [] [] [1=Fehler aktiv] Ausloesung Notab Interner Fehler 80";
+CM_ SG_ 659 Ausloesung_Notab_Interner_Fehler_79 "[] [] [] [1=Fehler aktiv] Ausloesung Notab Interner Fehler 79";
+CM_ SG_ 659 Ausloesung_Notab_Interner_Fehler_78 "[] [] [] [1=Fehler aktiv] Ausloesung Notab Interner Fehler 78";
+CM_ SG_ 659 Ausloesung_Notab_Interner_Fehler_77 "[] [] [] [1=Fehler aktiv] Ausloesung Notab Interner Fehler 77";
+CM_ SG_ 659 Ausloesung_Notab_Interner_Fehler_76 "[] [] [] [1=Fehler aktiv] Ausloesung Notab Interner Fehler 76";
+CM_ SG_ 659 Ausloesung_Notab_Interner_Fehler_75 "[] [] [] [1=Fehler aktiv] Ausloesung Notab Interner Fehler 75";
+CM_ SG_ 659 Ausloesung_Notab_Interner_Fehler_74 "[] [] [] [1=Fehler aktiv] Ausloesung Notab Interner Fehler 74";
+CM_ SG_ 659 Ausloesung_Notab_Interner_Fehler_73 "[] [] [] [1=Fehler aktiv] Ausloesung Notab Interner Fehler 73";
+CM_ SG_ 659 Ausloesung_Notab_Interner_Fehler_72 "[] [] [] [1=Fehler aktiv] Ausloesung Notab Interner Fehler 72";
+CM_ SG_ 659 Ausloesung_Notab_Interner_Fehler_71 "[] [] [] [1=Fehler aktiv] Ausloesung Notab Interner Fehler 71";
+CM_ SG_ 659 Ausloesung_Notab_Interner_Fehler_70 "[] [] [] [1=Fehler aktiv] Ausloesung Notab Interner Fehler 70";
+CM_ SG_ 659 Ausloesung_Notab_Interner_Fehler_69 "[] [] [] [1=Fehler aktiv] Ausloesung Notab Interner Fehler 69";
+CM_ SG_ 659 Ausloesung_Notab_Interner_Fehler_68 "[] [] [] [1=Fehler aktiv] Ausloesung Notab Interner Fehler 68";
+CM_ SG_ 659 Ausloesung_Notab_Interner_Fehler_67 "[] [] [] [1=Fehler aktiv] Ausloesung Notab Interner Fehler 67";
+CM_ SG_ 659 Ausloesung_Notab_Interner_Fehler_66 "[] [] [] [1=Fehler aktiv] Ausloesung Notab Interner Fehler 66";
+CM_ SG_ 659 Ausloesung_Notab_Interner_Fehler_65 "[] [] [] [1=Fehler aktiv] Ausloesung Notab Interner Fehler 65";
+CM_ SG_ 659 Ausloesung_Notab_Interner_Fehler_64 "[] [] [] [1=Fehler aktiv] Ausloesung Notab Interner Fehler 64";
+CM_ SG_ 915 Ausloesung_Notab_Interner_Fehlbedienung_263 "[] [] [] [1=Fehler aktiv] Ausloesung Notab Fehlbedienung 263";
+CM_ SG_ 915 Ausloesung_Notab_Interner_Fehlbedienung_262 "[] [] [] [1=Fehler aktiv] Ausloesung Notab Fehlbedienung 262";
+CM_ SG_ 915 Ausloesung_Notab_Interner_Fehlbedienung_261 "[] [] [] [1=Fehler aktiv] Ausloesung Notab Fehlbedienung 261";
+CM_ SG_ 915 Ausloesung_Notab_Interner_Fehlbedienung_260 "[] [] [] [1=Fehler aktiv] Ausloesung Notab Fehlbedienung 260";
+CM_ SG_ 915 Ausloesung_Notab_Interner_Fehlbedienung_259 "[] [] [] [1=Fehler aktiv] Ausloesung Notab Fehlbedienung 259";
+CM_ SG_ 915 Ausloesung_Notab_Interner_Fehlbedienung_258 "[] [] [] [1=Fehler aktiv] Ausloesung Notab Fehlbedienung 258";
+CM_ SG_ 915 Ausloesung_Notab_Interner_Fehlbedienung_257 "[] [] [] [1=Fehler aktiv] Ausloesung Notab Fehlbedienung 257";
+CM_ SG_ 915 Ausloesung_Notab_Interner_Fehlbedienung_256 "[] [] [] [1=Fehler aktiv] Ausloesung Notab Fehlbedienung 256";
+CM_ SG_ 915 Ausloesung_Notab_Interner_Fehlbedienung_255 "[] [] [] [1=Fehler aktiv] Ausloesung Notab Fehlbedienung 255";
+CM_ SG_ 915 Ausloesung_Notab_Interner_Fehlbedienung_254 "[] [] [] [1=Fehler aktiv] Ausloesung Notab Fehlbedienung 254";
+CM_ SG_ 915 Ausloesung_Notab_Interner_Fehlbedienung_253 "[] [] [] [1=Fehler aktiv] Ausloesung Notab Fehlbedienung 253";
+CM_ SG_ 915 Ausloesung_Notab_Interner_Fehlbedienung_252 "[] [] [] [1=Fehler aktiv] Ausloesung Notab Fehlbedienung 252";
+CM_ SG_ 915 Ausloesung_Notab_Interner_Fehlbedienung_251 "[] [] [] [1=Fehler aktiv] Ausloesung Notab Fehlbedienung 251";
+CM_ SG_ 915 Ausloesung_Notab_Interner_Fehlbedienung_250 "[] [] [] [1=Fehler aktiv] Ausloesung Notab Fehlbedienung 250";
+CM_ SG_ 915 Ausloesung_Notab_Interner_Fehlbedienung_249 "[] [] [] [1=Fehler aktiv] Ausloesung Notab Fehlbedienung 249";
+CM_ SG_ 915 Ausloesung_Notab_Interner_Fehlbedienung_248 "[] [] [] [1=Fehler aktiv] Ausloesung Notab Fehlbedienung 248";
+CM_ SG_ 915 Ausloesung_Notab_Interner_Fehlbedienung_247 "[] [] [] [1=Fehler aktiv] Ausloesung Notab Fehlbedienung 247";
+CM_ SG_ 915 Ausloesung_Notab_Interner_Fehlbedienung_246 "[] [] [] [1=Fehler aktiv] Ausloesung Notab Fehlbedienung 246";
+CM_ SG_ 915 Ausloesung_Notab_Interner_Fehlbedienung_245 "[] [] [] [1=Fehler aktiv] Ausloesung Notab Fehlbedienung 245";
+CM_ SG_ 915 Ausloesung_Notab_Interner_Fehlbedienung_244 "[] [] [] [1=Fehler aktiv] Ausloesung Notab Fehlbedienung 244";
+CM_ SG_ 915 Ausloesung_Notab_Interner_Fehlbedienung_243 "[] [] [] [1=Fehler aktiv] Ausloesung Notab Fehlbedienung 243";
+CM_ SG_ 915 Ausloesung_Notab_Interner_Fehlbedienung_242 "[] [] [] [1=Fehler aktiv] Ausloesung Notab Fehlbedienung 242";
+CM_ SG_ 915 Ausloesung_Notab_Interner_Fehlbedienung_241 "[] [] [] [1=Fehler aktiv] Ausloesung Notab Fehlbedienung 241";
+CM_ SG_ 915 Ausloesung_Notab_Interner_Fehlbedienung_240 "[] [] [] [1=Fehler aktiv] Ausloesung Notab Fehlbedienung 240";
+CM_ SG_ 915 Ausloesung_Notab_Interner_Fehlbedienung_239 "[] [] [] [1=Fehler aktiv] Ausloesung Notab Fehlbedienung 239";
+CM_ SG_ 915 Ausloesung_Notab_Interner_Fehlbedienung_238 "[] [] [] [1=Fehler aktiv] Ausloesung Notab Fehlbedienung 238";
+CM_ SG_ 915 Ausloesung_Notab_Interner_Fehlbedienung_237 "[] [] [] [1=Fehler aktiv] Ausloesung Notab Fehlbedienung 237";
+CM_ SG_ 915 Ausloesung_Notab_Interner_Fehlbedienung_236 "[] [] [] [1=Fehler aktiv] Ausloesung Notab Fehlbedienung 236";
+CM_ SG_ 915 Ausloesung_Notab_Interner_Fehlbedienung_235 "[] [] [] [1=Fehler aktiv] Ausloesung Notab Fehlbedienung 235";
+CM_ SG_ 915 Ausloesung_Notab_Interner_Fehlbedienung_234 "[] [] [] [1=Fehler aktiv] Ausloesung Notab Fehlbedienung 234";
+CM_ SG_ 915 Ausloesung_Notab_Interner_Fehlbedienung_233 "[] [] [] [1=Fehler aktiv] Ausloesung Notab Fehlbedienung 233";
+CM_ SG_ 915 Ausloesung_Notab_Interner_Fehlbedienung_232 "[] [] [] [1=Fehler aktiv] Ausloesung Notab Fehlbedienung 232";
+CM_ SG_ 915 Ausloesung_Notab_Interner_Fehlbedienung_231 "[] [] [] [1=Fehler aktiv] Ausloesung Notab Fehlbedienung 231";
+CM_ SG_ 915 Ausloesung_Notab_Interner_Fehlbedienung_230 "[] [] [] [1=Fehler aktiv] Ausloesung Notab Fehlbedienung 230";
+CM_ SG_ 915 Ausloesung_Notab_Interner_Fehlbedienung_229 "[] [] [] [1=Fehler aktiv] Ausloesung Notab Fehlbedienung 229";
+CM_ SG_ 915 Ausloesung_Notab_Interner_Fehlbedienung_228 "[] [] [] [1=Fehler aktiv] Ausloesung Notab Fehlbedienung 228";
+CM_ SG_ 915 Ausloesung_Notab_Interner_Fehlbedienung_227 "[] [] [] [1=Fehler aktiv] Ausloesung Notab Fehlbedienung 227";
+CM_ SG_ 915 Ausloesung_Notab_Interner_Fehlbedienung_226 "[] [] [] [1=Fehler aktiv] Ausloesung Notab Fehlbedienung 226";
+CM_ SG_ 915 Ausloesung_Notab_Interner_Fehlbedienung_225 "[] [] [] [1=Fehler aktiv] Ausloesung Notab Fehlbedienung 225";
+CM_ SG_ 915 Ausloesung_Notab_Interner_Fehlbedienung_224 "[] [] [] [1=Fehler aktiv] Ausloesung Notab Fehlbedienung 224";
+CM_ SG_ 915 Ausloesung_Notab_Interner_Fehlbedienung_223 "[] [] [] [1=Fehler aktiv] Ausloesung Notab Fehlbedienung 223";
+CM_ SG_ 915 Ausloesung_Notab_Interner_Fehlbedienung_222 "[] [] [] [1=Fehler aktiv] Ausloesung Notab Fehlbedienung 222";
+CM_ SG_ 915 Ausloesung_Notab_Interner_Fehlbedienung_221 "[] [] [] [1=Fehler aktiv] Ausloesung Notab Fehlbedienung 221";
+CM_ SG_ 915 Ausloesung_Notab_Interner_Fehlbedienung_220 "[] [] [] [1=Fehler aktiv] Ausloesung Notab Fehlbedienung 220";
+CM_ SG_ 915 Ausloesung_Notab_Interner_Fehlbedienung_219 "[] [] [] [1=Fehler aktiv] Ausloesung Notab Fehlbedienung 219";
+CM_ SG_ 915 Ausloesung_Notab_Interner_Fehlbedienung_218 "[] [] [] [1=Fehler aktiv] Ausloesung Notab Fehlbedienung 218";
+CM_ SG_ 915 Ausloesung_Notab_Interner_Fehlbedienung_217 "[] [] [] [1=Fehler aktiv] Ausloesung Notab Fehlbedienung 217";
+CM_ SG_ 915 Ausloesung_Notab_Interner_Fehlbedienung_216 "[] [] [] [1=Fehler aktiv] Ausloesung Notab Fehlbedienung 216";
+CM_ SG_ 915 Ausloesung_Notab_Interner_Fehlbedienung_215 "[] [] [] [1=Fehler aktiv] Ausloesung Notab Fehlbedienung 215";
+CM_ SG_ 915 Ausloesung_Notab_Interner_Fehlbedienung_214 "[] [] [] [1=Fehler aktiv] Ausloesung Notab Fehlbedienung 214";
+CM_ SG_ 915 Ausloesung_Notab_Interner_Fehlbedienung_213 "[] [] [] [1=Fehler aktiv] Ausloesung Notab Fehlbedienung 213";
+CM_ SG_ 915 Ausloesung_Notab_Interner_Fehlbedienung_212 "[] [] [] [1=Fehler aktiv] Ausloesung Notab Fehlbedienung 212";
+CM_ SG_ 915 Ausloesung_Notab_Interner_Fehlbedienung_211 "[] [] [] [1=Fehler aktiv] Ausloesung Notab Fehlbedienung 211";
+CM_ SG_ 915 Ausloesung_Notab_Interner_Fehlbedienung_210 "[] [] [] [1=Fehler aktiv] Ausloesung Notab Fehlbedienung 210";
+CM_ SG_ 915 Ausloesung_Notab_Interner_Fehlbedienung_209 "[] [] [] [1=Fehler aktiv] Ausloesung Notab Fehlbedienung 209";
+CM_ SG_ 915 Ausloesung_Notab_Interner_Fehlbedienung_208 "[] [] [] [1=Fehler aktiv] Ausloesung Notab Fehlbedienung 208";
+CM_ SG_ 915 Ausloesung_Notab_Interner_Fehlbedienung_207 "[] [] [] [1=Fehler aktiv] Ausloesung Notab Fehlbedienung 207";
+CM_ SG_ 915 Ausloesung_Notab_Interner_Fehlbedienung_206 "[] [] [] [1=Fehler aktiv] Ausloesung Notab Fehlbedienung 206";
+CM_ SG_ 915 Ausloesung_Notab_Interner_Fehlbedienung_205 "[] [] [] [1=Fehler aktiv] Ausloesung Notab Fehlbedienung 205";
+CM_ SG_ 915 Ausloesung_Notab_Interner_Fehlbedienung_204 "[] [] [] [1=Fehler aktiv] Ausloesung Notab Fehlbedienung 204";
+CM_ SG_ 915 Ausloesung_Notab_Interner_Fehlbedienung_203 "[] [] [] [1=Fehler aktiv] Ausloesung Notab Fehlbedienung 203";
+CM_ SG_ 915 Ausloesung_Notab_Interner_Fehlbedienung_202 "[] [] [] [1=Fehler aktiv] Ausloesung Notab Fehlbedienung 202";
+CM_ SG_ 915 Ausloesung_Notab_Interner_Fehlbedienung_201 "[] [] [] [1=Fehler aktiv] Ausloesung Notab Fehlbedienung 201";
+CM_ SG_ 915 Ausloesung_Notab_Interner_Fehlbedienung_200 "[] [] [] [1=Fehler aktiv] Ausloesung Notab Fehlbedienung 200";
+CM_ SG_ 1171 Zurueckgelegte_Wegstrecke_des_Systems_in_V "[] [] [] [] Zurückgelegte Wegstrecke des Systems in V";
+CM_ SG_ 1171 Adresse_Abort_Register_R13 "[] [] [] [] Adresse des Stackpointers im Abort-Modus (Abort Register R13)";
+CM_ SG_ 404 Adresse_Abort_Register_R14 "[] [] [] [] Adresse des Programcounters im Abort-Modus (Abort Register R14)";
+CM_ SG_ 404 Adresse_Abort_Register_Reserve "[] [] [] [] nc";
+CM_ SG_ 660 _6098_12VnachK11 "[6098] [A012] [X11.6] [[mV], 12V] 12VnachK11";
+CM_ SG_ 660 _6187_AusgangT2 "[6187] [A009] [X5.A2] [[mV], 12V] AusgangT2";
+CM_ SG_ 660 _6154_BSW_com1_1_24V "[6154] [A017] [X11.4] [[mV], 24V] BSW com1.1 (24V)";
+CM_ SG_ 660 _6156_BSW__0____24V "[6156] [A018] [X3.36] [[mV], 24V] BSW== 0 -> 24V";
+CM_ SG_ 916 _6157_BSW_1___24V "[6157] [A019] [X3.37, X3.11, X3.12] [[mV], 24V] BSW==1 ->24V";
+CM_ SG_ 916 _6160_BSW_1___48V "[6160] [A024] [X3.40] [[mV], 48V] BSW==1 ->48V";
+CM_ SG_ 916 _6158_BSW___2____48V "[6158] [A020] [X3.38] [[mV], 24V] BSW == 2 -> 48V";
+CM_ SG_ 916 _6163_BSW_com2_1_48V "[6163] [A022] [X11.5] [[mV], 48V] BSW com2.1 (48V)";
+CM_ SG_ 1172 _6161_BSW__0____48V "[6161] [A023] [X3.39] [[mV], 48V] BSW== 0 -> 48V";
+CM_ SG_ 1172 _6185_TemperaturMotor "[6185] [A067] [X11.13] [[mV], 12V] TemperaturMotor";
+CM_ SG_ 1172 _6076_T1_Ist_Spannung_Out "[6076] [A055] [X5.14] [[mV]] T1 Ist-Spannung-Out";
+CM_ SG_ 1172 _6077_T1_Ist_Strom_Out "[6077] [A056] [X5.15] [[mV]] T1 Ist-Strom-Out";
+CM_ SG_ 405 _6082_C1_Temperatur "[6082] [A007] [X5.20] [[mV]] C1 Temperatur";
+CM_ SG_ 405 _6069_48V_nach_F10_102 "[6069] [A004] [X6.A1] [[mV], 48V] 48V nach F10 (102)";
+CM_ SG_ 405 _6070_48V_nach_F11_103 "[6070] [A003] [X6.A2] [[mV], 48V] 48V nach F11 (103)";
+CM_ SG_ 405 _6061_BG1_K3_87b "[6061] [A028] [X6.9] [[mV]] BG1:K3.87b";
+CM_ SG_ 661 _6088_Notabtaster_com1 "[6088] [A042] [X1.A5, X4.4, X11.2] [[mV], 24V] Notabtaster com1";
+CM_ SG_ 661 _6166_Notabtaster_nc1_Funktion "[6166] [A043] [X4.5] [[mV], 24V] Notabtaster nc1 Funktion";
+CM_ SG_ 661 _6167_Notabtaster_no2_Funktion "[6167] [A044] [X4.6] [[mV], 24V] Notabtaster no2 Funktion";
+CM_ SG_ 661 _6009_Versorgung_28V_fuer_T1 "[6009] [] [X5.21] [] Versorgung 28V für T1";
+CM_ SG_ 917 _6089_Versorgung_28V_fuer_T2 "[6089] [A008] [X5.22] [[mV], 24V] Versorgung 28V für T2";
+CM_ SG_ 917 _6088_12V_nach_F13_301 "[6088] [A042] [X1.A5, X4.4, X11.2] [[mV], 24V] 12V nach F13 (301)";
+CM_ SG_ 917 _6087_12V_nach_F12_300 "[6087] [A011] [X1.A4, X11.1] [[mV], 12V] 12V nach F12 (300)";
+CM_ SG_ 917 _6099_12V_am_C2 "[6099] [A013] [X5.8] [[mV], 12V] 12V am C2";
+CM_ SG_ 1173 _6007_Ueberwachung_PK2_86 "[6007] [] [X3.35] [[mV], 24V] Überwachung PK2.86";
+CM_ SG_ 1173 _6159_BSW___2____48V "[6159] [A025] [X6.4, X3.41, X4.7, X4.8] [[mV], 48V] BSW == 2 -> 48V";
+CM_ SG_ 1173 _6067_48V_Versorgung_Motor "[6067] [A034] [X6.5] [[mV], 48V] 48V Versorgung Motor";
+CM_ SG_ 1173 _6053_BSW___1_an_K5 "[6053] [A016] [X6.1, X3.8] [[mV]] BSW == 1 an K5";
+CM_ SG_ 406 _6056_K1_86 "[6056] [A026] [X6.3] [[mV]] K1.86";
+CM_ SG_ 406 _6068_48V_Versorgung_Bremse__im_ISB "[6068] [A032] [X5.A3] [[mV], 48V] 48V Versorgung Bremse  im ISB";
+CM_ SG_ 406 _6055_BG1_K1_87b "[6055] [A021] [X6.15] [[mV]] BG1:K1.87b";
+CM_ SG_ 406 __Vers__IDA "[] [VersIDA] [-] [[mV], 24V] Vers. IDA";
+CM_ SG_ 662 _6112_ulPotiPin1Vcc "[6112] [] [X11.10] [] ulPotiPin1Vcc";
+CM_ SG_ 662 _6113_ulPotiPin2Schleifer "[6113] [] [X11.11] [] ulPotiPin2Schleifer";
+CM_ SG_ 662 _6005_ulVersorgungBremse "[6005] [A030] [X1.A1, X3.34] [24V] ulVersorgungBremse";
+CM_ SG_ 662 _6000_ulUeberwK12 "[6000] [A014] [X3.46] [24V] ulUeberwK12";
+CM_ SG_ 918 _6115_ulK6_Rollover "[6115] [] [X7.A1] [] ulK6_Rollover";
+CM_ SG_ 918 _6092_ulUebBremse "[6092] [A033] [X10.A3] [1,65] ulUebBremse";
+CM_ SG_ 918 _6066_ulUebMotor "[6066] [A035] [X6.6] [48V] ulUebMotor";
+CM_ SG_ 1174 _6006_Selbsthaltung_Batterierelais "[6006] [] [X1.A3] [1=Selbsthaltung] Selbsthaltung Batterierelais, 1=Selbsthaltung aktiv";
+CM_ SG_ 1174 _6009_LadewandlerT1 "[6009] [] [X5.21] [] LadewandlerT1";
+CM_ SG_ 1174 _6013_DMC_RW "[6013] [] [X3.3] [0=aktiv] DMC_RW, 0=aktiv";
+CM_ SG_ 1174 _6012_DMC_FW "[6012] [] [X3.2] [0=aktiv] DMC_FW, 0=aktiv";
+CM_ SG_ 1174 _6014_DMC_FS "[6014] [] [X3.4] [0=aktiv] DMC_FS, 0=aktiv";
+CM_ SG_ 1174 _6015_DMC_Seat "[6015] [] [X3.5] [0=aktiv] DMC_Seat, 0=aktiv";
+CM_ SG_ 1174 _6095_Testsignal_Out "[6095] [D045] [X5.1, X5.5] [1=Testsignal aktiv] Testsignal_Out";
+CM_ SG_ 1174 _6178_Hupe "[6178] [] [X3.20] [1=Hupe ertönt] Hupe";
+CM_ SG_ 1174 nc "[] [] [] [] nc";
+CM_ SG_ 1174 nc "[] [] [] [] nc";
+CM_ SG_ 1174 nc "[] [] [] [] nc";
+CM_ SG_ 1174 nc "[] [] [] [] nc";
+CM_ SG_ 1174 nc "[] [] [] [] nc";
+CM_ SG_ 1174 __Bremse "[] [DBremse] [X6.1, X3.8 über Relais] [1=geloest] Bremse, 1 = Bremse geöffnet";
+CM_ SG_ 1174 _6171_LED_Gruen "[6171] [] [X3.14] [1=LED an] LED_Gruen_6171, 1=LED an";
+CM_ SG_ 1174 _6170_LED_Rot "[6170] [] [X3.13] [1=LED an] LED_Rot_6170, 1=LED an";
+CM_ SG_ 1174 __AufwBed_7_D036_2_low_Motorueberwachung "[aufw_7] [] [] [] Aufw_Bedingung_7 D036_2_low_Motorüberwachung";
+CM_ SG_ 1174 __AufwBed_6_Versorgung_DMC "[aufw_6] [] [] [] Aufw_Bedingung_6_Versorgung_DMC";
+CM_ SG_ 1174 __AufwBed_5_Spulenwiderstand_Bremse "[aufw_5] [] [] [] Aufw_Bedingung_5_Spulenwiderstand_Bremse";
+CM_ SG_ 1174 __AufwBed_4_Versorgungsspannung_Bremse "[aufw_4] [] [] [] Aufw_Bedingung_4_Versorgungsspannung_Bremse";
+CM_ SG_ 1174 __AufwBed_3_Keyswitch_D016 "[aufw_3] [] [] [] Aufw_Bedingung_3_Keyswitch_D016";
+CM_ SG_ 1174 __AufwBed_2_Fanghakenschalter "[aufw_2] [] [] [] Aufw_Bedingung_2_Fanghakenschalter";
+CM_ SG_ 1174 __AufwBed_1_Endschalter_OT_UT_FHS "[aufw_1] [] [] [] Aufw_Bedingung_1_Endschalter_OT_UT_FHS";
+CM_ SG_ 1174 __AufwBed_0_Taster_Auf "[aufw_0] [] [] [] Aufw_Bedingung_0_Taster_Auf";
+CM_ SG_ 1174 __AufwBed_15_Auflastung "[aufw_15] [] [] [] Aufw_Bedingung_15_Auflastung";
+CM_ SG_ 1174 __AufwBed_14_Fehlermeldungen_erlauben_Komfortfahrt "[aufw_14] [] [] [] Aufw_Bedingung_14_Fehlermeldungen_erlauben_Komfortfahrt";
+CM_ SG_ 1174 __AufwBed_13_BSW_Plausibilitaet "[aufw_13] [] [] [] Aufw_Bedingung_13_BSW_Plausibilität";
+CM_ SG_ 1174 __AufwBed_12_DMC_LED "[aufw_12] [] [] [] Aufw_Bedingung_12_DMC_LED";
+CM_ SG_ 1174 __AufwBed_11_Timeout "[aufw_11] [] [] [] Aufw_Bedingung_11_Timeout";
+CM_ SG_ 1174 __AufwBed_10_Einmessfahrt_abgeschlossen "[aufw_10] [] [] [] Aufw_Bedingung_10_Einmessfahrt_abgeschlossen";
+CM_ SG_ 1174 __AufwBed_9_OT_nicht_ueberschritten "[aufw_9] [] [] [] Aufw_Bedingung_9_OT_nicht_ueberschritten";
+CM_ SG_ 1174 __AufwBed_8_Motortemp_ok "[aufw_8] [] [] [] Aufw_Bedingung_8_Motortemp_ok";
+CM_ SG_ 1174 nc "[] [] [] [] nc";
+CM_ SG_ 1174 __AbwBed_7_D036_2_low_Motorueberwachung "[abw_7] [] [] [] Abw_Bedingung_7 D036_2_low_Motorüberwachung";
+CM_ SG_ 1174 __AbwBed_6_Versorgung_DMC "[abw_6] [] [] [] Abw_Bedingung_6_Versorgung_DMC";
+CM_ SG_ 1174 __AbwBed_5_Spulenwiderstand_Bremse "[abw_5] [] [] [] Abw_Bedingung_5_Spulenwiderstand_Bremse";
+CM_ SG_ 1174 __AbwBed_4_Versorgungsspannung_Bremse "[abw_4] [] [] [] Abw_Bedingung_4_Versorgungsspannung_Bremse";
+CM_ SG_ 1174 __AbwBed_3_Keyswitch_D016 "[abw_3] [] [] [] Abw_Bedingung_3_Keyswitch_D016";
+CM_ SG_ 1174 __AbwBed_2_Fanghakenschalter "[abw_2] [] [] [] Abw_Bedingung_2_Fanghakenschalter";
+CM_ SG_ 1174 __AbwBed_1_Endschalter_OT_UT_FHS "[abw_1] [] [] [] Abw_Bedingung_1_Endschalter_OT_UT_FHS";
+CM_ SG_ 1174 __AbwBed_0_Taster_Ab "[abw_0] [] [] [] Abw_Bedingung_0_Taster_Ab";
+CM_ SG_ 1174 __AbwBed_15_Auflastung "[abw_15] [] [] [] Abw_Bedingung_15_Auflastung";
+CM_ SG_ 1174 __AbwBed_14_Fehlermeldungen_erlauben_Komfortfahrt "[abw_14] [] [] [] Abw_Bedingung_14_Fehlermeldungen_erlauben_Komfortfahrt";
+CM_ SG_ 1174 __AbwBed_13_BSW_Plausibilitaet "[abw_13] [] [] [] Abw_Bedingung_13_BSW_Plausibilität";
+CM_ SG_ 1174 __AbwBed_12_DMC_LED "[abw_12] [] [] [] Abw_Bedingung_12_DMC_LED";
+CM_ SG_ 1174 __AbwBed_11_Timeout "[abw_11] [] [] [] Abw_Bedingung_11_Timeout";
+CM_ SG_ 1174 __AbwBed_10_Einmessfahrt_abgeschlossen "[abw_10] [] [] [] Abw_Bedingung_10_Einmessfahrt_abgeschlossen";
+CM_ SG_ 1174 __AbwBed_9_OT_nicht_ueberschritten "[abw_9] [] [] [] Abw_Bedingung_9_OT_nicht_ueberschritten";
+CM_ SG_ 1174 __AbwBed_8_Motortemp_ok "[abw_8] [] [] [] Abw_Bedingung_8_Motortemp_ok";
+CM_ SG_ 1174 nc "[] [] [] [] nc";
+CM_ SG_ 407 __c_StartStop "[c_Startstop] [] [] [] c_StartStop";
+CM_ SG_ 407 FMC_Fehler_Adresse "[] [] [] [] FMC-Fehler-Adresse";
+CM_ SG_ 407 __Temp_C1 "[temp_c1] [] [] [] Temperatur des Ultracap C1";
+CM_ SG_ 663 ul_SPI_Error_Counter "[] [] [] [] ul_SPI_Error_Counter";
+CM_ SG_ 663 __DAC_DMC_Geschwindigkeit "[dac_dmc] [] [] [] DAC DMC Geschwindigkeit";
+CM_ SG_ 663 __Mainloop_Durchlaufzeit_in_us "[mainloop] [] [] [] Mainloop-Durchlaufzeit in ms";
+CM_ SG_ 1824 Bootup_message_IDA "[] [] [] [] Bootup message 0x00, dann Alive 0x05";
+CM_ SG_ 416 Alive_Counter "[] [] [] [] Alive Counter wird mit 2 Hz inkrementiert, auf 255 folgt 1; 0 = Initialisierungszustand; 1-255 Betriebszustand";
+CM_ SG_ 416 Status_Sitz_4 "[] [] [] [] Status Sitz 4: 0 = Fehler, 1 = gelb, 2 = blau, 3 = grün";
+CM_ SG_ 416 Status_Sitz_3 "[] [] [] [] Status Sitz 3: 0 = Fehler, 1 = gelb, 2 = blau, 3 = grün";
+CM_ SG_ 416 Status_Sitz_2 "[] [] [] [] Status Sitz 2: 0 = Fehler, 1 = gelb, 2 = blau, 3 = grün";
+CM_ SG_ 416 Status_Sitz_1 "[] [] [] [] Status Sitz 1: 0 = Fehler, 1 = gelb, 2 = blau, 3 = grün";
+CM_ SG_ 416 Ruecksetzen_Servicecounter_Notab "[] [] [] [] Rücksetzen Servicecounter Notab 1= Rücksetzen, 0=keine Aktion";
+CM_ SG_ 416 Ruecksetzen_Fehlerspeicher "[] [] [] [] Rücksetzen Fehlerspeicher 1= Rücksetzen, 0=keine Aktion";
+CM_ SG_ 416 aktuelle_UT_OT_Grenzwerte_speichern "[] [] [] [] aktuelle UT/OT Grenzwerte speichern 1= Grenzwerte Speichern, 0=keine Aktion";
+CM_ SG_ 416 Langsamfahrt "[] [] [] [] Langsamfahrt 1=Langsamfahrt, 0=Normalfahrt";
+CM_ SG_ 416 nc "[] [] [] [] nc";
+CM_ SG_ 416 Alive_fuer_alle_IDA_Knoten "[] [] [] [] Alive für alle IDA Knoten 1=alle Knoten alive, 0=nicht alle Knoten alive";
+CM_ SG_ 416 Alive_Getriebe "[] [] [] [] Alive Getriebe 1=alive, 0=offline";
+CM_ SG_ 416 Getriebe_laeuft "[] [] [] [] Getriebe läuft 1=läuft, 0=steht";
+CM_ SG_ 416 Sitz_1_belegt "[] [] [] [] Sitz 1 belegt, 0 = Sitz frei, 1 = Sitz belegt";
+CM_ SG_ 416 Sitz_2_belegt "[] [] [] [] Sitz 2 belegt, 0 = Sitz frei, 1 = Sitz belegt";
+CM_ SG_ 416 Betriebsstunden "[] [] [] [] Betriebsstunden 5 Minuten/Bit";
+CM_ SG_ 672 uc_Sollwert_Servicecounter "[] [] [] [] uc_Sollwert_Servicecounter";
+CM_ SG_ 672 nc "[] [] [] [] nc";
+CM_ SG_ 672 nc "[] [] [] [] nc";
+CM_ SG_ 672 nc "[] [] [] [] nc";
+CM_ SG_ 672 nc "[] [] [] [] nc";
+CM_ SG_ 672 nc "[] [] [] [] nc";
+CM_ SG_ 672 nc "[] [] [] [] nc";
+CM_ SG_ 672 nc "[] [] [] [] nc";
+
+BA_DEF_ BO_  "GenMsgSendType" ENUM  "cyclic","reserved","cyclicIfActive","reserved","reserved","reserved","reserved","reserved","noMsgSendType";     
+BA_DEF_ BO_  "GenMsgCycleTime" INT 0 3600000;
+BA_DEF_  "BusType" STRING ;                  
+BA_DEF_DEF_  "GenMsgSendType" "cyclic";    
+BA_DEF_DEF_  "GenMsgCycleTime" 0;            
+BA_DEF_DEF_  "BusType" "CAN";              
+BA_ "GenMsgCycleTime" BO_ 1808 270;
+BA_ "GenMsgCycleTime" BO_ 400 270;
+BA_ "GenMsgCycleTime" BO_ 656 270;
+BA_ "GenMsgCycleTime" BO_ 912 270;
+BA_ "GenMsgCycleTime" BO_ 1168 270;
+BA_ "GenMsgCycleTime" BO_ 913 270;
+BA_ "GenMsgCycleTime" BO_ 1169 270;
+BA_ "GenMsgCycleTime" BO_ 402 270;
+BA_ "GenMsgCycleTime" BO_ 658 270;
+BA_ "GenMsgCycleTime" BO_ 914 270;
+BA_ "GenMsgCycleTime" BO_ 1170 270;
+BA_ "GenMsgCycleTime" BO_ 403 270;
+BA_ "GenMsgCycleTime" BO_ 659 270;
+BA_ "GenMsgCycleTime" BO_ 915 270;
+BA_ "GenMsgCycleTime" BO_ 1171 270;
+BA_ "GenMsgCycleTime" BO_ 404 270;
+BA_ "GenMsgCycleTime" BO_ 660 270;
+BA_ "GenMsgCycleTime" BO_ 916 270;
+BA_ "GenMsgCycleTime" BO_ 1172 270;
+BA_ "GenMsgCycleTime" BO_ 405 270;
+BA_ "GenMsgCycleTime" BO_ 661 270;
+BA_ "GenMsgCycleTime" BO_ 917 270;
+BA_ "GenMsgCycleTime" BO_ 1173 270;
+BA_ "GenMsgCycleTime" BO_ 406 270;
+BA_ "GenMsgCycleTime" BO_ 662 270;
+BA_ "GenMsgCycleTime" BO_ 918 270;
+BA_ "GenMsgCycleTime" BO_ 1174 270;
+BA_ "GenMsgCycleTime" BO_ 407 270;
+BA_ "GenMsgCycleTime" BO_ 663 270;
+BA_ "GenMsgCycleTime" BO_ 1824 120;
+BA_ "GenMsgCycleTime" BO_ 416 120;
+BA_ "GenMsgCycleTime" BO_ 672 120;
+
+VAL_ 407 __c_StartStop 5 " Nachlauf " 4 " Abwärts anhalten " 3 " Abwärts fahren " 2 " Aufwärts anhalten " 1 " Aufwärts fahren " 0 " Stillstand " ;
+VAL_ 913 Ausloeser_der_Notabfahrt 1 " ROPS " 0 " Keine ";
+VAL_ 913 Ausloeser_der_Notabfahrt_2 1 " Notab - Taster " 0 " Keine ";

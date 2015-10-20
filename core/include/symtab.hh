@@ -50,10 +50,13 @@ namespace ceps
  		 enum Category{UNDEFINED,CTOR,VAR,LAMBDA,KIND,SYMBOL};
  		 Category category;
  		 std::string name;
- 		 void* payload; //TODO: THAT'S F***ING UGLY
+ 		 void* payload = nullptr; //TODO: THAT'S F***ING UGLY
+ 		 int userdef_ = 0;
  		 Symbol(Category symbol_category):category(symbol_category){}
  		 Symbol():category(UNDEFINED){}
   		 operator bool() {return category != UNDEFINED;}
+  		 int& userdefined() {return userdef_;}
+  		 int userdefined() const {return userdef_;}
  	 };
 
  	 template <typename Iter>
@@ -108,6 +111,16 @@ namespace ceps
  				 	 	 bool insert = false,
  				 	 	 bool only_current_scope = false,
  				 	 	 bool return_null_if_already_defined=false);
+ 		 Symbol* lookup_global(const std::string name,bool insert=false)
+ 		 {
+ 			if (scopes.size() == 0) return nullptr;
+ 			Symbolptr<Scope::Iter> res = scopes[0].find(name);
+ 			if (!res)
+ 			{
+ 				if (!insert) return nullptr;
+ 				return scopes[0].insert(name);
+ 			} else return res;
+ 		 }
  	 private:
  		 std::vector<Scope> scopes;
  	 };

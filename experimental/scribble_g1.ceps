@@ -1,0 +1,27 @@
+
+
+a b c;
+
+a b c 
+
+((a b) c)
+
+state x = velocity{1.0*km/h;},temperature{0.0*kelvin;},some_int{1;};
+event blabla; 
+description blabla = "abcdefgh";
+
+match ( state $left = $right ) 
+{
+ state { id{left;}; flatten right; } ; 
+}
+
+func flatten (n)
+{
+ if ( n == node(,) )
+  return flatten(left(n)) ++ flatten(right(n));
+ return n;
+}
+
+
+
+
