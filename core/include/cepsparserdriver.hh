@@ -43,6 +43,9 @@ private:
 	std::vector<err_entry> err_log_;
 	bool cerr_output_ = true;
 public:
+	std::vector<err_entry> err_log() {
+		return err_log_;
+	}
 	void cerr_output(bool b)
 	{
 		cerr_output_ = b;
