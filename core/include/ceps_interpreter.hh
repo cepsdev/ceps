@@ -1,7 +1,7 @@
 /**
  The MIT License (MIT)
 
-Copyright (c) 2014 The authors of ceps
+Copyright (c) 2014,2015 The authors of ceps
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -103,9 +103,6 @@ namespace ceps{
  	 struct Environment
  	 {
  		using Fn_binop_overload = ceps::ast::Nodebase_ptr (*)(ceps::ast::Nodebase_ptr , ceps::ast::Nodebase_ptr);
-#ifndef _MSC_VER
-	 private:
-#endif
 		 int kind_to_id_map_ctr_{0};
 		 std::map< std::string, int> kind_to_id_map_;
 		 std::map< std::tuple<char,int,int>, ceps::interpreter::Environment::Fn_binop_overload >
@@ -146,7 +143,12 @@ namespace ceps{
 		int lookup_kind(std::string const&);
 
 		void set_func_callback(func_callback_t f,void * func_callback_context_data){func_callback_ = f;func_callback_context_data_ = func_callback_context_data;}
+		void get_func_callback(func_callback_t& f,void *& func_callback_context_data){f = func_callback_;func_callback_context_data=func_callback_context_data_;}
+
+
+
 		void set_binop_resolver(func_binop_resolver_t f,void * cxt){global_binop_resolver_ = f;func_binop_resolver_context_data_ = cxt;}
+		void get_binop_resolver(func_binop_resolver_t& f,void * & cxt){f=global_binop_resolver_; cxt=func_binop_resolver_context_data_;}
 
 		void register_global_binop_overload( 	ceps::interpreter::Environment::Fn_binop_overload fn,
 												char op,

@@ -258,6 +258,7 @@ struct Nonleafbase
 {
 	using Container_t = std::vector<Nodebase_ptr>;
 	std::vector<Nodebase_ptr> children_;
+	bool owns_children_ = true;
 
 	Nonleafbase(Nonleafbase const & rhs)
 	{
@@ -266,6 +267,7 @@ struct Nonleafbase
 			children_.push_back(p->clone());
 		}
 	}
+
 
 	std::vector<Nodebase_ptr> & children()
 			{
@@ -309,10 +311,13 @@ struct Nonleafbase
 
 	}
 
+	bool owns_children () const {return owns_children_ ;}
+	bool& owns_children () {return owns_children_ ;}
+
 	virtual ~Nonleafbase()
 	{
 
-		for(Nodebase_ptr p : children())
+		if (owns_children_ ) for(Nodebase_ptr p : children())
 		{
 			delete p;
 		}
