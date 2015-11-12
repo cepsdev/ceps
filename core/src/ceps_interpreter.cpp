@@ -168,9 +168,9 @@ ceps::ast::Nodebase_ptr ceps::interpreter::evaluate(ceps::ast::Nodebase_ptr root
 
 		 ceps::ast::Nodebase_ptr rhs = evaluate(dynamic_cast<ceps::ast::Nonleafbase*>(root_node)->children()[0],sym_table,env,root_node);
 
-		 if ( (sym_ptr = sym_table.lookup(name(val_node),true,true,true)) == nullptr)
+		 if ( (sym_ptr = sym_table.lookup(name(val_node),true,true,false)) == nullptr)
 		 {
-			 throw semantic_exception{root_node,"Variable '" +name(val_node)+"' already defined."};
+			 throw semantic_exception{root_node,"Couldn't define Variable '" +name(val_node)+"' already defined."};
 		 }
 
 
