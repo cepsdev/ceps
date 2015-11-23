@@ -269,6 +269,14 @@ decl:
  delete $2;
  $$ = nullptr; 	
 }
+| KIND KINDID
+{
+ auto symbol = driver.symboltable().lookup(*$2,true,true,false);
+ symbol->category = ceps::parser_env::Symbol::KIND;
+ //$$= new ceps::ast::Kind{*$2};
+ delete $2;
+ $$ = nullptr; 	
+}
 |KINDID id_list
 {
  auto r = new ceps::ast::Kinddef(*$1,nullptr,nullptr,nullptr);
