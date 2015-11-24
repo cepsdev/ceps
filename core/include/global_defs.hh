@@ -50,7 +50,7 @@ inline std::string mk_string(int j)
 	return buffer;
 }
 
-#define ERROR(x) throw std::runtime_error{\
+#define CEPSERROR(x) throw std::runtime_error{\
 						std::string{" In module "} + std::string{__FILE__} + std::string{", at line "} + mk_string(__LINE__) + std::string{": "} + std::string{x} };
 
 

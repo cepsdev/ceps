@@ -78,7 +78,7 @@ void ceps::ast::Nodebase::print(std::ostream& out,bool pretty_print,int indent) 
 
 std::ostream& ceps::ast::operator << (std::ostream & out, Nodebase const & n)
 {
-	n.print(out,out.iword(Nodebase::iword_index),0);
+	n.print(out,out.iword(Nodebase::iword_index) != 0,0);
 	return out;
 }
 
