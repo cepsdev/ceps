@@ -425,7 +425,7 @@ namespace ceps {
     enum
     {
       yyeof_ = 0,
-      yylast_ = 939,           //< Last index in yytable_.
+      yylast_ = 934,           //< Last index in yytable_.
       yynnts_ = 28,  //< Number of nonterminal symbols.
       yyempty_ = -2,
       yyfinal_ = 3, //< Termination state number.
