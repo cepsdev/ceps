@@ -239,7 +239,7 @@ ceps::ast::Nodebase_ptr ceps::interpreter::evaluate(ceps::ast::Nodebase_ptr root
 
 		if ( nleaf.children().size() != 1)
 			{
-				ERROR("Internal error: Expression invalid.")
+				CEPSERROR("Internal error: Expression invalid.")
 			}
 
 		ceps::ast::Nodebase_ptr result = evaluate(nleaf.children()[0],sym_table,env,root_node);
@@ -819,7 +819,7 @@ ceps::ast::Nodebase_ptr ceps::interpreter::handle_binop(	ceps::ast::Nodebase_ptr
 {
 	using namespace ceps::ast;
 	if (lhs == nullptr || rhs == nullptr)
-		{ ERROR("Internal error: Operand(s) evaluates to null.") }
+		{ CEPSERROR("Internal error: Operand(s) evaluates to null.") }
 
 	if (op == '=')
 	{
@@ -1506,7 +1506,7 @@ ceps::ast::Nodebase_ptr ceps::interpreter::evaluate(ceps::ast::Nonleafbase& root
 		return result;
 	}
 
-	ERROR("Internal Error.")
+	CEPSERROR("Internal Error.")
 
 }
 

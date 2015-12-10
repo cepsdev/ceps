@@ -349,9 +349,9 @@ namespace ceps
 		std::string as_str() const
 		{
 			if (size() != 1)
-				ERROR("Cannot convert to string: too many / not enough elements in nodeset.");
+				CEPSERROR("Cannot convert to string: too many / not enough elements in nodeset.");
 			if (nodes_[0]->kind() != Ast_node_kind::string_literal)
-				ERROR("Cannot convert to string: nodeset contains no string.");
+				CEPSERROR("Cannot convert to string: nodeset contains no string.");
 			String & s_ref = as_string_ref(nodes_[0]);
 			return value(s_ref);
 		}
@@ -360,18 +360,18 @@ namespace ceps
 		{
 	
 			if (size() != 1)
-				ERROR("Cannot convert to int.");
+				CEPSERROR("Cannot convert to int.");
 	
 			if (nodes_[0]->kind() != Ast_node_kind::int_literal
 				&&
 				nodes_[0]->kind() != Ast_node_kind::float_literal
 				)
-			   ERROR("Cannot convert to int: no numerical value.");
+				CEPSERROR("Cannot convert to int: no numerical value.");
 	
 			if (nodes_[0]->kind() == Ast_node_kind::int_literal)
 			{
 				if (unit(as_int_ref(nodes_[0])) != all_zero_unit())
-					ERROR("Cannot convert to int: not a scalar.");
+					CEPSERROR("Cannot convert to int: not a scalar.");
 	
 				return value(as_int_ref(nodes_[0]));
 	
@@ -379,27 +379,27 @@ namespace ceps
 			if (nodes_[0]->kind() == Ast_node_kind::float_literal)
 			{
 				if (unit(as_double_ref(nodes_[0])) != all_zero_unit())
-					ERROR("Cannot convert to int: not a scalar.");
+					CEPSERROR("Cannot convert to int: not a scalar.");
 				return (int)value(as_double_ref(nodes_[0]));
 			}
-			ERROR("Cannot convert to int");
+			CEPSERROR("Cannot convert to int");
 	
 		}
 	
 		double as_double() const
 		{
 			if (size() != 1)
-				ERROR("Cannot convert to double.");
+				CEPSERROR("Cannot convert to double.");
 			if (nodes_[0]->kind() != Ast_node_kind::int_literal
 				&&
 				nodes_[0]->kind() != Ast_node_kind::float_literal
 				)
-			   ERROR("Cannot convert to double: no numerical value.");
+				CEPSERROR("Cannot convert to double: no numerical value.");
 	
 			if (nodes_[0]->kind() == Ast_node_kind::int_literal)
 			{
 				if (unit(as_int_ref(nodes_[0])) != all_zero_unit())
-					ERROR("Cannot convert to double: not a scalar.");
+					CEPSERROR("Cannot convert to double: not a scalar.");
 	
 				return (double)value(as_int_ref(nodes_[0]));
 	
@@ -407,10 +407,10 @@ namespace ceps
 			if (nodes_[0]->kind() == Ast_node_kind::float_literal)
 			{
 				if (unit(as_double_ref(nodes_[0])) != all_zero_unit())
-					ERROR("Cannot convert to int: not a scalar.");
+					CEPSERROR("Cannot convert to int: not a scalar.");
 				return value(as_double_ref(nodes_[0]));
 			}
-			ERROR("Cannot convert to int");
+			CEPSERROR("Cannot convert to int");
 		}
 	
 	
@@ -443,14 +443,14 @@ namespace ceps
 		Nodeset operator() (unsigned int i,unsigned int j) const
 			{
 				if ( nodes_.size() != 1)
-					ERROR("To many nodes in nodeset");
+					CEPSERROR("To many nodes in nodeset");
 				if (nodes_[0]->kind() != Ast_node_kind::rawmap)
-					ERROR("Not a map");
+					CEPSERROR("Not a map");
 				Rawmap & mp = as_rawmap_ref(nodes_[0]);
 				if (i >= mp.children().size())
-					ERROR("Indices out of range");
+					CEPSERROR("Indices out of range");
 				if (j >= nlf_ptr(mp.children()[i])->children().size())
-					ERROR("Indices out of range");
+					CEPSERROR("Indices out of range");
 				return Nodeset{nlf_ptr(mp.children()[i])->children()[j]};
 			}
 	
@@ -464,24 +464,24 @@ namespace ceps
 	 SI::Quantity<U,double> get_double(Nset const & nset)
 	 {
 		if (nset.size() == 0)
-			ERROR("Empty nodeset.");
+			CEPSERROR("Empty nodeset.");
 		if (nset.size() > 1)
-			ERROR("Too many elements in nodeset.");
+			CEPSERROR("Too many elements in nodeset.");
 		Nodebase_ptr node = nset.nodes()[0];
 		if (node->kind() != Ast_node_kind::float_literal && node->kind() != Ast_node_kind::int_literal)
-			ERROR("Element in nodeset has incompatible type.");
+			CEPSERROR("Element in nodeset has incompatible type.");
 		if (node->kind() == Ast_node_kind::float_literal)
 		{
 		 Double & node_ref = as_double_ref(node);
 		 if( Unit_rep{U::m,U::kg,U::s,U::A,U::K,U::mol,U::cd} != unit(node_ref) )
-			 ERROR("Incompatible unit.");
+			 CEPSERROR("Incompatible unit.");
 		 return SI::Quantity<U,double>{value(node_ref)};
 		}
 		if (node->kind() == Ast_node_kind::int_literal)
 		{
 			 Int & node_ref = as_int_ref(node);
 			 if( Unit_rep{U::m,U::kg,U::s,U::A,U::K,U::mol,U::cd} != unit(node_ref) )
-				 ERROR("Incompatible unit.");
+                                 CEPSERROR("Incompatible unit.");
 			 return SI::Quantity<U,double>{(double)value(node_ref)};
 		}
 	
@@ -493,24 +493,24 @@ namespace ceps
 	 SI::Quantity<U,int> get_int(Nset const & nset)
 	 {
 		if (nset.size() == 0)
-			ERROR("Empty nodeset.");
+			CEPSERROR("Empty nodeset.");
 		if (nset.size() > 1)
-			ERROR("Too many elements in nodeset.");
+			CEPSERROR("Too many elements in nodeset.");
 		Nodebase_ptr node = nset.nodes()[0];
 		if (node->kind() != Ast_node_kind::float_literal && node->kind() != Ast_node_kind::int_literal)
-			ERROR("Element in nodeset has incompatible type.");
+			CEPSERROR("Element in nodeset has incompatible type.");
 		if (node->kind() == Ast_node_kind::float_literal)
 		{
 		 Double & node_ref = as_double_ref(node);
 		 if( Unit_rep{U::m,U::kg,U::s,U::A,U::K,U::mol,U::cd} != unit(node_ref) )
-			 ERROR("Incompatible unit.");
+			 CEPSERROR("Incompatible unit.");
 		 return SI::Quantity<U,int>{(int)value(node_ref)};
 		}
 		if (node->kind() == Ast_node_kind::int_literal)
 		{
 			 Int & node_ref = as_int_ref(node);
 			 if( Unit_rep{U::m,U::kg,U::s,U::A,U::K,U::mol,U::cd} != unit(node_ref) )
-				 ERROR("Incompatible unit.");
+				 CEPSERROR("Incompatible unit.");
 			 return SI::Quantity<U,int>{(int)value(node_ref)};
 		}
 	
