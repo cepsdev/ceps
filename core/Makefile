@@ -1,13 +1,15 @@
-includes := -Iinclude -Iinclude/include_gen
 cflags :=  -O0 -g3 -Wall -fmessage-length=0 -std=c++11 -fPIC
 TARGET :=
 OBJDIR := bin$(TARGET)
-objfiles := ceps.tab.o symtab.o cepslexer.o cepsparserdriver.o cepsruntime.o ceps_ast.o ceps_interpreter.o ceps_serialize.o ceps_interpreter_loop.o ceps_interpreter_nodeset.o 
+objfiles := ceps.tab.o symtab.o cepslexer.o cepsparserdriver.o cepsruntime.o ceps_ast.o ceps_interpreter.o \
+ ceps_serialize.o ceps_interpreter_loop.o ceps_interpreter_nodeset.o pugixml.o
 objfiles := $(patsubst %,$(OBJDIR)/%,$(objfiles))
 src := src
+pugixml := ../../pugixml/src
 inc := include
 BISONGENDIR := src-gen
 CEPSLIB := libcepscore.a
+includes := -Iinclude -Iinclude/include_gen -I$(pugixml)
 
 all: bin/$(CEPSLIB)
 
@@ -47,6 +49,10 @@ $(OBJDIR)/ceps_interpreter_loop.o: $(src)/ceps_interpreter_loop.cpp include/ceps
 $(OBJDIR)/ceps_interpreter_nodeset.o: $(src)/ceps_interpreter_nodeset.cpp include/ceps_interpreter_nodeset.hh
 	$(CXX) -c $(cflags) $(includes) $(src)/ceps_interpreter_nodeset.cpp -o $(OBJDIR)/ceps_interpreter_nodeset.o
 	
+$(OBJDIR)/pugixml.o: $(pugixml)/pugixml.cpp $(pugixml)/pugixml.hpp
+	$(CXX) -c $(cflags) $(includes)  $(pugixml)/pugixml.cpp -o $(OBJDIR)/pugixml.o
+	
+
 src-gen/ceps.tab.cpp: src/grammar/ceps.y
 	cd $(BISONGENDIR);\
 	~/local/bin/bison ../src/grammar/ceps.y;\

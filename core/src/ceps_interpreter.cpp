@@ -28,6 +28,7 @@ SOFTWARE.
 #include <cmath>
 #include "ceps_interpreter_loop.hh"
 #include "ceps_interpreter_nodeset.hh"
+#include"pugixml.hpp"
 
 
 int ceps::interpreter::Environment::lookup_kind(std::string const& k)
@@ -125,6 +126,38 @@ void ceps::interpreter::evaluate(	 ceps::ast::Nodeset & universe,
 	}//for
 }//ceps::interpreter::evaluate
 
+
+static void traverse_xml(ceps::ast::Nonleafbase* root, const pugi::xml_node & xn){
+
+	if (xn.type() == pugi::xml_node_type::node_pcdata)
+	{
+		root->children().push_back(new ceps::ast::String(xn.value(),nullptr,nullptr,nullptr));
+		return;
+	}
+
+	auto t = new ceps::ast::Struct(xn.name());
+	root->children().push_back(t);
+	for(auto x:xn.children())
+		{
+			//if (xn.value()) std::cout << x
+			traverse_xml(t,x);
+		}
+}
+
+static ceps::ast::Nodebase_ptr include_xml_file(std::string path){
+
+	pugi::xml_document doc;
+	pugi::xml_parse_result result = doc.load_file(path.c_str());
+
+	if (result.status != pugi::xml_parse_status::status_ok) throw ceps::interpreter::semantic_exception{nullptr,"include_xml: Invaid format"};
+
+	auto r = new ceps::ast::Stmts();
+	for(auto xn: doc.children())
+	{
+		traverse_xml(r,xn);
+	}
+	return r;
+}
 
 ceps::ast::Nodebase_ptr ceps::interpreter::evaluate(ceps::ast::Nodebase_ptr root_node,
 													  ceps::parser_env::Symboltable & sym_table,
@@ -288,7 +321,18 @@ ceps::ast::Nodebase_ptr ceps::interpreter::evaluate(ceps::ast::Nodebase_ptr root
 
 			 auto rr = env.call_func_callback(ceps::ast::name(id),&params);
 			 if (rr != nullptr) return rr;
-			 if (name(id) == "sin")
+			 if (name(id) == "include_xml")
+			 {
+				 if (params.children().size() != 1)
+					 throw semantic_exception{root_node,"include_xml: Expecting 1 argument"};
+				 ceps::ast::Nodebase_ptr arg_ = params.children()[0];
+				 auto arg = evaluate(arg_,sym_table,env,root_node);
+				 if (arg->kind() != Kind::string_literal)
+					 throw semantic_exception{root_node,"include_xml: Illformed argument"};
+
+				 return include_xml_file(ceps::ast::value(ceps::ast::as_string_ref(arg)));
+			 }
+			 else if (name(id) == "sin")
 			 {
 				 if (params.children().size() != 1)
 					 throw semantic_exception{root_node,"sin: Expecting 1 argument"};
