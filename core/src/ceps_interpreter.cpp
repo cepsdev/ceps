@@ -159,6 +159,34 @@ static ceps::ast::Nodebase_ptr include_xml_file(std::string path){
 	return r;
 }
 
+
+
+static ceps::ast::Nodebase_ptr include_xml_file(std::string path,std::string xpath){
+	pugi::xml_document doc;
+	pugi::xml_parse_result result = doc.load_file(path.c_str());
+	if (result.status != pugi::xml_parse_status::status_ok) throw ceps::interpreter::semantic_exception{nullptr,"include_xml: Invaid format"};
+	auto r = new ceps::ast::Stmts();
+	auto nodes = doc.select_nodes(xpath.c_str());
+	for(auto xn: nodes)
+	{
+		traverse_xml(r,xn.node());
+	}
+	return r;
+}
+static void flatten_args(ceps::ast::Nodebase_ptr r, std::vector<ceps::ast::Nodebase_ptr>& v, char op_val = ',')
+{
+	using namespace ceps::ast;
+	if (r == nullptr) return;
+	if (r->kind() == ceps::ast::Ast_node_kind::binary_operator && op(as_binop_ref(r)) ==  op_val)
+	{
+		auto& t = as_binop_ref(r);
+		flatten_args(t.left(),v,op_val);
+		flatten_args(t.right(),v,op_val);
+		return;
+	}
+	v.push_back(r);
+}
+
 ceps::ast::Nodebase_ptr ceps::interpreter::evaluate(ceps::ast::Nodebase_ptr root_node,
 													  ceps::parser_env::Symboltable & sym_table,
 													  ceps::interpreter::Environment& env,
@@ -323,14 +351,25 @@ ceps::ast::Nodebase_ptr ceps::interpreter::evaluate(ceps::ast::Nodebase_ptr root
 			 if (rr != nullptr) return rr;
 			 if (name(id) == "include_xml")
 			 {
-				 if (params.children().size() != 1)
-					 throw semantic_exception{root_node,"include_xml: Expecting 1 argument"};
-				 ceps::ast::Nodebase_ptr arg_ = params.children()[0];
-				 auto arg = evaluate(arg_,sym_table,env,root_node);
-				 if (arg->kind() != Kind::string_literal)
-					 throw semantic_exception{root_node,"include_xml: Illformed argument"};
+				 std::vector<ceps::ast::Nodebase_ptr> args;
+				 flatten_args(params.children()[0], args);
 
-				 return include_xml_file(ceps::ast::value(ceps::ast::as_string_ref(arg)));
+				 if (args.size() != 1 &&  args.size() != 2)
+					 throw semantic_exception{root_node,"include_xml: Wrong number of arguments"};
+
+				 if (args.size() == 1){
+				  ceps::ast::Nodebase_ptr arg_ = params.children()[0];
+				  auto arg = evaluate(arg_,sym_table,env,root_node);
+				  if (arg->kind() != Kind::string_literal)
+					 throw semantic_exception{root_node,"include_xml: Illformed argument"};
+				  return include_xml_file(ceps::ast::value(ceps::ast::as_string_ref(arg)));
+				 } else {
+					  if (args[0]->kind() != Kind::string_literal || args[1]->kind() != Kind::string_literal)
+						 throw semantic_exception{root_node,"include_xml: Illformed argument"};
+
+					  return include_xml_file(ceps::ast::value(ceps::ast::as_string_ref(args[0])),ceps::ast::value(ceps::ast::as_string_ref(args[1])));
+				 }
+
 			 }
 			 else if (name(id) == "sin")
 			 {

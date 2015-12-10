@@ -39,13 +39,14 @@ testcase
 
 
 test{
- include_xml("read_xml_example.xml");
+ include_xml("read_xml_example.xml","a/b");
 };
 
 
 expectation{
   a{
     b{};
+    
     c{ 
       d{ 
 	kind xml_attr;
