@@ -1,0 +1,238 @@
+kind Systemstate;
+kind Guard;
+kind Event;
+
+
+Guard g1,g2,g3,g4;
+Systemstate v1,v2,v3;
+Event e;
+
+
+
+Statemachine
+{
+ id{UU1;};
+ States{Initial;Final;uu1_s1;uu1_s2;uu1_s3;};
+ Transition{Initial;uu1_s1;e;D{1;E{e1;f1;};};};
+ Transition{uu1_s1;uu1_s2;e;D{2;E{e2;f2;};};};
+};
+
+Statemachine
+{
+ id{U1;};
+ import{UU1;};
+ 
+ States{Initial;Final;u1_s1;u1_s2;u1_s3;};
+ Transition{Initial;u1_s1;e;D{3;E{e3;f3;};};};
+ Transition{u1_s1;UU1;e;D{4;E{e4;f4;};};};
+};
+
+
+Statemachine
+{
+ id{S1;};
+ import{U1;};//import{U2;};
+ States{Initial;Final;};
+ Transition{Initial;U1;D{5;E{e5;f5;};};};
+};
+
+
+Statemachine
+{
+ id{Flap_to_open;};
+};
+
+Statemachine
+{
+ id{Antenna_lashing_unlock;};
+};
+
+kind Event;kind Guard;
+Event ev_platform_extend_is_finished, ev_platform_extend_is_starting, ev_platform_extend_preconditions_are_not_met;
+Guard g_platform_extend_preconditions;
+Statemachine
+{
+  id{Platform_extend;};
+  States{Initial;Final;Error;};
+  join{Final;};
+
+  import{Platform_extend_fto_and_alu;};    // Flap_to_open and Antenna_lock_unlock
+  import{Z_drive_to_indexposition;};
+  import{Antenna_to_raise;};
+  import{Antenna_to_level_out;};
+  import{Platform_retract_ftc_and_all;};   // Flap_to_close and Antenna_lock_lock
+
+  Actions{
+    a_antenna_to_raise_is_starting              {ev_antenna_to_raise;};
+    a_z_drive_to_indexposition_is_starting      {ev_mast_ausfahren;};
+    a_platform_extend_is_starting 		{
+      print("---------- ev_platform_extend_is_starting ---------- \n");
+      ev_platform_extend_is_starting;
+    };
+    a_platform_extend_is_finished 		{
+      ev_platform_extend_is_finished;
+      print("---------- ev_platform_extend_is_finished ---------- \n");
+      print("---------- CONTROL ---------- ANTRIEB_STOP:       ",z_drive.z_Control.ANTRIEB_STOP,"\n");
+      print("---------- CONTROL ---------- BREAK_RELEASE:      ",z_drive.z_Control.ANTRIEB_BREAK_RELEASE,"\n");
+      print("---------- CONTROL ---------- ANTRIEB_ENABLE_IN:  ",z_drive.z_Control.ANTRIEB_ENABLE_IN,"\n");
+      print("---------- STATUS  ---------- ANTRIEB_ENABLE_OUT: ",z_drive.z_Status.ANTRIEB_ENABLE_OUT,"\n");
+      print("---------- STATUS  ---------- ANTRIEB_INPOS:      ",z_drive.z_Status.ANTRIEB_INPOS,"\n");
+    };
+    a_platform_extend_preconditions_are_not_met {ev_platform_extend_preconditions_are_not_met;};
+  };
+  
+  Transition{Initial; Platform_extend_fto_and_alu; g_platform_extend_preconditions; a_platform_extend_is_starting;};
+  Transition{Initial; Error;                      !g_platform_extend_preconditions; a_platform_extend_preconditions_are_not_met;};
+  Transition{Platform_extend_fto_and_alu.Final; Z_drive_to_indexposition;           a_z_drive_to_indexposition_is_starting;};
+  Transition{Z_drive_to_indexposition.Final; Antenna_to_raise;                      a_antenna_to_raise_is_starting;};
+  Transition{Antenna_to_raise.Final; Platform_retract_ftc_and_all;};
+  Transition{Platform_retract_ftc_and_all.Final; Antenna_to_level_out;};
+  Transition{Antenna_to_level_out.Final;Final;                                      a_platform_extend_is_finished;};
+};
+
+Statemachine
+{
+  id{Platform_extend_fto_and_alu;};
+  States{Initial;Final;};
+  join{Final;};
+
+  
+  thread{
+    States{Initial;Final;};
+    import{Flap_to_open;};
+    Transition{Initial;Flap_to_open;};
+    Transition{Flap_to_open.Final;Final;};
+  };
+  
+  thread{
+    States{Initial;Final;};
+    Actions {a_antenna_lashing_unlock_starting {ev_antenna_lashing_unlock_starting;};};
+    import{Antenna_lashing_unlock;};
+    Transition{Initial;Antenna_lashing_unlock; a_antenna_lashing_unlock_starting;};
+    Transition{Antenna_lashing_unlock.Final;Final;};
+  };
+};
+
+
+Simulation
+{
+ Start{S1;};
+ e;
+ ASSERT_CURRENT_STATES_CONTAINS{S1.U1.u1_s1;};
+ e;
+ ASSERT_CURRENT_STATES_CONTAINS{S1.U1.UU1.Initial;};
+};
+
+
+
+
+Statemachine
+{
+  id{Platform_extend_fto_and_alu;};
+  States{Initial;Final;};
+  join{Final;};
+
+  
+  thread{
+    States{Initial;Final;};
+    import{Flap_to_open;};
+    Transition{Initial;Flap_to_open;};
+    Transition{Flap_to_open.Final;Final;};
+  };
+  
+  thread{
+    States{Initial;Final;};
+    Actions {a_antenna_lashing_unlock_starting {ev_antenna_lashing_unlock_starting;};};
+    import{Antenna_lashing_unlock;};
+    Transition{Initial;Antenna_lashing_unlock; a_antenna_lashing_unlock_starting;};
+    Transition{Antenna_lashing_unlock.Final;Final;};
+  };
+};
+
+
+
+val doc_path = "doc_example/";
+val img_path = "img/";
+
+
+
+smgraphs{
+for(statemachine : root.Statemachine)
+{
+  smgraph{
+   statemachine.id;
+   for(transition : statemachine.Transition) 
+   { 
+     edge{from{transition.content().at(0);};to{transition.content().at(1);};event{transition.content().is_kind("Event");};};
+   };
+   
+   for(t:statemachine.thread){
+    thread{
+       localstates{t.States.content();};
+       for(transition : t.Transition) 
+       { 
+	  edge{from{transition.content().at(0);};to{transition.content().at(1);};event{transition.content().is_kind("Event");};};
+       };
+    }; 
+   };
+   
+   references{
+     //for(t:statemachine.import){name{text(t.content());};};
+    for(t:statemachine.import ){
+       val smname = text(root.Statemachine.id.text_value_of_content_equals(text(t.content())).content());
+       ref{smname;meta(root.Statemachine.id.text_value_of_content_equals(text(t.content())),"file");};
+     }   
+
+     for(t:statemachine.thread.import ){
+       val smname = text(root.Statemachine.id.text_value_of_content_equals(text(t.content())).content());
+       ref{smname;meta(root.Statemachine.id.text_value_of_content_equals(text(t.content())),"file");};
+     }
+   };//references
+  };
+  //references{for(r:statemachine.Transition){"111";text(r.content());} };
+};
+};
+
+
+for(dgraph:root.smgraphs.smgraph) {
+  val outfile=doc_path+"sm_"+text(dgraph.id.content())+".gv";
+  dump(outfile,dgraph);
+  system("dot "+outfile+" -Tsvg -o "+doc_path+img_path+"sm_"+text(dgraph.id.content())+".svg" ); 
+  html{
+    body{
+      h1{text(dgraph.id.content());};
+      img{
+	attr{src{img_path+"sm_"+text(dgraph.id.content())+".svg";};};	
+      };
+      p{};a{attr{href{meta(dgraph,"file");};};"source code...";};
+      h3{"Imports";};
+      for(r:dgraph.references.ref){
+	a{attr{href{"sm_"+text(r.content().at(0))+".html";};};text(r.content().at(0)); };" (";
+	a{attr{href{text(r.content().at(1));};};"source)"; };br{};
+	
+      }
+    };
+  };
+  dump(doc_path+"sm_"+text(dgraph.id.content())+".html",predecessor());  
+};
+
+html{
+  body{
+    if(1)  "abc";
+    ul{
+    for(dgraph:root.smgraphs.smgraph){
+      li{a{attr{href{"sm_"+text(dgraph.id.content())+".html";};};text(dgraph.id.content());};};
+    };
+    };
+  };
+};
+dump(doc_path+"index.html",predecessor());
+
+
+
+
+
+
+
+
+

@@ -28,6 +28,7 @@ SOFTWARE.
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <limits.h>
 #include <string.h>
 #include <vector>
 #include <mutex>
@@ -150,6 +151,17 @@ int main(int argc, char*argv[])
 
 			if (driver.errors_occured())
 				continue;
+
+			auto root = ceps::ast::nlf_ptr(driver.parsetree().get_root());
+
+			char buffer[PATH_MAX] = {};
+			if ( buffer != realpath(filename.c_str(),buffer) ){
+				std::cerr << "\n***Error: realpath() failed for '" << filename << "' " << std::endl;
+				return EXIT_FAILURE;
+			}
+
+
+			root->children().insert(root->children().begin(),new ceps::ast::Struct("@@file",new ceps::ast::String(std::string{buffer}),nullptr,nullptr));
 
 
 			if (print_raw)

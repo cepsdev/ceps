@@ -97,7 +97,7 @@ namespace ceps{
 
 	 ceps::ast::Nodebase_ptr evaluate(ceps::ast::Nonleafbase & root,
 		 Symboltable & sym_table,
-		 Environment& env, ceps::ast::Nodebase_ptr parent_node
+		 Environment& env, ceps::ast::Nodebase_ptr parent_node,ceps::ast::Nodebase_ptr predecessor
 		 );
 
  	 struct Environment
@@ -135,27 +135,30 @@ namespace ceps{
 		 	 if (global_binop_resolver_ == nullptr) return nullptr;
 		 	 return global_binop_resolver_(binop,lhs,rhs,func_binop_resolver_context_data_,parent_node);
 		 }
+
+		 std::map<std::string,std::string> meta_info_;
  	  public:
 
 		 std::map<std::string, std::map<std::string,ceps::ast::Nodebase_ptr >* >& symbol_mapping() {return symbol_mapping_;}
 		 std::map<std::string, std::map<std::string,ceps::ast::Nodebase_ptr >* > const & symbol_mapping() const {return symbol_mapping_;}
 
-		int lookup_kind(std::string const&);
+		 std::map<std::string,std::string>& meta_info() {return meta_info_;}
+		 int lookup_kind(std::string const&);
 
-		void set_func_callback(func_callback_t f,void * func_callback_context_data){func_callback_ = f;func_callback_context_data_ = func_callback_context_data;}
-		void get_func_callback(func_callback_t& f,void *& func_callback_context_data){f = func_callback_;func_callback_context_data=func_callback_context_data_;}
+		 void set_func_callback(func_callback_t f,void * func_callback_context_data){func_callback_ = f;func_callback_context_data_ = func_callback_context_data;}
+		 void get_func_callback(func_callback_t& f,void *& func_callback_context_data){f = func_callback_;func_callback_context_data=func_callback_context_data_;}
 
 
 
-		void set_binop_resolver(func_binop_resolver_t f,void * cxt){global_binop_resolver_ = f;func_binop_resolver_context_data_ = cxt;}
-		void get_binop_resolver(func_binop_resolver_t& f,void * & cxt){f=global_binop_resolver_; cxt=func_binop_resolver_context_data_;}
+		 void set_binop_resolver(func_binop_resolver_t f,void * cxt){global_binop_resolver_ = f;func_binop_resolver_context_data_ = cxt;}
+		 void get_binop_resolver(func_binop_resolver_t& f,void * & cxt){f=global_binop_resolver_; cxt=func_binop_resolver_context_data_;}
 
-		void register_global_binop_overload( 	ceps::interpreter::Environment::Fn_binop_overload fn,
+		 void register_global_binop_overload( 	ceps::interpreter::Environment::Fn_binop_overload fn,
 												char op,
 												std::string const & lhs_kind,
 												std::string const & rhs_kind );
 
-		Fn_binop_overload get_glbl_binop_overload(  char op,
+		 Fn_binop_overload get_glbl_binop_overload(  char op,
 				                                    std::string const & lhs_kind,
 													std::string const & rhs_kind);
 
@@ -164,7 +167,7 @@ namespace ceps{
 #ifndef _MSC_VER
 		 friend ceps::ast::Nodebase_ptr ceps::interpreter::evaluate(ceps::ast::Nodebase_ptr,
 				  ceps::parser_env::Symboltable & ,
-				  ceps::interpreter::Environment&,ceps::ast::Nodebase_ptr);
+				  ceps::interpreter::Environment&,ceps::ast::Nodebase_ptr,ceps::ast::Nodebase_ptr predecessor);
 #endif
  	 };
 
@@ -189,7 +192,7 @@ namespace ceps{
 
      ceps::ast::Nodebase_ptr evaluate(  ceps::ast::Nodebase_ptr root_node,
     		 	 	 	 	 	 	 	 Symboltable & sym_table,
-    		 	 	 	 	 	 	 	 Environment& env,ceps::ast::Nodebase_ptr parent_node
+    		 	 	 	 	 	 	 	 Environment& env,ceps::ast::Nodebase_ptr parent_node,ceps::ast::Nodebase_ptr predecessor
     		 	 	 	 	 	 	 	 );
 
      ceps::ast::Nodebase_ptr evaluate_and_remove(ceps::ast::Nonleafbase& root);

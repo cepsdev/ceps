@@ -127,3 +127,15 @@ std::ostream& ceps::ast::operator << (std::ostream& out, strct & s)
 }
 
 
+void ceps::ast::flatten_func_args(ceps::ast::Nodebase_ptr r, std::vector<ceps::ast::Nodebase_ptr>& v)
+{
+	if (r == nullptr) return;
+	if (r->kind() == ceps::ast::Ast_node_kind::binary_operator && op(as_binop_ref(r)) ==  ',')
+	{
+	 auto& t = as_binop_ref(r);
+	 flatten_func_args(t.left(),v);
+	 flatten_func_args(t.right(),v);
+	 return;
+	}
+	v.push_back(r);
+}

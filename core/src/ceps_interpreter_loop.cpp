@@ -74,10 +74,10 @@ static void flatten(ceps::ast::Nodebase_ptr root, std::vector<ceps::ast::Nodebas
 
 static void loop( std::vector<ceps::ast::Nodebase_ptr>& result,
 		   ceps::ast::Nodebase_ptr body,
-		   ceps::ast::Loop_head const& loop_head,
+		   ceps::ast::Loop_head& loop_head,
 		   int i,
 		   ceps::parser_env::Symboltable & sym_table,
-		   ceps::interpreter::Environment& env)
+		   ceps::interpreter::Environment& env,ceps::ast::Nodebase_ptr rootnode,ceps::ast::Nodebase_ptr predecessor)
 {
 	using namespace ceps::parser_env;
 
@@ -85,7 +85,7 @@ static void loop( std::vector<ceps::ast::Nodebase_ptr>& result,
 	bool is_range_loop = false;
 	bool last_head = i*2 +1 == loop_head.children().size() - 1;
 	ceps::ast::Identifier& id  = ceps::ast::as_id_ref(loop_head.children()[2*i]);
-	ceps::ast::Nodebase_ptr coll_  = evaluate(loop_head.children()[2*i+1],sym_table,env,nullptr);
+	ceps::ast::Nodebase_ptr coll_  = evaluate(loop_head.children()[2*i+1],sym_table,env,&loop_head,loop_head.children()[2*i]);
 	std::vector<ceps::ast::Nodebase_ptr> collection;
 
 
@@ -119,7 +119,7 @@ static void loop( std::vector<ceps::ast::Nodebase_ptr>& result,
 			value(counter_node) = h;
 			if (last_head)
 			{
-				auto new_node = evaluate(body,sym_table,env,nullptr);
+				auto new_node = evaluate(body,sym_table,env,rootnode,predecessor);
 				if (new_node != nullptr)
 				{
 					if (new_node->kind() == ceps::ast::Ast_node_kind::stmts)
@@ -130,7 +130,7 @@ static void loop( std::vector<ceps::ast::Nodebase_ptr>& result,
 					else result.push_back(new_node);
 				}
 
-			} else loop (result,body,loop_head,i+1,sym_table,env);
+			} else loop (result,body,loop_head,i+1,sym_table,env,rootnode,predecessor);
 
 		}
 
@@ -144,7 +144,7 @@ static void loop( std::vector<ceps::ast::Nodebase_ptr>& result,
 		if (last_head)
 		{
 
-			auto new_node = evaluate(body,sym_table,env,nullptr);
+			auto new_node = evaluate(body,sym_table,env,rootnode,predecessor);
 			if (new_node != nullptr)
 			{
 				if (new_node->kind() == ceps::ast::Ast_node_kind::stmts)
@@ -158,7 +158,7 @@ static void loop( std::vector<ceps::ast::Nodebase_ptr>& result,
 		}
 		else
 		{
-			loop (result,body,loop_head,i+1,sym_table,env);
+			loop (result,body,loop_head,i+1,sym_table,env,rootnode,predecessor);
 		}
 
 
@@ -177,19 +177,19 @@ static void loop( std::vector<ceps::ast::Nodebase_ptr>& result,
  * */
 ceps::ast::Nodebase_ptr  ceps::interpreter::evaluate_loop(ceps::ast::Loop_ptr loop_node,
 									  ceps::parser_env::Symboltable & sym_table,
-									  ceps::interpreter::Environment& env,ceps::ast::Nodebase_ptr)
+									  ceps::interpreter::Environment& env,ceps::ast::Nodebase_ptr rootnode,ceps::ast::Nodebase_ptr predecessor)
 {
 	const auto for_loop_head = 0;
 	const auto for_loop_body = 1;
 
 
 
-	auto const& loop_head =  as_loop_head_ref_const(loop_node->children()[for_loop_head]);
+	auto& loop_head =  as_loop_head_ref(loop_node->children()[for_loop_head]);
 	ceps::ast::Nodebase_ptr body = loop_node->children()[for_loop_body];
 
 	std::vector<ceps::ast::Nodebase_ptr> result_vec;
 
-	loop(result_vec, body, loop_head, 0, sym_table, env);
+	loop(result_vec, body, loop_head, 0, sym_table, env,rootnode,predecessor);
 
 	ceps::ast::Stmts * result = new ceps::ast::Stmts{};
 	for(auto p : result_vec)

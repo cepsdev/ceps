@@ -27,7 +27,7 @@ SOFTWARE.
 #include "cepsnodeset.hh"
 #include "symtab.hh"
 
-
+extern std::string default_text_representation(ceps::ast::Nodebase_ptr root_node);
 
 
 static void flatten(ceps::ast::Nodebase_ptr root, std::vector<ceps::ast::Nodebase_ptr>& acc)
@@ -55,7 +55,12 @@ ceps::ast::Nodebase_ptr ceps::interpreter::evaluate_nodeset_expr_dot(	ceps::ast:
 {
 	//INVARIANT: lhs is a nodeset
 
+
+
 	if (rhs == nullptr) return lhs;
+
+	//std::cout << "######################### RHS:" << *rhs << std::endl << std::endl;
+	//std::cout << "######################### LHS:" << *lhs << std::endl << std::endl;
 
 	std::vector<ceps::ast::Nodebase_ptr> acc;
 	flatten(rhs,  acc);
@@ -63,10 +68,12 @@ ceps::ast::Nodebase_ptr ceps::interpreter::evaluate_nodeset_expr_dot(	ceps::ast:
 	std::string last_identifier;
 	last_identifier = apply_idx_op_operand(as_ast_nodeset_ref(lhs));
 
-	//std::cout << acc.size() << std::endl;
+	//std::cout <<"----------------------------- "<< acc.size() << std::endl;
 
 	for (size_t i = 0; i < acc.size(); ++i)
 	{
+		std::string method_name;
+		std::vector<ceps::ast::Nodebase_ptr> args;
 		if (is_an_identifier(acc[i]))
 		{
 			auto id_name = name(as_id_ref(acc[i]));
@@ -75,9 +82,77 @@ ceps::ast::Nodebase_ptr ceps::interpreter::evaluate_nodeset_expr_dot(	ceps::ast:
 			else
 				result = result[last_identifier][ceps::ast::all{id_name}];
 			last_identifier= id_name;
-		} else
+
+		} else if (is_a_funccall(acc[i],method_name,args)){
+			last_identifier="";
+			if (method_name == "content"){
+				std::vector<ceps::ast::Nodebase_ptr> v;
+				for(auto pe : result.nodes())
+				{
+					if (pe->kind() != ceps::ast::Ast_node_kind::structdef) continue;
+					for(auto pes: as_struct_ref(pe).children()) v.push_back(pes);
+				}
+				result.nodes_ = v;
+			} else if (method_name == "first"){
+				if (result.nodes().size() == 0) result.nodes_.clear();
+				else{
+				std::vector<ceps::ast::Nodebase_ptr> v;
+				v.push_back(result.nodes()[0]);
+				result.nodes_ = v;
+				}
+			} else if (method_name == "at" && args.size() == 1){
+			  auto r = is_int(args[0]);
+
+			  if(!r.first) ceps::interpreter::semantic_exception{nullptr,"'"+method_name+"' expects integer as parameter."};
+			  if (result.nodes().size() <= (size_t) r.second) throw ceps::interpreter::semantic_exception{nullptr,"Nodeset method '"+method_name+"': index out of bounds."};
+			  std::vector<ceps::ast::Nodebase_ptr> t;
+			  t.push_back(result.nodes()[r.second]);
+			  result.nodes_=t;
+			} else if (method_name == "is_kind" && args.size() == 1 && args[0]->kind() == ceps::ast::Ast_node_kind::string_literal){
+			  std::string kind_name = value(as_string_ref(args[0]));
+			  std::vector<ceps::ast::Nodebase_ptr> v;
+			  for(auto pe : result.nodes())
+			  {
+			  	if (pe->kind() != ceps::ast::Ast_node_kind::symbol) continue;
+			  	if (kind_name == kind(as_symbol_ref(pe))) v.push_back(pe);
+			  }
+			  result.nodes_ = v;
+			} else if (method_name == "text_value_of_content_equals" && args.size() == 1 && args[0]->kind() == ceps::ast::Ast_node_kind::string_literal){
+			  std::string cv = value(as_string_ref(args[0]));
+
+			  std::vector<ceps::ast::Nodebase_ptr> v;
+
+			  for(auto pe : result.nodes())
+			  {
+
+				  if (pe->kind() == ceps::ast::Ast_node_kind::string_literal) continue;
+				  if (pe->kind() == ceps::ast::Ast_node_kind::int_literal) continue;
+				  if (pe->kind() == ceps::ast::Ast_node_kind::float_literal) continue;
+				  std::string c;
+				  for(auto p: ceps::ast::nlf_ptr(pe)->children()){
+					  c+=default_text_representation(p);
+				  }
+				  if (c!=cv) continue;
+				  v.push_back(pe);
+			  }
+			  //if (v.size() != 1) throw ceps::interpreter::semantic_exception{nullptr,"first_struct_with_name(): no matching node found."};
+			  result.nodes_ = v;
+			}
+
+			else throw ceps::interpreter::semantic_exception{nullptr,"'"+method_name+"' Unknown method/Invalid parameters for nodeset called."};
+		}
+		else
 		{
-			last_identifier = std::string{};
+			auto r_int = is_int(acc[i]);
+			if(r_int.first)
+			{
+				//std::cout << "################GAGAGAG " << result << std::endl;
+				result = result[ceps::ast::nth{r_int.second}];last_identifier = std::string{};
+
+			}else {
+				//std::cout << "!!!!!!!!!!!!!!!!!!!!" << (int)acc[i]->kind() << std::endl;
+				last_identifier = std::string{};
+			}
 		}
 	}//for
 

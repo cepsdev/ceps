@@ -1,0 +1,8 @@
+digraph U1{
+
+ graph [layout = dot]
+ node [fontname="Arial",fontsize="14",shape="box", style="rounded,filled", fillcolor=PowderBlue,margin=0];
+ edge [fontname="Arial bold italic",fontsize="12",fontcolor="Indigo"];
+ "Initial" -> "u1_s1" [ label = "e" ] ;
+"u1_s1" -> "UU1" [ label = "e" ] ;
+}

@@ -1,0 +1,12 @@
+1;2;
+predecessor();
+a{
+  a;b;c;predecessor();
+};
+
+h{i{1;};2;};
+f("x",predecessor());
+a{1;};
+
+
+meta(predecessor().a,"file");

@@ -1,0 +1,20 @@
+digraph Platform_extend_fto_and_alu{
+
+ graph [layout = dot]
+ node [fontname="Arial",fontsize="14",shape="box", style="rounded,filled", fillcolor=PowderBlue,margin=0];
+ edge [fontname="Arial bold italic",fontsize="12",fontcolor="Indigo"];
+ subgraph cluster_0 {
+  label="thread1";
+style=filled;
+color=lightgrey;
+"thread1.Initial" -> "Flap_to_open";
+"Flap_to_open.Final" -> "thread1.Final";
+}
+subgraph cluster_1 {
+  label="thread2";
+style=filled;
+color=lightgrey;
+"thread2.Initial" -> "Antenna_lashing_unlock";
+"Antenna_lashing_unlock.Final" -> "thread2.Final";
+}
+}

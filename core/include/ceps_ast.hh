@@ -988,6 +988,9 @@ inline Ifelse* as_ifelse_ptr(Nodebase_ptr p)
 	  return p->kind() == ceps::ast::Ast_node_kind::structdef;
   }
 
+
+
+
  Nodebase_ptr box(int j);
  Nodebase_ptr box(unsigned int j);
  Nodebase_ptr box(long j);
@@ -1115,6 +1118,29 @@ inline getNth_type<0,  Ast_nodeset >::type & apply_idx_op_operand(Ast_nodeset& x
 {
 	return get<0>(x);
 }
+
+
+inline std::pair<bool,int> is_int(Nodebase_ptr p)
+ {
+	  auto i = 0;
+	  auto r = p->kind() == ceps::ast::Ast_node_kind::int_literal;
+	  if (r) i = ceps::ast::value(ceps::ast::as_int_ref(p));
+ 	  return std::make_pair(r,i);
+ }
+
+void flatten_func_args(ceps::ast::Nodebase_ptr r, std::vector<ceps::ast::Nodebase_ptr>& v);
+inline bool is_a_funccall(Nodebase_ptr p,std::string& func_id,std::vector<ceps::ast::Nodebase_ptr>& args)
+  {
+	  auto r = p->kind() == ceps::ast::Ast_node_kind::func_call;
+	  if (!r) return r;
+	  ceps::ast::Func_call& func_call = *dynamic_cast<ceps::ast::Func_call*>(p);
+	  ceps::ast::Identifier& id = *dynamic_cast<ceps::ast::Identifier*>(func_call.children()[0]);
+	  func_id = name(id);
+	  if (nlf_ptr(func_call.children()[1])->children().size()){
+		  flatten_func_args(nlf_ptr(func_call.children()[1])->children()[0],args);
+	  }
+	  return r;
+  }
 
 /*
 const std::valarray<int> METER = {1,0,0,0,0,0,0};

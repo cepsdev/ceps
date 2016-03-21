@@ -231,13 +231,13 @@ namespace ceps
 	
 	
 	
-		Nodeset operator [] (int idx) const {
+		/*Nodeset operator [] (int idx) const {
 			if (nodes().size() == 1 && (nodes()[0]->kind() == Ast_node_kind::rawmap || nodes()[0]->kind() == Ast_node_kind::vector) )
 			{
 				return Nodeset{nlf_ptr(nodes()[0])->children()[idx]};
 			}
 			return Nodeset{nodes()[idx]};
-		}
+		}*/
 	
 		Nodeset operator [] (char const * sz) const {
 			return operator[](std::string{sz});
@@ -350,6 +350,8 @@ namespace ceps
 		{
 			if (size() != 1)
 				CEPSERROR("Cannot convert to string: too many / not enough elements in nodeset.");
+			if (nodes_[0]->kind() == ceps::ast::Ast_node_kind::identifier)
+				return name(as_id_ref(nodes_[0]));
 			if (nodes_[0]->kind() != Ast_node_kind::string_literal)
 				CEPSERROR("Cannot convert to string: nodeset contains no string.");
 			String & s_ref = as_string_ref(nodes_[0]);

@@ -1,0 +1,13 @@
+digraph Platform_extend{
+
+ graph [layout = dot]
+ node [fontname="Arial",fontsize="14",shape="box", style="rounded,filled", fillcolor=PowderBlue,margin=0];
+ edge [fontname="Arial bold italic",fontsize="12",fontcolor="Indigo"];
+ "Initial" -> "Platform_extend_fto_and_alu";
+"Initial" -> "Error";
+"Platform_extend_fto_and_alu.Final" -> "Z_drive_to_indexposition";
+"Z_drive_to_indexposition.Final" -> "Antenna_to_raise";
+"Antenna_to_raise.Final" -> "Platform_retract_ftc_and_all";
+"Platform_retract_ftc_and_all.Final" -> "Antenna_to_level_out";
+"Antenna_to_level_out.Final" -> "Final";
+}
