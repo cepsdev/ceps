@@ -57,8 +57,61 @@ std::string default_text_representation(ceps::ast::Nodebase_ptr root_node){
 
 
 void dump_nodes(std::ofstream& fout,ceps::ast::Nodeset nodes){
-
+	for(auto n_:nodes){
+		auto n = n_["node"];
+		auto id = n["id"];
+		if (id.size() == 0) continue;
+		fout << "\"" << id.as_str() << "\";" << std::endl;
+	}
 }
+
+
+
+void dump_subdigraph(std::ofstream& fout,ceps::ast::Nodeset edges){
+ for(auto e_:edges){
+  auto e = e_["edge"];
+
+   std::string from = default_text_representation(e["from"].nodes()[0]);
+   std::string to = default_text_representation(e["to"].nodes()[0]);
+
+   fout << "\"" << from << "\"" << " -> " << "\"" << to << "\"" <<";\n";
+
+   }
+}
+
+void dump_digraph(std::ofstream& fout, ceps::ast::Struct& digraph){
+ using namespace ceps::ast;
+
+ ceps::ast::Nodeset ns(&digraph);
+ fout << "digraph " <<  ns["digraph"]["id"].as_str() << "{\n";
+ fout << R"(
+ graph [layout = dot]
+ node [fontname="Arial",fontsize="14",shape="box", style="rounded,filled", fillcolor=PowderBlue,margin=0];
+ edge [fontname="Arial bold italic",fontsize="12",fontcolor="Indigo"];
+ )";
+
+
+ auto dg_edges = ns["digraph"][all{"edge"}];
+ dump_subdigraph(fout,dg_edges);
+
+ dump_nodes(fout,ns["digraph"][all{"node"}]);
+
+ auto threads = ns["digraph"][all{"subgraph"}];
+ int ctr = 1;
+ for(auto thrd_ : threads){
+	 auto thrd = thrd_["subgraph"];
+	 fout <<"subgraph "<< "cluster_"<< ctr-1 <<" {\n";
+	 //fout <<"  label=\""<< prefix <<"\";\n" <<"style=filled;\ncolor=lightgrey;\n";
+	 dump_subdigraph(fout,thrd[all{"edge"}]);
+	 fout<<"}\n";
+	 ++ctr;
+ }
+ fout << "}";
+}
+
+
+
+
 
 void dump_subgraph(std::ofstream& fout,ceps::ast::Nodeset edges,std::set<std::string> internal_states,std::string prefix){
  for(auto e_:edges){
@@ -235,6 +288,7 @@ void ceps::interpreter::evaluate(	 ceps::ast::Nodeset & universe,
   		 	 	 	 	 	 	 	 std::vector<ceps::ast::Nodebase_ptr>* generated_nodes
   		 	 	 )
 {
+
 	if (root_ == nullptr) return;
 
 	if (root_->kind() == ceps::ast::Ast_node_kind::int_literal ||
@@ -523,6 +577,24 @@ ceps::ast::Nodebase_ptr ceps::interpreter::evaluate(ceps::ast::Nodebase_ptr root
 				 //std::cout << "LLLLL" << std::endl;
 				 //std::cout << s << std::endl;
 				 return new ceps::ast::String(s,nullptr,nullptr,nullptr);
+			 } else if (name(id) == "name") {
+				 std::vector<ceps::ast::Nodebase_ptr> args;
+				 if (params.children().size()) flatten_args(params.children()[0], args);
+				 std::string s;
+				 for (auto p : args){
+
+				  	if(p == nullptr) continue;
+				  	if (p->kind() == ceps::ast::Ast_node_kind::structdef)
+				 	 s+=ceps::ast::name(ceps::ast::as_struct_ref(p));
+				  	else if (p->kind() == ceps::ast::Ast_node_kind::nodeset){
+					 auto& an = ceps::ast::as_ast_nodeset_ref(p);
+				  	 for (auto pp:an.children()) {
+				  	  if (pp->kind() == ceps::ast::Ast_node_kind::structdef)
+				 	  s+=ceps::ast::name(ceps::ast::as_struct_ref(pp));
+				  	 }
+				  	}
+				  }
+				 return new ceps::ast::String(s,nullptr,nullptr,nullptr);
 			 } else if (name(id) == "predecessor") {
 				 if(predecessor == nullptr) throw semantic_exception{root_node,"predecessor(): undefined in current context."};
 				 return ceps::ast::create_ast_nodeset("",std::vector<ceps::ast::Nodebase_ptr>{predecessor});
@@ -572,6 +644,8 @@ ceps::ast::Nodebase_ptr ceps::interpreter::evaluate(ceps::ast::Nodebase_ptr root
 						 std::string docid = name(container);
 						 if (docid == "smgraph")
 							 dump_smgraph(fout,container);
+						 else if (docid == "digraph")
+							 dump_digraph(fout,container);
 						 else if (docid == "html")
 							 dump_html(fout,container);
 

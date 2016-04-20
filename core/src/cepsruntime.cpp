@@ -48,9 +48,35 @@ const ceps::Ceps_ostream::endl_ ceps::Ceps_ostream::endl;
 bool ceps::INTERNAL_KILL_SIGNAL_RECEIVED = false;
 ceps::Ceps_Environment* ceps::CURRENT_ENV_INSTANCE = nullptr;
 
+
+
+
 std::string ceps::get_version_info()
 {
-	return "0.3.1 Build 07112013 (x86_64 GNU/Linux, GCC 4.8.2, Bison 3.0)";
+	std::stringstream ss;
+     #ifdef __GNUC__
+	 		ss
+				<< "VERSION 1.1 (" __DATE__ << ") BUILT WITH GCC "<< "" __VERSION__ ""<< " on GNU/LINUX "
+	 #ifdef __LP64__
+					  << "64BIT"
+	 #else
+					  << "32BIT"
+	 #endif
+					  << " (C) BY THE AUTHORS OF ceps";
+	#else
+		#ifdef _MSC_FULL_VER
+			ss
+				<< "VERSION 1.1 (" __DATE__ << ") BUILT WITH MS VISUAL C++ " << _MSC_FULL_VER << " on Windows "
+			#ifdef _WIN64
+				<< "64BIT"
+			#else
+				<< "32BIT"
+			#endif
+				<< " (C) BY THE AUTHORS OF ceps";
+		#endif
+	#endif
+	ss << " (ceps is hosted at github: https://github.com/cepsdev/ceps.git) ";
+	return ss.str();
 }
 
 void ceps::kill()

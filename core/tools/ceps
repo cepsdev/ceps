@@ -1,0 +1,2 @@
+#!/bin/sh
+cepsvalidate/cepsvalidate -e -pp -pe $@

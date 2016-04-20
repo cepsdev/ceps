@@ -38,7 +38,7 @@ SOFTWARE.
 #include <fstream>
 
 #define VERSION_CEPSVALIDATE_MAJOR 0
-#define VERSION_CEPSVALIDATE_MINOR 4
+#define VERSION_CEPSVALIDATE_MINOR 5
 
 using namespace std;
 using namespace ceps::ast;
@@ -47,7 +47,7 @@ const bool DEBUG = false;
 
 std::string help_text = 
 R"(
-Usage: cepsvalidate FILE [FILE...] [--evaluate|-e] [--print-evaluated|-pe] [--print-raw|-pr] [--pretty-print|-pp] [--version|-v]
+Usage: cepsvalidate FILE [FILE...] [--evaluate|-e] [--print-evaluated|-pe] [--print-raw|-pr] [--pretty-print|-pp] [--version|-v] [--verbose|-v]
 )";
 
 
@@ -60,6 +60,7 @@ int main(int argc, char*argv[])
 	bool print_raw = false;
 	bool print_pretty = false;
 	bool print_version = false;
+	bool print_verbose = false;
 
 	std::vector<std::string> files;
 	if (argc == 1)
@@ -87,11 +88,14 @@ int main(int argc, char*argv[])
 		{
 			print_raw = true;
 		}
-		else if (arg == "-v" || arg == "--version")
+		else if (arg == "--version")
 		{
 			print_version = true;
 		}
-
+		else if (arg == "--verbose" || arg == "-v")
+		{
+			print_verbose = true;
+		}
 		else {
 			
 			if (!ifstream{arg})
@@ -132,6 +136,7 @@ int main(int argc, char*argv[])
 	}
 
 	ceps::Ceps_Environment ceps_env{""};
+	Nodeset universe;
 	for(std::string const & filename : files)
 	{
 		ifstream in{filename};
@@ -163,10 +168,8 @@ int main(int argc, char*argv[])
 
 			root->children().insert(root->children().begin(),new ceps::ast::Struct("@@file",new ceps::ast::String(std::string{buffer}),nullptr,nullptr));
 
-
 			if (print_raw)
 			{
-				std::cout << "\n\nUninterpreted Tree:\n"<<std::endl;
 				if (print_pretty )
 					std::cout << ceps::ast::Nodebase::pretty_print <<  *driver.parsetree().get_root() << std::endl << std::endl;
 				else
@@ -178,22 +181,35 @@ int main(int argc, char*argv[])
 				/*ceps::ast::Nodebase_ptr p = ceps::interpreter::evaluate(	driver.parsetree().get_root(),
 																			ceps_env.get_global_symboltable(),
 																			ceps_env.interpreter_env());*/
-				Nodeset universe;
 
-				ceps::interpreter::evaluate(universe, driver.parsetree().get_root(),ceps_env.get_global_symboltable(),ceps_env.interpreter_env());
+				std::vector<ceps::ast::Nodebase_ptr> generated_nodes;
+
+				ceps::interpreter::evaluate(universe,
+						                    driver.parsetree().get_root(),
+						                    ceps_env.get_global_symboltable(),
+						                    ceps_env.interpreter_env(),&generated_nodes);
 
 				auto p = new Root();
-				p->children().insert(p->children().end(), universe.nodes().begin(), universe.nodes().end());
-
+				//p->children().insert(p->children().end(), universe.nodes().begin(), universe.nodes().end());
+				p->children().insert(p->children().end(), generated_nodes.begin(), generated_nodes.end());
 
 
 				if (print_evaluated)
 				{
-					std::cout << "\n\nInterpreted Tree:\n"<<std::endl;
-					if (print_pretty )
+					if (print_verbose){
+					 if (print_pretty )
 						std::cout << ceps::ast::Nodebase::pretty_print <<  *p << std::endl;
-					else
+					 else
 						std::cout << *p << std::endl;
+					} else {
+						for(auto pp: p->children()){
+							if (pp->kind() == ceps::ast::Ast_node_kind::structdef && ceps::ast::name(ceps::ast::as_struct_ref(pp)).substr(0,2) == "@@" ) continue;
+							 if (print_pretty )
+								std::cout << ceps::ast::Nodebase::pretty_print <<  *pp << std::endl;
+							 else
+								std::cout << *pp;
+						}
+					}
 				}
 			}
 		} catch (ceps::interpreter::semantic_exception & se)
