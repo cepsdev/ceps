@@ -1,4 +1,4 @@
-= Everything You Wanted To Know About ceps*
+= Everything You Always Wanted To Know About ceps*
 *But Were Afraid To Ask.
 
 
@@ -21,14 +21,17 @@ see Appendix A for further informations concerning the installation of ceps/sm4c
  
 The result - i.e. the printout on the console - should look like the following line.
 
- (STRING "hello_world.ceps")
- 
-== 2. ceps is spec reversed.
+ "Hello, World!"
 
-"The most important thing in the programming language is the name. 
+The quotes being part of the output may indicate to the assertive reader that we are not dealing with a general programming language in the 
+strict sense of the term here. Actually *ceps* hasn't even a notion of printing a string.
+
+== 2. ceps = spec reversed.
+
+_"The most important thing in the programming language is the name. 
 A language will not succeed without a good name. 
-I have recently invented a very good name and now I am looking for a suitable language."
-_Donald Knuth_
+I have recently invented a very good name and now I am looking for a suitable language."_
+*_Donald Knuth_*
 
 [[img-waterfallmodel]]
 image::waterfall_model.gif[caption="Figure 1: ", title="Waterfall model after Royce.", alt="Waterfall model" link="http://www.aa.bb"]

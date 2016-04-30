@@ -71,9 +71,10 @@ void ceps::ast::Nodebase::print_ws(std::ostream& out,int n) const
 
 void ceps::ast::Nodebase::print(std::ostream& out,bool pretty_print,int indent) const
 {
-	out << "("<<ast_node_kind_to_text[(int)kind()] << ' ';
-	print_content(out,pretty_print,indent);
-	out << ")";
+	if (kind() == ceps::ast::Ast_node_kind::string_literal) print_content(out,pretty_print,indent);
+	else {
+		out << "("<<ast_node_kind_to_text[(int)kind()] << ' '; print_content(out,pretty_print,indent); out << ")";
+	}
 }
 
 std::ostream& ceps::ast::operator << (std::ostream & out, Nodebase const & n)
