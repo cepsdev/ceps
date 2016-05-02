@@ -1,6 +1,53 @@
-= Everything You Always Wanted To Know About ceps*
-*But Were Afraid To Ask.
+= Everything You Always Wanted To Know About ceps - But Were Afraid To Ask.
+Tomas Prerovsky <tomas.prerovsky@gmail.com>
+v0.1, 2016-05-02 (c) Tomas Prerovsky
 
+== 0. Intro
+
+=== 0.1 Subject matter, Audience
+This document introduces a software design methodology and the core tools supporting it. 
+Both - methodology and tools - go by the name *ceps*. The intended audience is the *working* software professional with the ability to read modern C&#43;&#43; (i.e. C&#43;&#43;11 and newer).
+
+=== 0.2 Setting the stage 
+
+Every new method should improve the current state of the art, otherwise it is superfluous and therefore useless. 
+We believe that *ceps* is far from being useless, *ceps* owes its existence to a number of deep felt shortcomings each of the well established Software Engineering methods used today have in common. 
+The most important of which being the lack of a potent method for *Test Construction*. 
+In order to discuss what our method does better than the others we establish some context by skimming through some widely adopted so called agile methods - Test-Driven Development (TDD) and Behavior Driven Development (BDD). Followed
+by a short critique. We chose agile methods as a starting point for our discussion because they are widely known as dogmatic proponents of a test oriented approach and therefore should be the first candidate to ask for advice 
+in all matters concerning test construction. 
+
+WARNING: The following discussion of TDD and BDD is by no means complete and serves the sole purpose to gain a first idea of our method by pointedly contrasting it
+ with well established ones. 
+
+==== 0.2.1 TDD in nuce
+
+===== 0.2.1.1 The TDD triad
+
+Test Driven Development is about writing a test before writing the actual code and is best summarized by the TDD-triad:
+
+ * Write a failing Test (red).
+ * Write a minimum of code to pass this test and all other tests in the database of regression tests (green).
+ * Add test to database, refactor, iterate.
+
+Furthermore TDD proposes The principle of _emergent design_: The program design is mainly driven by the tests, a robust and viable design "emerges" by faithfully applying the TDD triad of steps. 
+
+===== 0.2.1.2 Is TDD sound? 
+
+Most of us consider the statement _"The less you know about a problem the more unlikely that you'll solve it."_ a fundamental fact of live. But at no time in a software project is the degree of uncertainty
+and - as a direct consequence - the probablity for grave errors higher than at its very beginning. 
+
+There seems to apply an analog of Heisenberg's "Unschaerferelation" - known from Quantum Mechanics - to every software project: 
+regardless of how much effort you invest in Requirements Analysis, Specifications and all other "upfront" activities - you'll never be able to reduce the rate of uncertainty below a certain threshold. But that's not the only problem,
+ the empirically justified desastrous effect of wrong decisions made early in a project works in quite the same unfavorable direction like uncertainty. 
+In fact both laws mutually reinforce each other in the most unpleasant way imaginable: The earlier a decision is made the more certain it is wrong and the greater its impact in form of defects in the future.
+
+It seems irresistible to draw the conclusion that the only reasonable strategy is to minimize all "upfront" activities, i.e. requirements analysis, technical specifications etc., in favour of building the software "bottom up" in the manner proposed by
+the TDD community. The most important benefits of TDD are:
+ * Running system early in the project, therefore quick response of the customer, furthermore growing knowledge of the problem domain
+ * The probability of really big defects declines rapidly in course of the project
+ * Growing database of regression tests serves as executable specification and documentation.
+ * The regression tests serve as an early catch-all for introduced bugs, which is .  
 
 
 == 1. Hello, World!
@@ -24,16 +71,13 @@ The result - i.e. the printout on the console - should look like the following l
  "Hello, World!"
 
 The quotes being part of the output may indicate to the assertive reader that we are not dealing with a general programming language in the 
-strict sense of the term here. Actually *ceps* hasn't even a notion of printing a string.
-
-== 2. ceps = spec reversed.
-
-_"The most important thing in the programming language is the name. 
-A language will not succeed without a good name. 
-I have recently invented a very good name and now I am looking for a suitable language."_
-*_Donald Knuth_*
-
-[[img-waterfallmodel]]
-image::waterfall_model.gif[caption="Figure 1: ", title="Waterfall model after Royce.", alt="Waterfall model" link="http://www.aa.bb"]
+strict sense of the term here. What we see on the console is the *value* of  _hello_world.ceps_ and not the result of a print command. Actually there is no built-in print command in *ceps*.
 
 
+
+[[app-listing]]
+[source,c++]
+.app.rb
+----
+int a = 1;
+----
