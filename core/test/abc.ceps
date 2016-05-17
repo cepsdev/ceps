@@ -1,0 +1,32 @@
+123;
+1+1;
+statemachine{1;};
+
+a+1;
+
+sm{
+  id{"haubeauf";};
+  t{1;1;};
+  t{2;2;};
+};
+
+sm{
+  id{"haubezu";};
+  t{1;1;};
+  t{2;2;};
+};
+
+sm{
+  id{"haubezuzu";};
+  t{1;1;};
+  t{2;2;};
+};
+
+html{
+  ul{
+for(sm:root.sm){
+  
+    li{sm.id.content();};
+}
+  };
+};

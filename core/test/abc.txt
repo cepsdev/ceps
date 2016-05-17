@@ -1,0 +1,1072 @@
+
+
+Interpreted Tree:
+
+(ROOT 
+  (STRUCT "@@file" 
+    (STRING "/home/tprerovs/projects/ceps/core/test/state_machines_docgen_1.ceps" )
+  )
+  (STRUCT "Statemachine" 
+    (STRUCT "id" 
+      (ID "UU1" 
+      )
+    )
+    (STRUCT "States" 
+      (ID "Initial" 
+      )
+      (ID "Final" 
+      )
+      (ID "uu1_s1" 
+      )
+      (ID "uu1_s2" 
+      )
+      (ID "uu1_s3" 
+      )
+    )
+    (STRUCT "Transition" 
+      (ID "Initial" 
+      )
+      (ID "uu1_s1" 
+      )
+      (SYMBOL "e" "Event" 
+      )
+      (STRUCT "D" 
+        (INT 1  )
+        (STRUCT "E" 
+          (ID "e1" 
+          )
+          (ID "f1" 
+          )
+        )
+      )
+    )
+    (STRUCT "Transition" 
+      (ID "uu1_s1" 
+      )
+      (ID "uu1_s2" 
+      )
+      (SYMBOL "e" "Event" 
+      )
+      (STRUCT "D" 
+        (INT 2  )
+        (STRUCT "E" 
+          (ID "e2" 
+          )
+          (ID "f2" 
+          )
+        )
+      )
+    )
+  )
+  (STRUCT "Statemachine" 
+    (STRUCT "id" 
+      (ID "U1" 
+      )
+    )
+    (STRUCT "import" 
+      (ID "UU1" 
+      )
+    )
+    (STRUCT "States" 
+      (ID "Initial" 
+      )
+      (ID "Final" 
+      )
+      (ID "u1_s1" 
+      )
+      (ID "u1_s2" 
+      )
+      (ID "u1_s3" 
+      )
+    )
+    (STRUCT "Transition" 
+      (ID "Initial" 
+      )
+      (ID "u1_s1" 
+      )
+      (SYMBOL "e" "Event" 
+      )
+      (STRUCT "D" 
+        (INT 3  )
+        (STRUCT "E" 
+          (ID "e3" 
+          )
+          (ID "f3" 
+          )
+        )
+      )
+    )
+    (STRUCT "Transition" 
+      (ID "u1_s1" 
+      )
+      (ID "UU1" 
+      )
+      (SYMBOL "e" "Event" 
+      )
+      (STRUCT "D" 
+        (INT 4  )
+        (STRUCT "E" 
+          (ID "e4" 
+          )
+          (ID "f4" 
+          )
+        )
+      )
+    )
+  )
+  (STRUCT "Statemachine" 
+    (STRUCT "id" 
+      (ID "S1" 
+      )
+    )
+    (STRUCT "import" 
+      (ID "U1" 
+      )
+    )
+    (STRUCT "States" 
+      (ID "Initial" 
+      )
+      (ID "Final" 
+      )
+    )
+    (STRUCT "Transition" 
+      (ID "Initial" 
+      )
+      (ID "U1" 
+      )
+      (STRUCT "D" 
+        (INT 5  )
+        (STRUCT "E" 
+          (ID "e5" 
+          )
+          (ID "f5" 
+          )
+        )
+      )
+    )
+  )
+  (STRUCT "Statemachine" 
+    (STRUCT "id" 
+      (ID "Flap_to_open" 
+      )
+    )
+  )
+  (STRUCT "Statemachine" 
+    (STRUCT "id" 
+      (ID "Antenna_lashing_unlock" 
+      )
+    )
+  )
+  (STRUCT "Statemachine" 
+    (STRUCT "id" 
+      (ID "Platform_extend" 
+      )
+    )
+    (STRUCT "States" 
+      (ID "Initial" 
+      )
+      (ID "Final" 
+      )
+      (ID "Error" 
+      )
+    )
+    (STRUCT "join" 
+      (ID "Final" 
+      )
+    )
+    (STRUCT "import" 
+      (ID "Platform_extend_fto_and_alu" 
+      )
+    )
+    (STRUCT "import" 
+      (ID "Z_drive_to_indexposition" 
+      )
+    )
+    (STRUCT "import" 
+      (ID "Antenna_to_raise" 
+      )
+    )
+    (STRUCT "import" 
+      (ID "Antenna_to_level_out" 
+      )
+    )
+    (STRUCT "import" 
+      (ID "Platform_retract_ftc_and_all" 
+      )
+    )
+    (STRUCT "Actions" 
+      (STRUCT "a_antenna_to_raise_is_starting" 
+        (ID "ev_antenna_to_raise" 
+        )
+      )
+      (STRUCT "a_z_drive_to_indexposition_is_starting" 
+        (ID "ev_mast_ausfahren" 
+        )
+      )
+      (STRUCT "a_platform_extend_is_starting" 
+        (FUNC_CALL 
+          (ID "print" 
+          )
+          (CALL_PARAMETERS 
+            (STRING "---------- ev_platform_extend_is_starting ---------- 
+" )
+          )
+        )
+        (SYMBOL "ev_platform_extend_is_starting" "Event" 
+        )
+      )
+      (STRUCT "a_platform_extend_is_finished" 
+        (SYMBOL "ev_platform_extend_is_finished" "Event" 
+        )
+        (FUNC_CALL 
+          (ID "print" 
+          )
+          (CALL_PARAMETERS 
+            (STRING "---------- ev_platform_extend_is_finished ---------- 
+" )
+          )
+        )
+        (FUNC_CALL 
+          (ID "print" 
+          )
+          (CALL_PARAMETERS 
+            (OPERATOR , 
+              (OPERATOR , 
+                (STRING "---------- CONTROL ---------- ANTRIEB_STOP:       " )
+                (OPERATOR . 
+                  (OPERATOR . 
+                    (ID "z_drive" 
+                    )
+                    (ID "z_Control" 
+                    )
+                  )
+                  (ID "ANTRIEB_STOP" 
+                  )
+                )
+              )
+              (STRING "
+" )
+            )
+          )
+        )
+        (FUNC_CALL 
+          (ID "print" 
+          )
+          (CALL_PARAMETERS 
+            (OPERATOR , 
+              (OPERATOR , 
+                (STRING "---------- CONTROL ---------- BREAK_RELEASE:      " )
+                (OPERATOR . 
+                  (OPERATOR . 
+                    (ID "z_drive" 
+                    )
+                    (ID "z_Control" 
+                    )
+                  )
+                  (ID "ANTRIEB_BREAK_RELEASE" 
+                  )
+                )
+              )
+              (STRING "
+" )
+            )
+          )
+        )
+        (FUNC_CALL 
+          (ID "print" 
+          )
+          (CALL_PARAMETERS 
+            (OPERATOR , 
+              (OPERATOR , 
+                (STRING "---------- CONTROL ---------- ANTRIEB_ENABLE_IN:  " )
+                (OPERATOR . 
+                  (OPERATOR . 
+                    (ID "z_drive" 
+                    )
+                    (ID "z_Control" 
+                    )
+                  )
+                  (ID "ANTRIEB_ENABLE_IN" 
+                  )
+                )
+              )
+              (STRING "
+" )
+            )
+          )
+        )
+        (FUNC_CALL 
+          (ID "print" 
+          )
+          (CALL_PARAMETERS 
+            (OPERATOR , 
+              (OPERATOR , 
+                (STRING "---------- STATUS  ---------- ANTRIEB_ENABLE_OUT: " )
+                (OPERATOR . 
+                  (OPERATOR . 
+                    (ID "z_drive" 
+                    )
+                    (ID "z_Status" 
+                    )
+                  )
+                  (ID "ANTRIEB_ENABLE_OUT" 
+                  )
+                )
+              )
+              (STRING "
+" )
+            )
+          )
+        )
+        (FUNC_CALL 
+          (ID "print" 
+          )
+          (CALL_PARAMETERS 
+            (OPERATOR , 
+              (OPERATOR , 
+                (STRING "---------- STATUS  ---------- ANTRIEB_INPOS:      " )
+                (OPERATOR . 
+                  (OPERATOR . 
+                    (ID "z_drive" 
+                    )
+                    (ID "z_Status" 
+                    )
+                  )
+                  (ID "ANTRIEB_INPOS" 
+                  )
+                )
+              )
+              (STRING "
+" )
+            )
+          )
+        )
+      )
+      (STRUCT "a_platform_extend_preconditions_are_not_met" 
+        (SYMBOL "ev_platform_extend_preconditions_are_not_met" "Event" 
+        )
+      )
+    )
+    (STRUCT "Transition" 
+      (ID "Initial" 
+      )
+      (ID "Platform_extend_fto_and_alu" 
+      )
+      (SYMBOL "g_platform_extend_preconditions" "Guard" 
+      )
+      (ID "a_platform_extend_is_starting" 
+      )
+    )
+    (STRUCT "Transition" 
+      (ID "Initial" 
+      )
+      (ID "Error" 
+      )
+      (UNARY_OPERATOR ! 
+        (SYMBOL "g_platform_extend_preconditions" "Guard" 
+        )
+      )
+      (ID "a_platform_extend_preconditions_are_not_met" 
+      )
+    )
+    (STRUCT "Transition" 
+      (OPERATOR . 
+        (ID "Platform_extend_fto_and_alu" 
+        )
+        (ID "Final" 
+        )
+      )
+      (ID "Z_drive_to_indexposition" 
+      )
+      (ID "a_z_drive_to_indexposition_is_starting" 
+      )
+    )
+    (STRUCT "Transition" 
+      (OPERATOR . 
+        (ID "Z_drive_to_indexposition" 
+        )
+        (ID "Final" 
+        )
+      )
+      (ID "Antenna_to_raise" 
+      )
+      (ID "a_antenna_to_raise_is_starting" 
+      )
+    )
+    (STRUCT "Transition" 
+      (OPERATOR . 
+        (ID "Antenna_to_raise" 
+        )
+        (ID "Final" 
+        )
+      )
+      (ID "Platform_retract_ftc_and_all" 
+      )
+    )
+    (STRUCT "Transition" 
+      (OPERATOR . 
+        (ID "Platform_retract_ftc_and_all" 
+        )
+        (ID "Final" 
+        )
+      )
+      (ID "Antenna_to_level_out" 
+      )
+    )
+    (STRUCT "Transition" 
+      (OPERATOR . 
+        (ID "Antenna_to_level_out" 
+        )
+        (ID "Final" 
+        )
+      )
+      (ID "Final" 
+      )
+      (ID "a_platform_extend_is_finished" 
+      )
+    )
+  )
+  (STRUCT "Statemachine" 
+    (STRUCT "id" 
+      (ID "Platform_extend_fto_and_alu" 
+      )
+    )
+    (STRUCT "States" 
+      (ID "Initial" 
+      )
+      (ID "Final" 
+      )
+    )
+    (STRUCT "join" 
+      (ID "Final" 
+      )
+    )
+    (STRUCT "thread" 
+      (STRUCT "States" 
+        (ID "Initial" 
+        )
+        (ID "Final" 
+        )
+      )
+      (STRUCT "import" 
+        (ID "Flap_to_open" 
+        )
+      )
+      (STRUCT "Transition" 
+        (ID "Initial" 
+        )
+        (ID "Flap_to_open" 
+        )
+      )
+      (STRUCT "Transition" 
+        (OPERATOR . 
+          (ID "Flap_to_open" 
+          )
+          (ID "Final" 
+          )
+        )
+        (ID "Final" 
+        )
+      )
+    )
+    (STRUCT "thread" 
+      (STRUCT "States" 
+        (ID "Initial" 
+        )
+        (ID "Final" 
+        )
+      )
+      (STRUCT "Actions" 
+        (STRUCT "a_antenna_lashing_unlock_starting" 
+          (ID "ev_antenna_lashing_unlock_starting" 
+          )
+        )
+      )
+      (STRUCT "import" 
+        (ID "Antenna_lashing_unlock" 
+        )
+      )
+      (STRUCT "Transition" 
+        (ID "Initial" 
+        )
+        (ID "Antenna_lashing_unlock" 
+        )
+        (ID "a_antenna_lashing_unlock_starting" 
+        )
+      )
+      (STRUCT "Transition" 
+        (OPERATOR . 
+          (ID "Antenna_lashing_unlock" 
+          )
+          (ID "Final" 
+          )
+        )
+        (ID "Final" 
+        )
+      )
+    )
+  )
+  (STRUCT "Simulation" 
+    (STRUCT "Start" 
+      (ID "S1" 
+      )
+    )
+    (SYMBOL "e" "Event" 
+    )
+    (STRUCT "ASSERT_CURRENT_STATES_CONTAINS" 
+      (OPERATOR . 
+        (OPERATOR . 
+          (ID "S1" 
+          )
+          (ID "U1" 
+          )
+        )
+        (ID "u1_s1" 
+        )
+      )
+    )
+    (SYMBOL "e" "Event" 
+    )
+    (STRUCT "ASSERT_CURRENT_STATES_CONTAINS" 
+      (OPERATOR . 
+        (OPERATOR . 
+          (OPERATOR . 
+            (ID "S1" 
+            )
+            (ID "U1" 
+            )
+          )
+          (ID "UU1" 
+          )
+        )
+        (ID "Initial" 
+        )
+      )
+    )
+  )
+  (STRUCT "Statemachine" 
+    (STRUCT "id" 
+      (ID "Platform_extend_fto_and_alu" 
+      )
+    )
+    (STRUCT "States" 
+      (ID "Initial" 
+      )
+      (ID "Final" 
+      )
+    )
+    (STRUCT "join" 
+      (ID "Final" 
+      )
+    )
+    (STRUCT "thread" 
+      (STRUCT "States" 
+        (ID "Initial" 
+        )
+        (ID "Final" 
+        )
+      )
+      (STRUCT "import" 
+        (ID "Flap_to_open" 
+        )
+      )
+      (STRUCT "Transition" 
+        (ID "Initial" 
+        )
+        (ID "Flap_to_open" 
+        )
+      )
+      (STRUCT "Transition" 
+        (OPERATOR . 
+          (ID "Flap_to_open" 
+          )
+          (ID "Final" 
+          )
+        )
+        (ID "Final" 
+        )
+      )
+    )
+    (STRUCT "thread" 
+      (STRUCT "States" 
+        (ID "Initial" 
+        )
+        (ID "Final" 
+        )
+      )
+      (STRUCT "Actions" 
+        (STRUCT "a_antenna_lashing_unlock_starting" 
+          (ID "ev_antenna_lashing_unlock_starting" 
+          )
+        )
+      )
+      (STRUCT "import" 
+        (ID "Antenna_lashing_unlock" 
+        )
+      )
+      (STRUCT "Transition" 
+        (ID "Initial" 
+        )
+        (ID "Antenna_lashing_unlock" 
+        )
+        (ID "a_antenna_lashing_unlock_starting" 
+        )
+      )
+      (STRUCT "Transition" 
+        (OPERATOR . 
+          (ID "Antenna_lashing_unlock" 
+          )
+          (ID "Final" 
+          )
+        )
+        (ID "Final" 
+        )
+      )
+    )
+  )
+  (STRUCT "smgraphs" 
+    (STRUCT "smgraph" 
+      (STRUCT "id" 
+        (ID "UU1" 
+        )
+      )
+      (STRUCT "edge" 
+        (STRUCT "from" 
+          (ID "Initial" 
+          )
+        )
+        (STRUCT "to" 
+          (ID "uu1_s1" 
+          )
+        )
+        (STRUCT "event" 
+          (SYMBOL "e" "Event" 
+          )
+        )
+      )
+      (STRUCT "edge" 
+        (STRUCT "from" 
+          (ID "uu1_s1" 
+          )
+        )
+        (STRUCT "to" 
+          (ID "uu1_s2" 
+          )
+        )
+        (STRUCT "event" 
+          (SYMBOL "e" "Event" 
+          )
+        )
+      )
+      (STRUCT "references" 
+      )
+    )
+    (STRUCT "smgraph" 
+      (STRUCT "id" 
+        (ID "U1" 
+        )
+      )
+      (STRUCT "edge" 
+        (STRUCT "from" 
+          (ID "Initial" 
+          )
+        )
+        (STRUCT "to" 
+          (ID "u1_s1" 
+          )
+        )
+        (STRUCT "event" 
+          (SYMBOL "e" "Event" 
+          )
+        )
+      )
+      (STRUCT "edge" 
+        (STRUCT "from" 
+          (ID "u1_s1" 
+          )
+        )
+        (STRUCT "to" 
+          (ID "UU1" 
+          )
+        )
+        (STRUCT "event" 
+          (SYMBOL "e" "Event" 
+          )
+        )
+      )
+      (STRUCT "references" 
+        (STRUCT "gagaga" 
+          (STRUCT "text" 
+            (STRING "UU1" )
+          )
+          (STRUCT "id" 
+            (ID "UU1" 
+            )
+          )
+        )
+      )
+    )
+    (STRUCT "smgraph" 
+      (STRUCT "id" 
+        (ID "S1" 
+        )
+      )
+      (STRUCT "edge" 
+        (STRUCT "from" 
+          (ID "Initial" 
+          )
+        )
+        (STRUCT "to" 
+          (ID "U1" 
+          )
+        )
+        (STRUCT "event" 
+        )
+      )
+      (STRUCT "references" 
+        (STRUCT "gagaga" 
+          (STRUCT "text" 
+            (STRING "U1" )
+          )
+          (STRUCT "id" 
+            (ID "U1" 
+            )
+          )
+        )
+      )
+    )
+    (STRUCT "smgraph" 
+      (STRUCT "id" 
+        (ID "Flap_to_open" 
+        )
+      )
+      (STRUCT "references" 
+      )
+    )
+    (STRUCT "smgraph" 
+      (STRUCT "id" 
+        (ID "Antenna_lashing_unlock" 
+        )
+      )
+      (STRUCT "references" 
+      )
+    )
+    (STRUCT "smgraph" 
+      (STRUCT "id" 
+        (ID "Platform_extend" 
+        )
+      )
+      (STRUCT "edge" 
+        (STRUCT "from" 
+          (ID "Initial" 
+          )
+        )
+        (STRUCT "to" 
+          (ID "Platform_extend_fto_and_alu" 
+          )
+        )
+        (STRUCT "event" 
+        )
+      )
+      (STRUCT "edge" 
+        (STRUCT "from" 
+          (ID "Initial" 
+          )
+        )
+        (STRUCT "to" 
+          (ID "Error" 
+          )
+        )
+        (STRUCT "event" 
+        )
+      )
+      (STRUCT "edge" 
+        (STRUCT "from" 
+          (OPERATOR . 
+            (ID "Platform_extend_fto_and_alu" 
+            )
+            (ID "Final" 
+            )
+          )
+        )
+        (STRUCT "to" 
+          (ID "Z_drive_to_indexposition" 
+          )
+        )
+        (STRUCT "event" 
+        )
+      )
+      (STRUCT "edge" 
+        (STRUCT "from" 
+          (OPERATOR . 
+            (ID "Z_drive_to_indexposition" 
+            )
+            (ID "Final" 
+            )
+          )
+        )
+        (STRUCT "to" 
+          (ID "Antenna_to_raise" 
+          )
+        )
+        (STRUCT "event" 
+        )
+      )
+      (STRUCT "edge" 
+        (STRUCT "from" 
+          (OPERATOR . 
+            (ID "Antenna_to_raise" 
+            )
+            (ID "Final" 
+            )
+          )
+        )
+        (STRUCT "to" 
+          (ID "Platform_retract_ftc_and_all" 
+          )
+        )
+        (STRUCT "event" 
+        )
+      )
+      (STRUCT "edge" 
+        (STRUCT "from" 
+          (OPERATOR . 
+            (ID "Platform_retract_ftc_and_all" 
+            )
+            (ID "Final" 
+            )
+          )
+        )
+        (STRUCT "to" 
+          (ID "Antenna_to_level_out" 
+          )
+        )
+        (STRUCT "event" 
+        )
+      )
+      (STRUCT "edge" 
+        (STRUCT "from" 
+          (OPERATOR . 
+            (ID "Antenna_to_level_out" 
+            )
+            (ID "Final" 
+            )
+          )
+        )
+        (STRUCT "to" 
+          (ID "Final" 
+          )
+        )
+        (STRUCT "event" 
+        )
+      )
+      (STRUCT "references" 
+        (STRUCT "gagaga" 
+          (STRUCT "text" 
+            (STRING "Platform_extend_fto_and_alu" )
+          )
+          (STRUCT "id" 
+            (ID "Platform_extend_fto_and_alu" 
+            )
+          )
+        )
+        (STRUCT "gagaga" 
+          (STRUCT "text" 
+            (STRING "Z_drive_to_indexposition" )
+          )
+        )
+        (STRUCT "gagaga" 
+          (STRUCT "text" 
+            (STRING "Antenna_to_raise" )
+          )
+        )
+        (STRUCT "gagaga" 
+          (STRUCT "text" 
+            (STRING "Antenna_to_level_out" )
+          )
+        )
+        (STRUCT "gagaga" 
+          (STRUCT "text" 
+            (STRING "Platform_retract_ftc_and_all" )
+          )
+        )
+      )
+    )
+    (STRUCT "smgraph" 
+      (STRUCT "id" 
+        (ID "Platform_extend_fto_and_alu" 
+        )
+      )
+      (STRUCT "thread" 
+        (STRUCT "localstates" 
+          (ID "Initial" 
+          )
+          (ID "Final" 
+          )
+        )
+        (STRUCT "edge" 
+          (STRUCT "from" 
+            (ID "Initial" 
+            )
+          )
+          (STRUCT "to" 
+            (ID "Flap_to_open" 
+            )
+          )
+          (STRUCT "event" 
+          )
+        )
+        (STRUCT "edge" 
+          (STRUCT "from" 
+            (OPERATOR . 
+              (ID "Flap_to_open" 
+              )
+              (ID "Final" 
+              )
+            )
+          )
+          (STRUCT "to" 
+            (ID "Final" 
+            )
+          )
+          (STRUCT "event" 
+          )
+        )
+      )
+      (STRUCT "thread" 
+        (STRUCT "localstates" 
+          (ID "Initial" 
+          )
+          (ID "Final" 
+          )
+        )
+        (STRUCT "edge" 
+          (STRUCT "from" 
+            (ID "Initial" 
+            )
+          )
+          (STRUCT "to" 
+            (ID "Antenna_lashing_unlock" 
+            )
+          )
+          (STRUCT "event" 
+          )
+        )
+        (STRUCT "edge" 
+          (STRUCT "from" 
+            (OPERATOR . 
+              (ID "Antenna_lashing_unlock" 
+              )
+              (ID "Final" 
+              )
+            )
+          )
+          (STRUCT "to" 
+            (ID "Final" 
+            )
+          )
+          (STRUCT "event" 
+          )
+        )
+      )
+      (STRUCT "references" 
+        (STRUCT "ref" 
+          (STRING "Flap_to_open" )
+          (STRING "/home/tprerovs/projects/ceps/core/test/state_machines_docgen_1.ceps" )
+        )
+        (STRUCT "ref" 
+          (STRING "Antenna_lashing_unlock" )
+          (STRING "/home/tprerovs/projects/ceps/core/test/state_machines_docgen_1.ceps" )
+        )
+      )
+    )
+    (STRUCT "smgraph" 
+      (STRUCT "id" 
+        (ID "Platform_extend_fto_and_alu" 
+        )
+      )
+      (STRUCT "thread" 
+        (STRUCT "localstates" 
+          (ID "Initial" 
+          )
+          (ID "Final" 
+          )
+        )
+        (STRUCT "edge" 
+          (STRUCT "from" 
+            (ID "Initial" 
+            )
+          )
+          (STRUCT "to" 
+            (ID "Flap_to_open" 
+            )
+          )
+          (STRUCT "event" 
+          )
+        )
+        (STRUCT "edge" 
+          (STRUCT "from" 
+            (OPERATOR . 
+              (ID "Flap_to_open" 
+              )
+              (ID "Final" 
+              )
+            )
+          )
+          (STRUCT "to" 
+            (ID "Final" 
+            )
+          )
+          (STRUCT "event" 
+          )
+        )
+      )
+      (STRUCT "thread" 
+        (STRUCT "localstates" 
+          (ID "Initial" 
+          )
+          (ID "Final" 
+          )
+        )
+        (STRUCT "edge" 
+          (STRUCT "from" 
+            (ID "Initial" 
+            )
+          )
+          (STRUCT "to" 
+            (ID "Antenna_lashing_unlock" 
+            )
+          )
+          (STRUCT "event" 
+          )
+        )
+        (STRUCT "edge" 
+          (STRUCT "from" 
+            (OPERATOR . 
+              (ID "Antenna_lashing_unlock" 
+              )
+              (ID "Final" 
+              )
+            )
+          )
+          (STRUCT "to" 
+            (ID "Final" 
+            )
+          )
+          (STRUCT "event" 
+          )
+        )
+      )
+      (STRUCT "references" 
+        (STRUCT "ref" 
+          (STRING "Flap_to_open" )
+          (STRING "/home/tprerovs/projects/ceps/core/test/state_machines_docgen_1.ceps" )
+        )
+        (STRUCT "ref" 
+          (STRING "Antenna_lashing_unlock" )
+          (STRING "/home/tprerovs/projects/ceps/core/test/state_machines_docgen_1.ceps" )
+        )
+      )
+    )
+  )
+)

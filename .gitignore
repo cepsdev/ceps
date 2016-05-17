@@ -5,10 +5,28 @@
 eclipse/
 Debug/
 Release/
+ipch/
 .metadata/
 RemoteSystemsTempFiles/
 *.sdf
 *.suo
+*.filters
+*.obj
+*.log
+*.tlog
+*.dll
+*.lib
+*.ilk
+*.pch
+*.pdb
+*.idb
+*.bin
+*.lastbuildstate
+*.out
+
+
+
+
 
 
 
