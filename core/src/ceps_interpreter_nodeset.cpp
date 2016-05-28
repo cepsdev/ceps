@@ -108,7 +108,15 @@ ceps::ast::Nodebase_ptr ceps::interpreter::evaluate_nodeset_expr_dot(	ceps::ast:
 			  std::vector<ceps::ast::Nodebase_ptr> t;
 			  t.push_back(result.nodes()[r.second]);
 			  result.nodes_=t;
-			} else if (method_name == "is_struct") {
+			} else if (method_name == "is_string") {
+				  std::vector<ceps::ast::Nodebase_ptr> v;
+				  for(auto pe : result.nodes())
+				  {
+				  	if (pe->kind() == ceps::ast::Ast_node_kind::string_literal) v.push_back(pe);
+				  }
+				  result.nodes_ = v;
+
+			 }else if (method_name == "is_struct") {
 			  std::vector<ceps::ast::Nodebase_ptr> v;
 			  for(auto pe : result.nodes())
 			  {
