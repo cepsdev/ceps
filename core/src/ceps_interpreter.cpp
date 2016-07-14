@@ -181,9 +181,12 @@ void dump_smgraph(std::ofstream& fout, ceps::ast::Struct& digraph){
 
 void dump_html_impl(std::ofstream& fout,ceps::ast::Nodebase_ptr elem){
  if (elem->kind() == ceps::ast::Ast_node_kind::structdef){
+
   auto& cont = ceps::ast::as_struct_ref(elem);
-  if (cont.children().size() == 0) fout << "<" << ceps::ast::name(cont) << "/>";
+  if (cont.children().size() == 0){ fout << "<" << ceps::ast::name(cont) << "/>";}
+
   else{
+
 	  fout << "<" << ceps::ast::name(cont);
 	  for(auto e: cont.children()){
 		  if(e->kind() != ceps::ast::Ast_node_kind::structdef) continue;

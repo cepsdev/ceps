@@ -99,7 +99,7 @@ namespace ceps
  	 		 name_to_symbol[name].name = name;
  	 		 return &name_to_symbol[name];
  	 	 }
- 	 private:
+
  		 std::map<std::string,Symbol> name_to_symbol;
  	 };
  	 class Symboltable
@@ -121,7 +121,7 @@ namespace ceps
  				return scopes[0].insert(name);
  			} else return res;
  		 }
- 	 private:
+
  		 std::vector<Scope> scopes;
  	 };
  }
