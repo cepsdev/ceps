@@ -254,6 +254,7 @@ ceps::Cepsparser::token_type yylex(
 					return ceps::Cepsparser::token::RAWMAP;
 		}
 		if (s == "template") return ceps::Cepsparser::token::TEMPLATE;
+		if (s == "macro") return ceps::Cepsparser::token::MACRO;
 
 
 		auto symbol = driver.symboltable().lookup(s,false,false,false);

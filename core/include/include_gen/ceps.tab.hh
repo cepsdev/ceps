@@ -1,4 +1,4 @@
-// A Bison parser, made by GNU Bison 3.0.
+// A Bison parser, made by GNU Bison 3.0.2.
 
 // Skeleton interface for Bison LALR(1) parsers in C++
 
@@ -40,12 +40,12 @@
 #ifndef YY_YY_CEPS_TAB_H_INCLUDED
 # define YY_YY_CEPS_TAB_H_INCLUDED
 // //                    "%code requires" blocks.
-#line 35 "../src/grammar/ceps.y" // lalr1.cc:371
+#line 35 "../src/grammar/ceps.y" // lalr1.cc:372
 
  class Ceps_parser_driver;
  namespace ceps{namespace parsetree{class Node;}namespace ast{class Nodebase;}}
 
-#line 49 "ceps.tab.h" // lalr1.cc:371
+#line 49 "ceps.tab.h" // lalr1.cc:372
 
 
 # include <vector>
@@ -56,14 +56,67 @@
 # include "location.hh"
 
 
+#ifndef YY_ATTRIBUTE
+# if (defined __GNUC__                                               \
+      && (2 < __GNUC__ || (__GNUC__ == 2 && 96 <= __GNUC_MINOR__)))  \
+     || defined __SUNPRO_C && 0x5110 <= __SUNPRO_C
+#  define YY_ATTRIBUTE(Spec) __attribute__(Spec)
+# else
+#  define YY_ATTRIBUTE(Spec) /* empty */
+# endif
+#endif
+
+#ifndef YY_ATTRIBUTE_PURE
+# define YY_ATTRIBUTE_PURE   YY_ATTRIBUTE ((__pure__))
+#endif
+
+#ifndef YY_ATTRIBUTE_UNUSED
+# define YY_ATTRIBUTE_UNUSED YY_ATTRIBUTE ((__unused__))
+#endif
+
+#if !defined _Noreturn \
+     && (!defined __STDC_VERSION__ || __STDC_VERSION__ < 201112)
+# if defined _MSC_VER && 1200 <= _MSC_VER
+#  define _Noreturn __declspec (noreturn)
+# else
+#  define _Noreturn YY_ATTRIBUTE ((__noreturn__))
+# endif
+#endif
+
+/* Suppress unused-variable warnings by "using" E.  */
+#if ! defined lint || defined __GNUC__
+# define YYUSE(E) ((void) (E))
+#else
+# define YYUSE(E) /* empty */
+#endif
+
+#if defined __GNUC__ && 407 <= __GNUC__ * 100 + __GNUC_MINOR__
+/* Suppress an incorrect diagnostic about yylval being uninitialized.  */
+# define YY_IGNORE_MAYBE_UNINITIALIZED_BEGIN \
+    _Pragma ("GCC diagnostic push") \
+    _Pragma ("GCC diagnostic ignored \"-Wuninitialized\"")\
+    _Pragma ("GCC diagnostic ignored \"-Wmaybe-uninitialized\"")
+# define YY_IGNORE_MAYBE_UNINITIALIZED_END \
+    _Pragma ("GCC diagnostic pop")
+#else
+# define YY_INITIAL_VALUE(Value) Value
+#endif
+#ifndef YY_IGNORE_MAYBE_UNINITIALIZED_BEGIN
+# define YY_IGNORE_MAYBE_UNINITIALIZED_BEGIN
+# define YY_IGNORE_MAYBE_UNINITIALIZED_END
+#endif
+#ifndef YY_INITIAL_VALUE
+# define YY_INITIAL_VALUE(Value) /* Nothing. */
+#endif
+
 /* Debug traces.  */
 #ifndef YYDEBUG
 # define YYDEBUG 0
 #endif
 
-#line 31 "../src/grammar/ceps.y" // lalr1.cc:371
+#line 31 "../src/grammar/ceps.y" // lalr1.cc:372
 namespace ceps {
-#line 67 "ceps.tab.h" // lalr1.cc:371
+#line 120 "ceps.tab.h" // lalr1.cc:372
 
 
 
@@ -77,7 +130,7 @@ namespace ceps {
     /// Symbol semantic values.
     union semantic_type
     {
-    #line 54 "../src/grammar/ceps.y" // lalr1.cc:371
+    #line 54 "../src/grammar/ceps.y" // lalr1.cc:372
 
 	int ival;
 	double fval;
@@ -86,7 +139,7 @@ namespace ceps {
 	ceps::ast::Nodebase* ast_node;
 	std::vector<std::string>* str_list;
 
-#line 90 "ceps.tab.h" // lalr1.cc:371
+#line 143 "ceps.tab.h" // lalr1.cc:372
     };
 #else
     typedef YYSTYPE semantic_type;
@@ -123,21 +176,22 @@ namespace ceps {
         TEMPLATE = 271,
         TEMPLATE_ID = 272,
         TEMPLATE_PARAM = 273,
-        REL_OP_GT = 274,
-        REL_OP_LT = 275,
-        REL_OP_EQ = 276,
-        REL_OP_NEQ = 277,
-        REL_OP_LT_EQ = 278,
-        REL_OP_GT_EQ = 279,
-        NEG = 280,
-        NOT = 281,
-        STRUCTID = 282,
-        ID = 283,
-        KINDID = 284,
-        LITERAL = 285,
-        METRIC_UNIT = 286,
-        FUNCCALL = 287,
-        INDEXOP = 288
+        MACRO = 274,
+        REL_OP_GT = 275,
+        REL_OP_LT = 276,
+        REL_OP_EQ = 277,
+        REL_OP_NEQ = 278,
+        REL_OP_LT_EQ = 279,
+        REL_OP_GT_EQ = 280,
+        NEG = 281,
+        NOT = 282,
+        STRUCTID = 283,
+        ID = 284,
+        KINDID = 285,
+        LITERAL = 286,
+        METRIC_UNIT = 287,
+        FUNCCALL = 288,
+        INDEXOP = 289
       };
     };
 
@@ -239,14 +293,14 @@ namespace ceps {
 
 #if YYDEBUG
     /// The current debugging stream.
-    std::ostream& debug_stream () const;
+    std::ostream& debug_stream () const YY_ATTRIBUTE_PURE;
     /// Set the current debugging stream.
     void set_debug_stream (std::ostream &);
 
     /// Type for debugging levels.
     typedef int debug_level_type;
     /// The current debugging level.
-    debug_level_type debug_level () const;
+    debug_level_type debug_level () const YY_ATTRIBUTE_PURE;
     /// Set the current debugging level.
     void set_debug_level (debug_level_type l);
 #endif
@@ -275,8 +329,8 @@ namespace ceps {
 
     /// Compute post-reduction state.
     /// \param yystate   the current state
-    /// \param yylhs     the nonterminal to push on the stack
-    state_type yy_lr_goto_state_ (state_type yystate, int yylhs);
+    /// \param yysym     the nonterminal to push on the stack
+    state_type yy_lr_goto_state_ (state_type yystate, int yysym);
 
     /// Whether the given \c yypact_ value indicates a defaulted state.
     /// \param yyvalue   the value to check
@@ -351,7 +405,7 @@ namespace ceps {
     /// \brief Reclaim the memory associated to a symbol.
     /// \param yymsg     Why this token is reclaimed.
     ///                  If null, print nothing.
-    /// \param s         The symbol.
+    /// \param yysym     The symbol.
     template <typename Base>
     void yy_destroy_ (const char* yymsg, basic_symbol<Base>& yysym) const;
 
@@ -425,13 +479,13 @@ namespace ceps {
     enum
     {
       yyeof_ = 0,
-      yylast_ = 934,           //< Last index in yytable_.
-      yynnts_ = 28,  //< Number of nonterminal symbols.
+      yylast_ = 1099,     ///< Last index in yytable_.
+      yynnts_ = 29,  ///< Number of nonterminal symbols.
       yyempty_ = -2,
-      yyfinal_ = 3, //< Termination state number.
+      yyfinal_ = 3, ///< Termination state number.
       yyterror_ = 1,
       yyerrcode_ = 256,
-      yyntokens_ = 53    //< Number of tokens.
+      yyntokens_ = 54  ///< Number of tokens.
     };
 
 
@@ -440,9 +494,9 @@ namespace ceps {
   };
 
 
-#line 31 "../src/grammar/ceps.y" // lalr1.cc:371
+#line 31 "../src/grammar/ceps.y" // lalr1.cc:372
 } // ceps
-#line 446 "ceps.tab.h" // lalr1.cc:371
+#line 500 "ceps.tab.h" // lalr1.cc:372
 
 
 

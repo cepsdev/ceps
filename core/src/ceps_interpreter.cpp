@@ -982,11 +982,22 @@ ceps::ast::Nodebase_ptr ceps::interpreter::evaluate(ceps::ast::Nodebase_ptr root
 		}
 		else
 		{
-			 ceps::ast::Nodebase_ptr lhs = binop.children()[0];
-			 //if (lhs->kind() != ceps::ast::Ast_node_kind::identifier)
-			 lhs = evaluate(binop.children()[0],sym_table,env,root_node,nullptr);
+			 ceps::ast::Nodebase_ptr lhs =  evaluate(binop.children()[0],sym_table,env,root_node,nullptr);
+			 ceps::ast::Nodebase_ptr unevaluated_lhs = binop.children()[0];
 			 ceps::ast::Nodebase_ptr rhs = evaluate(binop.children()[1],sym_table,env,root_node,binop.children()[0]);
-			 if( lhs->kind() == ceps::ast::Ast_node_kind::symbol ||
+
+			 bool treat_lhs_as_symbol = false;
+
+			 if (unevaluated_lhs->kind() == ceps::ast::Ast_node_kind::identifier){
+				 ceps::ast::Identifier& id = *dynamic_cast<ceps::ast::Identifier*>(unevaluated_lhs);
+			 	 ceps::parser_env::Symbol* sym_ptr;
+		 		 if ( (sym_ptr = sym_table.lookup(name(id))) == nullptr) treat_lhs_as_symbol=true;
+		 		 if (sym_ptr && sym_ptr->category != ceps::parser_env::Symbol::Category::VAR) treat_lhs_as_symbol=true;
+		 		 else if (sym_ptr && sym_ptr->category == ceps::parser_env::Symbol::Category::VAR) lhs = unevaluated_lhs;
+			 }
+
+			 if( treat_lhs_as_symbol ||
+				 lhs->kind() == ceps::ast::Ast_node_kind::symbol ||
 			     lhs->kind() == ceps::ast::Ast_node_kind::binary_operator ||
 			     lhs->kind() == ceps::ast::Ast_node_kind::unary_operator ||
 			     lhs->kind() == ceps::ast::Ast_node_kind::func_call )
@@ -1048,13 +1059,14 @@ ceps::ast::Nodebase_ptr ceps::interpreter::evaluate(ceps::ast::Nodebase_ptr root
 			 return new ceps::ast::Identifier(id_name,nullptr,nullptr,nullptr);
 		 }
 
-		 if (sym_ptr->category == Symbol::Category::SYMBOL)
+		 ceps::parser_env::Symbol& sym = *sym_ptr;
+		 if (sym_ptr->category == Symbol::Category::SYMBOL )
 		 {
 			 return new ceps::ast::Symbol(name(id), ((ceps::parser_env::Symbol*)sym_ptr->payload)->name, nullptr, nullptr, nullptr);
 		 }
 
 
-		 ceps::parser_env::Symbol& sym = *sym_ptr;
+
 		 if (sym.category != Symbol::Category::VAR)
 			 throw semantic_exception{root_node,"Variable '" +name(id)+"' is not defined."};
 
@@ -1172,9 +1184,9 @@ ceps::ast::Nodebase_ptr ceps::interpreter::handle_binop(	ceps::ast::Nodebase_ptr
 	if (op == '=')
 	{
 		using namespace ceps::parser_env;
-		if (lhs->kind() != Kind::identifier)
+		if (lhs->kind() != Kind::identifier){
 			throw semantic_exception{binop_node," Left hand side of assignment should be a variable"};
-
+		}
 
 		ceps::ast::Identifier& id = *dynamic_cast<ceps::ast::Identifier*>(lhs);
 		ceps::parser_env::Symbol* sym_ptr;

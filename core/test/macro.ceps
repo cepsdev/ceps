@@ -1,0 +1,6 @@
+
+macro sm{ Statemachine{id{S;};States{Initial;a;b;c;}; }; };
+
+sm;
+
+

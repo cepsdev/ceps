@@ -55,7 +55,7 @@ $(OBJDIR)/pugixml.o: $(pugixml)/pugixml.cpp $(pugixml)/pugixml.hpp
 
 src-gen/ceps.tab.cpp: src/grammar/ceps.y
 	cd $(BISONGENDIR);\
-	~/local/bin/bison ../src/grammar/ceps.y;\
+	bison ../src/grammar/ceps.y;\
 	cd ..;\
 	mv $(BISONGENDIR)/location.hh include/include_gen;\
 	mv $(BISONGENDIR)/position.hh include/include_gen;\

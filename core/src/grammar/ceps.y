@@ -78,6 +78,7 @@ SOFTWARE.
 %token TEMPLATE
 %token TEMPLATE_ID
 %token TEMPLATE_PARAM
+%token MACRO
 
 
 //%token KINDID
@@ -130,6 +131,7 @@ SOFTWARE.
 %type <ast_node> id_or_struct_id;
 %type <ast_node> for_loop_head;
 %type <ast_node> ifthenelse;
+%type <ast_node> macro_definition;
 
 %expect 41
 
@@ -183,6 +185,11 @@ stmt :
  
 | 
  template ';'
+ {
+  $$ = $1;
+ }
+| 
+ macro_definition ';'
  {
   $$ = $1;
  }
@@ -287,6 +294,10 @@ decl:
  delete $2; 
  $$ = r;
 } 
+|KINDID ID '=' expr
+{
+  $$ = new ceps::ast::Expression($4,nullptr,nullptr);
+}
 |expr 
 {
 	$$ = new ceps::ast::Expression($1,nullptr,nullptr);
@@ -544,6 +555,13 @@ template:
 TEMPLATE general_id '(' ')' '{' stmts '}'
 {
 }
+;
+
+macro_definition:
+ MACRO general_id '{' stmts '}'
+ {
+  
+ }
 ;
 
 
