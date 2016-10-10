@@ -1,6 +1,33 @@
 
-macro sm{ Statemachine{id{S;};States{Initial;a;b;c;}; }; };
 
-sm;
+macro 
+ sequence
+{
+ Statemachine{
+  id{hd(arglist);};
+  States{Initial;
+   for(step:tail(arglist)){
+    step;
+   } };
+  
+  Transition{Initial;hd(tail(arglist));};
+  for(step:tail(arglist)){
+    if(!last){
+     Transition{step;next;as_symbol("ev_"+text(step)+"_done","Event");};
+    }
+  }
+  Transition{last(arglist);Initial;};
+ };
+};
 
+sequence{Motorsteuerung;
+         Erfasse_Kuehlwassertemperatur_HT;
+         Erfasse_Kuehlwassertemperatur_NT;
+         Versende_Kuehlwassertemperaturdaten;
+         Erfasse_Druck_Klimaanlage;
+         Erfasse_Temperatur_Klimaanlage;
+         Versende_Klimaanlagedaten;};
+
+
+sequence{1;2;};
 

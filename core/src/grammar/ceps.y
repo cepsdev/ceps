@@ -560,7 +560,11 @@ TEMPLATE general_id '(' ')' '{' stmts '}'
 macro_definition:
  MACRO general_id '{' stmts '}'
  {
-  
+  auto symbol = driver.symboltable().lookup(*$2,true,true,false);
+  symbol->category = ceps::parser_env::Symbol::MACRO;
+  symbol->payload = $4;
+  delete $2;
+  $$ = nullptr; 	  
  }
 ;
 

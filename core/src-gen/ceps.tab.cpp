@@ -1154,140 +1154,144 @@ namespace ceps {
   case 86:
 #line 562 "../src/grammar/ceps.y" // lalr1.cc:847
     {
-  
+  auto symbol = driver.symboltable().lookup(*(yystack_[3].value.sval),true,true,false);
+  symbol->category = ceps::parser_env::Symbol::MACRO;
+  symbol->payload = (yystack_[1].value.ast_node);
+  delete (yystack_[3].value.sval);
+  (yylhs.value.ast_node) = nullptr; 	  
  }
-#line 1160 "ceps.tab.c" // lalr1.cc:847
+#line 1164 "ceps.tab.c" // lalr1.cc:847
     break;
 
   case 91:
-#line 580 "../src/grammar/ceps.y" // lalr1.cc:847
+#line 584 "../src/grammar/ceps.y" // lalr1.cc:847
     {
   (yylhs.value.ast_node) = new ceps::ast::Call_parameters((yystack_[0].value.ast_node),nullptr,nullptr);
  }
-#line 1168 "ceps.tab.c" // lalr1.cc:847
+#line 1172 "ceps.tab.c" // lalr1.cc:847
     break;
 
   case 92:
-#line 585 "../src/grammar/ceps.y" // lalr1.cc:847
+#line 589 "../src/grammar/ceps.y" // lalr1.cc:847
     {
   if((yystack_[0].value.ast_node) != nullptr) 
   	ceps::ast::nlf_ptr((yystack_[2].value.ast_node))->children().push_back((yystack_[0].value.ast_node));
     
   (yylhs.value.ast_node) = (yystack_[2].value.ast_node);
  }
-#line 1179 "ceps.tab.c" // lalr1.cc:847
+#line 1183 "ceps.tab.c" // lalr1.cc:847
     break;
 
   case 93:
-#line 595 "../src/grammar/ceps.y" // lalr1.cc:847
+#line 599 "../src/grammar/ceps.y" // lalr1.cc:847
     {
   (yylhs.value.ast_node) = (yystack_[0].value.ast_node);
  }
-#line 1187 "ceps.tab.c" // lalr1.cc:847
+#line 1191 "ceps.tab.c" // lalr1.cc:847
     break;
 
   case 94:
-#line 606 "../src/grammar/ceps.y" // lalr1.cc:847
+#line 610 "../src/grammar/ceps.y" // lalr1.cc:847
     {
  	(yylhs.value.ast_node)=(yystack_[0].value.ast_node);
  }
-#line 1195 "ceps.tab.c" // lalr1.cc:847
+#line 1199 "ceps.tab.c" // lalr1.cc:847
     break;
 
   case 95:
-#line 613 "../src/grammar/ceps.y" // lalr1.cc:847
+#line 617 "../src/grammar/ceps.y" // lalr1.cc:847
     {
  	(yylhs.value.ast_node) = new ceps::ast::Rawmap();
  }
-#line 1203 "ceps.tab.c" // lalr1.cc:847
+#line 1207 "ceps.tab.c" // lalr1.cc:847
     break;
 
   case 96:
-#line 617 "../src/grammar/ceps.y" // lalr1.cc:847
+#line 621 "../src/grammar/ceps.y" // lalr1.cc:847
     { 
  	if (!ceps::ast::nlf_ptr((yystack_[0].value.ast_node))->empty()) 
  	 ceps::ast::nlf_ptr((yystack_[1].value.ast_node))->children().push_back((yystack_[0].value.ast_node)); 
  	(yylhs.value.ast_node) = (yystack_[1].value.ast_node);
  }
-#line 1213 "ceps.tab.c" // lalr1.cc:847
+#line 1217 "ceps.tab.c" // lalr1.cc:847
     break;
 
   case 97:
-#line 626 "../src/grammar/ceps.y" // lalr1.cc:847
+#line 630 "../src/grammar/ceps.y" // lalr1.cc:847
     {
 	(yylhs.value.ast_node) = new ceps::ast::Atoms();
 }
-#line 1221 "ceps.tab.c" // lalr1.cc:847
+#line 1225 "ceps.tab.c" // lalr1.cc:847
     break;
 
   case 98:
-#line 630 "../src/grammar/ceps.y" // lalr1.cc:847
+#line 634 "../src/grammar/ceps.y" // lalr1.cc:847
     {
   ceps::ast::nlf_ptr((yystack_[1].value.ast_node))->children().push_back(new ceps::ast::Int((yystack_[0].value.ival),ceps::ast::Unit_rep(),nullptr,nullptr,nullptr));
   (yylhs.value.ast_node) = (yystack_[1].value.ast_node);
 }
-#line 1230 "ceps.tab.c" // lalr1.cc:847
+#line 1234 "ceps.tab.c" // lalr1.cc:847
     break;
 
   case 99:
-#line 635 "../src/grammar/ceps.y" // lalr1.cc:847
+#line 639 "../src/grammar/ceps.y" // lalr1.cc:847
     {
   ceps::ast::nlf_ptr((yystack_[2].value.ast_node))->children().push_back(new ceps::ast::Int(-1 * (yystack_[0].value.ival),ceps::ast::Unit_rep(),nullptr,nullptr,nullptr));
   (yylhs.value.ast_node) = (yystack_[2].value.ast_node);
 }
-#line 1239 "ceps.tab.c" // lalr1.cc:847
+#line 1243 "ceps.tab.c" // lalr1.cc:847
     break;
 
   case 100:
-#line 641 "../src/grammar/ceps.y" // lalr1.cc:847
+#line 645 "../src/grammar/ceps.y" // lalr1.cc:847
     {
   ceps::ast::nlf_ptr((yystack_[2].value.ast_node))->children().push_back(new ceps::ast::Int((yystack_[0].value.ival),ceps::ast::Unit_rep(),nullptr,nullptr,nullptr));
 
   (yylhs.value.ast_node) = (yystack_[2].value.ast_node);
 }
-#line 1249 "ceps.tab.c" // lalr1.cc:847
+#line 1253 "ceps.tab.c" // lalr1.cc:847
     break;
 
   case 101:
-#line 649 "../src/grammar/ceps.y" // lalr1.cc:847
+#line 653 "../src/grammar/ceps.y" // lalr1.cc:847
     {
   ceps::ast::nlf_ptr((yystack_[1].value.ast_node))->children().push_back(new ceps::ast::Double((yystack_[0].value.fval),ceps::ast::Unit_rep(),nullptr,nullptr,nullptr));
   (yylhs.value.ast_node) = (yystack_[1].value.ast_node);
 }
-#line 1258 "ceps.tab.c" // lalr1.cc:847
+#line 1262 "ceps.tab.c" // lalr1.cc:847
     break;
 
   case 102:
-#line 654 "../src/grammar/ceps.y" // lalr1.cc:847
+#line 658 "../src/grammar/ceps.y" // lalr1.cc:847
     {
   ceps::ast::nlf_ptr((yystack_[2].value.ast_node))->children().push_back(new ceps::ast::Double(-1.0*(yystack_[0].value.fval),ceps::ast::Unit_rep(),nullptr,nullptr,nullptr));
   (yylhs.value.ast_node) = (yystack_[2].value.ast_node);
 }
-#line 1267 "ceps.tab.c" // lalr1.cc:847
+#line 1271 "ceps.tab.c" // lalr1.cc:847
     break;
 
   case 103:
-#line 660 "../src/grammar/ceps.y" // lalr1.cc:847
+#line 664 "../src/grammar/ceps.y" // lalr1.cc:847
     {
   ceps::ast::nlf_ptr((yystack_[2].value.ast_node))->children().push_back(new ceps::ast::Double((yystack_[0].value.fval),ceps::ast::Unit_rep(),nullptr,nullptr,nullptr));
 
   (yylhs.value.ast_node) = (yystack_[2].value.ast_node);
 }
-#line 1277 "ceps.tab.c" // lalr1.cc:847
+#line 1281 "ceps.tab.c" // lalr1.cc:847
     break;
 
   case 104:
-#line 668 "../src/grammar/ceps.y" // lalr1.cc:847
+#line 672 "../src/grammar/ceps.y" // lalr1.cc:847
     {
   ceps::ast::nlf_ptr((yystack_[1].value.ast_node))->children().push_back(new ceps::ast::String(*(yystack_[0].value.sval),nullptr,nullptr,nullptr));
   delete (yystack_[0].value.sval);
   (yylhs.value.ast_node) = (yystack_[1].value.ast_node);
 }
-#line 1287 "ceps.tab.c" // lalr1.cc:847
+#line 1291 "ceps.tab.c" // lalr1.cc:847
     break;
 
 
-#line 1291 "ceps.tab.c" // lalr1.cc:847
+#line 1295 "ceps.tab.c" // lalr1.cc:847
             default:
               break;
             }
@@ -1851,9 +1855,9 @@ namespace ceps {
      399,   405,   410,   415,   420,   425,   429,   433,   437,   441,
      445,   449,   453,   457,   462,   467,   473,   477,   483,   485,
      489,   490,   491,   492,   493,   494,   498,   499,   503,   508,
-     516,   523,   534,   545,   551,   555,   561,   568,   570,   571,
-     575,   579,   584,   594,   605,   613,   616,   625,   629,   634,
-     640,   648,   653,   659,   667,   677,   679
+     516,   523,   534,   545,   551,   555,   561,   572,   574,   575,
+     579,   583,   588,   598,   609,   617,   620,   629,   633,   638,
+     644,   652,   657,   663,   671,   681,   683
   };
 
   // Print the state stack on the debug stream.
@@ -1937,8 +1941,8 @@ namespace ceps {
 
 #line 31 "../src/grammar/ceps.y" // lalr1.cc:1155
 } // ceps
-#line 1941 "ceps.tab.c" // lalr1.cc:1155
-#line 682 "../src/grammar/ceps.y" // lalr1.cc:1156
+#line 1945 "ceps.tab.c" // lalr1.cc:1155
+#line 686 "../src/grammar/ceps.y" // lalr1.cc:1156
 
 
 void ceps::Cepsparser::error (const ceps::Cepsparser::location_type& l, const std::string& m)

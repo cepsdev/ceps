@@ -96,14 +96,24 @@ static void loop( std::vector<ceps::ast::Nodebase_ptr>& result,
 	sym_table.push_scope();
 
 	ceps::parser_env::Symbol* sym_ptr;
+	ceps::parser_env::Symbol* next_sym_ptr;
+	ceps::parser_env::Symbol* last_sym_ptr;
 
 	if ( (sym_ptr = sym_table.lookup(name(id),true,true,false)) == nullptr)
 	{
-		 throw ceps::interpreter::semantic_exception{body,"Variable '" +name(id)+"' could not be instantiated defined."};
+		 throw ceps::interpreter::semantic_exception{body,"Variable '" +name(id)+"' could not be defined."};
 	}
-    //std::cout << "*****" << name(id) << std::endl;
+	if ( (next_sym_ptr = sym_table.lookup("next",true,true,false)) == nullptr)
+	{
+		 throw ceps::interpreter::semantic_exception{body,"next could not be defined."};
+	}
+	if ( (last_sym_ptr = sym_table.lookup("last",true,true,false)) == nullptr)
+	{
+		 throw ceps::interpreter::semantic_exception{body,"last could not be defined."};
+	}
+	//std::cout << "*****" << name(id) << std::endl;
 
-	sym_ptr->category = Symbol::Category::VAR;
+	last_sym_ptr->category= next_sym_ptr->category = sym_ptr->category = Symbol::Category::VAR;
 
 	if (is_range_loop)
 	{
@@ -135,9 +145,15 @@ static void loop( std::vector<ceps::ast::Nodebase_ptr>& result,
 		}
 
 	}
-	else for(auto col_node : collection)
+	else for(auto k = 0; k!= collection.size(); ++k)
 	{
+		auto col_node = collection[k];
 		sym_ptr->payload = col_node;//TODO: See comment in symtab.hh
+		next_sym_ptr->payload = nullptr;
+		if (k + 1 < collection.size()) next_sym_ptr->payload = collection[k+1];
+
+		last_sym_ptr->payload = new ceps::ast::Int( k + 1 < collection.size() ? 0 : 1,ceps::ast::all_zero_unit(),nullptr,nullptr,nullptr);
+
 
 		//std::cout << "###" <<ceps::ast::Nodeset{col_node} << std::endl;
 
