@@ -1,0 +1,46 @@
+strict_digraph{id{graph_id;}; };
+strict_graph{id{graph_id;}; };
+digraph{id{graph_id;}; };
+graph{id{graph_id;}; };
+
+digraph{id{graph_id;}; 
+ graph{attributes{};};
+ node{attributes{};};
+ edge{attributes{id2=id2;id3=id4;};};
+ node_id{attributes{};};
+ node_id{port{};};
+ node_id{port{};attributes{};};
+ port{location{id;};location{id;id;};angle{id;};};
+ edge{from{};to{};directed/*default*/;undirected;attributes{};};
+};
+
+
+Example1{
+  digraph{
+    id{"G";};
+    compound=true;
+    subgraph{id{cluster0;};
+     edge{a;b;};
+     edge{a;c;};
+     edge{b;d;};
+     edge{c;d;};
+    };
+    subgraph{id{cluster1;};
+     edge{e;g;};
+     edge{e;f;};
+    };
+    edge{b;f;a{lhead=cluster1;};};
+    edge{d;e;};
+    edge{c;g;a{ltail=cluster0;lhead=cluster1;};};
+    edge{c;e;a{ltail=cluster0;};};
+    edge{d;h;};
+  };  
+};
+
+
+dump("example1.gv",root.Example1.digraph); 
+
+
+
+
+

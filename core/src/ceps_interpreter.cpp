@@ -1275,7 +1275,7 @@ ceps::ast::Nodebase_ptr ceps::interpreter::evaluate(ceps::ast::Nonleafbase& root
 		{
 			continue;
 		}
-		if (r->kind() == Ast_node_kind::stmts || r->kind() == Ast_node_kind::scope || r->kind() == Ast_node_kind::nodeset)
+		if (r->kind() == Ast_node_kind::stmts || r->kind() == Ast_node_kind::nodeset)
 		{
 			for(Nodebase_ptr elem : nlf_ptr(r)->children())
 			{

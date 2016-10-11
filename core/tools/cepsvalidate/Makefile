@@ -12,7 +12,7 @@ cepslibs := ../../bin
 
 all: cepsvalidate 
 
-cepsvalidate: cepsvalidate.o
+cepsvalidate: cepsvalidate.o ../../bin/cepsparserdriver.o ../../bin/ceps_interpreter.o ../../bin/symtab.o ../../bin/cepslexer.o ../../bin/ceps.tab.o ../../bin/ceps_ast.o  ../../bin/cepsruntime.o ../../bin/ceps_interpreter_loop.o ../../bin/ceps_interpreter_nodeset.o ../../bin/ceps_interpreter_functions.o ../../bin/ceps_interpreter_macros.o ../../bin/pugixml.o cepsvalidate.o
 	g++   $(cflags) $(includes) -L"$(cepslibs)" ../../bin/cepsparserdriver.o ../../bin/ceps_interpreter.o ../../bin/symtab.o ../../bin/cepslexer.o ../../bin/ceps.tab.o ../../bin/ceps_ast.o  ../../bin/cepsruntime.o ../../bin/ceps_interpreter_loop.o ../../bin/ceps_interpreter_nodeset.o ../../bin/ceps_interpreter_functions.o ../../bin/ceps_interpreter_macros.o ../../bin/pugixml.o cepsvalidate.o -o cepsvalidate 
 
 cepsvalidate.o: src/cepsvalidate.cpp

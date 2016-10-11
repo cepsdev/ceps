@@ -11,7 +11,7 @@ BISONGENDIR := src-gen
 CEPSLIB := libcepscore.a
 includes := -Iinclude -Iinclude/include_gen -I$(pugixml)
 
-all: bin/$(CEPSLIB)
+all: bin/$(CEPSLIB) tools/cepsvalidate/cepsvalidate
 
 tests: test/ast_gen_1 test/si_units_1 test/test_1
 
@@ -25,32 +25,32 @@ $(OBJDIR)/ceps.tab.o: $(BISONGENDIR)/ceps.tab.cpp
 $(OBJDIR)/symtab.o: $(src)/symtab.cpp
 	$(CXX) -c $(cflags) $(includes) $(src)/symtab.cpp -o $(OBJDIR)/symtab.o  
 
-$(OBJDIR)/cepslexer.o: $(src)/cepslexer.cpp
+$(OBJDIR)/cepslexer.o: $(src)/cepslexer.cpp include/ceps_ast.hh
 	$(CXX) -c $(cflags) $(includes) $(src)/cepslexer.cpp -o $(OBJDIR)/cepslexer.o
 
-$(OBJDIR)/cepsparserdriver.o: $(src)/cepsparserdriver.cpp
+$(OBJDIR)/cepsparserdriver.o: $(src)/cepsparserdriver.cpp include/ceps_ast.hh
 	$(CXX) -c $(cflags) $(includes) $(src)/cepsparserdriver.cpp -o $(OBJDIR)/cepsparserdriver.o
 
-$(OBJDIR)/cepsruntime.o: $(src)/cepsruntime.cpp $(inc)/cepsruntime.hh $(inc)/ceps_interpreter.hh
+$(OBJDIR)/cepsruntime.o: $(src)/cepsruntime.cpp $(inc)/cepsruntime.hh $(inc)/ceps_interpreter.hh include/ceps_ast.hh
 	$(CXX) -c $(cflags) $(includes) $(src)/cepsruntime.cpp -o $(OBJDIR)/cepsruntime.o
 
 $(OBJDIR)/ceps_ast.o: $(src)/ceps_ast.cpp include/ceps_ast.hh
 	$(CXX) -c $(cflags) $(includes) $(src)/ceps_ast.cpp -o $(OBJDIR)/ceps_ast.o
 
-$(OBJDIR)/ceps_interpreter.o: $(src)/ceps_interpreter.cpp include/ceps_interpreter.hh
+$(OBJDIR)/ceps_interpreter.o: $(src)/ceps_interpreter.cpp include/ceps_interpreter.hh include/ceps_ast.hh
 	$(CXX) -c $(cflags) $(includes) $(src)/ceps_interpreter.cpp -o $(OBJDIR)/ceps_interpreter.o
 
-$(OBJDIR)/ceps_serialize.o: $(src)/ceps_serialize.cpp include/ceps_serialize.hh
+$(OBJDIR)/ceps_serialize.o: $(src)/ceps_serialize.cpp include/ceps_serialize.hh include/ceps_ast.hh
 	$(CXX) -c $(cflags) $(includes) $(src)/ceps_serialize.cpp -o $(OBJDIR)/ceps_serialize.o
 
-$(OBJDIR)/ceps_interpreter_loop.o: $(src)/ceps_interpreter_loop.cpp include/ceps_interpreter_loop.hh
+$(OBJDIR)/ceps_interpreter_loop.o: $(src)/ceps_interpreter_loop.cpp include/ceps_interpreter_loop.hh include/ceps_ast.hh
 	$(CXX) -c $(cflags) $(includes) $(src)/ceps_interpreter_loop.cpp -o $(OBJDIR)/ceps_interpreter_loop.o
 
-$(OBJDIR)/ceps_interpreter_nodeset.o: $(src)/ceps_interpreter_nodeset.cpp include/ceps_interpreter_nodeset.hh
+$(OBJDIR)/ceps_interpreter_nodeset.o: $(src)/ceps_interpreter_nodeset.cpp include/ceps_interpreter_nodeset.hh include/ceps_ast.hh
 	$(CXX) -c $(cflags) $(includes) $(src)/ceps_interpreter_nodeset.cpp -o $(OBJDIR)/ceps_interpreter_nodeset.o
-$(OBJDIR)/ceps_interpreter_functions.o: $(src)/ceps_interpreter_functions.cpp include/ceps_interpreter.hh
+$(OBJDIR)/ceps_interpreter_functions.o: $(src)/ceps_interpreter_functions.cpp include/ceps_interpreter.hh include/ceps_ast.hh
 	$(CXX) -c $(cflags) $(includes) $(src)/ceps_interpreter_functions.cpp -o $(OBJDIR)/ceps_interpreter_functions.o
-$(OBJDIR)/ceps_interpreter_macros.o: $(src)/ceps_interpreter_macros.cpp include/ceps_interpreter.hh
+$(OBJDIR)/ceps_interpreter_macros.o: $(src)/ceps_interpreter_macros.cpp include/ceps_interpreter.hh include/ceps_ast.hh
 	$(CXX) -c $(cflags) $(includes) $(src)/ceps_interpreter_macros.cpp -o $(OBJDIR)/ceps_interpreter_macros.o
 		
 $(OBJDIR)/pugixml.o: $(pugixml)/pugixml.cpp $(pugixml)/pugixml.hpp
@@ -81,6 +81,8 @@ test/si_units_1: test/si_units_1.cpp $(OBJDIR)/libcepscore.a
 test/test_1: test/test_1.cpp $(OBJDIR)/libcepscore.a
 	$(CXX) test/test_1.cpp $(cflags) $(includes) -L$(OBJDIR) -lcepscore -o test/test_1;\
 	chmod +x test/test_1
+tools/cepsvalidate/cepsvalidate: bin/$(CEPSLIB)
+	cd tools/cepsvalidate && $(MAKE)
 
 clean_tests:
 	rm -f test/ast_gen_1
