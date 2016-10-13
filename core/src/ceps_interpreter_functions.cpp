@@ -91,7 +91,7 @@ static void traverse_xml(ceps::ast::Nonleafbase* root, const pugi::xml_node & xn
 		}
 }
 
-static void default_text_representation_impl(std::stringstream& ss,ceps::ast::Nodebase_ptr root_node){
+static void default_text_representation_impl(std::stringstream& ss,ceps::ast::Nodebase_ptr root_node, bool enable_check_for_html = false){
 	if (root_node->kind() == ceps::ast::Ast_node_kind::identifier) {
 		ss << name(as_id_ref(root_node));
 	} else if (root_node->kind() == ceps::ast::Ast_node_kind::string_literal) {
@@ -186,7 +186,7 @@ static bool read_id(ceps::ast::Nonleafbase& parent, std::string& result){
  return false;
 }
 
-static void dump_digraph_elem(ceps::ast::Nodebase_ptr elem,std::ostream& fout){
+static void dump_digraph_elem(ceps::ast::Nodebase_ptr elem,std::ostream& fout, bool enable_html = false){
  using namespace ceps::ast;
  if (elem->kind() == Ast_node_kind::identifier){
   fout << name(as_id_ref(elem));
@@ -197,7 +197,15 @@ static void dump_digraph_elem(ceps::ast::Nodebase_ptr elem,std::ostream& fout){
  else if (elem->kind() == Ast_node_kind::float_literal){
   fout << value(as_double_ref(elem));
  } else if (elem->kind() == Ast_node_kind::string_literal){
-	 fout << "\"" << value(as_string_ref(elem)) << "\"";
+	 bool is_html = false;
+	 std::string v = value(as_string_ref(elem));
+	 if (enable_html)
+	 {
+		 if (v.length() > 4 && v[0] == '<' && v[1] == '<'  && v[v.length()-2] == '>' && v[v.length()-1] == '>') is_html = true;
+	 }
+	 if (is_html )
+		   fout << v;
+	 else  fout << "\"" << v << "\"";
  } else throw ceps::interpreter::semantic_exception{nullptr,"dump_digraph: Unsupported attribute type."};
 }
 
@@ -206,8 +214,10 @@ static void dump_digraph_attr(ceps::ast::Nodebase_ptr elem,std::ostream& fout,In
  if (elem->kind() == Ast_node_kind::binary_operator){
   auto& e = ceps::ast::as_binop_ref(elem);
   dump_digraph_elem(e.left(),fout);
+  bool is_label = e.left()->kind() == Ast_node_kind::identifier &&
+		  (name(as_id_ref(e.left())) == "label" || name(as_id_ref(e.left())) == "taillabel" || name(as_id_ref(e.left())) == "headlabel");
   fout << "=";
-  dump_digraph_elem(e.right(),fout);
+  dump_digraph_elem(e.right(),fout,is_label);
  } else throw ceps::interpreter::semantic_exception{nullptr,"dump_digraph: illformed attribute assignment."};
 }
 
@@ -349,6 +359,12 @@ static bool dump_digraph_stmt(ceps::ast::Nodebase_ptr root,std::ostream& fout,In
 	else if ( (root->kind() == Ast_node_kind::structdef && (name(as_struct_ref(root)) == "edge" ))){
 	   dump_digraph_edge( as_struct_ref(root),fout,indent);
 	   return true;
+	}
+	else if ( root->kind() == Ast_node_kind::structdef && name(as_struct_ref(root))!="id" ){
+		   fout << name(as_struct_ref(root)) << " [";
+		   dump_digraph_attrlist( as_struct_ref(root).children(),fout,indent);
+		   fout << "]";
+		   return true;
 	}
 
 	return false;

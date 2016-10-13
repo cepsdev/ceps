@@ -248,13 +248,18 @@ ceps::ast::Nodebase_ptr ceps::interpreter::eval_ifelse(ceps::ast::Nodebase_ptr r
  ceps::ast::Nodebase_ptr cond = evaluate(ifelse.children()[0],sym_table,env,root_node,nullptr);
  ceps::ast::Nodebase_ptr left_branch = nullptr,right_branch=nullptr;
  if (cond->kind() == ceps::ast::Ast_node_kind::int_literal){
+	 ceps::ast::Nodebase_ptr r = nullptr;
 	 if (ceps::ast::value(ceps::ast::as_int_ref(cond)) != 0 ){
-		 if (ifelse.children().size() > 1) return evaluate(ifelse.children()[1],sym_table,env,root_node,ifelse.children()[0]);
-		 else return nullptr;
+		 if (ifelse.children().size() > 1) r = evaluate(ifelse.children()[1],sym_table,env,root_node,ifelse.children()[0]);
 	 } else {
-		 if (ifelse.children().size() > 2) return evaluate(ifelse.children()[2],sym_table,env,root_node,ifelse.children()[1]);
-		 else return nullptr;
+		 if (ifelse.children().size() > 2) r = evaluate(ifelse.children()[2],sym_table,env,root_node,ifelse.children()[1]);
 	 }
+	 if (r == nullptr || r->kind() != ceps::ast::Ast_node_kind::scope) return r;
+	 auto& scope = *ceps::ast::nlf_ptr(r);
+	 //std::cout << "***********" << *r << std::endl;
+	 if (scope.children().size() == 0) return nullptr;
+	 if (scope.children().size() == 1) return scope.children()[0];
+	 return create_ast_nodeset("", scope.children());
  }
 
  if (ifelse.children().size() > 1) left_branch = evaluate(ifelse.children()[1],sym_table,env,root_node,ifelse.children()[0]);
@@ -493,6 +498,28 @@ ceps::ast::Nodebase_ptr ceps::interpreter::evaluate(ceps::ast::Nodebase_ptr root
 		 			  env,
 		 			  parent_node,
 		 			  predecessor);
+		} else if (
+				(sym_ptr = sym_table.lookup(id)) != nullptr &&
+				sym_ptr->category ==  ceps::parser_env::Symbol::Category::VAR &&
+				sym_ptr->payload != nullptr &&
+
+				(
+				 (((ceps::ast::Nodebase_ptr)sym_ptr->payload)->kind() == ceps::ast::Ast_node_kind::nodeset)
+				)
+		)
+		{
+			std::string id;
+			auto& ns = ceps::ast::as_ast_nodeset_ref(((ceps::ast::Nodebase_ptr)sym_ptr->payload));
+			if (ns.children().size() > 0)
+			{
+			 if (ns.children()[0]->kind() == ceps::ast::Ast_node_kind::identifier)
+				id = ceps::ast::name(ceps::ast::as_id_ref( ns.children()[0] ));
+			 else if (ns.children()[0]->kind() == ceps::ast::Ast_node_kind::symbol)
+				id = ceps::ast::name(ceps::ast::as_symbol_ref( ns.children()[0] ));
+			}
+			result = evaluate(*dynamic_cast<ceps::ast::Nonleafbase*>(root_node),sym_table,env,root_node,predecessor);
+			if (id.length()) ceps::ast::name(ceps::ast::as_struct_ref(result)) = id;
+
 		} else result = evaluate(*dynamic_cast<ceps::ast::Nonleafbase*>(root_node),sym_table,env,root_node,predecessor);
 		sym_table.pop_scope();
 		return result;

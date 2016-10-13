@@ -1,0 +1,11 @@
+stuff{
+ a;b;c;d;
+};
+
+stuff2{
+for(n:root.stuff.content()){
+ n{};
+}
+};
+
+n{1;2;3;};

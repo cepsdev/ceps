@@ -1,0 +1,14 @@
+stuff{
+ rel{a;b;v{a_details;};};
+ rel{b;c;v{b_details;};};
+ rel{c;d;};
+};
+
+for (e:root.stuff.rel){
+ edge{e.content().first();
+ e.content().second();
+ if(e.content().v.size()){
+  "v set";1;2;g=text(e.content().v.content());
+ }
+ };
+}

@@ -1,0 +1,8 @@
+mm{
+a;"bnmnmmnm";
+b;"c";
+d;"e";
+};
+
+root.mm.content().map(a,a);
+root.mm.content().map(g,g);

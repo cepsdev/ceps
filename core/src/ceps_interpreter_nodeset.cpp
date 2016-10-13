@@ -93,11 +93,20 @@ ceps::ast::Nodebase_ptr ceps::interpreter::evaluate_nodeset_expr_dot(	ceps::ast:
 					for(auto pes: as_struct_ref(pe).children()) v.push_back(pes);
 				}
 				result.nodes_ = v;
+			} else if (method_name == "size"){
+				return new ceps::ast::Int(result.nodes().size(),ceps::ast::all_zero_unit(),nullptr,nullptr,nullptr);
 			} else if (method_name == "first"){
 				if (result.nodes().size() == 0) result.nodes_.clear();
 				else{
 				std::vector<ceps::ast::Nodebase_ptr> v;
 				v.push_back(result.nodes()[0]);
+				result.nodes_ = v;
+				}
+			} else if (method_name == "second"){
+				if (result.nodes().size() < 2) result.nodes_.clear();
+				else{
+				std::vector<ceps::ast::Nodebase_ptr> v;
+				v.push_back(result.nodes()[1]);
 				result.nodes_ = v;
 				}
 			} else if (method_name == "at" && args.size() == 1){
@@ -108,6 +117,31 @@ ceps::ast::Nodebase_ptr ceps::interpreter::evaluate_nodeset_expr_dot(	ceps::ast:
 			  std::vector<ceps::ast::Nodebase_ptr> t;
 			  t.push_back(result.nodes()[r.second]);
 			  result.nodes_=t;
+			} else if (method_name == "map") {
+				if (args.size() != 2) throw ceps::interpreter::semantic_exception{nullptr,"'"+method_name+"' wrong number of arguments."};
+				ceps::ast::Nodebase_ptr r = nullptr;
+				ceps::ast::Nodebase_ptr a0 = args[0];
+				ceps::ast::Nodebase_ptr a1 = args[1];
+				if (a0->kind() == ceps::ast::Ast_node_kind::nodeset)
+				 if (ceps::ast::as_ast_nodeset_ref(a0).children().size())
+					 a0 = ceps::ast::as_ast_nodeset_ref(a0).children()[0];
+
+				if (a1->kind() == ceps::ast::Ast_node_kind::nodeset)
+				 if (ceps::ast::as_ast_nodeset_ref(a1).children().size())
+					 a1 = ceps::ast::as_ast_nodeset_ref(a1).children()[0];
+
+				for(int i = 0; i != result.nodes().size(); i+=2){
+					auto v = result.nodes()[i];
+
+					if (v->kind() != a0->kind()) continue;
+					if (v->kind() == ceps::ast::Ast_node_kind::identifier)
+						if (ceps::ast::name(ceps::ast::as_id_ref(v)) == ceps::ast::name(ceps::ast::as_id_ref(a0))){
+							r = result.nodes()[i+1];
+							break;
+						}
+				}
+				if (r == nullptr) r = a1;
+				result.nodes_ = std::vector<ceps::ast::Nodebase_ptr> {r};
 			} else if (method_name == "is_string") {
 				  std::vector<ceps::ast::Nodebase_ptr> v;
 				  for(auto pe : result.nodes())
