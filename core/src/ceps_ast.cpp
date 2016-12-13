@@ -114,8 +114,9 @@ ceps::ast::Nodebase_ptr ceps::ast::box(std::string const & s)
 	return  new String(s, nullptr, nullptr, nullptr);
    }
 
-
-
+ceps::ast::Nodebase_ptr ceps::ast::box(ceps::ast::ident const & s){
+	return new Identifier(s.v, nullptr, nullptr, nullptr);
+}
 Struct_ptr ceps::ast::make_struct(std::string const & name)
 {
 	return new Struct(name, nullptr, nullptr, nullptr);

@@ -49,3 +49,28 @@ ceps::ast::Nodebase_ptr ceps::interpreter::eval_macro(ceps::ast::Nodebase_ptr ro
 	result = ceps::ast::as_stmts_ptr(evaluate(*dynamic_cast<ceps::ast::Nonleafbase*>(body),sym_table,env,root_node,predecessor));
 	return create_ast_nodeset("",result->children());
 }
+
+ceps::ast::Nodebase_ptr ceps::interpreter::eval_rewrite(ceps::ast::Nodebase_ptr root_node,ceps::parser_env::Symbol* sym_ptr,
+			ceps::parser_env::Symboltable & sym_table,
+			ceps::interpreter::Environment& env,
+			ceps::ast::Nodebase_ptr parent_node,
+			ceps::ast::Nodebase_ptr predecessor)
+{
+
+
+	ceps::ast::Nodeset result;
+	if (sym_ptr->payload == nullptr) return create_ast_nodeset("",result.nodes());
+	auto fn = (ceps::interpreter::struct_rewrite_fn_t)(sym_ptr->payload);
+	ceps::ast::Struct_ptr arglist_ = nullptr;
+	arglist_ = ceps::ast::as_struct_ptr(evaluate(*dynamic_cast<ceps::ast::Nonleafbase*>(root_node),sym_table,env,root_node,predecessor));
+	result = fn(arglist_,root_node,sym_ptr,sym_table,env,parent_node,predecessor);
+	return create_ast_nodeset("",result.nodes());
+}
+
+void ceps::interpreter::register_struct_rewrite_rule(ceps::parser_env::Symboltable & symtab,std::string which_struct,struct_rewrite_fn_t fn, void* ctxt){
+	auto symbol = symtab.lookup(which_struct,true,true,false);
+	symbol->category = ceps::parser_env::Symbol::REWRITE;
+	symbol->payload = (void*)fn;
+	symbol->data = ctxt;
+}
+

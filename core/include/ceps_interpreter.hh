@@ -214,6 +214,21 @@ namespace ceps{
 			ceps::interpreter::Environment& env,
 			ceps::ast::Nodebase_ptr parent_node,
 			ceps::ast::Nodebase_ptr predecessor);
+ 	ceps::ast::Nodebase_ptr eval_rewrite(ceps::ast::Nodebase_ptr root_node,ceps::parser_env::Symbol* sym_ptr,
+			ceps::parser_env::Symboltable & sym_table,
+			ceps::interpreter::Environment& env,
+			ceps::ast::Nodebase_ptr parent_node,
+			ceps::ast::Nodebase_ptr predecessor);
+
+ 	using struct_rewrite_fn_t = ceps::ast::Nodeset (*)(
+ 				ceps::ast::Struct_ptr,
+ 				ceps::ast::Nodebase_ptr,ceps::parser_env::Symbol* ,
+ 				ceps::parser_env::Symboltable &,
+ 				ceps::interpreter::Environment& ,
+ 				ceps::ast::Nodebase_ptr ,
+ 				ceps::ast::Nodebase_ptr );
+
+ 	void register_struct_rewrite_rule(ceps::parser_env::Symboltable &,std::string which_struct, struct_rewrite_fn_t fn, void* ctxt);
 
      void evaluate(	 ceps::ast::Nodeset & universe,
     		 	 	 ceps::ast::Nodebase_ptr root,

@@ -498,6 +498,13 @@ ceps::ast::Nodebase_ptr ceps::interpreter::evaluate(ceps::ast::Nodebase_ptr root
 		 			  env,
 		 			  parent_node,
 		 			  predecessor);
+		} else if ( (sym_ptr = sym_table.lookup(id)) != nullptr && sym_ptr->category ==  ceps::parser_env::Symbol::Category::REWRITE){
+			result =  eval_rewrite(root_node,
+					  sym_ptr,
+		 			  sym_table,
+		 			  env,
+		 			  parent_node,
+		 			  predecessor);
 		} else if (
 				(sym_ptr = sym_table.lookup(id)) != nullptr &&
 				sym_ptr->category ==  ceps::parser_env::Symbol::Category::VAR &&

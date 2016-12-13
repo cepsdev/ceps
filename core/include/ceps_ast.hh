@@ -956,6 +956,17 @@ inline Ifelse* as_ifelse_ptr(Nodebase_ptr p)
 	  return dynamic_cast<Ast_nodeset_ptr>(p);
   }
 
+ inline Scope & as_scope_ref(Nodebase_ptr p)
+ {
+  	return *dynamic_cast<Scope*>(p);
+ }
+
+
+ inline Scope* as_scope_ptr(Nodebase_ptr p)
+ {
+   return dynamic_cast<Scope*>(p);
+ }
+
  inline Ast_nodeset_ptr create_ast_nodeset(std::string index_operator_argument,std::vector<Nodebase_ptr> const & children)
  {
 	 Ast_nodeset_ptr t = new ast_node<Ast_node_kind::nodeset,std::string>(index_operator_argument, nullptr, nullptr, nullptr);
@@ -1213,9 +1224,27 @@ struct strct
 		}
 	}
 };
+struct ident{
+	std::string v;
+	ident(std::string s):v{s}{}
+	ident() = default;
+};
+
+Nodebase_ptr box(ident const & s);
+
 
 Struct_ptr make_struct(std::string const & name);
 
+template<typename... Ts>
+	Struct_ptr make_struct(std::string const & name, ident i,Ts const &... args)
+	{
+
+		Struct_ptr p =  make_struct(name,args...);
+		p->children().insert(
+				p->children().begin(),
+				new Identifier{i.v});
+		return p;
+	}
 
 template<typename... Ts>
 	Struct_ptr make_struct(std::string const & name, int  n,Ts const &... args)
