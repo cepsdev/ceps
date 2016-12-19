@@ -560,7 +560,9 @@ ceps::ast::Nodebase_ptr ceps::interpreter::eval_funccall(ceps::ast::Nodebase_ptr
 	 {
 		 ceps::ast::Identifier& id = *dynamic_cast<ceps::ast::Identifier*>(func_call.children()[0]);
 
-		 ceps::ast::Nodebase_ptr params_ = evaluate(func_call.children()[1],sym_table,env,root_node,predecessor);
+		 ceps::ast::Nodebase_ptr params_ = nullptr;
+		 if (env.is_lazy_func != nullptr && env.is_lazy_func(name(id))) params_ = func_call.children()[1];
+		 else params_ = evaluate(func_call.children()[1],sym_table,env,root_node,predecessor);
 		 ceps::ast::Call_parameters& params = *dynamic_cast<ceps::ast::Call_parameters*>(params_);
 
 		 auto rr = env.call_func_callback(ceps::ast::name(id),&params);

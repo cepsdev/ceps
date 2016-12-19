@@ -118,6 +118,7 @@ namespace ceps{
 
 		 func_callback_t func_callback_ = nullptr;
 		 func_binop_resolver_t global_binop_resolver_ = nullptr;
+		 bool (*is_lazy_func)(std::string const &) = nullptr;
 
 		 void * func_callback_context_data_ = nullptr;
 		 void * func_binop_resolver_context_data_ = nullptr;
