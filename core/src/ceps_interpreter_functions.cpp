@@ -570,9 +570,10 @@ ceps::ast::Nodebase_ptr ceps::interpreter::eval_funccall(ceps::ast::Nodebase_ptr
 		 if (name(id) == "hd"){
 			if(params.children().size() == 0)
 				throw semantic_exception{root_node,"head(): argument has to be a non empty list of nodes."};
-			std::vector<ceps::ast::Nodebase_ptr> a;
-			a.push_back(params.children()[0]);
-			return ceps::ast::create_ast_nodeset("",a);
+			//std::vector<ceps::ast::Nodebase_ptr> a;
+			//a.push_back(params.children()[0]);
+			//return ceps::ast::create_ast_nodeset("",a);
+			return params.children()[0];
 		 } else if (name(id) == "last"){
 			if(params.children().size() == 0)
 			 throw semantic_exception{root_node,"last(): argument has to be a non empty list of nodes."};

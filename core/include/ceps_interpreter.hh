@@ -115,6 +115,8 @@ namespace ceps{
 				 	 	 	 	 	 	 	 	 	 	 	 	  ceps::ast::Nodebase_ptr rhs,
 				 	 	 	 	 	 	 	 	 	 	 	 	  void* cxt,
 				 	 	 	 	 	 	 	 	 	 	 	 	  ceps::ast::Nodebase_ptr parent_node);
+		 typedef ceps::ast::Nodebase_ptr (*func_callback_if_symbol_undefined_t)(ceps::ast::Nodebase_ptr, void *);
+
 
 		 func_callback_t func_callback_ = nullptr;
 		 func_binop_resolver_t global_binop_resolver_ = nullptr;
@@ -122,6 +124,8 @@ namespace ceps{
 
 		 void * func_callback_context_data_ = nullptr;
 		 void * func_binop_resolver_context_data_ = nullptr;
+		 func_callback_if_symbol_undefined_t func_callback_if_symbol_undefined_ = nullptr;
+         void * func_callback_if_symbol_undefined_ctxt_ = nullptr;
 
 		 ceps::ast::Nodebase_ptr call_func_callback(std::string const & id, ceps::ast::Call_parameters* params)
 		 {
@@ -139,6 +143,13 @@ namespace ceps{
 
 		 std::map<std::string,std::string> meta_info_;
  	  public:
+
+		 void reg_sym_undefined_clbk(func_callback_if_symbol_undefined_t f,void* ctxt){func_callback_if_symbol_undefined_ = f;func_callback_if_symbol_undefined_ctxt_ = ctxt;}
+		 func_callback_if_symbol_undefined_t get_sym_undefined_clbk(){return func_callback_if_symbol_undefined_;}
+		 ceps::ast::Nodebase_ptr call_sym_undefined_clbk(ceps::ast::Nodebase_ptr  n){
+			 if(nullptr == get_sym_undefined_clbk()) return n;
+			 return get_sym_undefined_clbk()(n,func_callback_if_symbol_undefined_ctxt_);
+		 }
 
 		 std::map<std::string, std::map<std::string,ceps::ast::Nodebase_ptr >* >& symbol_mapping() {return symbol_mapping_;}
 		 std::map<std::string, std::map<std::string,ceps::ast::Nodebase_ptr >* > const & symbol_mapping() const {return symbol_mapping_;}
