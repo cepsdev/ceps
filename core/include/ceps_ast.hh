@@ -1461,7 +1461,7 @@ template<typename... Ts>
 
 /****************************** I/O *************************************/
 std::ostream& operator << (std::ostream& out, strct & s);
-
+Nodebase_ptr read_xml_file(std::string path);
 
 }//namespace ast
 }//namespace ceps

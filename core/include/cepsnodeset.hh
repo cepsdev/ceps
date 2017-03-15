@@ -348,14 +348,15 @@ namespace ceps
 	
 		std::string as_str() const
 		{
-			if (size() != 1)
-				CEPSERROR("Cannot convert to string: too many / not enough elements in nodeset.");
-			if (nodes_[0]->kind() == ceps::ast::Ast_node_kind::identifier)
-				return name(as_id_ref(nodes_[0]));
-			if (nodes_[0]->kind() != Ast_node_kind::string_literal)
-				CEPSERROR("Cannot convert to string: nodeset contains no string.");
-			String & s_ref = as_string_ref(nodes_[0]);
-			return value(s_ref);
+			if (size() == 0) return "";
+			std::string r;
+			for (auto e : nodes_){
+				if (e->kind() == ceps::ast::Ast_node_kind::identifier)
+					r += name(as_id_ref(e));
+				else if (e->kind() ==  Ast_node_kind::string_literal)
+					r+= value(as_string_ref(e));
+			}
+			return r;
 		}
 	
 		int as_int() const

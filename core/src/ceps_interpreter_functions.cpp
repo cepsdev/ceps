@@ -59,6 +59,10 @@ static ceps::ast::Nodebase_ptr include_xml_file(std::string path){
 	return r;
 }
 
+ceps::ast::Nodebase_ptr ceps::ast::read_xml_file(std::string path){
+	return include_xml_file(path);
+}
+
 
 
 static ceps::ast::Nodebase_ptr include_xml_file(std::string path,std::string xpath){
@@ -84,6 +88,12 @@ static void traverse_xml(ceps::ast::Nonleafbase* root, const pugi::xml_node & xn
 
 	auto t = new ceps::ast::Struct(xn.name());
 	root->children().push_back(t);
+	for(auto attr:xn.attributes()){
+		std::string id = attr.name();
+		std::string value = attr.value();
+		auto tt = new ceps::ast::Struct("@"+id);t->children().push_back(tt);
+		tt->children().push_back(new ceps::ast::String(value,nullptr,nullptr,nullptr));
+	}
 	for(auto x:xn.children())
 		{
 			//if (xn.value()) std::cout << x
