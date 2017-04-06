@@ -86,6 +86,7 @@ namespace ceps {
 		template_id,
 		ifelse,
 		ret,
+		undefined = 4999,
 		user_defined = 5000
 	};
 

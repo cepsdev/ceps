@@ -34,6 +34,7 @@ SOFTWARE.
 #include <stdexcept>
 #include <iterator>
 #include <iostream>
+#include <memory>
 #include "global_defs.hh"
 
 // Yet Another Model Description Language
@@ -80,7 +81,6 @@ namespace ceps
  	 class Scope
  	 {
  	 public:
-
  	 	typedef std::map<std::string,Symbol>::iterator Iter;
  	 	typedef std::map<std::string,Symbol>::const_iterator Iter_const;
 
@@ -115,15 +115,16 @@ namespace ceps
  		 Symbol* lookup_global(const std::string name,bool insert=false)
  		 {
  			if (scopes.size() == 0) return nullptr;
- 			Symbolptr<Scope::Iter> res = scopes[0].find(name);
+ 			Symbolptr<Scope::Iter> res = scopes[0]->find(name);
  			if (!res)
  			{
  				if (!insert) return nullptr;
- 				return scopes[0].insert(name);
+ 				return scopes[0]->insert(name);
  			} else return res;
  		 }
 
- 		 std::vector<Scope> scopes;
+ 		 std::vector<std::shared_ptr<Scope>> scopes;
+ 		 using scopes_t = std::vector<std::shared_ptr<Scope>>;
  	 };
  }
 }

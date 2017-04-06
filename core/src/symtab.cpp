@@ -34,7 +34,7 @@ SOFTWARE.
  */
 void ceps::parser_env::Symboltable::push_scope()
 {
- scopes.push_back(Scope{});
+ scopes.push_back(std::make_shared<Scope>());
 }
 
 /**
@@ -58,9 +58,9 @@ void ceps::parser_env::Symboltable::push_scope()
 	 if (scopes.empty())
 		 throw std::runtime_error("Symboltable: scopes.empty().");
 
-	 for(std::vector<Scope>::reverse_iterator it = scopes.rbegin();it != scopes.rend();++it)
+	 for(scopes_t::reverse_iterator it = scopes.rbegin();it != scopes.rend();++it)
 	 {
-		 Symbolptr<Scope::Iter> res = it->find(name);
+		 Symbolptr<Scope::Iter> res = it->get()->find(name);
 		 if(res)
 		 {
 			 if (return_null_if_already_defined) return NULL;
@@ -73,6 +73,6 @@ void ceps::parser_env::Symboltable::push_scope()
 	 if(!insert)
 		 return NULL;
 
-	 return scopes.rbegin()->insert(name);
+	 return scopes.rbegin()->get()->insert(name);
  }
 

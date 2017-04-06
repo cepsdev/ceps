@@ -606,6 +606,14 @@ ceps::ast::Nodebase_ptr ceps::interpreter::eval_funccall(ceps::ast::Nodebase_ptr
 				 throw semantic_exception{root_node,"as_symbol(): wrong arguments (expect two strings)."};
 
 			 return new ceps::ast::Symbol(ceps::ast::value(ceps::ast::as_string_ref(args[0])),ceps::ast::value(ceps::ast::as_string_ref(args[1])), nullptr, nullptr, nullptr);
+		 } else if (name(id) == "as_identifier") {
+			 std::vector<ceps::ast::Nodebase_ptr> args;
+			 if (params.children().size()) flatten_args(params.children()[0], args);
+			 if (args.size() != 1)
+				 throw semantic_exception{root_node,"as_identifier(): one argument expected."};
+			 if (args[0]->kind() != ceps::ast::Ast_node_kind::string_literal)
+				 throw semantic_exception{root_node,"as_identifier(): wrong arguments (expect a string)."};
+			 return new ceps::ast::Identifier(ceps::ast::value(ceps::ast::as_string_ref(args[0])), nullptr, nullptr, nullptr);
 		 } else if (name(id) == "text"){
 			 std::vector<ceps::ast::Nodebase_ptr> args;
 			 if (params.children().size()) flatten_args(params.children()[0], args);
