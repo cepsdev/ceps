@@ -109,7 +109,7 @@ namespace ceps{
 		 global_binop_overloads_;
 		 ceps::ast::Nodeset * associated_universe_ = nullptr;
 		 std::map<std::string, std::map<std::string,ceps::ast::Nodebase_ptr >* > symbol_mapping_;
-		 typedef ceps::ast::Nodebase_ptr (*func_callback_t)(std::string const & , ceps::ast::Call_parameters*, void *);
+		 typedef ceps::ast::Nodebase_ptr (*func_callback_t)(std::string const & , ceps::ast::Call_parameters*, void *, ceps::parser_env::Symboltable & sym_table);
 		 typedef ceps::ast::Nodebase_ptr (*func_binop_resolver_t)(ceps::ast::Binary_operator_ptr binop,
 				 	 	 	 	 	 	 	 	 	 	 	 	  ceps::ast::Nodebase_ptr lhs ,
 				 	 	 	 	 	 	 	 	 	 	 	 	  ceps::ast::Nodebase_ptr rhs,
@@ -127,10 +127,10 @@ namespace ceps{
 		 func_callback_if_symbol_undefined_t func_callback_if_symbol_undefined_ = nullptr;
          void * func_callback_if_symbol_undefined_ctxt_ = nullptr;
 
-		 ceps::ast::Nodebase_ptr call_func_callback(std::string const & id, ceps::ast::Call_parameters* params)
+		 ceps::ast::Nodebase_ptr call_func_callback(std::string const & id, ceps::ast::Call_parameters* params, ceps::parser_env::Symboltable & sym_table)
 		 {
 			 if (func_callback_ == nullptr) return nullptr;
-			 return func_callback_(id,params,func_callback_context_data_);
+			 return func_callback_(id,params,func_callback_context_data_,sym_table);
 		 }
 		 ceps::ast::Nodebase_ptr call_binop_resolver(ceps::ast::Binary_operator_ptr binop,
 				                                     ceps::ast::Nodebase_ptr lhs ,

@@ -86,6 +86,7 @@ namespace ceps {
 		template_id,
 		ifelse,
 		ret,
+		byte_array,
 		undefined = 4999,
 		user_defined = 5000
 	};
@@ -483,6 +484,44 @@ template <Ast_node_kind what,typename... rest>
 
 	};
 
+template <Ast_node_kind what,typename... rest>
+	struct ast_node<what,std::vector<unsigned char>,rest...>: public ast_node<what,rest...>
+	{
+		using T = std::vector<unsigned char>;
+		T x;
+		using Base = ast_node<what,rest...>;
+		using This_type = ast_node<what,std::vector<unsigned char>,rest...>;
+		ast_node(T val_1,rest... args,Nodebase_ptr child1=nullptr,Nodebase_ptr child2=nullptr,Nodebase_ptr child3=nullptr)
+			: Base(args...,child1,child2,child3),x(val_1)
+			{
+
+			}
+		void print_content(std::ostream& out,bool pretty_print,int indent) const override
+			{
+				for(auto const & s : x)
+				{
+					out << " "<< (int)s;
+				}
+				Base::print_content(out,pretty_print,indent);
+			}
+
+
+		virtual void print_value(std::ostream& out) const override
+		{
+			for(auto const & s : x)
+			{
+				out << " "<< (int)s;
+			}
+			Base::print_value(out);
+		}
+
+		Nodebase* clone()
+		{
+			return new This_type(*this);
+		}
+
+	};
+
 template <typename... rest>
 	struct ast_node<Ast_node_kind::binary_operator,int,rest...>: public ast_node<Ast_node_kind::binary_operator,rest...>
 	{
@@ -758,6 +797,8 @@ typedef ast_node<Ast_node_kind::template_definition,std::string,std::vector<std:
 typedef ast_node<Ast_node_kind::template_id,std::string> Template_id;
 typedef ast_node<Ast_node_kind::ifelse> Ifelse;
 typedef ast_node<Ast_node_kind::ret> Return;
+typedef ast_node<Ast_node_kind::byte_array, std::vector<unsigned char> > Byte_array;
+
 typedef ast_node<Ast_node_kind::user_defined,int,void*> User_defined;
 
 
@@ -790,6 +831,16 @@ TYPE_ALIAS(Loop_ptr , Loop*)
 TYPE_ALIAS(Loop_head_ptr , Loop_head*)
 TYPE_ALIAS(Ast_nodeset_ptr, Ast_nodeset*)
 TYPE_ALIAS(Nodeset_path_expr_ptr, Nodeset_path_expr*)
+
+
+inline Byte_array* as_byte_array_ptr(Nodebase_ptr p)
+{
+ return dynamic_cast<Byte_array*>(p);
+}
+inline Byte_array & as_byte_array_ref(Nodebase_ptr p)
+{
+ return *as_byte_array_ptr(p);
+}
 
 inline Return* as_return_ptr(Nodebase_ptr p)
  {
@@ -999,7 +1050,10 @@ inline Ifelse* as_ifelse_ptr(Nodebase_ptr p)
   {
 	  return p->kind() == ceps::ast::Ast_node_kind::structdef;
   }
-
+  inline bool is_a_byte_array(Nodebase_ptr p)
+  {
+	  return p->kind() == ceps::ast::Ast_node_kind::byte_array;
+  }
 
 
 
@@ -1131,6 +1185,10 @@ inline getNth_type<0,  Ast_nodeset >::type & apply_idx_op_operand(Ast_nodeset& x
 	return get<0>(x);
 }
 
+inline getNth_type<0,  Byte_array >::type & bytes(Byte_array& x)
+{
+	return get<0>(x);
+}
 
 inline std::pair<bool,int> is_int(Nodebase_ptr p)
  {

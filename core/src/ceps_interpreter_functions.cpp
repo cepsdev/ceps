@@ -575,7 +575,7 @@ ceps::ast::Nodebase_ptr ceps::interpreter::eval_funccall(ceps::ast::Nodebase_ptr
 		 else params_ = evaluate(func_call.children()[1],sym_table,env,root_node,predecessor);
 		 ceps::ast::Call_parameters& params = *dynamic_cast<ceps::ast::Call_parameters*>(params_);
 
-		 auto rr = env.call_func_callback(ceps::ast::name(id),&params);
+		 auto rr = env.call_func_callback(ceps::ast::name(id),&params,sym_table);
 		 if (rr != nullptr) return rr;
 		 if (name(id) == "hd"){
 			if(params.children().size() == 0)
