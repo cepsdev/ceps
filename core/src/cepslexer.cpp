@@ -25,8 +25,8 @@ SOFTWARE.
 
 #include "cepslexer.hh"
 #include "cepsparserdriver.hh"
-
-
+#include<memory>
+#include <cstring>
 
 void read_number(std::string& s,std::istream& in,std::vector< std::set<char> > available_digits,int num_enc,char& ch,ceps::Cepsparser::location_type* yylloc = nullptr)
 {
@@ -344,9 +344,10 @@ ceps::Cepsparser::token_type yylex(
 		else
 		{
 			int value = 0;
+                        unsigned int value2 = 0;
 			istringstream is(integral_part);
-			if (num_enc == hex) is >> std::hex >> value;
-			else if (num_enc == oct) is >> std::oct >> value;
+                        if (num_enc == hex) {is >> std::hex >> value2; std::memcpy(&value,&value2,sizeof(value));}
+                        else if (num_enc == oct) {is >> std::oct >> value2; std::memcpy(&value,&value2,sizeof(value));}
 			else is >> value;
 			if(yylval != NULL) yylval->ival = value;
 		}
