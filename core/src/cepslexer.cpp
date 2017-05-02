@@ -239,7 +239,7 @@ ceps::Cepsparser::token_type yylex(
 					{return ceps::Cepsparser::token::IF;}
 		if (s == "else")
 					return ceps::Cepsparser::token::ELSE;
-		if (s == "for")
+		if (s == "static_for")
 		{
 
 					return ceps::Cepsparser::token::FOR;
