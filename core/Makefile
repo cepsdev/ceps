@@ -1,15 +1,18 @@
 cflags :=  -O0 -g3 -Wall -fmessage-length=0 -std=c++11 -fPIC
 TARGET :=
 OBJDIR := bin$(TARGET)
-objfiles := ceps.tab.o symtab.o cepslexer.o cepsparserdriver.o cepsruntime.o ceps_ast.o ceps_interpreter.o \
+objfiles_orig := ceps.tab.o symtab.o cepslexer.o cepsparserdriver.o cepsruntime.o ceps_ast.o ceps_interpreter.o \
  ceps_serialize.o ceps_interpreter_loop.o ceps_interpreter_nodeset.o pugixml.o ceps_interpreter_functions.o ceps_interpreter_macros.o
-objfiles := $(patsubst %,$(OBJDIR)/%,$(objfiles))
+objfiles := $(patsubst %,$(OBJDIR)/%,$(objfiles_orig))
+objfilesx86 := $(patsubst %,$(OBJDIR)/x86/%,$(objfiles_orig))
+
 src := src
 pugixml := ../../pugixml/src
 inc := include
 BISONGENDIR := src-gen
 CEPSLIB := libcepscore.a
 includes := -Iinclude -Iinclude/include_gen -I$(pugixml)
+cepslib86 := bin/x86/$(CEPSLIB)
 
 all: bin/$(CEPSLIB) tools/cepsvalidate/cepsvalidate
 
@@ -18,7 +21,11 @@ tests: test/ast_gen_1 test/si_units_1 test/test_1
 bin/$(CEPSLIB): $(objfiles)
 	rm -f bin/$(CEPSLIB);\
 	$(AR) rcs $(OBJDIR)/$(CEPSLIB) $(objfiles)
-
+	mkdir -p bin/x86
+	rm -f $(cepslib86)
+	rm -f $(objfilesx86)
+	cp $(objfiles) bin/$(CEPSLIB) bin/x86
+	
 $(OBJDIR)/ceps.tab.o: $(BISONGENDIR)/ceps.tab.cpp
 	$(CXX) -c $(cflags) $(BISONGENDIR)/ceps.tab.cpp $(includes) -o $(OBJDIR)/ceps.tab.o
 

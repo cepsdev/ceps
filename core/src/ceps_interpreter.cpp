@@ -105,8 +105,13 @@ void ceps::interpreter::evaluate(	 ceps::ast::Nodeset & universe,
 					if (generated_nodes != nullptr)
 						generated_nodes->insert(generated_nodes->end(),as_ast_nodeset_ptr(ev)->children().begin(),as_ast_nodeset_ptr(ev)->children().end());
 
-				}
-				else if (ev != nullptr)
+				} else if (ev != nullptr && ev->kind() == Kind::stmts){
+				 auto& stmts = as_stmts_ref(ev);
+				 if (stmts.children().size()){
+				  universe.nodes().insert(universe.nodes().end(),stmts.children().begin(),stmts.children().end());
+				  if (generated_nodes != nullptr) generated_nodes->insert(generated_nodes->end(),stmts.children().begin(),stmts.children().end());
+				 }
+				}else if (ev != nullptr)
 				{
 					universe.nodes().push_back(ev);
 					if (generated_nodes != nullptr) generated_nodes->push_back(ev);
@@ -115,11 +120,19 @@ void ceps::interpreter::evaluate(	 ceps::ast::Nodeset & universe,
 			continue;
 		}
 		auto ev = evaluate(p,sym_table,env,/*p??*/root_,predecessor);predecessor=p;
+
 		if (ev != nullptr && ev->kind() == Kind::nodeset)
 		{
+			auto& ndeset = as_ast_nodeset_ref(ev);
 			universe.nodes().insert(universe.nodes().end(),as_ast_nodeset_ptr(ev)->children().begin(),as_ast_nodeset_ptr(ev)->children().end());
 			if (generated_nodes != nullptr)
 									generated_nodes->insert(generated_nodes->end(),as_ast_nodeset_ptr(ev)->children().begin(),as_ast_nodeset_ptr(ev)->children().end());
+		} else if (ev != nullptr && ev->kind() == Kind::stmts){
+		  auto& stmts = as_stmts_ref(ev);
+	      if (stmts.children().size()){
+	       universe.nodes().insert(universe.nodes().end(),stmts.children().begin(),stmts.children().end());
+	       if (generated_nodes != nullptr) generated_nodes->insert(generated_nodes->end(),stmts.children().begin(),stmts.children().end());
+	      }
 		}
 		else if (ev != nullptr) {
 			universe.nodes().push_back(ev);
@@ -529,6 +542,7 @@ ceps::ast::Nodebase_ptr ceps::interpreter::evaluate(ceps::ast::Nodebase_ptr root
 
 		} else result = evaluate(*dynamic_cast<ceps::ast::Nonleafbase*>(root_node),sym_table,env,root_node,predecessor);
 		sym_table.pop_scope();
+		if (id == "ignore_value") return nullptr;
 		return result;
 	 }
 	 case Kind::expr:
@@ -627,9 +641,10 @@ ceps::ast::Nodebase_ptr ceps::interpreter::evaluate(ceps::ast::Nodebase_ptr root
 	 }
 	 case Kind::loop:
 	 {
-		 return evaluate_loop(as_loop_ptr(root_node),
+		 auto l = evaluate_loop(as_loop_ptr(root_node),
 				  	  	  	  sym_table,
 				  	  	  	  env,root_node,predecessor);
+		 return l;
 	 }
 	 case Kind::symbol:
 	 {
@@ -1301,6 +1316,7 @@ ceps::ast::Nodebase_ptr ceps::interpreter::evaluate(ceps::ast::Nonleafbase& root
 	//if (((ceps::ast::Nodebase_ptr)&root)->kind() != Ast_node_kind::call_parameters) predecessor = nullptr;
 
 
+	Nodebase* root_ptr = dynamic_cast<Nodebase*>(&root);
 	for(Nodebase_ptr p : root.children())
 	{
 
@@ -1320,7 +1336,7 @@ ceps::ast::Nodebase_ptr ceps::interpreter::evaluate(ceps::ast::Nonleafbase& root
 		else v.push_back(r);
 	}
 
-	Nodebase* root_ptr = dynamic_cast<Nodebase*>(&root);
+
 	if (root_ptr->kind() == ceps::ast::Ast_node_kind::root)
 	{
 		Root* result = new Root{};

@@ -598,13 +598,25 @@ ceps::ast::Nodebase_ptr ceps::interpreter::eval_funccall(ceps::ast::Nodebase_ptr
 		 } else if (name(id) == "as_symbol") {
 			 std::vector<ceps::ast::Nodebase_ptr> args;
 			 if (params.children().size()) flatten_args(params.children()[0], args);
-			 if (args.size() != 2)
-				 throw semantic_exception{root_node,"as_symbol(): two arguments expected."};
+			 if (args.size() < 2)
+				 throw semantic_exception{root_node,"as_symbol(): at least two arguments expected."};
 			 if (args[0]->kind() != ceps::ast::Ast_node_kind::string_literal)
 				 throw semantic_exception{root_node,"as_symbol(): wrong arguments (expect two strings)."};
 			 if (args[1]->kind() != ceps::ast::Ast_node_kind::string_literal)
 				 throw semantic_exception{root_node,"as_symbol(): wrong arguments (expect two strings)."};
-
+			 if (args.size() >= 3 && args[2]->kind() == ceps::ast::Ast_node_kind::identifier && "into_symtab_at_global_scope" == ceps::ast::name(ceps::ast::as_id_ref(args[2])) ){
+				 auto kind_name = ceps::ast::value(ceps::ast::as_string_ref(args[1]));
+				 auto sym_name = ceps::ast::value(ceps::ast::as_string_ref(args[0]));
+				 auto sym_kind_ptr = sym_table.lookup(kind_name,false);
+				 if (sym_kind_ptr == nullptr || sym_kind_ptr->category != ceps::parser_env::Symbol::KIND)
+					 throw semantic_exception{root_node,"as_symbol(...,into_symtab_at_global_scope): '"+kind_name+"' not a kind ."};
+				 auto sym = sym_table.scopes[0]->insert(sym_name);
+				 sym->category = ceps::parser_env::Symbol::SYMBOL;
+				 ceps::parser_env::Symbol* copy_of_sym_kind_ptr = new ceps::parser_env::Symbol(ceps::parser_env::Symbol::KIND);
+				 copy_of_sym_kind_ptr->name = sym_kind_ptr->name;
+				 copy_of_sym_kind_ptr->payload = nullptr;
+				 sym->payload = copy_of_sym_kind_ptr;
+			 }
 			 return new ceps::ast::Symbol(ceps::ast::value(ceps::ast::as_string_ref(args[0])),ceps::ast::value(ceps::ast::as_string_ref(args[1])), nullptr, nullptr, nullptr);
 		 } else if (name(id) == "as_identifier") {
 			 std::vector<ceps::ast::Nodebase_ptr> args;
