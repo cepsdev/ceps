@@ -48,6 +48,20 @@ static void flatten(ceps::ast::Nodebase_ptr root, std::vector<ceps::ast::Nodebas
 	flatten(op.children()[1],acc);
 }
 
+static void fetch_recursively_symbols(std::vector<ceps::ast::Nodebase_ptr> const & in,std::vector<ceps::ast::Nodebase_ptr> & out);
+
+static void fetch_recursively_symbols(ceps::ast::Nodebase_ptr elem,std::vector<ceps::ast::Nodebase_ptr> & out){
+ if (elem->kind() == ceps::ast::Ast_node_kind::symbol) out.push_back(elem);
+ if (elem->kind() == ceps::ast::Ast_node_kind::structdef){
+     fetch_recursively_symbols(ceps::ast::as_struct_ref(elem).children(),out);
+ }
+}
+
+static void fetch_recursively_symbols(std::vector<ceps::ast::Nodebase_ptr> const & in,std::vector<ceps::ast::Nodebase_ptr> & out){
+ for(auto e : in)
+  fetch_recursively_symbols(e,out);
+}
+
 ceps::ast::Nodebase_ptr ceps::interpreter::evaluate_nodeset_expr_dot(	ceps::ast::Nodebase_ptr lhs,
 															ceps::ast::Nodebase_ptr rhs ,
 															ceps::parser_env::Symboltable & sym_table,
@@ -117,7 +131,12 @@ ceps::ast::Nodebase_ptr ceps::interpreter::evaluate_nodeset_expr_dot(	ceps::ast:
 			  std::vector<ceps::ast::Nodebase_ptr> t;
 			  t.push_back(result.nodes()[r.second]);
 			  result.nodes_=t;
-			} else if (method_name == "map") {
+            } else if (method_name == "fetch_recursively_symbols") {
+                std::vector<ceps::ast::Nodebase_ptr> v;
+                fetch_recursively_symbols(result.nodes_,v);
+                result.nodes_ = v;
+
+            } else if (method_name == "map") {
 				if (args.size() != 2) throw ceps::interpreter::semantic_exception{nullptr,"'"+method_name+"' wrong number of arguments."};
 				ceps::ast::Nodebase_ptr r = nullptr;
 				ceps::ast::Nodebase_ptr a0 = args[0];

@@ -116,7 +116,8 @@ static void default_text_representation_impl(std::stringstream& ss,ceps::ast::No
 		char buffer[2] = {};buffer[0] = op(binop);
 		ss << buffer;
 		default_text_representation_impl(ss,binop.right());
-	}
+    } else ss << *root_node;
+
 }
 
 extern std::string default_text_representation(ceps::ast::Nodebase_ptr root_node){

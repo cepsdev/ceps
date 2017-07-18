@@ -198,10 +198,10 @@ public:
 	 *
 	 */
 	virtual void print(std::ostream& out,bool pretty_print = false,int indent = 0) const;
-	virtual void print_content(std::ostream& out,bool pretty_print = false,int indent = 0) const
+        virtual void print_content(std::ostream& ,bool pretty_print = false,int indent = 0) const
 		{
 		}
-	virtual void print_value(std::ostream& out) const
+        virtual void print_value(std::ostream& ) const
 	{
 
 	}
