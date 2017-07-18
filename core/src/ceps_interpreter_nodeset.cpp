@@ -52,10 +52,21 @@ static void fetch_recursively_symbols(std::vector<ceps::ast::Nodebase_ptr> const
 
 static void fetch_recursively_symbols(ceps::ast::Nodebase_ptr elem,std::vector<ceps::ast::Nodebase_ptr> & out){
  if (elem->kind() == ceps::ast::Ast_node_kind::symbol) out.push_back(elem);
- if (elem->kind() == ceps::ast::Ast_node_kind::structdef){
+ else if (elem->kind() == ceps::ast::Ast_node_kind::structdef){
      fetch_recursively_symbols(ceps::ast::as_struct_ref(elem).children(),out);
+ } else if (elem->kind() == ceps::ast::Ast_node_kind::ifelse){
+     auto ifelse = ceps::ast::as_ifelse_ptr(elem);
+     ceps::ast::Nodebase_ptr cond = ifelse->children()[0];
+     fetch_recursively_symbols(cond,out);
+     if (ifelse->children().size() > 1) fetch_recursively_symbols(ifelse->children()[1],out);
+     if (ifelse->children().size() > 2) fetch_recursively_symbols(ifelse->children()[2],out);
+ } else if (elem->kind() == ceps::ast::Ast_node_kind::binary_operator){
+     auto & binop = ceps::ast::as_binop_ref(elem);
+     fetch_recursively_symbols(binop.left(),out);fetch_recursively_symbols(binop.right(),out);
  }
 }
+
+
 
 static void fetch_recursively_symbols(std::vector<ceps::ast::Nodebase_ptr> const & in,std::vector<ceps::ast::Nodebase_ptr> & out){
  for(auto e : in)
@@ -135,7 +146,17 @@ ceps::ast::Nodebase_ptr ceps::interpreter::evaluate_nodeset_expr_dot(	ceps::ast:
                 std::vector<ceps::ast::Nodebase_ptr> v;
                 fetch_recursively_symbols(result.nodes_,v);
                 result.nodes_ = v;
-
+            } else if (method_name == "to_text") {
+                std::vector<ceps::ast::Nodebase_ptr> v;
+                for(auto p: result.nodes_)
+                   v.push_back(new ceps::ast::String(default_text_representation(p)));
+                result.nodes_ = v;
+            } else if (method_name == "sort") {
+                std::sort(result.nodes_.begin(),result.nodes_.end(),
+                          [](ceps::ast::Nodebase_ptr a,ceps::ast::Nodebase_ptr b ) {return default_text_representation(a) < default_text_representation(b); } );
+            } else if (method_name == "unique") {
+                auto it = std::unique(result.nodes_.begin(),  result.nodes_.end(),[](ceps::ast::Nodebase_ptr a,ceps::ast::Nodebase_ptr b ) {return default_text_representation(a) == default_text_representation(b); });
+                result.nodes_.erase(it,result.nodes_.end());
             } else if (method_name == "map") {
 				if (args.size() != 2) throw ceps::interpreter::semantic_exception{nullptr,"'"+method_name+"' wrong number of arguments."};
 				ceps::ast::Nodebase_ptr r = nullptr;

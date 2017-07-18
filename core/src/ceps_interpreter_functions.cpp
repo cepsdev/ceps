@@ -116,6 +116,8 @@ static void default_text_representation_impl(std::stringstream& ss,ceps::ast::No
 		char buffer[2] = {};buffer[0] = op(binop);
 		ss << buffer;
 		default_text_representation_impl(ss,binop.right());
+    } else if (root_node->kind() == ceps::ast::Ast_node_kind::symbol) {
+        ss << name(as_symbol_ref(root_node));
     } else ss << *root_node;
 
 }
@@ -646,7 +648,9 @@ ceps::ast::Nodebase_ptr ceps::interpreter::eval_funccall(ceps::ast::Nodebase_ptr
 			 for (auto p : args){
 
 			  	if(p == nullptr) continue;
-			  	if (p->kind() == ceps::ast::Ast_node_kind::structdef)
+                if (p->kind() == ceps::ast::Ast_node_kind::symbol)
+                    s+=ceps::ast::name(ceps::ast::as_symbol_ref(p));
+                else if (p->kind() == ceps::ast::Ast_node_kind::structdef)
 			 	 s+=ceps::ast::name(ceps::ast::as_struct_ref(p));
 			  	else if (p->kind() == ceps::ast::Ast_node_kind::nodeset){
 				 auto& an = ceps::ast::as_ast_nodeset_ref(p);
