@@ -29,6 +29,8 @@ SOFTWARE.
 #include "ceps_interpreter_loop.hh"
 #include "ceps_interpreter_nodeset.hh"
 #include"pugixml.hpp"
+#include <random>
+
 static void traverse_xml(ceps::ast::Nonleafbase* root, const pugi::xml_node & xn);
 static void flatten_args(ceps::ast::Nodebase_ptr r, std::vector<ceps::ast::Nodebase_ptr>& v, char op_val = ',')
 {
@@ -561,6 +563,9 @@ static std::string get_meta_info(ceps::ast::Nodeset * universe,ceps::ast::Nodeba
 }
 
 
+static std::random_device randomd;
+static std::default_random_engine e1(randomd());
+
 ceps::ast::Nodebase_ptr ceps::interpreter::eval_funccall(ceps::ast::Nodebase_ptr root_node,
 		ceps::parser_env::Symboltable & sym_table,
 		ceps::interpreter::Environment& env,
@@ -738,9 +743,22 @@ ceps::ast::Nodebase_ptr ceps::interpreter::eval_funccall(ceps::ast::Nodebase_ptr
 				  return include_xml_file(ceps::ast::value(ceps::ast::as_string_ref(args[0])),ceps::ast::value(ceps::ast::as_string_ref(args[1])));
 			 }
 
-		 }
-		 else if (name(id) == "sin")
-		 {
+         } else if (name(id) == "__uniform_dist") {
+             std::vector<ceps::ast::Nodebase_ptr> args;
+             flatten_args(params.children()[0], args);
+
+             if (args.size() != 2)
+                 throw semantic_exception{root_node,"__random: Wrong number of arguments"};
+
+             if (args[0]->kind() != ceps::ast::Ast_node_kind::int_literal || args[1]->kind() != ceps::ast::Ast_node_kind::int_literal){
+                 func_call.children()[1] = params_;
+                 return root_node;
+             }
+
+             std::uniform_int_distribution<int> uniform_dist(ceps::ast::value(ceps::ast::as_int_ref(args[0])),ceps::ast::value(ceps::ast::as_int_ref(args[1])));
+             return new ceps::ast::Int(uniform_dist(e1), ceps::ast::all_zero_unit(), nullptr, nullptr, nullptr);
+
+         } else if (name(id) == "sin") {
 			 if (params.children().size() != 1)
 				 throw semantic_exception{root_node,"sin: Expecting 1 argument"};
 			 ceps::ast::Nodebase_ptr arg_ = params.children()[0];
