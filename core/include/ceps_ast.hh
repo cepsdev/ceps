@@ -87,6 +87,9 @@ namespace ceps {
 		ifelse,
 		ret,
 		byte_array,
+                error,
+                undef,
+                none,
 		undefined = 4999,
 		user_defined = 5000
 	};
@@ -798,6 +801,9 @@ typedef ast_node<Ast_node_kind::template_id,std::string> Template_id;
 typedef ast_node<Ast_node_kind::ifelse> Ifelse;
 typedef ast_node<Ast_node_kind::ret> Return;
 typedef ast_node<Ast_node_kind::byte_array, std::vector<unsigned char> > Byte_array;
+typedef ast_node<Ast_node_kind::error, std::string , int , void* > Error;
+typedef ast_node<Ast_node_kind::undef> Undefined;
+typedef ast_node<Ast_node_kind::none> None;
 
 typedef ast_node<Ast_node_kind::user_defined,int,void*> User_defined;
 
@@ -831,6 +837,18 @@ TYPE_ALIAS(Loop_ptr , Loop*)
 TYPE_ALIAS(Loop_head_ptr , Loop_head*)
 TYPE_ALIAS(Ast_nodeset_ptr, Ast_nodeset*)
 TYPE_ALIAS(Nodeset_path_expr_ptr, Nodeset_path_expr*)
+
+
+typedef ast_node<Ast_node_kind::error, std::string , int , void* > Error;
+
+inline Error* as_error_ptr(Nodebase_ptr p)
+{
+ return dynamic_cast<Error*>(p);
+}
+inline Error & as_error_ref(Nodebase_ptr p)
+{
+ return *as_error_ptr(p);
+}
 
 
 inline Byte_array* as_byte_array_ptr(Nodebase_ptr p)
@@ -1050,9 +1068,15 @@ inline Ifelse* as_ifelse_ptr(Nodebase_ptr p)
   {
 	  return p->kind() == ceps::ast::Ast_node_kind::structdef;
   }
+
   inline bool is_a_byte_array(Nodebase_ptr p)
   {
 	  return p->kind() == ceps::ast::Ast_node_kind::byte_array;
+  }
+
+  inline bool is_an_error(Nodebase_ptr p)
+  {
+          return p->kind() == ceps::ast::Ast_node_kind::error;
   }
 
 
@@ -1189,6 +1213,23 @@ inline getNth_type<0,  Byte_array >::type & bytes(Byte_array& x)
 {
 	return get<0>(x);
 }
+
+inline getNth_type<0,  Error >::type & err_msg(Error& x)
+{
+        return get<0>(x);
+}
+
+inline getNth_type<1,  Error >::type & err_code(Error& x)
+{
+        return get<1>(x);
+}
+
+inline getNth_type<2,  Error >::type & err_tag_data(Error& x)
+{
+        return get<2>(x);
+}
+
+
 
 inline std::pair<bool,int> is_int(Nodebase_ptr p)
  {
