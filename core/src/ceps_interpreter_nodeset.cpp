@@ -73,6 +73,8 @@ static void fetch_recursively_symbols(std::vector<ceps::ast::Nodebase_ptr> const
   fetch_recursively_symbols(e,out);
 }
 
+extern std::string default_text_representation(std::vector<ceps::ast::Nodebase_ptr> nodes);
+
 ceps::ast::Nodebase_ptr ceps::interpreter::evaluate_nodeset_expr_dot(	ceps::ast::Nodebase_ptr lhs,
 															ceps::ast::Nodebase_ptr rhs ,
 															ceps::parser_env::Symboltable & sym_table,
@@ -99,18 +101,37 @@ ceps::ast::Nodebase_ptr ceps::interpreter::evaluate_nodeset_expr_dot(	ceps::ast:
 	{
 		std::string method_name;
 		std::vector<ceps::ast::Nodebase_ptr> args;
+
 		if (is_an_identifier(acc[i]))
 		{
 			auto id_name = name(as_id_ref(acc[i]));
-			if (last_identifier.length() == 0)
+            //std::cout << id_name <<" '"<<last_identifier<<"' "<<"-----" << std::endl;
+            //std::cout << "before="<< result << std::endl;
+
+            if (last_identifier.length() == 0){
 				result = result[ceps::ast::all{id_name}];
-			else
+            }
+            else {
 				result = result[last_identifier][ceps::ast::all{id_name}];
+            }
 			last_identifier= id_name;
 
 		} else if (is_a_funccall(acc[i],method_name,args)){
-			last_identifier="";
-			if (method_name == "content"){
+            auto last_identifier_save = last_identifier;
+            last_identifier = "";
+            if (method_name == "select"){
+                if (args.size() != 1 || args[0]->kind() != ceps::ast::Ast_node_kind::string_literal)
+                    throw ceps::interpreter::semantic_exception{nullptr,"'select' missing/wrong argument."};;
+                last_identifier = last_identifier_save;
+                auto id_name = value(as_string_ref(args[0]));
+                if (last_identifier.length() == 0){
+                    result = result[ceps::ast::all{id_name}];
+                }
+                else {
+                    result = result[last_identifier][ceps::ast::all{id_name}];
+                }
+                last_identifier= id_name;
+            } else if (method_name == "content"){
 				std::vector<ceps::ast::Nodebase_ptr> v;
 				for(auto pe : result.nodes())
 				{
@@ -137,7 +158,7 @@ ceps::ast::Nodebase_ptr ceps::interpreter::evaluate_nodeset_expr_dot(	ceps::ast:
 			} else if (method_name == "at" && args.size() == 1){
 			  auto r = is_int(args[0]);
 
-			  if(!r.first) ceps::interpreter::semantic_exception{nullptr,"'"+method_name+"' expects integer as parameter."};
+              if(!r.first) throw ceps::interpreter::semantic_exception{nullptr,"'"+method_name+"' expects integer as parameter."};
 			  if (result.nodes().size() <= (size_t) r.second) throw ceps::interpreter::semantic_exception{nullptr,"Nodeset method '"+method_name+"': index out of bounds."};
 			  std::vector<ceps::ast::Nodebase_ptr> t;
 			  t.push_back(result.nodes()[r.second]);
@@ -152,9 +173,42 @@ ceps::ast::Nodebase_ptr ceps::interpreter::evaluate_nodeset_expr_dot(	ceps::ast:
                    v.push_back(new ceps::ast::String(default_text_representation(p)));
                 result.nodes_ = v;
             } else if (method_name == "sort") {
-                std::sort(result.nodes_.begin(),result.nodes_.end(),
-                          [](ceps::ast::Nodebase_ptr a,ceps::ast::Nodebase_ptr b ) {return default_text_representation(a) < default_text_representation(b); } );
+                last_identifier = last_identifier_save;
+                if (args.size () == 0)
+                 std::sort(result.nodes_.begin(),
+                          result.nodes_.end(),
+                          [](ceps::ast::Nodebase_ptr a,ceps::ast::Nodebase_ptr b ) {
+                            return default_text_representation(a) < default_text_representation(b);
+                          });
+                else if (args.size() == 1 && args[0]->kind() == ceps::ast::Ast_node_kind::string_literal){
+                    auto const & key = ceps::ast::value(ceps::ast::as_string_ref(args[0]));
+                   std::sort(result.nodes_.begin(),
+                             result.nodes_.end(),
+                             [key](ceps::ast::Nodebase_ptr a_,ceps::ast::Nodebase_ptr b_ ) {
+                               using namespace ceps::ast;
+                               if (a_->kind() != ceps::ast::Ast_node_kind::structdef || b_->kind() != ceps::ast::Ast_node_kind::structdef)
+                                   throw ceps::interpreter::semantic_exception{nullptr,"'sort' type mismatch."};
+                               auto ans = ceps::ast::Nodeset{as_struct_ref(a_).children()}[key];
+                               auto bns = ceps::ast::Nodeset{as_struct_ref(b_).children()}[key];
+                               /*std::cout << key << std::endl;
+                               std::cout << *a_ << std::endl;
+                               std::cout << *b_ << std::endl;*/
+                               if (ans.nodes().size() == 0 || bns.nodes().size() == 0 )
+                                   throw ceps::interpreter::semantic_exception{nullptr,"'sort' illformed key."};
+                               auto a = ans.nodes()[0];auto b = bns.nodes()[0];
+                               if (a->kind() == ceps::ast::Ast_node_kind::int_literal && b->kind() == ceps::ast::Ast_node_kind::int_literal )
+                                   return value(as_int_ref(a)) < value(as_int_ref(b));
+                               if (a->kind() == ceps::ast::Ast_node_kind::float_literal && b->kind() == ceps::ast::Ast_node_kind::int_literal )
+                                   return value(as_double_ref(a)) < (double)value(as_int_ref(b));
+                               if (a->kind() == ceps::ast::Ast_node_kind::int_literal && b->kind() == ceps::ast::Ast_node_kind::float_literal )
+                                   return (double)value(as_int_ref(a)) < value(as_double_ref(a));
+                               if (a->kind() == ceps::ast::Ast_node_kind::float_literal && b->kind() == ceps::ast::Ast_node_kind::float_literal )
+                                   return value(as_double_ref(a)) < value(as_double_ref(a));
+                               return default_text_representation(ans.nodes()) < default_text_representation(bns.nodes());
+                    });
+                }
             } else if (method_name == "unique") {
+                last_identifier = last_identifier_save;
                 auto it = std::unique(result.nodes_.begin(),  result.nodes_.end(),[](ceps::ast::Nodebase_ptr a,ceps::ast::Nodebase_ptr b ) {return default_text_representation(a) == default_text_representation(b); });
                 result.nodes_.erase(it,result.nodes_.end());
             } else if (method_name == "map") {
@@ -190,14 +244,13 @@ ceps::ast::Nodebase_ptr ceps::interpreter::evaluate_nodeset_expr_dot(	ceps::ast:
 				  }
 				  result.nodes_ = v;
 
-			 }else if (method_name == "is_struct") {
+            }else if (method_name == "is_struct") {
 			  std::vector<ceps::ast::Nodebase_ptr> v;
 			  for(auto pe : result.nodes())
 			  {
 			  	if (pe->kind() == ceps::ast::Ast_node_kind::structdef) v.push_back(pe);
 			  }
 			  result.nodes_ = v;
-
 			} else if (method_name == "is_kind" && args.size() == 1 && args[0]->kind() == ceps::ast::Ast_node_kind::string_literal){
 			  std::string kind_name = value(as_string_ref(args[0]));
 			  std::vector<ceps::ast::Nodebase_ptr> v;

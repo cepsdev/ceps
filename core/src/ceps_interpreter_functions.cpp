@@ -130,6 +130,12 @@ extern std::string default_text_representation(ceps::ast::Nodebase_ptr root_node
 	return ss.str();
 }
 
+extern std::string default_text_representation(std::vector<ceps::ast::Nodebase_ptr> nodes){
+    std::stringstream ss;
+    for(auto e : nodes) default_text_representation_impl(ss,e);
+    return ss.str();
+}
+
 
 
 static void dump_nodes(std::ofstream& fout,ceps::ast::Nodeset nodes){
@@ -588,11 +594,19 @@ ceps::ast::Nodebase_ptr ceps::interpreter::eval_funccall(ceps::ast::Nodebase_ptr
 		 if (name(id) == "hd"){
 			if(params.children().size() == 0)
 				throw semantic_exception{root_node,"head(): argument has to be a non empty list of nodes."};
-			//std::vector<ceps::ast::Nodebase_ptr> a;
-			//a.push_back(params.children()[0]);
-			//return ceps::ast::create_ast_nodeset("",a);
+
 			return params.children()[0];
-		 } else if (name(id) == "last"){
+         } else if (name(id) == "strip"){
+             if(params.children().size() != 1)
+              throw semantic_exception{root_node,name(id)+": expecting one argument."};
+             auto p = params.children()[0];
+             if (p->kind() == ceps::ast::Ast_node_kind::nodeset){
+              auto& an = ceps::ast::as_ast_nodeset_ref(p);
+              if (an.children().size() != 1)
+                  throw semantic_exception{root_node,name(id)+": size of nodeset unequal one."};
+              return an.children()[0];
+             } else return p;
+         } else if (name(id) == "last"){
 			if(params.children().size() == 0)
 			 throw semantic_exception{root_node,"last(): argument has to be a non empty list of nodes."};
 			std::vector<ceps::ast::Nodebase_ptr> a;
@@ -626,7 +640,17 @@ ceps::ast::Nodebase_ptr ceps::interpreter::eval_funccall(ceps::ast::Nodebase_ptr
 				 sym->payload = copy_of_sym_kind_ptr;
 			 }
 			 return new ceps::ast::Symbol(ceps::ast::value(ceps::ast::as_string_ref(args[0])),ceps::ast::value(ceps::ast::as_string_ref(args[1])), nullptr, nullptr, nullptr);
-		 } else if (name(id) == "as_identifier") {
+         } else if (name(id) == "make_struct") {
+             std::vector<ceps::ast::Nodebase_ptr> args;
+             if (params.children().size()) flatten_args(params.children()[0], args);
+             if (args.size() == 0)
+                 throw semantic_exception{root_node,"make_struct(): at least one argument expected."};
+             if (args[0]->kind() != ceps::ast::Ast_node_kind::string_literal)
+                 throw semantic_exception{root_node,"make_struct(): first argument expected to be a string."};
+             auto n = new ceps::ast::Struct(ceps::ast::value(ceps::ast::as_string_ref(args[0])));
+             n->children() = std::vector<ceps::ast::Nodebase_ptr>{args.begin()+1,args.end()};
+             return n;
+         } else if (name(id) == "as_identifier") {
 			 std::vector<ceps::ast::Nodebase_ptr> args;
 			 if (params.children().size()) flatten_args(params.children()[0], args);
 			 if (args.size() != 1)

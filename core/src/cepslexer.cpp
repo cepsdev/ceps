@@ -344,7 +344,7 @@ ceps::Cepsparser::token_type yylex(
 		else
 		{
 			int value = 0;
-                        unsigned int value2 = 0;
+            unsigned int value2 = 0;
 			istringstream is(integral_part);
                         if (num_enc == hex) {is >> std::hex >> value2; std::memcpy(&value,&value2,sizeof(value));}
                         else if (num_enc == oct) {is >> std::oct >> value2; std::memcpy(&value,&value2,sizeof(value));}
