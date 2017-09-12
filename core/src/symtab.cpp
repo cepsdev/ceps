@@ -76,3 +76,24 @@ void ceps::parser_env::Symboltable::push_scope()
 	 return scopes.rbegin()->get()->insert(name);
  }
 
+ ceps::parser_env::Symbol* ceps::parser_env::Symboltable::lookup_globally(const std::string name,
+                                                                   bool insert,
+                                                                   bool return_null_if_already_defined)
+ {
+
+     if (scopes.empty())
+         throw std::runtime_error("Symboltable: scopes.empty().");
+
+     Symbolptr<Scope::Iter> res = scopes[0]->find(name);
+     if(res)
+     {
+      if (return_null_if_already_defined) return nullptr;
+      else return res;
+     }
+
+     //INVARIANT: NOTHING FOUND
+     if(!insert)
+         return nullptr;
+
+     return scopes[0]->insert(name);
+ }

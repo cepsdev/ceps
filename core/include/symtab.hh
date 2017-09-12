@@ -112,6 +112,9 @@ namespace ceps
  				 	 	 bool insert = false,
  				 	 	 bool only_current_scope = false,
  				 	 	 bool return_null_if_already_defined=false);
+                 Symbol* lookup_globally( const std::string name,
+                                  bool insert = false,
+                                  bool return_null_if_already_defined=false);
  		 Symbol* lookup_global(const std::string name,bool insert=false)
  		 {
  			if (scopes.size() == 0) return nullptr;
