@@ -248,6 +248,12 @@ namespace ceps{
     		 	 	 Environment& env,
     		 	 	 std::vector<ceps::ast::Nodebase_ptr>* generated_nodes = nullptr
     		 	 	 );
+     void evaluate_without_modifying_universe (	 ceps::ast::Nodeset & universe,
+                                                 ceps::ast::Nodebase_ptr root,
+                                                 Symboltable & sym_table,
+                                                 Environment& env,
+                                                 std::vector<ceps::ast::Nodebase_ptr>* generated_nodes = nullptr
+                                                 );
 
      ceps::ast::Nodebase_ptr handle_binop(	ceps::ast::Nodebase_ptr binop_node,
     		 	 	 	 	 	 	 	 	int op,

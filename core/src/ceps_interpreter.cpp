@@ -142,6 +142,81 @@ void ceps::interpreter::evaluate(	 ceps::ast::Nodeset & universe,
 }//ceps::interpreter::evaluate
 
 
+void ceps::interpreter::evaluate_without_modifying_universe(ceps::ast::Nodeset & universe,
+                                     ceps::ast::Nodebase_ptr root_,
+                                     ceps::parser_env::Symboltable & sym_table,
+                                     ceps::interpreter::Environment& env,
+                                     std::vector<ceps::ast::Nodebase_ptr>* generated_nodes
+                 )
+{
+
+    if (root_ == nullptr) return;
+
+    if (root_->kind() == ceps::ast::Ast_node_kind::int_literal ||
+        root_->kind() == ceps::ast::Ast_node_kind::float_literal ||
+        root_->kind() == ceps::ast::Ast_node_kind::string_literal)
+    {
+        if (generated_nodes != nullptr) generated_nodes->push_back(root_);
+        return;
+    }
+
+
+    auto root = ceps::ast::nlf_ptr(root_);
+    env.associated_universe() = &universe;
+    ceps::ast::Nodebase_ptr predecessor = nullptr;
+    auto temp = universe.nodes();
+    for(auto p : root->children())
+    {
+        if (p->kind() == Kind::stmts)
+        {
+            ceps::ast::Nodebase_ptr predecessor = nullptr;
+            for(auto pp: as_stmts_ptr(p)->children() )
+            {
+                auto ev = evaluate(pp,sym_table,env,p,predecessor);predecessor = ev;
+                if (ev  != nullptr && ev->kind() == Kind::nodeset)
+                {
+                    universe.nodes().insert(universe.nodes().end(),as_ast_nodeset_ptr(ev)->children().begin(),as_ast_nodeset_ptr(ev)->children().end());
+                    if (generated_nodes != nullptr)
+                        generated_nodes->insert(generated_nodes->end(),as_ast_nodeset_ptr(ev)->children().begin(),as_ast_nodeset_ptr(ev)->children().end());
+
+                } else if (ev != nullptr && ev->kind() == Kind::stmts){
+                 auto& stmts = as_stmts_ref(ev);
+                 if (stmts.children().size()){
+                  universe.nodes().insert(universe.nodes().end(),stmts.children().begin(),stmts.children().end());
+                  if (generated_nodes != nullptr) generated_nodes->insert(generated_nodes->end(),stmts.children().begin(),stmts.children().end());
+                 }
+                }else if (ev != nullptr)
+                {
+                    universe.nodes().push_back(ev);
+                    if (generated_nodes != nullptr) generated_nodes->push_back(ev);
+                }
+            }//for
+            continue;
+        }
+        auto ev = evaluate(p,sym_table,env,/*p??*/root_,predecessor);predecessor=p;
+
+        if (ev != nullptr && ev->kind() == Kind::nodeset)
+        {
+            auto& ndeset = as_ast_nodeset_ref(ev);
+            universe.nodes().insert(universe.nodes().end(),as_ast_nodeset_ptr(ev)->children().begin(),as_ast_nodeset_ptr(ev)->children().end());
+            if (generated_nodes != nullptr)
+                                    generated_nodes->insert(generated_nodes->end(),as_ast_nodeset_ptr(ev)->children().begin(),as_ast_nodeset_ptr(ev)->children().end());
+        } else if (ev != nullptr && ev->kind() == Kind::stmts){
+          auto& stmts = as_stmts_ref(ev);
+          if (stmts.children().size()){
+           universe.nodes().insert(universe.nodes().end(),stmts.children().begin(),stmts.children().end());
+           if (generated_nodes != nullptr) generated_nodes->insert(generated_nodes->end(),stmts.children().begin(),stmts.children().end());
+          }
+        }
+        else if (ev != nullptr) {
+            universe.nodes().push_back(ev);
+            if (generated_nodes != nullptr) generated_nodes->push_back(ev);
+        }
+    }//for
+    universe.nodes() = temp;
+
+}//ceps::interpreter::evaluate
+
 
 
 static void flatten_args(ceps::ast::Nodebase_ptr r, std::vector<ceps::ast::Nodebase_ptr>& v, char op_val = ',')
