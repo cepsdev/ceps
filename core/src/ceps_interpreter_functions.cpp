@@ -572,6 +572,15 @@ static std::string get_meta_info(ceps::ast::Nodeset * universe,ceps::ast::Nodeba
 static std::random_device randomd;
 static std::default_random_engine e1(randomd());
 
+void peel_off_nodesets(ceps::ast::Nodebase_ptr p,std::vector<ceps::ast::Nodebase_ptr> & v){
+    if(p == nullptr) return;
+    if (p->kind() == ceps::ast::Ast_node_kind::nodeset){
+        for(auto pp: ceps::ast::as_ast_nodeset_ref(p).children()){
+            peel_off_nodesets(pp,v);
+        }
+    } else v.push_back(p);
+}
+
 ceps::ast::Nodebase_ptr ceps::interpreter::eval_funccall(ceps::ast::Nodebase_ptr root_node,
 		ceps::parser_env::Symboltable & sym_table,
 		ceps::interpreter::Environment& env,
@@ -648,7 +657,13 @@ ceps::ast::Nodebase_ptr ceps::interpreter::eval_funccall(ceps::ast::Nodebase_ptr
              if (args[0]->kind() != ceps::ast::Ast_node_kind::string_literal)
                  throw semantic_exception{root_node,"make_struct(): first argument expected to be a string."};
              auto n = new ceps::ast::Struct(ceps::ast::value(ceps::ast::as_string_ref(args[0])));
-             n->children() = std::vector<ceps::ast::Nodebase_ptr>{args.begin()+1,args.end()};
+             //n->children() = std::vector<ceps::ast::Nodebase_ptr>{args.begin()+1,args.end()};
+             for(std::size_t i = 1; i != args.size();++i){
+                 auto p = args[i];
+                 if (p->kind() == ceps::ast::Ast_node_kind::nodeset){
+                     peel_off_nodesets(p,n->children());
+                 } else n->children().push_back(p);
+             }
              return n;
          } else if (name(id) == "as_identifier") {
 			 std::vector<ceps::ast::Nodebase_ptr> args;
