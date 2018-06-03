@@ -114,19 +114,29 @@ static void default_text_representation_impl(std::stringstream& ss,ceps::ast::No
 		ss << value(as_double_ref(root_node));
 	} else if (root_node->kind() == ceps::ast::Ast_node_kind::binary_operator) {
 		auto& binop = ceps::ast::as_binop_ref(root_node);
-		default_text_representation_impl(ss,binop.left());
+        ss << "(";
+        default_text_representation_impl(ss,binop.left());
 		char buffer[2] = {};buffer[0] = op(binop);
 		ss << buffer;
 		default_text_representation_impl(ss,binop.right());
+        ss << ")";
     } else if (root_node->kind() == ceps::ast::Ast_node_kind::symbol) {
         ss << name(as_symbol_ref(root_node));
+    } else if (root_node->kind() == ceps::ast::Ast_node_kind::structdef){
+        auto & s = ceps::ast::as_struct_ref(root_node);
+        ss <<name(s)<<  "{";
+        for (auto p: s.children()){
+            default_text_representation_impl(ss,p,enable_check_for_html);
+            if (p && p->kind() !=  ceps::ast::Ast_node_kind::structdef) ss << ";";
+        }
+        ss << "};";
     } else ss << *root_node;
 
 }
 
 extern std::string default_text_representation(ceps::ast::Nodebase_ptr root_node){
 	std::stringstream ss;
-	default_text_representation_impl(ss,root_node);
+    default_text_representation_impl(ss,root_node);
 	return ss.str();
 }
 
@@ -593,13 +603,14 @@ ceps::ast::Nodebase_ptr ceps::interpreter::eval_funccall(ceps::ast::Nodebase_ptr
 	 {
 		 ceps::ast::Identifier& id = *dynamic_cast<ceps::ast::Identifier*>(func_call.children()[0]);
 
-		 ceps::ast::Nodebase_ptr params_ = nullptr;
+         ceps::ast::Nodebase_ptr params_ = nullptr;
 		 if (env.is_lazy_func != nullptr && env.is_lazy_func(name(id))) params_ = func_call.children()[1];
 		 else params_ = evaluate(func_call.children()[1],sym_table,env,root_node,predecessor);
 		 ceps::ast::Call_parameters& params = *dynamic_cast<ceps::ast::Call_parameters*>(params_);
 
 		 auto rr = env.call_func_callback(ceps::ast::name(id),&params,sym_table);
 		 if (rr != nullptr) return rr;
+
 		 if (name(id) == "hd"){
 			if(params.children().size() == 0)
 				throw semantic_exception{root_node,"head(): argument has to be a non empty list of nodes."};
@@ -665,6 +676,13 @@ ceps::ast::Nodebase_ptr ceps::interpreter::eval_funccall(ceps::ast::Nodebase_ptr
                  } else n->children().push_back(p);
              }
              return n;
+         } else if (name(id) == "append") {
+             std::vector<ceps::ast::Nodebase_ptr> args;
+             if (params.children().size()) flatten_args(params.children()[0], args);
+             if (args.size() == 0)
+                 throw semantic_exception{root_node,"append(): at least one argument expected."};
+             std::cerr << "!!!!!!!\n"<< std::endl;
+             return args[0];
          } else if (name(id) == "as_identifier") {
 			 std::vector<ceps::ast::Nodebase_ptr> args;
 			 if (params.children().size()) flatten_args(params.children()[0], args);
@@ -677,13 +695,10 @@ ceps::ast::Nodebase_ptr ceps::interpreter::eval_funccall(ceps::ast::Nodebase_ptr
 			 std::vector<ceps::ast::Nodebase_ptr> args;
 			 if (params.children().size()) flatten_args(params.children()[0], args);
 			 std::string s;
-			 //std::cout << "JJJJJJ" << std::endl;
 			 for (auto p : args){
-				 	if(p == nullptr) continue;
+                    if(p == nullptr) continue;
 					s+=default_text_representation(p);
 			 }
-			 //std::cout << "LLLLL" << std::endl;
-			 //std::cout << s << std::endl;
 			 return new ceps::ast::String(s,nullptr,nullptr,nullptr);
 		 } else if (name(id) == "name") {
 			 std::vector<ceps::ast::Nodebase_ptr> args;
@@ -696,6 +711,14 @@ ceps::ast::Nodebase_ptr ceps::interpreter::eval_funccall(ceps::ast::Nodebase_ptr
                     s+=ceps::ast::name(ceps::ast::as_symbol_ref(p));
                 else if (p->kind() == ceps::ast::Ast_node_kind::structdef)
 			 	 s+=ceps::ast::name(ceps::ast::as_struct_ref(p));
+                else if (p->kind() == ceps::ast::Ast_node_kind::func_call){
+                    ceps::ast::Func_call& func_call = *dynamic_cast<ceps::ast::Func_call*>(p);
+                    if (func_call.children()[0]->kind() == Kind::identifier)
+                    {
+                        ceps::ast::Identifier& id = *dynamic_cast<ceps::ast::Identifier*>(func_call.children()[0]);
+                        s+=ceps::ast::name(id);
+                    }
+                }
 			  	else if (p->kind() == ceps::ast::Ast_node_kind::nodeset){
 				 auto& an = ceps::ast::as_ast_nodeset_ref(p);
 			  	 for (auto pp:an.children()) {
