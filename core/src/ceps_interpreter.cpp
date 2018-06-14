@@ -1097,6 +1097,21 @@ ceps::ast::Nodebase_ptr ceps::interpreter::handle_binop(	ceps::ast::Nodebase_ptr
 			return new Double(value(lhs_ref) + value(rhs_ref), unit(lhs_ref), nullptr, nullptr, nullptr);
 		}
 	}// Addition
+    /** Modulo **/
+    if (op == '%')
+    {
+
+        if (lhs->kind() == Kind::int_literal && rhs->kind() == Kind::int_literal)
+        {
+            Int lhs_ref = *dynamic_cast<Int*>(lhs);
+            Int rhs_ref = *dynamic_cast<Int*>(rhs);
+            if ( ceps::ast::unit(lhs_ref) != ceps::ast::unit(rhs_ref) )
+            {
+                throw semantic_exception{&lhs_ref," Failed to apply '+': Incompatible units."};
+            }
+            return new Int( value(lhs_ref) % value(rhs_ref), unit(lhs_ref), nullptr, nullptr, nullptr);
+        } else throw semantic_exception{lhs," Failed to apply '%': Incompatible types."};
+    }// Modulo
 
 	/*Logical And*/
 	if (op == '&')

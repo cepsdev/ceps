@@ -834,6 +834,17 @@ ceps::ast::Nodebase_ptr ceps::interpreter::eval_funccall(ceps::ast::Nodebase_ptr
              std::uniform_int_distribution<int> uniform_dist(ceps::ast::value(ceps::ast::as_int_ref(args[0])),ceps::ast::value(ceps::ast::as_int_ref(args[1])));
              return new ceps::ast::Int(uniform_dist(e1), ceps::ast::all_zero_unit(), nullptr, nullptr, nullptr);
 
+         } else if (name(id) == "mod") {
+             std::vector<ceps::ast::Nodebase_ptr> args;
+             flatten_args(params.children()[0], args);
+
+             if (args.size() != 2)
+                 throw semantic_exception{root_node,"mod: Expecting two arguments"};
+
+             if (args[0]->kind() != Kind::int_literal || args[1]->kind() != Kind::int_literal)
+              throw semantic_exception{root_node,"mod: Expecting two int arguments"};
+
+             return new ceps::ast::Int{ value(as_int_ref(args[0])) % value(as_int_ref(args[1])),ceps::ast::all_zero_unit()};
          } else if (name(id) == "sin") {
 			 if (params.children().size() != 1)
 				 throw semantic_exception{root_node,"sin: Expecting 1 argument"};
