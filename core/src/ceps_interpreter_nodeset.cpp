@@ -251,7 +251,12 @@ ceps::ast::Nodebase_ptr ceps::interpreter::evaluate_nodeset_expr_dot(	ceps::ast:
 			  	if (pe->kind() == ceps::ast::Ast_node_kind::structdef) v.push_back(pe);
 			  }
 			  result.nodes_ = v;
-			} else if (method_name == "is_kind" && args.size() == 1 && args[0]->kind() == ceps::ast::Ast_node_kind::string_literal){
+            }else if (method_name == "is_id") {
+              std::vector<ceps::ast::Nodebase_ptr> v;
+              for(auto pe : result.nodes())
+                  if (pe->kind() == ceps::ast::Ast_node_kind::identifier) v.push_back(pe);
+                result.nodes_ = v;
+             } else if (method_name == "is_kind" && args.size() == 1 && args[0]->kind() == ceps::ast::Ast_node_kind::string_literal){
 			  std::string kind_name = value(as_string_ref(args[0]));
 			  std::vector<ceps::ast::Nodebase_ptr> v;
 			  for(auto pe : result.nodes())

@@ -375,6 +375,11 @@ ceps::ast::Nodebase_ptr ceps::interpreter::eval_binaryop(ceps::ast::Nodebase_ptr
 	 ceps::ast::Nodebase_ptr lhs = evaluate(binop.children()[0],sym_table,env,root_node,predecessor);
 	 ceps::ast::Nodebase_ptr rhs = evaluate(binop.children()[1],sym_table,env,root_node,predecessor);
 
+    // std::cout << "\n//------\n";
+    // std::cout << *lhs << std::endl;
+    // std::cout << *rhs << std::endl;
+    // std::cout << "------//"<<std::endl;
+
 	 if (lhs->kind() == ceps::ast::Ast_node_kind::nodeset && rhs->kind() == ceps::ast::Ast_node_kind::func_call) {
 		 //Case Nodeset.func
 		 result = handle_binop(root_node,ceps::ast::op(binop),lhs,rhs,sym_table,env,root_node);
@@ -796,6 +801,9 @@ ceps::ast::Nodebase_ptr ceps::interpreter::handle_binop(	ceps::ast::Nodebase_ptr
 
 	if (op == ceps::Cepsparser::token::REL_OP_EQ)
 	{
+        if (lhs->kind() == ceps::ast::Ast_node_kind::identifier || rhs->kind() == ceps::ast::Ast_node_kind::identifier)
+            return binop_node;
+
 		if (lhs->kind() == Kind::string_literal && rhs->kind() == Kind::string_literal)
 		{
 			String lhs_ref = *dynamic_cast<String*>(lhs);
@@ -839,6 +847,9 @@ ceps::ast::Nodebase_ptr ceps::interpreter::handle_binop(	ceps::ast::Nodebase_ptr
 	}
 	if (op == ceps::Cepsparser::token::REL_OP_NEQ)
 	{
+        if (lhs->kind() == ceps::ast::Ast_node_kind::identifier || rhs->kind() == ceps::ast::Ast_node_kind::identifier)
+            return binop_node;
+
 		if (lhs->kind() == Kind::string_literal && rhs->kind() == Kind::string_literal)
 		{
 			String lhs_ref = *dynamic_cast<String*>(lhs);
@@ -882,6 +893,9 @@ ceps::ast::Nodebase_ptr ceps::interpreter::handle_binop(	ceps::ast::Nodebase_ptr
 	}
 	if (op == ceps::Cepsparser::token::REL_OP_GT)
 	{
+        if (lhs->kind() == ceps::ast::Ast_node_kind::identifier || rhs->kind() == ceps::ast::Ast_node_kind::identifier)
+            return binop_node;
+
 		if (lhs->kind() == Kind::string_literal && rhs->kind() == Kind::string_literal)
 		{
 			String lhs_ref = *dynamic_cast<String*>(lhs);
@@ -925,6 +939,15 @@ ceps::ast::Nodebase_ptr ceps::interpreter::handle_binop(	ceps::ast::Nodebase_ptr
 	}
 	if (op == ceps::Cepsparser::token::REL_OP_LT)
 	{
+        if (lhs->kind() == ceps::ast::Ast_node_kind::identifier || rhs->kind() == ceps::ast::Ast_node_kind::identifier)
+            return binop_node;
+
+        if (lhs->kind() == ceps::ast::Ast_node_kind::identifier || rhs->kind() == ceps::ast::Ast_node_kind::identifier)
+            return binop_node;
+
+        if (lhs->kind() == ceps::ast::Ast_node_kind::identifier || rhs->kind() == ceps::ast::Ast_node_kind::identifier)
+            return binop_node;
+
 		if (lhs->kind() == Kind::string_literal && rhs->kind() == Kind::string_literal)
 		{
 			String lhs_ref = *dynamic_cast<String*>(lhs);
@@ -968,6 +991,9 @@ ceps::ast::Nodebase_ptr ceps::interpreter::handle_binop(	ceps::ast::Nodebase_ptr
 	}
 	if (op == ceps::Cepsparser::token::REL_OP_GT_EQ)
 	{
+        if (lhs->kind() == ceps::ast::Ast_node_kind::identifier || rhs->kind() == ceps::ast::Ast_node_kind::identifier)
+            return binop_node;
+
 		if (lhs->kind() == Kind::string_literal && rhs->kind() == Kind::string_literal)
 		{
 			String lhs_ref = *dynamic_cast<String*>(lhs);
@@ -1011,6 +1037,12 @@ ceps::ast::Nodebase_ptr ceps::interpreter::handle_binop(	ceps::ast::Nodebase_ptr
 	}
 	if (op == ceps::Cepsparser::token::REL_OP_LT_EQ)
 	{
+        if (lhs->kind() == ceps::ast::Ast_node_kind::identifier || rhs->kind() == ceps::ast::Ast_node_kind::identifier)
+            return binop_node;
+
+        if (lhs->kind() == ceps::ast::Ast_node_kind::identifier || rhs->kind() == ceps::ast::Ast_node_kind::identifier)
+            return binop_node;
+
 		if (lhs->kind() == Kind::string_literal && rhs->kind() == Kind::string_literal)
 		{
 			String lhs_ref = *dynamic_cast<String*>(lhs);
@@ -1055,6 +1087,9 @@ ceps::ast::Nodebase_ptr ceps::interpreter::handle_binop(	ceps::ast::Nodebase_ptr
 	/** Addition **/
 	if (op == '+')
 	{
+        if (lhs->kind() == ceps::ast::Ast_node_kind::identifier || rhs->kind() == ceps::ast::Ast_node_kind::identifier)
+            return binop_node;
+
 		if (lhs->kind() == Kind::string_literal && rhs->kind() == Kind::string_literal)
 		{
 			String lhs_ref = *dynamic_cast<String*>(lhs);
