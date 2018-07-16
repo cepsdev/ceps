@@ -681,7 +681,6 @@ ceps::ast::Nodebase_ptr ceps::interpreter::eval_funccall(ceps::ast::Nodebase_ptr
              if (params.children().size()) flatten_args(params.children()[0], args);
              if (args.size() == 0)
                  throw semantic_exception{root_node,"append(): at least one argument expected."};
-             std::cerr << "!!!!!!!\n"<< std::endl;
              return args[0];
          } else if (name(id) == "as_identifier") {
 			 std::vector<ceps::ast::Nodebase_ptr> args;
@@ -691,7 +690,16 @@ ceps::ast::Nodebase_ptr ceps::interpreter::eval_funccall(ceps::ast::Nodebase_ptr
 			 if (args[0]->kind() != ceps::ast::Ast_node_kind::string_literal)
 				 throw semantic_exception{root_node,"as_identifier(): wrong arguments (expect a string)."};
 			 return new ceps::ast::Identifier(ceps::ast::value(ceps::ast::as_string_ref(args[0])), nullptr, nullptr, nullptr);
-		 } else if (name(id) == "text"){
+         }else if (name(id) == "as_int"){
+             std::vector<ceps::ast::Nodebase_ptr> args;
+             if (params.children().size()) flatten_args(params.children()[0], args);
+             std::string s;
+             for (auto p : args){
+                    if(p == nullptr) continue;
+                    s+=default_text_representation(p);
+             }
+             return new ceps::ast::Int(std::stoi(s),ceps::ast::all_zero_unit());
+         } else if (name(id) == "text"){
 			 std::vector<ceps::ast::Nodebase_ptr> args;
 			 if (params.children().size()) flatten_args(params.children()[0], args);
 			 std::string s;
