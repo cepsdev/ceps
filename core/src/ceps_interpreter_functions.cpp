@@ -632,7 +632,15 @@ ceps::ast::Nodebase_ptr ceps::interpreter::eval_funccall(ceps::ast::Nodebase_ptr
 			std::vector<ceps::ast::Nodebase_ptr> a;
 				a.push_back(params.children()[params.children().size()-1]);
 			return ceps::ast::create_ast_nodeset("",a);
-		 } else if (name(id) == "tail"){
+         } else if (name(id)=="as_nodeset"){
+             std::vector<ceps::ast::Nodebase_ptr> args;
+             if (params.children().size()) flatten_args(params.children()[0], args);
+             if(args.size() == 0)
+                 throw semantic_exception{root_node,"as_nodeset(): argument has to be a non empty list of nodes."};
+
+             return ceps::ast::create_ast_nodeset("",args);
+
+         } else if (name(id) == "tail"){
 			if(params.children().size() == 0)
 				throw semantic_exception{root_node,"tail(): argument has to be a non empty list of nodes."};
 			params.children().erase(params.children().begin());
@@ -667,14 +675,26 @@ ceps::ast::Nodebase_ptr ceps::interpreter::eval_funccall(ceps::ast::Nodebase_ptr
                  throw semantic_exception{root_node,"make_struct(): at least one argument expected."};
              if (args[0]->kind() != ceps::ast::Ast_node_kind::string_literal)
                  throw semantic_exception{root_node,"make_struct(): first argument expected to be a string."};
-             auto n = new ceps::ast::Struct(ceps::ast::value(ceps::ast::as_string_ref(args[0])));
-             //n->children() = std::vector<ceps::ast::Nodebase_ptr>{args.begin()+1,args.end()};
+
+             std::string id = ceps::ast::value(ceps::ast::as_string_ref(args[0]));
+             auto n = new ceps::ast::Struct(id);
+
              for(std::size_t i = 1; i != args.size();++i){
                  auto p = args[i];
                  if (p->kind() == ceps::ast::Ast_node_kind::nodeset){
                      peel_off_nodesets(p,n->children());
                  } else n->children().push_back(p);
              }
+             ceps::parser_env::Symbol* sym_ptr = sym_table.lookup(id);
+             if ( sym_ptr != nullptr && sym_ptr->category ==  ceps::parser_env::Symbol::Category::MACRO){
+                 return  eval_macro(n,
+                           sym_ptr,
+                           sym_table,
+                           env,
+                           nullptr,
+                           nullptr);
+             }
+
              return n;
          } else if (name(id) == "append") {
              std::vector<ceps::ast::Nodebase_ptr> args;
