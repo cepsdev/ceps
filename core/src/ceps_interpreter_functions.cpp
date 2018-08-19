@@ -31,6 +31,8 @@ SOFTWARE.
 #include"pugixml.hpp"
 #include <random>
 
+extern char **environ;
+
 static void traverse_xml(ceps::ast::Nonleafbase* root, const pugi::xml_node & xn);
 static void flatten_args(ceps::ast::Nodebase_ptr r, std::vector<ceps::ast::Nodebase_ptr>& v, char op_val = ',')
 {
@@ -847,6 +849,24 @@ ceps::ast::Nodebase_ptr ceps::interpreter::eval_funccall(ceps::ast::Nodebase_ptr
 				  return include_xml_file(ceps::ast::value(ceps::ast::as_string_ref(args[0])),ceps::ast::value(ceps::ast::as_string_ref(args[1])));
 			 }
 
+         } else if (name(id) == "env") {
+             std::vector<ceps::ast::Nodebase_ptr> args;
+             flatten_args(params.children()[0], args);
+             if (args.size() == 0){
+                 auto p = new ceps::ast::Struct{"env"};
+                 for(auto e = environ;*e;++e){
+                     p->children().push_back(new ceps::ast::String{*e});
+                 }
+                 return p;
+             } else {
+                 if (args[0]->kind() != ceps::ast::Ast_node_kind::string_literal) return new ceps::ast::String{""};
+                 auto s = ceps::ast::value(ceps::ast::as_string_ref(args[0]));
+                 auto p = getenv(s.c_str());
+                 if (p) return new ceps::ast::String{p};
+             }
+             if(args.size() > 1 && args[1]->kind() == ceps::ast::Ast_node_kind::string_literal)
+                 return args[1];
+             return new ceps::ast::String{""};
          } else if (name(id) == "__uniform_dist") {
              std::vector<ceps::ast::Nodebase_ptr> args;
              flatten_args(params.children()[0], args);
