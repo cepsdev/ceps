@@ -736,6 +736,7 @@ ceps::ast::Nodebase_ptr ceps::interpreter::evaluate(ceps::ast::Nodebase_ptr root
 			 if (r != nullptr) return evaluate(r,sym_table, env,root_node,predecessor );
 			 return env.call_sym_undefined_clbk(root_node,parent_node);
 		 }
+         return new ceps::ast::Symbol(name,kind);
 		 return root_node;
 	 }
 	 case Kind::ret:
