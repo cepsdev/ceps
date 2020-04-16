@@ -1,0 +1,48 @@
+
+
+The RAW segment contains only data.
+The TYPE segment contains type information.
+TYPE segment is a list of type descriptions.
+A type description starts with a TYPEDESCRIPTOR. A possible TYPEDESCRIPTOR is a TYPEID. A possible TYPEID is a simple TYPEID, a simple TYPEID is a 6 bit signed value encoded as byte.
+Simple TYPEID   |     Meaning
+=================================
+0               | EOS(End Of Stream)
+1               | signed 8 bit value
+2               | unsigned 8 bit value
+3               | signed 16 bit value
+4               | unsigned 16 bit value
+5               | signed 32 bit value
+6               | unsigned 32 bit integer
+7               | signed 64 bit integer
+8               | unsigned 64 bit integer
+9               | signed 128 bit integer
+10              | unsigned 128 bit integer
+11              | half precision floating point
+12              | single precision floating point
+13              | double precision floating point
+14              | double extended precision floating point
+15              | ASCIIZ
+16              | UTF8
+
+A TYPEID can be followed by a number denoting the number of entities, this is called a RLE (Run Length Encoded) TYPEID. A TYPEID is a RLE TYPEID if it is negative. The meaning of a RLE TYPEID T
+is the meaning of the TYPEID abs(T).
+
+Examples
+========
+
+RAW:
+0x01 0x02 0x03
+TYPE:
+0x01 0x01 0x01 0x00
+
+Meaning: three signed bytes 1,2,3
+
+Equivalent encoding with RLE TYPEID:
+
+RAW:
+0x01 0x02 0x03
+TYPE:
+0x3F 0x03 0x00
+
+
+
