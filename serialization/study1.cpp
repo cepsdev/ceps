@@ -88,7 +88,7 @@ namespace ceps{
             } else if (auto r = type_handler<decltype(v)>::tag_match(segs_.type_seg_ + segs_.type_seg_ofs_)) {
                 if(!r.rle) {
                     type_handler<decltype(v)>::write_tag(segs_.type_seg_ + segs_.type_seg_ofs_,true);
-                    type_handler<decltype(v)>::write_length_7bit_encoded(segs_.type_seg_ + segs_.type_seg_ofs_ + 1,1);
+                    type_handler<decltype(v)>::write_length_7bit_encoded(segs_.type_seg_ + segs_.type_seg_ofs_ + 1,2);
                     ++segs_.type_seg_written_;
                 } else {
                     type_handler<decltype(v)>::increment_7bit_encoded(segs_.type_seg_ + segs_.type_seg_ofs_ + 1,segs_.type_seg_written_ - segs_.type_seg_ofs_ - 1);
@@ -99,7 +99,7 @@ namespace ceps{
         std::ostream& dump_info(std::ostream& os){
             for(size_t i = 0;i != segs_.info_seg_written_;++i){
              if (i % 16 == 0) os << "\n";
-             os << (int)*(segs_.info_seg_+i) << ' ';
+             os << (int)*( ((unsigned char *)segs_.info_seg_)+i) << ' ';
             }
             return os;
         }
@@ -121,8 +121,8 @@ int main(){
     char type_seg[1024];
     ceps::serialization::mem mem;
     mem.set_mem({info_seg,type_seg,1024,1024,0,0});
-    for (int i = 0; i != 6;++i)
-     mem.write_unchecked(1 << i);
+    for (int i = 0; i != 128;++i)
+     mem.write_unchecked(i);
     std::cout << "Info Segment:\n";mem.dump_info(std::cout);std::cout << "\n\n";
     std::cout << "Type Segment:\n";mem.dump_type(std::cout);
     
