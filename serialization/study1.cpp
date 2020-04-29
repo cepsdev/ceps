@@ -27,7 +27,7 @@ namespace ceps{
       static void write_length_7bit_encoded(char* addr,int v){
           *addr = v;
       }
-      static void increment_7bit_encoded(char* addr,size_t width){
+      static size_t increment_7bit_encoded(char* addr,size_t width){
           unsigned long long int stored_value = 0;
           //read
           for(size_t j = 0; j != width;++j){
@@ -35,6 +35,8 @@ namespace ceps{
               stored_value |= (v & 0x7f) << j*7; 
               if (v & 0x80 == 0) break;
           }
+          std::cerr << stored_value << "<<\n";
+
           ++stored_value;
           unsigned short bytes_to_write = 0;
           if (0x7f80 & stored_value){ // => 16 bit representation (14 bit representation)
@@ -42,11 +44,11 @@ namespace ceps{
           } else { // 8bit representation (7 bit value)
             bytes_to_write = 1;
           }
-          for (unsigned short i = 0; i != bytes_to_write;++i,stored_value >> 7){
+          for (unsigned short i = 0; i != bytes_to_write;++i,stored_value >>= 7){
               *addr = stored_value & 0x7F | (i + 1 != bytes_to_write ? 0x80:0);
               ++addr;
           }
-
+          return bytes_to_write;
       }
       static tag_match_result_t tag_match(char* addr){
           if (*addr == mem_tag<T>::tag || *addr == mem_tag<T>::rle_tag)
@@ -91,7 +93,9 @@ namespace ceps{
                     type_handler<decltype(v)>::write_length_7bit_encoded(segs_.type_seg_ + segs_.type_seg_ofs_ + 1,2);
                     ++segs_.type_seg_written_;
                 } else {
-                    type_handler<decltype(v)>::increment_7bit_encoded(segs_.type_seg_ + segs_.type_seg_ofs_ + 1,segs_.type_seg_written_ - segs_.type_seg_ofs_ - 1);
+                    auto cur_width_of_len_tag = segs_.type_seg_written_ - segs_.type_seg_ofs_ - 1;
+                    auto cur_width = type_handler<decltype(v)>::increment_7bit_encoded(segs_.type_seg_ + segs_.type_seg_ofs_ + 1,segs_.type_seg_written_ - segs_.type_seg_ofs_ - 1);
+                    if (cur_width > cur_width_of_len_tag) segs_.type_seg_written_ += cur_width - cur_width_of_len_tag;
                 }            
             }            
             return {};
@@ -106,7 +110,7 @@ namespace ceps{
         std::ostream& dump_type(std::ostream& os){
             for(size_t i = 0;i != segs_.type_seg_written_;++i){
              if (i % 16 == 0) os << "\n";
-             os << (int)*(segs_.type_seg_+i) << ' ';
+             os << (int)*( (unsigned char *) segs_.type_seg_+i) << ' ';
             }
             return os;
         }
@@ -117,13 +121,12 @@ namespace ceps{
 
 int main(){
     std::cout << "Serialization Study I\n";
-    char info_seg[1024];
-    char type_seg[1024];
+    char* info_seg = new char[1024*1024];
+    char* type_seg = new char[1024*1024];
     ceps::serialization::mem mem;
     mem.set_mem({info_seg,type_seg,1024,1024,0,0});
-    for (int i = 0; i != 128;++i)
+    for (int i = 0; i != 129;++i)
      mem.write_unchecked(i);
     std::cout << "Info Segment:\n";mem.dump_info(std::cout);std::cout << "\n\n";
     std::cout << "Type Segment:\n";mem.dump_type(std::cout);
-    
 }
