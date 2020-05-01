@@ -35,11 +35,12 @@ namespace ceps{
               stored_value |= (v & 0x7f) << j*7; 
               if (v & 0x80 == 0) break;
           }
-          std::cerr << stored_value << "<<\n";
-
           ++stored_value;
           unsigned short bytes_to_write = 0;
-          if (0x7f80 & stored_value){ // => 16 bit representation (14 bit representation)
+          if (0x1fc000 & stored_value){ // => 24 bit representation (21 bit representation)
+            bytes_to_write = 3;
+          }
+          else if (0x7f80 & stored_value){ // => 16 bit representation (14 bit representation)
             bytes_to_write = 2;
           } else { // 8bit representation (7 bit value)
             bytes_to_write = 1;
@@ -79,9 +80,9 @@ namespace ceps{
             segs_ = new_seg_info;
             return segs_;
         }
-        write_result_t write_unchecked(std::int32_t v){
+        write_result_t write_unchecked(std::int32_t v,bool write_through = true){
             //Write Data
-            *((decltype(v)*) (segs_.info_seg_+segs_.info_seg_written_) ) = v;
+            if (write_through) *((decltype(v)*) (segs_.info_seg_+segs_.info_seg_written_) ) = v;
             segs_.info_seg_written_ += sizeof(v);
             //Write Type
             if (segs_.type_seg_ofs_ == segs_.type_seg_written_){
@@ -125,8 +126,11 @@ int main(){
     char* type_seg = new char[1024*1024];
     ceps::serialization::mem mem;
     mem.set_mem({info_seg,type_seg,1024,1024,0,0});
-    for (int i = 0; i != 129;++i)
-     mem.write_unchecked(i);
-    std::cout << "Info Segment:\n";mem.dump_info(std::cout);std::cout << "\n\n";
+    //for (int i = 0; i <= 16384;++i)
+    // mem.write_unchecked(i,false);
+    for (int i = 0; i < 16;++i)
+     mem.write_unchecked(i,false);
+    
+    //std::cout << "Info Segment:\n";mem.dump_info(std::cout);std::cout << "\n\n";
     std::cout << "Type Segment:\n";mem.dump_type(std::cout);
 }
