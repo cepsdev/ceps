@@ -1,8 +1,41 @@
 #include <iostream>
 #include <tuple>
+#include <limits>
 
 namespace ceps{
  namespace serialization{
+   namespace basic{
+     constexpr unsigned long long inline read_7bitrle_encoded(unsigned char* addr, unsigned short max_width = 10)
+     {
+        unsigned long long r = *((unsigned long long*)addr);
+        if ( (r & 0x80) == 0) return r & 0x7f;
+        else if ( (r & 0x8000) == 0) 
+         return (r & 0x7f) | ((r & 0x7f00) >> 1);
+        else if ( (r & 0x800000) == 0) 
+         return (r & 0x7f) | ((r & 0x7f00) >> 1) | ((r & 0x7f0000) >> 2);
+        else if ( (r & 0x80000000) == 0) 
+         return (r & 0x7f) | ((r & 0x7f00) >> 1) | ((r & 0x7f0000) >> 2) | ((r & 0x7f000000) >> 3) ;
+        else if ( (r & 0x8000000000) == 0) 
+         return (r & 0x7f) | ((r & 0x7f00) >> 1) | ((r & 0x7f0000) >> 2) | ((r & 0x7f000000) >> 3) | ((r & 0x7f00000000) >> 4) ;
+        else if ( (r & 0x800000000000) == 0) 
+         return (r & 0x7f) | ((r & 0x7f00) >> 1) | ((r & 0x7f0000) >> 2) | ((r & 0x7f000000) >> 3) | ((r & 0x7f00000000) >> 4) | ((r & 0x7f0000000000) >> 5) ;
+        else if ( (r & 0x80000000000000) == 0) 
+         return (r & 0x7f) | ((r & 0x7f00) >> 1) | ((r & 0x7f0000) >> 2) | ((r & 0x7f000000) >> 3) | ((r & 0x7f00000000) >> 4) | ((r & 0x7f0000000000) >> 5) | 
+                                                                           ((r & 0x7f000000000000) >> 6);
+        else if ( (r & 0x8000000000000000) == 0) 
+         return (r & 0x7f) | ((r & 0x7f00) >> 1) | ((r & 0x7f0000) >> 2) | ((r & 0x7f000000) >> 3) | ((r & 0x7f00000000) >> 4) | ((r & 0x7f0000000000) >> 5) | 
+                                                                           ((r & 0x7f000000000000) >> 6) | ((r & 0x7f00000000000000) >> 7);
+        else if ((*(addr + sizeof(unsigned long long int)) & 0x80) == 0) 
+          return (r & 0x7f) | ((r & 0x7f00) >> 1) | ((r & 0x7f0000) >> 2) | ((r & 0x7f000000) >> 3) | ((r & 0x7f00000000) >> 4) | ((r & 0x7f0000000000) >> 5) | 
+                                                                            ((r & 0x7f000000000000) >> 6) | ((r & 0x7f00000000000000) >> 7) | 
+                                                                            ((unsigned long long int)(*(addr + sizeof(unsigned long long int)) & 0x7f) << 56);
+        return (r & 0x7f) | ((r & 0x7f00) >> 1) | ((r & 0x7f0000) >> 2) | ((r & 0x7f000000) >> 3) | ((r & 0x7f00000000) >> 4) | ((r & 0x7f0000000000) >> 5) | 
+                                                                            ((r & 0x7f000000000000) >> 6) | ((r & 0x7f00000000000000) >> 7) | 
+                                                                            ((unsigned long long int)(*(addr + sizeof(unsigned long long int)) & 0x7f) << 56)| 
+                                                                            ((unsigned long long int)(*(addr + sizeof(unsigned long long int)+1) & 0x01) << 63);
+     }
+   }
+
   template<typename T> struct mem_tag{      
 
   };
@@ -29,15 +62,37 @@ namespace ceps{
       }
       static size_t increment_7bit_encoded(char* addr,size_t width){
           unsigned long long int stored_value = 0;
-          //read
-          for(size_t j = 0; j != width;++j){
+          //read--
+          /*for(size_t j = 0; j != width;++j){
               unsigned char v = *( (unsigned char*)addr + j);
               stored_value |= (v & 0x7f) << j*7; 
               if (v & 0x80 == 0) break;
-          }
+          }*/
+          stored_value = basic::read_7bitrle_encoded((unsigned char*) addr,width);
           ++stored_value;
           unsigned short bytes_to_write = 0;
-          if (0x1fc000 & stored_value){ // => 24 bit representation (21 bit representation)
+          if (0x8000000000000000 & stored_value){ // => 80 bit representation (64 bit value)
+            bytes_to_write = 10;
+          }
+          else if (0x7f00000000000000 & stored_value){ // => 72 bit representation (63 bit value)
+            bytes_to_write = 9;
+          }
+          else if (0xfe000000000000 & stored_value){ // => 64 bit representation (56 bit value)
+            bytes_to_write = 8;
+          }
+          else if (  0x1fC0000000000 & stored_value){ // => 56 bit representation (49 bit value)
+            bytes_to_write = 7;
+          }
+          else if (    0x3f800000000 & stored_value){ // => 48 bit representation (42 bit representation)
+            bytes_to_write = 6;
+          }
+          else if (0x7f0000000 & stored_value){ // => 40 bit representation (35 bit representation)
+            bytes_to_write = 5;
+          }
+          else if (0xfe00000 & stored_value){ // => 32 bit representation (28 bit representation)
+            bytes_to_write = 4;
+          }
+          else if (0x1fc000 & stored_value){ // => 24 bit representation (21 bit representation)
             bytes_to_write = 3;
           }
           else if (0x7f80 & stored_value){ // => 16 bit representation (14 bit representation)
@@ -49,6 +104,7 @@ namespace ceps{
               *addr = stored_value & 0x7F | (i + 1 != bytes_to_write ? 0x80:0);
               ++addr;
           }
+          //std::cerr << "bytes_to_write:"<< bytes_to_write << std::endl;
           return bytes_to_write;
       }
       static tag_match_result_t tag_match(char* addr){
@@ -122,15 +178,24 @@ namespace ceps{
 
 int main(){
     std::cout << "Serialization Study I\n";
-    char* info_seg = new char[1024*1024];
-    char* type_seg = new char[1024*1024];
+    constexpr auto mem_size = 1024*1024;
+    char* info_seg = new char[mem_size];
+    char* type_seg = new char[mem_size];
     ceps::serialization::mem mem;
-    mem.set_mem({info_seg,type_seg,1024,1024,0,0});
     //for (int i = 0; i <= 16384;++i)
     // mem.write_unchecked(i,false);
-    for (int i = 0; i < 16;++i)
-     mem.write_unchecked(i,false);
+    //1  2  4  8  16  32  64  128 256 512 1024 2048 4096 8192  16384 32768  65536  131072  262144  524288  1048576
+    //0  1  2  3  4   5   6   7   8   9   10   11   12   13    14    15     16     17      18      19      20
+    //|-------- 0 - 127----| |----------128 -16383 ---------| | -------------- 16384 - 1048575 -------------------| 
+
+    for (unsigned int i = 0; i <= 63;++i){
+        mem.set_mem({info_seg,type_seg,mem_size,mem_size,0,0,0,0});
+        for(unsigned long long j=0;j < 1 << i; ++j)
+          mem.write_unchecked(j,false);
+        std::cerr << "\nType Segment:2^"<< i << ":";
+        mem.dump_type(std::cerr);
+    }
     
     //std::cout << "Info Segment:\n";mem.dump_info(std::cout);std::cout << "\n\n";
-    std::cout << "Type Segment:\n";mem.dump_type(std::cout);
+    //std::cout << "Type Segment:\n";mem.dump_type(std::cout);
 }
