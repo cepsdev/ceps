@@ -5,7 +5,7 @@
 namespace ceps{
  namespace serialization{
    namespace basic{
-     constexpr unsigned long long inline read_7bitrle_encoded(unsigned char* addr, unsigned short max_width = 10)
+     constexpr unsigned long long inline read_base128_ull(unsigned char* addr, unsigned short max_width = 10)
      {
         unsigned long long r = *((unsigned long long*)addr);
         if ( (r & 0x80) == 0) return r & 0x7f;
@@ -16,24 +16,66 @@ namespace ceps{
         else if ( (r & 0x80000000) == 0) 
          return (r & 0x7f) | ((r & 0x7f00) >> 1) | ((r & 0x7f0000) >> 2) | ((r & 0x7f000000) >> 3) ;
         else if ( (r & 0x8000000000) == 0) 
-         return (r & 0x7f) | ((r & 0x7f00) >> 1) | ((r & 0x7f0000) >> 2) | ((r & 0x7f000000) >> 3) | ((r & 0x7f00000000) >> 4) ;
+         return (r & 0x7f) | ((r & 0x7f00) >> 1) | ((r & 0x7f0000) >> 2) | ((r & 0x7f000000) >> 3) | 
+                ((r & 0x7f00000000) >> 4) ;
         else if ( (r & 0x800000000000) == 0) 
-         return (r & 0x7f) | ((r & 0x7f00) >> 1) | ((r & 0x7f0000) >> 2) | ((r & 0x7f000000) >> 3) | ((r & 0x7f00000000) >> 4) | ((r & 0x7f0000000000) >> 5) ;
+         return (r & 0x7f) | ((r & 0x7f00) >> 1) | ((r & 0x7f0000) >> 2) | ((r & 0x7f000000) >> 3) | 
+                ((r & 0x7f00000000) >> 4) | ((r & 0x7f0000000000) >> 5) ;
         else if ( (r & 0x80000000000000) == 0) 
-         return (r & 0x7f) | ((r & 0x7f00) >> 1) | ((r & 0x7f0000) >> 2) | ((r & 0x7f000000) >> 3) | ((r & 0x7f00000000) >> 4) | ((r & 0x7f0000000000) >> 5) | 
-                                                                           ((r & 0x7f000000000000) >> 6);
+         return (r & 0x7f) | ((r & 0x7f00) >> 1) | ((r & 0x7f0000) >> 2) | ((r & 0x7f000000) >> 3) | 
+                ((r & 0x7f00000000) >> 4) | ((r & 0x7f0000000000) >> 5) | ((r & 0x7f000000000000) >> 6);
         else if ( (r & 0x8000000000000000) == 0) 
-         return (r & 0x7f) | ((r & 0x7f00) >> 1) | ((r & 0x7f0000) >> 2) | ((r & 0x7f000000) >> 3) | ((r & 0x7f00000000) >> 4) | ((r & 0x7f0000000000) >> 5) | 
-                                                                           ((r & 0x7f000000000000) >> 6) | ((r & 0x7f00000000000000) >> 7);
+         return (r & 0x7f) | ((r & 0x7f00) >> 1) | ((r & 0x7f0000) >> 2) | ((r & 0x7f000000) >> 3) | 
+                ((r & 0x7f00000000) >> 4) | ((r & 0x7f0000000000) >> 5) | 
+                ((r & 0x7f000000000000) >> 6) | ((r & 0x7f00000000000000) >> 7);
         else if ((*(addr + sizeof(unsigned long long int)) & 0x80) == 0) 
-          return (r & 0x7f) | ((r & 0x7f00) >> 1) | ((r & 0x7f0000) >> 2) | ((r & 0x7f000000) >> 3) | ((r & 0x7f00000000) >> 4) | ((r & 0x7f0000000000) >> 5) | 
-                                                                            ((r & 0x7f000000000000) >> 6) | ((r & 0x7f00000000000000) >> 7) | 
-                                                                            ((unsigned long long int)(*(addr + sizeof(unsigned long long int)) & 0x7f) << 56);
-        return (r & 0x7f) | ((r & 0x7f00) >> 1) | ((r & 0x7f0000) >> 2) | ((r & 0x7f000000) >> 3) | ((r & 0x7f00000000) >> 4) | ((r & 0x7f0000000000) >> 5) | 
-                                                                            ((r & 0x7f000000000000) >> 6) | ((r & 0x7f00000000000000) >> 7) | 
-                                                                            ((unsigned long long int)(*(addr + sizeof(unsigned long long int)) & 0x7f) << 56)| 
-                                                                            ((unsigned long long int)(*(addr + sizeof(unsigned long long int)+1) & 0x01) << 63);
+          return (r & 0x7f) | ((r & 0x7f00) >> 1) | ((r & 0x7f0000) >> 2) | ((r & 0x7f000000) >> 3) | 
+                 ((r & 0x7f00000000) >> 4) | ((r & 0x7f0000000000) >> 5) | 
+                 ((r & 0x7f000000000000) >> 6) | ((r & 0x7f00000000000000) >> 7) | 
+                 ((unsigned long long int)(*(addr + sizeof(unsigned long long int)) & 0x7f) << 56);
+        return (r & 0x7f) | ((r & 0x7f00) >> 1) | ((r & 0x7f0000) >> 2) | ((r & 0x7f000000) >> 3) | 
+               ((r & 0x7f00000000) >> 4) | ((r & 0x7f0000000000) >> 5) | 
+               ((r & 0x7f000000000000) >> 6) | ((r & 0x7f00000000000000) >> 7) | 
+               ((unsigned long long int)(*(addr + sizeof(unsigned long long int)) & 0x7f) << 56)| 
+               ((unsigned long long int)(*(addr + sizeof(unsigned long long int)+1) & 0x01) << 63);
      }
+   }
+   unsigned short write_base128(unsigned char* addr, unsigned long long value){
+          unsigned short bytes_to_write = 0;
+          if (0x8000000000000000 & value){ // => 80 bit representation (64 bit value)
+            bytes_to_write = 10;
+          }
+          else if (0x7f00000000000000 & value){ // => 72 bit representation (63 bit value)
+            bytes_to_write = 9;
+          }
+          else if (0xfe000000000000 & value){ // => 64 bit representation (56 bit value)
+            bytes_to_write = 8;
+          }
+          else if (  0x1fC0000000000 & value){ // => 56 bit representation (49 bit value)
+            bytes_to_write = 7;
+          }
+          else if (    0x3f800000000 & value){ // => 48 bit representation (42 bit representation)
+            bytes_to_write = 6;
+          }
+          else if (0x7f0000000 & value){ // => 40 bit representation (35 bit representation)
+            bytes_to_write = 5;
+          }
+          else if (0xfe00000 & value){ // => 32 bit representation (28 bit representation)
+            bytes_to_write = 4;
+          }
+          else if (0x1fc000 & value){ // => 24 bit representation (21 bit representation)
+            bytes_to_write = 3;
+          }
+          else if (0x7f80 & value){ // => 16 bit representation (14 bit representation)
+            bytes_to_write = 2;
+          } else { // 8bit representation (7 bit value)
+            bytes_to_write = 1;
+          }
+          for (unsigned short i = 0; i != bytes_to_write;++i,value >>= 7){
+              *addr = value & 0x7F | (i + 1 != bytes_to_write ? 0x80:0);
+              ++addr;
+          }
+          return bytes_to_write;
    }
 
   template<typename T> struct mem_tag{      
@@ -62,50 +104,9 @@ namespace ceps{
       }
       static size_t increment_7bit_encoded(char* addr,size_t width){
           unsigned long long int stored_value = 0;
-          //read--
-          /*for(size_t j = 0; j != width;++j){
-              unsigned char v = *( (unsigned char*)addr + j);
-              stored_value |= (v & 0x7f) << j*7; 
-              if (v & 0x80 == 0) break;
-          }*/
-          stored_value = basic::read_7bitrle_encoded((unsigned char*) addr,width);
+          stored_value = basic::read_base128_ull((unsigned char*) addr,width);
           ++stored_value;
-          unsigned short bytes_to_write = 0;
-          if (0x8000000000000000 & stored_value){ // => 80 bit representation (64 bit value)
-            bytes_to_write = 10;
-          }
-          else if (0x7f00000000000000 & stored_value){ // => 72 bit representation (63 bit value)
-            bytes_to_write = 9;
-          }
-          else if (0xfe000000000000 & stored_value){ // => 64 bit representation (56 bit value)
-            bytes_to_write = 8;
-          }
-          else if (  0x1fC0000000000 & stored_value){ // => 56 bit representation (49 bit value)
-            bytes_to_write = 7;
-          }
-          else if (    0x3f800000000 & stored_value){ // => 48 bit representation (42 bit representation)
-            bytes_to_write = 6;
-          }
-          else if (0x7f0000000 & stored_value){ // => 40 bit representation (35 bit representation)
-            bytes_to_write = 5;
-          }
-          else if (0xfe00000 & stored_value){ // => 32 bit representation (28 bit representation)
-            bytes_to_write = 4;
-          }
-          else if (0x1fc000 & stored_value){ // => 24 bit representation (21 bit representation)
-            bytes_to_write = 3;
-          }
-          else if (0x7f80 & stored_value){ // => 16 bit representation (14 bit representation)
-            bytes_to_write = 2;
-          } else { // 8bit representation (7 bit value)
-            bytes_to_write = 1;
-          }
-          for (unsigned short i = 0; i != bytes_to_write;++i,stored_value >>= 7){
-              *addr = stored_value & 0x7F | (i + 1 != bytes_to_write ? 0x80:0);
-              ++addr;
-          }
-          //std::cerr << "bytes_to_write:"<< bytes_to_write << std::endl;
-          return bytes_to_write;
+          return  write_base128( (unsigned char*)addr, stored_value);
       }
       static tag_match_result_t tag_match(char* addr){
           if (*addr == mem_tag<T>::tag || *addr == mem_tag<T>::rle_tag)
@@ -176,7 +177,38 @@ namespace ceps{
  }
 }
 
+
+namespace ceps{
+ namespace serialization{
+   namespace basic{
+     namespace tests{
+       void dump_data(unsigned char* buffer, size_t elems){
+         for(size_t i = 0; i != elems;++i)
+          std::cout << (unsigned int)buffer[i] << (i % 16 == 0 ? "\n":" ");
+       }
+       void read_write_128_base(){
+         unsigned char buffer[128];
+         auto wr1 = write_base128(buffer, 0);
+         auto rr1 = read_base128_ull(buffer);
+         std::cout << "bytes written:"<< wr1 << " value read:" << rr1 << "\n";
+         auto wr2 = write_base128(buffer, 1);
+         auto rr2 = read_base128_ull(buffer);
+         std::cout << "bytes written:"<< wr2 << " value read:" << rr2 << "\n";
+         auto wr3 = write_base128(buffer, 127);
+         auto rr3 = read_base128_ull(buffer);
+         std::cout << "bytes written:"<< wr3 << " value read:" << rr3 << "\n";
+         auto wr4 = write_base128(buffer, 128);
+         auto rr4 = read_base128_ull(buffer);
+         std::cout << "bytes written:"<< wr4 << " value read:" << rr4 << "\n";
+
+       }
+     }
+   }
+  }
+}
 int main(){
+    ceps::serialization::basic::tests::read_write_128_base();
+    return 0;
     std::cout << "Serialization Study I\n";
     constexpr auto mem_size = 1024*1024;
     char* info_seg = new char[mem_size];
