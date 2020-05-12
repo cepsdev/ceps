@@ -1,6 +1,9 @@
 #include <iostream>
+#include <iomanip>
 #include <tuple>
 #include <limits>
+#include <cstring>
+#include <cassert>
 
 namespace ceps{
  namespace serialization{
@@ -76,6 +79,18 @@ namespace ceps{
               ++addr;
           }
           return bytes_to_write;
+   }
+   
+   unsigned short write_base128(unsigned char* addr, unsigned int value){
+          return write_base128(addr, (unsigned long long) value);
+   }
+
+   unsigned short write_base128(unsigned char* addr, unsigned short value){
+          return write_base128(addr, (unsigned long long) value);
+   }
+
+   unsigned short write_base128(unsigned char* addr, unsigned char value){
+          return write_base128(addr, (unsigned long long) value);
    }
 
   template<typename T> struct mem_tag{      
@@ -184,50 +199,43 @@ namespace ceps{
      namespace tests{
        void dump_data(unsigned char* buffer, size_t elems){
          for(size_t i = 0; i != elems;++i)
-          std::cout << (unsigned int)buffer[i] << (i % 16 == 0 ? "\n":" ");
+          std::cout << std::setw(4) << std::setfill(' ') << (unsigned int)buffer[i] << ((i+1) % 16 == 0 ? "\n":" ");
        }
        void read_write_128_base(){
-         unsigned char buffer[128];
-         auto wr1 = write_base128(buffer, 0);
-         auto rr1 = read_base128_ull(buffer);
-         std::cout << "bytes written:"<< wr1 << " value read:" << rr1 << "\n";
-         auto wr2 = write_base128(buffer, 1);
-         auto rr2 = read_base128_ull(buffer);
-         std::cout << "bytes written:"<< wr2 << " value read:" << rr2 << "\n";
-         auto wr3 = write_base128(buffer, 127);
-         auto rr3 = read_base128_ull(buffer);
-         std::cout << "bytes written:"<< wr3 << " value read:" << rr3 << "\n";
-         auto wr4 = write_base128(buffer, 128);
-         auto rr4 = read_base128_ull(buffer);
-         std::cout << "bytes written:"<< wr4 << " value read:" << rr4 << "\n";
+         constexpr auto buf_size = 128;
+         unsigned char buffer[buf_size];// = {0};
+         auto read_write_128_base_step = [&](unsigned long long v){
+                    memset(buffer,0,buf_size); 
+                    auto wr = write_base128(buffer, v);
+                    auto rr = read_base128_ull(buffer);
+                    if (v!=rr){ 
+                      std::cout << "bytes written:"<< wr << " value read:" << rr << " value expected: " << v << "\n";
+                      dump_data(buffer,buf_size);
+                      assert(v==rr);
+                    }
+         };
+            //1  2  4  8  16  32  64  128 256 512 1024 2048 4096 8192  16384 32768  65536  131072  262144  524288  1048576
+            //0  1  2  3  4   5   6   7   8   9   10   11   12   13    14    15     16     17      18      19      20
+            //|-------- 0 - 127----| |----------128 -16383 ---------| | -------------- 16384 - 1048575 -------------------| 
 
+         for (auto v : {0ull,1ull,127ull,128ull,129ull,16383ull,16384ull,32768ull,1048676ull,1048677ull,
+                        0x0ull,0xfull,0xffull,0xfffull,0xffffull,0xfffffull,0xffffffull,0xfffffffull,0xffffffffull,0xfffffffffull,0xffffffffffull,
+                        0xfffffffffffull,0xffffffffffffull,0xfffffffffffffull,0xffffffffffffffull,0xfffffffffffffffull, 0xffffffffffffffffull,
+                        0x1ull,0xeull,0xfeull,0xefull,0xfffull,0xeffull,0xaffull,0xbf3ull,0xffffull,0xfffffull,0xffffffull,0xfffffffull,0xffffffffull,
+                        0xfffffffffull,0xffffffffffull,0xfffffffffffull,0xffffffffffffull,0xfffffffffffffull,0xffffffffffffffull,0xfffffffffffffffull, 
+                        0xffffffffffffffffull,
+                         }
+                        )
+           read_write_128_base_step(v);
+       }
+       void run_all(){
+         read_write_128_base();
        }
      }
    }
   }
 }
-int main(){
-    ceps::serialization::basic::tests::read_write_128_base();
-    return 0;
-    std::cout << "Serialization Study I\n";
-    constexpr auto mem_size = 1024*1024;
-    char* info_seg = new char[mem_size];
-    char* type_seg = new char[mem_size];
-    ceps::serialization::mem mem;
-    //for (int i = 0; i <= 16384;++i)
-    // mem.write_unchecked(i,false);
-    //1  2  4  8  16  32  64  128 256 512 1024 2048 4096 8192  16384 32768  65536  131072  262144  524288  1048576
-    //0  1  2  3  4   5   6   7   8   9   10   11   12   13    14    15     16     17      18      19      20
-    //|-------- 0 - 127----| |----------128 -16383 ---------| | -------------- 16384 - 1048575 -------------------| 
 
-    for (unsigned int i = 0; i <= 63;++i){
-        mem.set_mem({info_seg,type_seg,mem_size,mem_size,0,0,0,0});
-        for(unsigned long long j=0;j < 1 << i; ++j)
-          mem.write_unchecked(j,false);
-        std::cerr << "\nType Segment:2^"<< i << ":";
-        mem.dump_type(std::cerr);
-    }
-    
-    //std::cout << "Info Segment:\n";mem.dump_info(std::cout);std::cout << "\n\n";
-    //std::cout << "Type Segment:\n";mem.dump_type(std::cout);
+int main(){
+    ceps::serialization::basic::tests::run_all();
 }
