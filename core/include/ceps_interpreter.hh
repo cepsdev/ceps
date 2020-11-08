@@ -177,7 +177,7 @@ namespace ceps{
 
 		 ceps::ast::Nodeset * & associated_universe() {return associated_universe_;}
 #ifndef _MSC_VER
-		 friend ceps::ast::Nodebase_ptr ceps::interpreter::evaluate(ceps::ast::Nodebase_ptr,
+		 friend ceps::ast::Nodebase_ptr evaluate(ceps::ast::Nodebase_ptr,
 				  ceps::parser_env::Symboltable & ,
 				  ceps::interpreter::Environment&,ceps::ast::Nodebase_ptr,ceps::ast::Nodebase_ptr predecessor);
 #endif
