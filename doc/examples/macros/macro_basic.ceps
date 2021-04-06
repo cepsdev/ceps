@@ -1,0 +1,23 @@
+macro M1{
+ static_for(i: 1 .. hd(arglist)){
+  i;
+ }
+};
+
+TEST{
+ M1{4;};
+};
+
+SHOULD_BE{
+ 1;2;3;4;
+};
+
+
+TEST{
+ M1(4);
+};
+
+SHOULD_BE{
+ 1;2;3;4;
+};
+
