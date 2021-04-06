@@ -841,6 +841,16 @@ TYPE_ALIAS(Nodeset_path_expr_ptr, Nodeset_path_expr*)
 
 typedef ast_node<Ast_node_kind::error, std::string , int , void* > Error;
 
+
+
+inline Nodebase_ptr func_call_target(Func_call& fc){
+	return fc.children()[0];
+} 
+
+inline Func_call& as_func_call_ref(Nodebase_ptr p){
+	return *dynamic_cast<ceps::ast::Func_call*>(p);
+}
+
 inline Error* as_error_ptr(Nodebase_ptr p)
 {
  return dynamic_cast<Error*>(p);

@@ -31,18 +31,21 @@ SOFTWARE.
 #include"pugixml.hpp"
 
 
-ceps::ast::Nodebase_ptr ceps::interpreter::eval_macro(ceps::ast::Nodebase_ptr root_node,ceps::parser_env::Symbol* sym_ptr,
+ceps::ast::Nodebase_ptr ceps::interpreter::eval_macro(
+	        ceps::ast::Nodebase_ptr root_node,
+            ceps::parser_env::Symbol* sym_ptr,
 			ceps::parser_env::Symboltable & sym_table,
 			ceps::interpreter::Environment& env,
 			ceps::ast::Nodebase_ptr parent_node,
-			ceps::ast::Nodebase_ptr predecessor)
+			ceps::ast::Nodebase_ptr predecessor,
+			std::vector<ceps::ast::Nodebase_ptr>* args)
 {
 	ceps::ast::Nodebase_ptr body = (ceps::ast::Nodebase_ptr)(sym_ptr->payload);
 	ceps::ast::Stmts* result = nullptr;
 	ceps::ast::Struct_ptr arglist_ = nullptr;
 
-	arglist_ = ceps::ast::as_struct_ptr(evaluate(*dynamic_cast<ceps::ast::Nonleafbase*>(root_node),sym_table,env,root_node,predecessor));
-	auto arglist = create_ast_nodeset("", arglist_->children());
+	auto arglist = create_ast_nodeset("", 
+	 args != nullptr ? *args : ceps::ast::as_struct_ptr(evaluate(*dynamic_cast<ceps::ast::Nonleafbase*>(root_node),sym_table,env,root_node,predecessor))->children());
 	auto symbol = sym_table.lookup("arglist",true,true,false);
 	symbol->category = ceps::parser_env::Symbol::NODESET;
 	symbol->payload = (void*)(arglist);

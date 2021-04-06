@@ -4,6 +4,12 @@ macro M1{
  }
 };
 
+macro M2{
+ static_for(i: hd(arglist) .. hd(tail(arglist))){
+  i;
+ }
+};
+
 TEST{
  M1{4;};
 };
@@ -21,3 +27,10 @@ SHOULD_BE{
  1;2;3;4;
 };
 
+TEST{
+ M2(2,4);
+};
+
+SHOULD_BE{
+ 2;3;4;
+};

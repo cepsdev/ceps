@@ -221,11 +221,15 @@ namespace ceps{
 			ceps::interpreter::Environment& env,
 			ceps::ast::Nodebase_ptr parent_node,
 			ceps::ast::Nodebase_ptr predecessor);
- 	ceps::ast::Nodebase_ptr eval_macro(ceps::ast::Nodebase_ptr root_node,ceps::parser_env::Symbol* sym_ptr,
-			ceps::parser_env::Symboltable & sym_table,
-			ceps::interpreter::Environment& env,
-			ceps::ast::Nodebase_ptr parent_node,
-			ceps::ast::Nodebase_ptr predecessor);
+
+ 	ceps::ast::Nodebase_ptr eval_macro(ceps::ast::Nodebase_ptr root_node,
+	                                   ceps::parser_env::Symbol* sym_ptr,
+			                           ceps::parser_env::Symboltable & sym_table,
+			                           ceps::interpreter::Environment& env,
+			                           ceps::ast::Nodebase_ptr parent_node,
+			                           ceps::ast::Nodebase_ptr predecessor,
+									   std::vector<ceps::ast::Nodebase_ptr>* args = nullptr);
+
  	ceps::ast::Nodebase_ptr eval_rewrite(ceps::ast::Nodebase_ptr root_node,ceps::parser_env::Symbol* sym_ptr,
 			ceps::parser_env::Symboltable & sym_table,
 			ceps::interpreter::Environment& env,
