@@ -916,7 +916,7 @@ inline Ifelse* as_ifelse_ptr(Nodebase_ptr p)
  }
  inline Identifier & as_id_ref(Nodebase_ptr p)
   {
- 	return *dynamic_cast<Identifier_ptr>(p);
+ 	return *static_cast<Identifier_ptr>(p);
   }
 
  inline Identifier const  & as_id_ref_const(Nodebase_ptr p)
@@ -953,10 +953,15 @@ inline Ifelse* as_ifelse_ptr(Nodebase_ptr p)
   return *as_loop_ptr(p);
  }
 
-  inline Binary_operator* as_binop_ptr(Nodebase_ptr p)
-    {
-   	return dynamic_cast<Binary_operator*>(p);
-    }
+inline bool is_binop(Nodebase_ptr p)
+{
+ return p->kind() == ceps::ast::Ast_node_kind::binary_operator;
+}
+
+inline Binary_operator* as_binop_ptr(Nodebase_ptr p)
+{
+ return dynamic_cast<Binary_operator*>(p);
+}
 
   inline Binary_operator & as_binop_ref(Nodebase_ptr p)
     {
@@ -965,7 +970,7 @@ inline Ifelse* as_ifelse_ptr(Nodebase_ptr p)
 
  inline Struct_ptr as_struct_ptr(Nodebase_ptr p)
   {
- 	return dynamic_cast<Struct_ptr>(p);
+ 	return static_cast<Struct_ptr>(p);
   }
   inline Struct & as_struct_ref(Nodebase_ptr p)
   {
@@ -1006,7 +1011,13 @@ inline Ifelse* as_ifelse_ptr(Nodebase_ptr p)
 
   inline Symbol & as_symbol_ref(Nodebase_ptr p)
   {
-   	return *dynamic_cast<Symbol*>(p);
+   	return *static_cast<Symbol*>(p);
+  }
+
+
+ inline Symbol* as_symbol_ptr(Nodebase_ptr p)
+  {
+   	return static_cast<Symbol*>(p);
   }
 
 
@@ -1064,6 +1075,11 @@ inline Ifelse* as_ifelse_ptr(Nodebase_ptr p)
    {
  	  return dynamic_cast<Nodeset_path_expr_ptr>(p);
    }
+  
+  inline bool is_a_symbol(Nodebase_ptr p)
+  {
+	  return p->kind() == ceps::ast::Ast_node_kind::symbol;
+  }
 
   inline bool is_a_nodeset(Nodebase_ptr p)
   {
@@ -1087,6 +1103,11 @@ inline Ifelse* as_ifelse_ptr(Nodebase_ptr p)
   inline bool is_an_error(Nodebase_ptr p)
   {
           return p->kind() == ceps::ast::Ast_node_kind::error;
+  }
+
+  inline bool is_a_string(Nodebase_ptr p)
+  {
+          return p->kind() == ceps::ast::Ast_node_kind::string_literal;
   }
 
 
@@ -1239,6 +1260,11 @@ inline getNth_type<2,  Error >::type & err_tag_data(Error& x)
         return get<2>(x);
 }
 
+
+inline std::string op_val(Binary_operator& x){
+	if(op(x) == ceps::Cepsparser::token::DOTDOT) return "..";
+	return ""; 
+}  
 
 
 inline std::pair<bool,int> is_int(Nodebase_ptr p)
