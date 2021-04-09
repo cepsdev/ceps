@@ -842,6 +842,93 @@ TYPE_ALIAS(Nodeset_path_expr_ptr, Nodeset_path_expr*)
 typedef ast_node<Ast_node_kind::error, std::string , int , void* > Error;
 
 
+///////////// is_* predicates
+
+
+template<ceps::ast::Ast_node_kind k> bool is(Nodebase_ptr p) {
+	return p->kind() == k;
+}
+
+
+
+
+inline bool is_binop(Nodebase_ptr p)
+{
+ return p->kind() == ceps::ast::Ast_node_kind::binary_operator;
+}
+
+inline bool is_a_symbol(Nodebase_ptr p)
+{
+ return p->kind() == ceps::ast::Ast_node_kind::symbol;
+}
+
+inline bool is_a_nodeset(Nodebase_ptr p)
+{
+ return p->kind() == ceps::ast::Ast_node_kind::nodeset;
+}
+
+inline bool is_an_identifier(Nodebase_ptr p)
+{
+ return p->kind() == ceps::ast::Ast_node_kind::identifier;
+}
+
+inline bool is_a_struct(Nodebase_ptr p)
+{
+ return p->kind() == ceps::ast::Ast_node_kind::structdef;
+}
+
+inline bool is_a_byte_array(Nodebase_ptr p)
+{
+ return p->kind() == ceps::ast::Ast_node_kind::byte_array;
+}
+
+inline bool is_an_error(Nodebase_ptr p)
+{
+ return p->kind() == ceps::ast::Ast_node_kind::error;
+}
+
+inline bool is_a_string(Nodebase_ptr p)
+{
+ return p->kind() == ceps::ast::Ast_node_kind::string_literal;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/////////// as_* casts
+
+
+
+
+
+
+
+
+
+
+
+
 
 inline Nodebase_ptr func_call_target(Func_call& fc){
 	return fc.children()[0];
@@ -953,10 +1040,6 @@ inline Ifelse* as_ifelse_ptr(Nodebase_ptr p)
   return *as_loop_ptr(p);
  }
 
-inline bool is_binop(Nodebase_ptr p)
-{
- return p->kind() == ceps::ast::Ast_node_kind::binary_operator;
-}
 
 inline Binary_operator* as_binop_ptr(Nodebase_ptr p)
 {
@@ -1023,33 +1106,33 @@ inline Binary_operator* as_binop_ptr(Nodebase_ptr p)
 
   inline Loop_head & as_loop_head_ref(Nodebase_ptr p)
   {
-   	return *dynamic_cast<Loop_head_ptr>(p);
+   	return *static_cast<Loop_head_ptr>(p);
   }
 
   inline Loop_head const & as_loop_head_ref_const(Nodebase_ptr p)
    {
-    	return *dynamic_cast<Loop_head_ptr>(p);
+    	return *static_cast<Loop_head_ptr>(p);
    }
 
   inline Loop_head_ptr as_loop_head_ptr(Nodebase_ptr p)
   {
-   	return dynamic_cast<Loop_head_ptr>(p);
+   	return static_cast<Loop_head_ptr>(p);
   }
 
  inline Ast_nodeset & as_ast_nodeset_ref(Nodebase_ptr p)
   {
-   	return *dynamic_cast<Ast_nodeset_ptr>(p);
+   	return *static_cast<Ast_nodeset_ptr>(p);
   }
 
 
  inline Ast_nodeset_ptr as_ast_nodeset_ptr(Nodebase_ptr p)
   {
-	  return dynamic_cast<Ast_nodeset_ptr>(p);
+	  return static_cast<Ast_nodeset_ptr>(p);
   }
 
  inline Scope & as_scope_ref(Nodebase_ptr p)
  {
-  	return *dynamic_cast<Scope*>(p);
+  	return *static_cast<Scope*>(p);
  }
 
 
@@ -1076,40 +1159,7 @@ inline Binary_operator* as_binop_ptr(Nodebase_ptr p)
  	  return dynamic_cast<Nodeset_path_expr_ptr>(p);
    }
   
-  inline bool is_a_symbol(Nodebase_ptr p)
-  {
-	  return p->kind() == ceps::ast::Ast_node_kind::symbol;
-  }
-
-  inline bool is_a_nodeset(Nodebase_ptr p)
-  {
-	  return p->kind() == ceps::ast::Ast_node_kind::nodeset;
-  }
-
-  inline bool is_an_identifier(Nodebase_ptr p)
-  {
-  	  return p->kind() == ceps::ast::Ast_node_kind::identifier;
-  }
-  inline bool is_a_struct(Nodebase_ptr p)
-  {
-	  return p->kind() == ceps::ast::Ast_node_kind::structdef;
-  }
-
-  inline bool is_a_byte_array(Nodebase_ptr p)
-  {
-	  return p->kind() == ceps::ast::Ast_node_kind::byte_array;
-  }
-
-  inline bool is_an_error(Nodebase_ptr p)
-  {
-          return p->kind() == ceps::ast::Ast_node_kind::error;
-  }
-
-  inline bool is_a_string(Nodebase_ptr p)
-  {
-          return p->kind() == ceps::ast::Ast_node_kind::string_literal;
-  }
-
+  
 
 
  Nodebase_ptr box(int j);
