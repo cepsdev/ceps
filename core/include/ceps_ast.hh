@@ -1,26 +1,18 @@
-/**
- The MIT License (MIT)
+/*
+Copyright 2014,2015,2016,2017,2018,2019,2020,2021 Tomas Prerovsky (cepsdev@hotmail.com).
 
-Copyright (c) 2014 The authors of ceps
+Licensed under the Apache License, Version 2.0 (the "License");
+   you may not use this file except in compliance with the License.
+   You may obtain a copy of the License at
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
+       http://www.apache.org/licenses/LICENSE-2.0
 
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
- **/
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+*/
 
 #ifndef CEPS_AST_H_
 #define CEPS_AST_H_
@@ -87,9 +79,11 @@ namespace ceps {
 		ifelse,
 		ret,
 		byte_array,
-                error,
-                undef,
-                none,
+        error,
+        undef,
+        none,
+		macro_definition,
+		algorithm_definition,
 		undefined = 4999,
 		user_defined = 5000
 	};
@@ -801,6 +795,9 @@ typedef ast_node<Ast_node_kind::template_id,std::string> Template_id;
 typedef ast_node<Ast_node_kind::ifelse> Ifelse;
 typedef ast_node<Ast_node_kind::ret> Return;
 typedef ast_node<Ast_node_kind::byte_array, std::vector<unsigned char> > Byte_array;
+
+typedef ast_node<Ast_node_kind::macro_definition,std::string /*name*/, void* /*symbol entry*/> Macrodef;
+
 typedef ast_node<Ast_node_kind::error, std::string , int , void* > Error;
 typedef ast_node<Ast_node_kind::undef> Undefined;
 typedef ast_node<Ast_node_kind::none> None;
@@ -927,7 +924,14 @@ inline bool is_a_string(Nodebase_ptr p)
 
 
 
-
+inline Macrodef* as_macrodef_ptr(Nodebase_ptr p)
+ {
+	return static_cast<Macrodef*>(p);
+ }
+ inline Macrodef & as_macrodef_ref(Nodebase_ptr p)
+ {
+	return *as_macrodef_ptr(p);
+ }
 
 
 inline Nodebase_ptr func_call_target(Func_call& fc){
@@ -1181,39 +1185,13 @@ inline Binary_operator* as_binop_ptr(Nodebase_ptr p)
 	 return vv;
  }
 
-#ifdef CEPS_CORE_WITH_BOOST
-#include "boost/array.hpp"
 
- template<typename T, size_t N>
-  Nodebase_ptr box(boost::array<T,N> const & v)
-  {
- 	 Vector_ptr vv = new Vector;
- 	 for(int i = 0; i < N; ++i)
- 	 {
- 		 vv->children().push_back(box(v[i]));
- 	 }
- 	 return vv;
-  }
-
-
-#endif
 
 
 template<typename T> auto get0th(T & x) -> typename getNth_type<0,T>::type
 		{
 			return get<0>(x);
 		}
-
-/*
-getNth_type<0, Struct >::type & name(Struct& x);
-getNth_type<0, Identifier>::type & name(Identifier& x);
-getNth_type<0, String >::type & value(String& x);
-getNth_type<0, Double >::type & value(Double& x);
-getNth_type<0, Int>::type & value(Int& x);
-getNth_type<0, Int>::type &  neg(Int& x);
-getNth_type<0, Double>::type &  neg(Double& x);
-*/
-
 
 
 inline getNth_type<0,  Binary_operator >::type & op(Binary_operator& x)
@@ -1316,6 +1294,15 @@ inline std::string op_val(Binary_operator& x){
 	return ""; 
 }  
 
+inline getNth_type<0,  Macrodef >::type & name(Macrodef& x)
+{
+	return get<0>(x);
+}
+
+inline getNth_type<1,  Macrodef >::type & symbol_table_info(Macrodef& x)
+{
+	return get<1>(x);
+}
 
 inline std::pair<bool,int> is_int(Nodebase_ptr p)
  {
@@ -1349,6 +1336,7 @@ const std::valarray<int> MOL = {0,0,0,0,0,1,0};
 const std::valarray<int> CANDELA = {0,0,0,0,0,0,1};
 
 */
+
 
 
 
