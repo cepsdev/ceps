@@ -84,6 +84,7 @@ namespace ceps {
         none,
 		macro_definition,
 		algorithm_definition,
+		label,
 		undefined = 4999,
 		user_defined = 5000
 	};
@@ -412,6 +413,36 @@ template <Ast_node_kind what,typename T,typename... rest>
 		}
 	};
 
+
+template <Ast_node_kind what,typename... rest>
+	struct ast_node<what,std::vector<Nodebase_ptr>,rest...>: public ast_node<what,rest...>
+	{
+		using T = std::vector<Nodebase_ptr>;
+		T x;
+		using Base = ast_node<what,rest...>;
+		using This_type = ast_node<what,std::vector<Nodebase_ptr>,rest...>;
+		ast_node(T val_1,rest... args,Nodebase_ptr child1=nullptr,Nodebase_ptr child2=nullptr,Nodebase_ptr child3=nullptr)
+			: Base(args...,child1,child2,child3),x(val_1)
+			{
+
+			}
+		void print_content(std::ostream& out,bool pretty_print,int indent) const override
+			{
+			 Base::print_content(out,pretty_print,indent);
+			}
+
+
+		virtual void print_value(std::ostream& out) const override
+		{
+			Base::print_value(out);
+		}
+
+		Nodebase* clone()
+		{
+			return new This_type(*this);
+		}
+
+	};
 
 template <Ast_node_kind what,typename... rest>
 	struct ast_node<what,std::string,rest...>: public ast_node<what,rest...>
@@ -797,6 +828,7 @@ typedef ast_node<Ast_node_kind::ret> Return;
 typedef ast_node<Ast_node_kind::byte_array, std::vector<unsigned char> > Byte_array;
 
 typedef ast_node<Ast_node_kind::macro_definition,std::string /*name*/, void* /*symbol entry*/> Macrodef;
+typedef ast_node<Ast_node_kind::label,std::string /*name*/, std::vector<Nodebase_ptr> /* attributes */,  void* /*symbol entry*/> Label;
 
 typedef ast_node<Ast_node_kind::error, std::string , int , void* > Error;
 typedef ast_node<Ast_node_kind::undef> Undefined;
@@ -920,7 +952,14 @@ inline bool is_a_string(Nodebase_ptr p)
 
 
 
-
+inline Label* as_label_ptr(Nodebase_ptr p)
+ {
+	return static_cast<Label*>(p);
+ }
+inline Label& as_label_ref(Nodebase_ptr p)
+ {
+	return *static_cast<Label*>(p);
+ }
 
 inline Valdef* as_valdef_ptr(Nodebase_ptr p)
  {
@@ -1201,48 +1240,75 @@ template<typename T> auto get0th(T & x) -> typename getNth_type<0,T>::type
 		}
 
 
+// Binary Operator 
+
 inline getNth_type<0,  Binary_operator >::type & op(Binary_operator& x)
 {
 	return get<0>(x);
 }
+
+inline std::string op_val(Binary_operator& x){
+	if(op(x) == ceps::Cepsparser::token::DOTDOT) return "..";
+	return ""; 
+}  
+
+// Unary Operator
+
 inline getNth_type<0,  Unary_operator >::type & op(Unary_operator& x)
 {
 	return get<0>(x);
 }
+
+// User Defined
 
 inline getNth_type<0,  User_defined >::type & id(User_defined& x)
 {
 	return get<0>(x);
 }
 
-inline getNth_type<0,  Struct >::type & name(Struct& x)
-{
-	return get<0>(x);
-}
-inline getNth_type<0,  Identifier>::type & name(Identifier& x)
-{
-	return get<0>(x);
-}
-inline getNth_type<0,  String >::type & value(String& x)
-{
-	return get<0>(x);
-}
-inline getNth_type<0, Double >::type & value(Double& x)
-{
-	return get<0>(x);
-}
-inline getNth_type<0, Int>::type & value(Int& x)
-{
-	return get<0>(x);
-}
-inline getNth_type<0,  Valdef>::type & name(Valdef& x)
+// Label
+
+inline getNth_type<0,  Label >::type & name(Label& x)
 {
 	return get<0>(x);
 }
 
-inline getNth_type<0, Int>::type & neg(Int& x)
+inline getNth_type<1,  Label >::type & attributes(Label& x)
 {
-	return get<0>(x) =  - get<0>(x);
+	return get<1>(x);
+}
+
+inline getNth_type<2,  Label >::type & tag_data(Label& x)
+{
+	return get<2>(x);
+}
+
+// Struct
+
+inline getNth_type<0,  Struct >::type & name(Struct& x)
+{
+	return get<0>(x);
+}
+
+// Identifier
+
+inline getNth_type<0,  Identifier>::type & name(Identifier& x)
+{
+	return get<0>(x);
+}
+
+// String
+
+inline getNth_type<0,  String >::type & value(String& x)
+{
+	return get<0>(x);
+}
+
+// Double
+
+inline getNth_type<0, Double >::type & value(Double& x)
+{
+	return get<0>(x);
 }
 
 inline getNth_type<0, Double>::type & neg(Double& x)
@@ -1255,10 +1321,32 @@ inline getNth_type<1, Double>::type & unit(Double& x)
 	return get<1>(x);
 }
 
+// Int
+
+inline getNth_type<0, Int>::type & value(Int& x)
+{
+	return get<0>(x);
+}
+
+inline getNth_type<0, Int>::type & neg(Int& x)
+{
+	return get<0>(x) =  - get<0>(x);
+}
+
 inline getNth_type<1, Int>::type &  unit(Int& x)
 {
 	return get<1>(x);
 }
+
+
+// Valdef
+
+inline getNth_type<0,  Valdef>::type & name(Valdef& x)
+{
+	return get<0>(x);
+}
+
+// Symbol
 
 inline getNth_type<0,  Symbol >::type & name(Symbol& x)
 {
@@ -1270,15 +1358,21 @@ inline getNth_type<1,  Symbol >::type & kind(Symbol& x)
 	return get<1>(x);
 }
 
+// Ast_nodeset
+
 inline getNth_type<0,  Ast_nodeset >::type & apply_idx_op_operand(Ast_nodeset& x)
 {
 	return get<0>(x);
 }
 
+// Byte_array
+
 inline getNth_type<0,  Byte_array >::type & bytes(Byte_array& x)
 {
 	return get<0>(x);
 }
+
+// Error
 
 inline getNth_type<0,  Error >::type & err_msg(Error& x)
 {
@@ -1295,11 +1389,7 @@ inline getNth_type<2,  Error >::type & err_tag_data(Error& x)
         return get<2>(x);
 }
 
-
-inline std::string op_val(Binary_operator& x){
-	if(op(x) == ceps::Cepsparser::token::DOTDOT) return "..";
-	return ""; 
-}  
+// Macrodef
 
 inline getNth_type<0,  Macrodef >::type & name(Macrodef& x)
 {
@@ -1567,25 +1657,6 @@ template<typename T, size_t N, typename... Ts>
 		}
 		return  p;
 	}
-
-#ifdef CEPS_CORE_WITH_BOOST
-#include "boost/array.hpp"
-
-template<typename T, size_t N, typename... Ts>
-	Struct_ptr make_struct(std::string const & name, boost::array<T,N> const  & arr ,Ts const &... args)
-	{
-		Struct_ptr p =  make_struct(name,args...);
-
-		for (size_t i = 0; i < N; ++i)
-		{
-			p->children().push_back(
-					box(arr[i]));
-
-		}
-		return  p;
-	}
-
-#endif
 
 template<typename T,typename... Ts>
 	Struct_ptr make_struct(std::string const & name, std::vector<T *> const  & il ,Ts const &... args)
