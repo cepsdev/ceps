@@ -922,7 +922,14 @@ inline bool is_a_string(Nodebase_ptr p)
 
 
 
-
+inline Valdef* as_valdef_ptr(Nodebase_ptr p)
+ {
+	return static_cast<Valdef*>(p);
+ }
+inline Valdef& as_valdef_ref(Nodebase_ptr p)
+ {
+	return *static_cast<Valdef*>(p);
+ }
 
 inline Macrodef* as_macrodef_ptr(Nodebase_ptr p)
  {
