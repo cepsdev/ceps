@@ -49,6 +49,7 @@ Licensed under the Apache License, Version 2.0 (the "License");
 	ceps::parsetree::Node* node;//deprecated
 	ceps::ast::Nodebase* ast_node;
 	std::vector<std::string>* str_list;
+  std::vector<ceps::ast::Nodebase*>* ast_list;
 };
 
 
@@ -70,6 +71,7 @@ Licensed under the Apache License, Version 2.0 (the "License");
 %token TEMPLATE_ID
 %token TEMPLATE_PARAM
 %token MACRO
+%token LABEL
 
 
 //%token KINDID
@@ -123,6 +125,7 @@ Licensed under the Apache License, Version 2.0 (the "License");
 %type <ast_node> for_loop_head;
 %type <ast_node> ifthenelse;
 %type <ast_node> macro_definition;
+%type <ast_list> attribute_list;
 
 %expect 41
 
@@ -154,6 +157,11 @@ stmts :
 stmt :
 
  '{' stmts '}' { $$ = new ceps::ast::Scope{$2};}
+| LABEL general_id attribute_list';'
+{
+  $$ = new ceps::ast::Label(*$2,*$3,nullptr,nullptr,nullptr,nullptr);
+  delete $3;
+}
 | RET expr ';'
 {
  $$ = new ceps::ast::Return($2,nullptr,nullptr);
@@ -666,6 +674,34 @@ EOL
   delete $2;
   $$ = $1;
 }
+
+
+attribute_list:
+{
+  $$ = new std::vector<ceps::ast::Nodebase_ptr>;
+}
+|
+general_id '=' LITERAL attribute_list
+{
+  $4 -> push_back(new ceps::ast::String(*$1,nullptr,nullptr,nullptr));
+  $4 -> push_back(new ceps::ast::String(*$3,nullptr,nullptr,nullptr));
+  $$ = $4;
+}
+|
+general_id '=' INTNUM attribute_list
+{
+  $4 -> push_back(new ceps::ast::String(*$1,nullptr,nullptr,nullptr)); 
+  $4 -> push_back(new ceps::ast::Int($3,ceps::ast::Unit_rep(),nullptr,nullptr,nullptr));  
+  $$ = $4;
+}
+|
+general_id '=' FLOATNUM attribute_list
+{
+  $4 -> push_back(new ceps::ast::String(*$1,nullptr,nullptr,nullptr));
+  $4->push_back(new ceps::ast::Double($3,ceps::ast::Unit_rep(),nullptr,nullptr,nullptr));
+  $$ = $4;
+}
+;
 
 
 ;

@@ -950,7 +950,14 @@ inline bool is_a_string(Nodebase_ptr p)
 
 
 
-
+inline Unary_operator* as_unary_op_ptr(Nodebase_ptr p)
+ {
+	return static_cast<Unary_operator*>(p);
+ }
+inline Unary_operator& as_unary_op_ref(Nodebase_ptr p)
+ {
+	return *static_cast<Unary_operator*>(p);
+ }
 
 inline Label* as_label_ptr(Nodebase_ptr p)
  {
@@ -1248,7 +1255,29 @@ inline getNth_type<0,  Binary_operator >::type & op(Binary_operator& x)
 }
 
 inline std::string op_val(Binary_operator& x){
+	if(op(x) == '.') return ".";
+	if(op(x) == '+') return "+";
+	if(op(x) == '-') return "-";
+	if(op(x) == '*') return "*";
+	if(op(x) == '/') return "/";
+	if(op(x) == '%') return "%";
+	if(op(x) == '!') return "!";
+	if(op(x) == '~') return "~";
+	if(op(x) == '=') return "=";
+	if(op(x) == '>') return ">";
+	if(op(x) == '<') return "<";
+	if(op(x) == '&') return "&&";
+    if(op(x) == '|') return "||";
+
 	if(op(x) == ceps::Cepsparser::token::DOTDOT) return "..";
+	if(op(x) == ceps::Cepsparser::token::NOT) return "!";
+	if(op(x) == ceps::Cepsparser::token::REL_OP_EQ) return "==";
+	if(op(x) == ceps::Cepsparser::token::REL_OP_GT) return ">";
+    if(op(x) == ceps::Cepsparser::token::REL_OP_LT) return "<";
+    if(op(x) == ceps::Cepsparser::token::REL_OP_GT_EQ) return ">=";
+	if(op(x) == ceps::Cepsparser::token::REL_OP_LT_EQ) return "<=";
+	if(op(x) == ceps::Cepsparser::token::REL_OP_NEQ) return "!=";
+
 	return ""; 
 }  
 
