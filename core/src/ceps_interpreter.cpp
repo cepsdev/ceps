@@ -461,6 +461,11 @@ ceps::ast::Nodebase_ptr ceps::interpreter::eval_id(ceps::ast::Nodebase_ptr root_
 	{
 		return new ceps::ast::Int(1, ceps::ast::mol_unit(), nullptr, nullptr, nullptr);
 	}
+	else if (name(id) == "scope"){
+		if (env.scope)
+		 return create_ast_nodeset("", *env.scope);
+		return create_ast_nodeset("",std::vector<ceps::ast::Nodebase_ptr>{});
+	}
 	else if (name(id) == "root" && env.associated_universe() != nullptr)
 		return create_ast_nodeset("", env.associated_universe()->nodes());
 	else if (name(id) == "arglist"){
@@ -1430,14 +1435,18 @@ ceps::ast::Nodebase_ptr ceps::interpreter::handle_binop(	ceps::ast::Nodebase_ptr
 }
 
 ceps::ast::Nodebase_ptr ceps::interpreter::evaluate(ceps::ast::Nonleafbase& root,
-		                                              ceps::parser_env::Symboltable & sym_table,
-		                                              ceps::interpreter::Environment& env, ceps::ast::Nodebase_ptr parent_node,ceps::ast::Nodebase_ptr predecessor)
+		                                            ceps::parser_env::Symboltable & sym_table,
+		                                            ceps::interpreter::Environment& env, 
+													ceps::ast::Nodebase_ptr parent_node,
+													ceps::ast::Nodebase_ptr predecessor)
 {
 	using namespace ceps::ast;
 	Nonleafbase::Container_t v;
 	//if (((ceps::ast::Nodebase_ptr)&root)->kind() != Ast_node_kind::call_parameters) predecessor = nullptr;
 
 
+    auto old_scope = env.scope;
+    env.scope = &v;
 	Nodebase* root_ptr = dynamic_cast<Nodebase*>(&root);
 	for(Nodebase_ptr p : root.children())
 	{
@@ -1457,6 +1466,7 @@ ceps::ast::Nodebase_ptr ceps::interpreter::evaluate(ceps::ast::Nonleafbase& root
 		}
 		else v.push_back(r);
 	}
+	env.scope = old_scope;
 
 
 	if (root_ptr->kind() == ceps::ast::Ast_node_kind::root)

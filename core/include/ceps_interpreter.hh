@@ -126,6 +126,8 @@ namespace ceps{
 		 void * func_binop_resolver_context_data_ = nullptr;
 		 func_callback_if_symbol_undefined_t func_callback_if_symbol_undefined_ = nullptr;
          void * func_callback_if_symbol_undefined_ctxt_ = nullptr;
+		 // Set by inner nodes (like stmts) which define the scope of node set expressions.
+		 std::vector<ceps::ast::Nodebase_ptr>* scope;
 
 		 ceps::ast::Nodebase_ptr call_func_callback(std::string const & id, ceps::ast::Call_parameters* params, ceps::parser_env::Symboltable & sym_table)
 		 {
