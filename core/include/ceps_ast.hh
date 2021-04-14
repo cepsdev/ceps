@@ -827,7 +827,7 @@ typedef ast_node<Ast_node_kind::ifelse> Ifelse;
 typedef ast_node<Ast_node_kind::ret> Return;
 typedef ast_node<Ast_node_kind::byte_array, std::vector<unsigned char> > Byte_array;
 
-typedef ast_node<Ast_node_kind::macro_definition,std::string /*name*/, void* /*symbol entry*/> Macrodef;
+typedef ast_node<Ast_node_kind::macro_definition,std::string /*name*/, void* /*symbol entry*/, std::vector<Nodebase_ptr> /* attributes */> Macrodef;
 typedef ast_node<Ast_node_kind::label,std::string /*name*/, std::vector<Nodebase_ptr> /* attributes */,  void* /*symbol entry*/> Label;
 
 typedef ast_node<Ast_node_kind::error, std::string , int , void* > Error;
@@ -1429,6 +1429,12 @@ inline getNth_type<1,  Macrodef >::type & symbol_table_info(Macrodef& x)
 {
 	return get<1>(x);
 }
+
+inline getNth_type<2,  Macrodef >::type & attributes(Macrodef& x)
+{
+	return get<2>(x);
+}
+
 
 inline std::pair<bool,int> is_int(Nodebase_ptr p)
  {

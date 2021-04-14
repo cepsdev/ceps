@@ -116,12 +116,12 @@ ceps::Cepsparser::token_type yylex(
 		 * So the variable "ch" is well defined when isspace is called.
 		 *
 		 */
-		bool white_space_read = false;
+		//bool white_space_read = false;
 		for(;in.get(ch) && std::isspace(ch);)
 		{
 			/*if (yylloc && ch == '\n') yylloc->lines(1);
 			if (yylloc) yylloc->step();*/
-			white_space_read = true;
+			//white_space_read = true;
 			if (yylloc)
 			{
 				if (ch != '\n')

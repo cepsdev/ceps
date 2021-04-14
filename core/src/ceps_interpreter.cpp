@@ -115,7 +115,6 @@ void ceps::interpreter::evaluate(	 ceps::ast::Nodeset & universe,
 
 		if (ev != nullptr && ev->kind() == Kind::nodeset)
 		{
-			auto& ndeset = as_ast_nodeset_ref(ev);
 			universe.nodes().insert(universe.nodes().end(),as_ast_nodeset_ptr(ev)->children().begin(),as_ast_nodeset_ptr(ev)->children().end());
 			if (generated_nodes != nullptr)
 									generated_nodes->insert(generated_nodes->end(),as_ast_nodeset_ptr(ev)->children().begin(),as_ast_nodeset_ptr(ev)->children().end());
@@ -740,7 +739,7 @@ ceps::ast::Nodebase_ptr ceps::interpreter::evaluate(ceps::ast::Nodebase_ptr root
 	 case Kind::macro_definition:{
 		 auto& macrodef{ceps::ast::as_macrodef_ref(root_node)};
 
-		 return new::ceps::ast::Macrodef(name(macrodef),symbol_table_info(macrodef));
+		 return new::ceps::ast::Macrodef(name(macrodef),symbol_table_info(macrodef),attributes(macrodef));
 	 }
 	 default:
 		 return root_node;

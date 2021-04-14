@@ -557,13 +557,13 @@ TEMPLATE general_id '(' ')' '{' stmts '}'
 ;
 
 macro_definition:
- MACRO general_id '{' stmts '}'
+ MACRO general_id  attribute_list '{' stmts '}'
  {
   auto symbol = driver.symboltable().lookup(*$2,true,true,false);
   symbol->category = ceps::parser_env::Symbol::MACRO;
-  symbol->payload = $4;
-  auto temp{new ceps::ast::Macrodef(*$2,symbol)};
-  delete $2;
+  symbol->payload = $5;
+  auto temp{new ceps::ast::Macrodef(*$2,symbol,*$3)};
+  delete $2;delete $3;
   $$ = temp; 	  
  }
 ;
