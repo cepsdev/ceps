@@ -77,9 +77,11 @@ Licensed under the Apache License, Version 2.0 (the "License");
 //%token KINDID
 
 
+%left '#'
 %left ','
-
 %left DOTDOT
+%left LEFTARROW
+%left RIGHTARROW
 %right '='
 %left '|'
 %left '&'
@@ -89,6 +91,7 @@ Licensed under the Apache License, Version 2.0 (the "License");
 %left REL_OP_NEQ
 %left REL_OP_LT_EQ
 %left REL_OP_GT_EQ
+%left '~'
 %left '-' '+'
 %left '*'
 %right '/'
@@ -127,7 +130,7 @@ Licensed under the Apache License, Version 2.0 (the "License");
 %type <ast_node> macro_definition;
 %type <ast_list> attribute_list;
 
-%expect 41
+%expect 43
 
 %%
  
@@ -369,6 +372,11 @@ expr:
 {  
 	
 	$$ = new ceps::ast::Unary_operator('!',$2,nullptr,nullptr); 
+}
+
+|expr '#' expr
+{
+ $$ = new ceps::ast::Binary_operator('#',$1,$3,nullptr); 
 }
 
 |expr DOTDOT expr

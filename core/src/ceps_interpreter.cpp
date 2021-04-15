@@ -662,11 +662,13 @@ ceps::ast::Nodebase_ptr ceps::interpreter::evaluate(ceps::ast::Nodebase_ptr root
 	 }
 	 case Kind::binary_operator:
 	 {
-		 return eval_binaryop(root_node,
+		 auto& bop{as_binop_ref(root_node)};
+		 if (op_val(bop) != "#") return eval_binaryop(root_node,
 		 			  sym_table,
 		 			  env,
 		 			  parent_node,
 		 			  predecessor);
+		return evaluate(bop.left(),sym_table,env,root_node,predecessor);
 	 }
 	 case Kind::identifier:
 	 {

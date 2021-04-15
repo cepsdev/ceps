@@ -417,7 +417,7 @@ ceps::Cepsparser::token_type yylex(
 			char t;in.get(t);
 			if (t == '=') return ceps::Cepsparser::token::REL_OP_EQ;
 			in.unget();return ceps::Cepsparser::token_type(ch);
-		}
+		} else if (ch == '#') return ceps::Cepsparser::token_type(ch);
 
 		return ceps::Cepsparser::token_type(ch);
 	}

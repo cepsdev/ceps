@@ -1278,6 +1278,11 @@ inline std::string op_val(Binary_operator& x){
 	if(op(x) == ceps::Cepsparser::token::REL_OP_LT_EQ) return "<=";
 	if(op(x) == ceps::Cepsparser::token::REL_OP_NEQ) return "!=";
 
+	if ((unsigned int)op(x) <= 255){
+	 std::string t;
+	 t.push_back(op(x));
+	 return t;
+	}
 	return ""; 
 }  
 
