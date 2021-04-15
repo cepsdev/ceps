@@ -85,6 +85,7 @@ namespace ceps {
 		macro_definition,
 		algorithm_definition,
 		label,
+		let,
 		undefined = 4999,
 		user_defined = 5000
 	};
@@ -829,6 +830,7 @@ typedef ast_node<Ast_node_kind::byte_array, std::vector<unsigned char> > Byte_ar
 
 typedef ast_node<Ast_node_kind::macro_definition,std::string /*name*/, void* /*symbol entry*/, std::vector<Nodebase_ptr> /* attributes */> Macrodef;
 typedef ast_node<Ast_node_kind::label,std::string /*name*/, std::vector<Nodebase_ptr> /* attributes */,  void* /*symbol entry*/> Label;
+typedef ast_node<Ast_node_kind::let,std::string /*lhs*/> Let;
 
 typedef ast_node<Ast_node_kind::error, std::string , int , void* > Error;
 typedef ast_node<Ast_node_kind::undef> Undefined;
@@ -921,6 +923,10 @@ inline bool is_a_string(Nodebase_ptr p)
  return p->kind() == ceps::ast::Ast_node_kind::string_literal;
 }
 
+inline bool is_a_let(Nodebase_ptr p)
+{
+ return p->kind() == ceps::ast::Ast_node_kind::let;
+}
 
 
 
@@ -948,7 +954,14 @@ inline bool is_a_string(Nodebase_ptr p)
 /////////// as_* casts
 
 
-
+inline Let* as_let_ptr(Nodebase_ptr p)
+ {
+	return static_cast<Let*>(p);
+ }
+inline Let& as_let_ref(Nodebase_ptr p)
+ {
+	return *static_cast<Let*>(p);
+ }
 
 inline Unary_operator* as_unary_op_ptr(Nodebase_ptr p)
  {
@@ -1438,6 +1451,14 @@ inline getNth_type<1,  Macrodef >::type & symbol_table_info(Macrodef& x)
 inline getNth_type<2,  Macrodef >::type & attributes(Macrodef& x)
 {
 	return get<2>(x);
+}
+
+
+// Let
+
+inline getNth_type<0,  Let >::type & name(Let& x)
+{
+	return get<0>(x);
 }
 
 

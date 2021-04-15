@@ -244,6 +244,16 @@ ceps::Cepsparser::token_type yylex(
 
 					return ceps::Cepsparser::token::FOR;
 		}
+		if (s == "for")
+		{
+
+					return ceps::Cepsparser::token::FOR;
+		}
+		if (s == "let")
+		{
+
+					return ceps::Cepsparser::token::LET;
+		}
 		if (s == "kind")
 		{
 					return ceps::Cepsparser::token::KIND;

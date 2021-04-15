@@ -561,6 +561,20 @@ ceps::ast::Nodebase_ptr ceps::interpreter::evaluate(ceps::ast::Nodebase_ptr root
 		 			  parent_node,
 		 			  predecessor);
 	 }
+	 case Kind::let:
+	 {
+		ceps::ast::Let& let_node{ceps::ast::as_let_ref(root_node)};
+ 		ceps::parser_env::Symbol* sym_ptr;
+
+ 		ceps::ast::Nodebase_ptr rhs = evaluate(let_node.children()[0],sym_table,env,root_node,nullptr);
+
+ 		if ( (sym_ptr = sym_table.lookup(name(let_node),false,false,false)) == nullptr)
+	 		throw semantic_exception{root_node,"Couldn't assign to Variable '" +name(let_node)+"': not defined."};
+
+ 		ceps::parser_env::Symbol& sym = *sym_ptr;
+ 		sym.payload = rhs;//TODO: See comment in symtab.hh
+ 		return nullptr;//Called because of side effect, no return value. Variable definitions end up in the symbol table and disappear from the tree.
+	 }
 	 case Kind::stmts:
 	 case Kind::root:
 	 case Kind::stmt:

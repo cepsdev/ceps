@@ -36,7 +36,7 @@ const char * ceps::ast::ast_node_kind_to_text[] = {	"ROOT","STRUCT","ID","STRING
 													"NODESET","NODESET_PATH_EXPR","TEMPLATE",
 													"TEMPLATE_ID","IF_ELSE","RETURN", "BYTE_ARRAY",
 													"ERROR","UNDEFINED","NONE","MACRO","ALGORITHM",
-													"LABEL"};
+													"LABEL","LET"};
 
 const int ceps::ast::Nodebase::iword_index = std::ios_base::xalloc();
 

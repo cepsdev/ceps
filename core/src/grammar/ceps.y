@@ -72,6 +72,7 @@ Licensed under the Apache License, Version 2.0 (the "License");
 %token TEMPLATE_PARAM
 %token MACRO
 %token LABEL
+%token LET
 
 
 //%token KINDID
@@ -195,8 +196,12 @@ stmt :
  {
   $$ = $1;
  }
+| LET  general_id '=' expr ';'
+ {
+   $$ = new ceps::ast::Let(*$2,$4);//,nullptr,nullptr,nullptr,nullptr);
+ }
 | ';' 
-{
+ {
  	$$ = nullptr;
  }
 ;
