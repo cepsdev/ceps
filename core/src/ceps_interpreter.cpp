@@ -619,6 +619,7 @@ ceps::ast::Nodebase_ptr ceps::interpreter::evaluate(ceps::ast::Nodebase_ptr root
 		} else result = evaluate(*dynamic_cast<ceps::ast::Nonleafbase*>(root_node),sym_table,env,root_node,predecessor);
 		sym_table.pop_scope();
 		if (id == "ignore_value") return nullptr;
+		if (id == "comment_stmt") return nullptr;
 		return result;
 	 }
 	 case Kind::expr:
