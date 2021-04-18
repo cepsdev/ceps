@@ -24,7 +24,8 @@ RemoteSystemsTempFiles/
 *.lastbuildstate
 *.out
 tools/cepsvalidate/cepsvalidate
-
+core/include/include_gen/
+core/src-gen/
 
 
 
