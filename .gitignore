@@ -23,7 +23,7 @@ RemoteSystemsTempFiles/
 *.bin
 *.lastbuildstate
 *.out
-
+tools/cepsvalidate/cepsvalidate
 
 
 
