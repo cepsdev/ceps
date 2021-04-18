@@ -16,7 +16,7 @@ Licensed under the Apache License, Version 2.0 (the "License");
   
 %verbose
 %skeleton "lalr1.cc"
-%require "2.7"
+%require "3.2"
 %defines
 %define parser_class_name "Cepsparser"
 %define namespace ceps
