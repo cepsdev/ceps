@@ -30,6 +30,7 @@ SOFTWARE.
 #include "ceps_interpreter_nodeset.hh"
 #include"pugixml.hpp"
 #include <random>
+#include <unordered_map>;
 
 extern char **environ;
 
@@ -594,14 +595,34 @@ void peel_off_nodesets(ceps::ast::Nodebase_ptr p,std::vector<ceps::ast::Nodebase
 }
 
 
-/// ceps::parser_env::Symbol* sym_ptr;
-//		if ( (sym_ptr = sym_table.lookup(id)) != nullptr && sym_ptr->category ==  ceps::parser_env::Symbol::Category::MACRO){
-
-
 bool is_macro(std::string const & s, ceps::parser_env::Symboltable & sym_table){
 	auto sym  = sym_table.lookup(s);
 	return sym != nullptr && sym->category ==  ceps::parser_env::Symbol::Category::MACRO;
 }
+
+namespace ceps{
+	namespace interpreter{
+		using namespace ceps::ast;
+		Nodebase_ptr as_nodeset(Nodebase_ptr root_node, Symboltable & sym_table, Environment& env, Nodebase_ptr parent_node, Nodebase_ptr predecessor, Call_parameters& params)
+		{
+        	std::vector<ceps::ast::Nodebase_ptr> args;
+            if (params.children().size()) flatten_args(params.children()[0], args);
+			 for(auto e : params.children()){
+				 std::vector<ceps::ast::Nodebase_ptr> args_temp;
+				 flatten_args(e, args_temp);
+				 args.insert(args.end(), args_temp.begin(),args_temp.end());				 
+			 }
+            if(args.size() == 0)
+                 throw semantic_exception{root_node,"as_nodeset(): argument has to be a non empty list of nodes."};
+
+            return ceps::ast::create_ast_nodeset("",args);
+		}
+	}
+}
+
+static std::unordered_map< std::string, ceps::ast::Nodebase_ptr  (*) (ceps::ast::Nodebase_ptr root_node,ceps::parser_env::Symboltable & sym_table,ceps::interpreter::Environment& env,
+		    											ceps::ast::Nodebase_ptr parent_node,ceps::ast::Nodebase_ptr predecessor,ceps::ast::Call_parameters& params) > func_cache;
+
 
 ceps::ast::Nodebase_ptr ceps::interpreter::eval_funccall(ceps::ast::Nodebase_ptr root_node,
 		                                                 ceps::parser_env::Symboltable & sym_table,
@@ -609,22 +630,26 @@ ceps::ast::Nodebase_ptr ceps::interpreter::eval_funccall(ceps::ast::Nodebase_ptr
 		                                                 ceps::ast::Nodebase_ptr parent_node,
 		                                                 ceps::ast::Nodebase_ptr predecessor)
 {
-	 auto func_call = as_func_call_ref(root_node);
-	 auto fcall_target = func_call_target(func_call);
+	auto func_call = as_func_call_ref(root_node);
+	auto fcall_target = func_call_target(func_call);
 
-	 if (is_an_identifier(func_call_target(func_call)))
+	if (is_an_identifier(func_call_target(func_call)))
 	 {
-		 ceps::ast::Identifier& id = as_id_ref(fcall_target);
-         ceps::ast::Nodebase_ptr params_ = nullptr;
+		ceps::ast::Identifier& id = as_id_ref(fcall_target);
+        ceps::ast::Nodebase_ptr params_ = nullptr;
 		 
-		 if (env.is_lazy_func != nullptr && env.is_lazy_func(name(id))) params_ = func_call.children()[1];
-		 else params_ = evaluate(func_call.children()[1],sym_table,env,root_node,predecessor);
-		 ceps::ast::Call_parameters& params = *dynamic_cast<ceps::ast::Call_parameters*>(params_);
+		if (env.is_lazy_func != nullptr && env.is_lazy_func(name(id))) params_ = func_call.children()[1];
+		else params_ = evaluate(func_call.children()[1],sym_table,env,root_node,predecessor);
+		ceps::ast::Call_parameters& params = *dynamic_cast<ceps::ast::Call_parameters*>(params_);
 
-		 auto rr = env.call_func_callback(ceps::ast::name(id),&params,sym_table);
-		 if (rr != nullptr) return rr;
+		auto rr = env.call_func_callback(ceps::ast::name(id),&params,sym_table);
+		if (rr != nullptr) return rr;
+		auto fit = func_cache.find(name(id));
+		if (fit != func_cache.end()){
+		  	return fit->second(root_node,sym_table,env,parent_node,predecessor,params);
+		}
 
-		 if (is_macro(name(id), sym_table)) {
+		if (is_macro(name(id), sym_table)) {
 			 std::vector<ceps::ast::Nodebase_ptr> args;
 			 flatten_args(params.children()[0], args);
 
@@ -639,12 +664,12 @@ ceps::ast::Nodebase_ptr ceps::interpreter::eval_funccall(ceps::ast::Nodebase_ptr
 			 return result;
 		 }
 
-		 if (name(id) == "hd"){
+		if (name(id) == "hd"){
 			if(params.children().size() == 0)
 				throw semantic_exception{root_node,"head(): argument has to be a non empty list of nodes."};
 
 			return params.children()[0];
-         } else if (name(id) == "strip"){
+        } else if (name(id) == "strip"){
              if(params.children().size() != 1)
               throw semantic_exception{root_node,name(id)+": expecting one argument."};
              auto p = params.children()[0];
@@ -654,21 +679,16 @@ ceps::ast::Nodebase_ptr ceps::interpreter::eval_funccall(ceps::ast::Nodebase_ptr
                   throw semantic_exception{root_node,name(id)+": size of nodeset unequal one."};
               return an.children()[0];
              } else return p;
-         } else if (name(id) == "last"){
+        } else if (name(id) == "last"){
 			if(params.children().size() == 0)
 			 throw semantic_exception{root_node,"last(): argument has to be a non empty list of nodes."};
 			std::vector<ceps::ast::Nodebase_ptr> a;
 				a.push_back(params.children()[params.children().size()-1]);
 			return ceps::ast::create_ast_nodeset("",a);
-         } else if (name(id)=="as_nodeset"){
-             std::vector<ceps::ast::Nodebase_ptr> args;
-             if (params.children().size()) flatten_args(params.children()[0], args);
-             if(args.size() == 0)
-                 throw semantic_exception{root_node,"as_nodeset(): argument has to be a non empty list of nodes."};
-
-             return ceps::ast::create_ast_nodeset("",args);
-
-         } else if (name(id) == "tail"){
+        } else if (name(id)=="as_nodeset"){
+			 func_cache[name(id)] = ceps::interpreter::as_nodeset; 
+			 return ceps::interpreter::as_nodeset(root_node,sym_table,env,parent_node,predecessor,params);
+        } else if (name(id) == "tail"){
 			if(params.children().size() == 0)
 				throw semantic_exception{root_node,"tail(): argument has to be a non empty list of nodes."};
 			params.children().erase(params.children().begin());

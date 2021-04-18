@@ -612,6 +612,11 @@ argument_list:
  {
   $$ = $1;
  }
+ |
+ struct_decl
+ {
+   $$ = $1;
+ }
  
  ;
 
