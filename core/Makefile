@@ -19,6 +19,7 @@ all: bin/$(CEPSLIB) tools/cepsvalidate/cepsvalidate
 tests: test/ast_gen_1 test/si_units_1 test/test_1
 
 bin/$(CEPSLIB): $(objfiles)
+	mkdir bin -p
 	rm -f bin/$(CEPSLIB);\
 	$(AR) rcs $(OBJDIR)/$(CEPSLIB) $(objfiles)
 	mkdir -p bin/x86
@@ -65,6 +66,7 @@ $(OBJDIR)/pugixml.o: $(pugixml)/pugixml.cpp $(pugixml)/pugixml.hpp
 	
 
 src-gen/ceps.tab.cpp: src/grammar/ceps.y
+	mkdir $(BISONGENDIR) -p
 	cd $(BISONGENDIR);\
 	bison ../src/grammar/ceps.y;\
 	cd ..;\
