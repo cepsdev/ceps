@@ -1211,6 +1211,21 @@ inline Binary_operator* as_binop_ptr(Nodebase_ptr p)
    return dynamic_cast<Scope*>(p);
  }
 
+inline Kinddef & as_kinddef_ref(Nodebase_ptr p)
+ {
+  	return *static_cast<Kinddef*>(p);
+ }
+
+
+ inline Kinddef * as_kinddef_ptr(Nodebase_ptr p)
+ {
+   return static_cast<Kinddef*>(p);
+ }
+
+
+
+
+
  inline Ast_nodeset_ptr create_ast_nodeset(std::string index_operator_argument,std::vector<Nodebase_ptr> const & children)
  {
 	 Ast_nodeset_ptr t = new ast_node<Ast_node_kind::nodeset,std::string>(index_operator_argument, nullptr, nullptr, nullptr);
@@ -1461,6 +1476,12 @@ inline getNth_type<0,  Let >::type & name(Let& x)
 	return get<0>(x);
 }
 
+// Kinddef
+
+inline getNth_type<0,  Kinddef >::type & kind(Kinddef& x)
+{
+	return get<0>(x);
+}
 
 inline std::pair<bool,int> is_int(Nodebase_ptr p)
  {
