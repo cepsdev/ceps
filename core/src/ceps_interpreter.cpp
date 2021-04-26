@@ -1140,6 +1140,38 @@ ceps::ast::Nodebase_ptr ceps::interpreter::handle_binop(	ceps::ast::Nodebase_ptr
 			}
 			return new Int( value(lhs_ref) + value(rhs_ref), unit(lhs_ref), nullptr, nullptr, nullptr);
 		}
+
+		if (lhs->kind() == Kind::long_literal && rhs->kind() == Kind::long_literal)
+		{
+			auto lhs_ref = *static_cast<Int64*>(lhs);
+			auto rhs_ref = *static_cast<Int64*>(rhs);
+			if ( ceps::ast::unit(lhs_ref) != ceps::ast::unit(rhs_ref) )
+			{
+				throw semantic_exception{&lhs_ref," Failed to apply '+': Incompatible units."};
+			}
+			return mk_int64_node( value(lhs_ref) + value(rhs_ref), unit(lhs_ref));
+		}
+		if (lhs->kind() == Kind::long_literal && rhs->kind() == Kind::int_literal)
+		{
+			auto lhs_ref = *static_cast<Int64*>(lhs);
+			auto rhs_ref = *static_cast<Int*>(rhs);
+			if ( ceps::ast::unit(lhs_ref) != ceps::ast::unit(rhs_ref) )
+			{
+				throw semantic_exception{&lhs_ref," Failed to apply '+': Incompatible units."};
+			}
+			return mk_int64_node( value(lhs_ref) + value(rhs_ref), unit(lhs_ref));
+		}
+		if (lhs->kind() == Kind::int_literal && rhs->kind() == Kind::long_literal)
+		{
+			auto lhs_ref = *static_cast<Int*>(lhs);
+			auto rhs_ref = *static_cast<Int64*>(rhs);
+			if ( ceps::ast::unit(lhs_ref) != ceps::ast::unit(rhs_ref) )
+			{
+				throw semantic_exception{&lhs_ref," Failed to apply '+': Incompatible units."};
+			}
+			return mk_int64_node( value(lhs_ref) + value(rhs_ref), unit(lhs_ref));
+		}
+
 		if (lhs->kind() == Kind::float_literal && rhs->kind() == Kind::float_literal)
 		{
 			Double lhs_ref = *dynamic_cast<Double*>(lhs);
