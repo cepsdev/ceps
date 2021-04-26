@@ -31,6 +31,7 @@ SOFTWARE.
 #include"pugixml.hpp"
 #include <random>
 #include <unordered_map>;
+#include <time.h>
 
 extern char **environ;
 
@@ -603,12 +604,40 @@ bool is_macro(std::string const & s, ceps::parser_env::Symboltable & sym_table){
 namespace ceps{
 	namespace interpreter{
 		using namespace ceps::ast;
-		Nodebase_ptr as_nodeset(Nodebase_ptr root_node, Symboltable & sym_table, Environment& env, Nodebase_ptr parent_node, Nodebase_ptr predecessor, Call_parameters& params)
+		using node_t = Nodebase_ptr;
+        using node_int64_t = Int64*;
+		using node_vec_t = std::vector<node_t>;
+
+		node_int64_t mk_int64_node(std::int64_t value){
+			return new ceps::ast::Int64(value, ceps::ast::all_zero_unit(), nullptr, nullptr, nullptr);
+		}
+
+		node_int64_t mk_int64_node(std::int64_t value, Unit_rep u){
+			return new ceps::ast::Int64(value, u, nullptr, nullptr, nullptr);
+		}
+		int read_int(node_t n){
+			if (n->kind() != ceps::ast::Ast_node_kind::int_literal) return 0;
+			return value(as_int_ref(n));
+		}
+
+
+		node_vec_t get_args(Call_parameters& params){
+        	node_vec_t v;
+            if (params.children().size()) flatten_args(params.children()[0], v);
+			 for(auto e : params.children()){
+				 node_vec_t args_temp;
+				 flatten_args(e, args_temp);
+				 v.insert(v.end(), args_temp.begin(),args_temp.end());				 
+			 }
+			 return v;
+		}
+
+		node_t as_nodeset(node_t root_node, Symboltable & sym_table, Environment& env, node_t parent_node, node_t predecessor, Call_parameters& params)
 		{
-        	std::vector<ceps::ast::Nodebase_ptr> args;
+        	node_vec_t args;
             if (params.children().size()) flatten_args(params.children()[0], args);
 			 for(auto e : params.children()){
-				 std::vector<ceps::ast::Nodebase_ptr> args_temp;
+				 node_vec_t args_temp;
 				 flatten_args(e, args_temp);
 				 args.insert(args.end(), args_temp.begin(),args_temp.end());				 
 			 }
@@ -616,6 +645,22 @@ namespace ceps{
                  throw semantic_exception{root_node,"as_nodeset(): argument has to be a non empty list of nodes."};
 
             return ceps::ast::create_ast_nodeset("",args);
+		}
+
+		node_t mktime(node_t root_node, Symboltable & sym_table, Environment& env,node_t parent_node, node_t predecessor, Call_parameters& params)
+		{
+        	node_vec_t args{get_args(params)};
+            if(args.size() == 0) return mk_int64_node(0);
+			tm timeinfo = {};
+			if (args.size() > 0) timeinfo.tm_year = read_int(args[0]) - 1900;
+			if (args.size() > 1) timeinfo.tm_mon = read_int(args[1]) - 1;
+			if (args.size() > 2) timeinfo.tm_mday = read_int(args[2]);
+			if (args.size() > 3) timeinfo.tm_hour = read_int(args[3]);
+			if (args.size() > 4) timeinfo.tm_min = read_int(args[4]);
+			if (args.size() > 5) timeinfo.tm_sec = read_int(args[5]);
+
+			auto r =::mktime(&timeinfo);
+			return(mk_int64_node(r));
 		}
 	}
 }
@@ -688,6 +733,9 @@ ceps::ast::Nodebase_ptr ceps::interpreter::eval_funccall(ceps::ast::Nodebase_ptr
         } else if (name(id)=="as_nodeset"){
 			 func_cache[name(id)] = ceps::interpreter::as_nodeset; 
 			 return ceps::interpreter::as_nodeset(root_node,sym_table,env,parent_node,predecessor,params);
+        } else if (name(id)=="mktime"){
+			 func_cache[name(id)] = ceps::interpreter::mktime; 
+			 return ceps::interpreter::mktime(root_node,sym_table,env,parent_node,predecessor,params);
         } else if (name(id) == "tail"){
 			if(params.children().size() == 0)
 				throw semantic_exception{root_node,"tail(): argument has to be a non empty list of nodes."};

@@ -236,14 +236,14 @@ ceps::ast::Nodebase_ptr ceps::interpreter::eval_kinddef(ceps::ast::Nodebase_ptr 
 
  ceps::parser_env::Symbol* sym_kind_ptr =
 	sym_table.lookup(ceps::ast::get<0>(kind_def_node),true);
- sym_kind_ptr->category = Symbol::KIND;
+ sym_kind_ptr->category = ceps::parser_env::Symbol::KIND;
  for (ceps::ast::Nodebase* pnbs : kind_def_node.children())
  {
 	 ceps::ast::Identifier & v = ceps::ast::as_id_ref(pnbs);
 	 ceps::parser_env::Symbol* sym_ptr =
 			 				sym_table.lookup(ceps::ast::name(v),true);
-	 sym_ptr->category = Symbol::SYMBOL;
-	 ceps::parser_env::Symbol* copy_of_sym_kind_ptr = new ceps::parser_env::Symbol(Symbol::KIND);
+	 sym_ptr->category = ceps::parser_env::Symbol::SYMBOL;
+	 ceps::parser_env::Symbol* copy_of_sym_kind_ptr = new ceps::parser_env::Symbol(ceps::parser_env::Symbol::KIND);
 	 copy_of_sym_kind_ptr->name = sym_kind_ptr->name;
 	 copy_of_sym_kind_ptr->payload = nullptr;
 	 sym_ptr->payload = copy_of_sym_kind_ptr;
@@ -270,7 +270,7 @@ ceps::ast::Nodebase_ptr ceps::interpreter::eval_valdef(ceps::ast::Nodebase_ptr r
 
 
  ceps::parser_env::Symbol& sym = *sym_ptr;
- sym.category = Symbol::Category::VAR;
+ sym.category = ceps::parser_env::Symbol::Category::VAR;
  sym.payload = rhs;//TODO: See comment in symtab.hh
 
  return nullptr;//Called because of side effect, no return value. Variable definitions end up in the symbol table and disappear from the tree.
@@ -472,7 +472,7 @@ ceps::ast::Nodebase_ptr ceps::interpreter::eval_id(ceps::ast::Nodebase_ptr root_
 		ceps::parser_env::Symbol* sym_ptr;
 		if ( (sym_ptr = sym_table.lookup(name(id))) == nullptr)
 			throw semantic_exception{root_node,"arglist undefined (not inside macro body)."};
-		if (sym_ptr->category != Symbol::Category::NODESET)
+		if (sym_ptr->category != ceps::parser_env::Symbol::Category::NODESET)
 			throw semantic_exception{root_node,"arglist was redefined with wrong type (should be nodeset)."};
 		if(nullptr == sym_ptr->payload)
 		     throw semantic_exception{root_node,"arglist undefined."};
@@ -491,17 +491,17 @@ ceps::ast::Nodebase_ptr ceps::interpreter::eval_id(ceps::ast::Nodebase_ptr root_
 	 }
 
 	 ceps::parser_env::Symbol& sym = *sym_ptr;
-	 if (sym_ptr->category == Symbol::Category::SYMBOL )
+	 if (sym_ptr->category == ceps::parser_env::Symbol::Category::SYMBOL )
 	 {
 		 return new ceps::ast::Symbol(name(id), ((ceps::parser_env::Symbol*)sym_ptr->payload)->name, nullptr, nullptr, nullptr);
 	 }
 
 
-	 if (sym_ptr->category == Symbol::Category::MACRO)
+	 if (sym_ptr->category == ceps::parser_env::Symbol::Category::MACRO)
 	 {
 		 return new ceps::ast::Identifier(name(id),nullptr,nullptr,nullptr);
 	 }
-	 else if (sym.category != Symbol::Category::VAR)
+	 else if (sym.category != ceps::parser_env::Symbol::Category::VAR)
 		 throw semantic_exception{root_node,"Variable '" +name(id)+"' is not defined."};
 
 	 ceps::ast::Nodebase_ptr node_ptr = reinterpret_cast<ceps::ast::Nodebase_ptr>(sym.payload);
@@ -1318,6 +1318,33 @@ ceps::ast::Nodebase_ptr ceps::interpreter::handle_binop(	ceps::ast::Nodebase_ptr
 								value(lhs_ref)*value(rhs_ref), //multiply values
 								unit(lhs_ref)+unit(rhs_ref) // add units
 								, nullptr, nullptr, nullptr
+			);
+		}
+		if (lhs->kind() == Kind::long_literal && rhs->kind() == Kind::long_literal)
+		{
+			auto lhs_ref = *static_cast<Int64*>(lhs);
+			auto rhs_ref = *static_cast<Int64*>(rhs);
+			return mk_int64_node(
+								value(lhs_ref)*value(rhs_ref), //multiply values
+								unit(lhs_ref)+unit(rhs_ref) // add units								
+			);
+		}
+		if (lhs->kind() == Kind::long_literal && rhs->kind() == Kind::int_literal)
+		{
+			auto lhs_ref = *static_cast<Int64*>(lhs);
+			auto rhs_ref = *static_cast<Int*>(rhs);
+			return mk_int64_node(
+								value(lhs_ref)*value(rhs_ref), //multiply values
+								unit(lhs_ref)+unit(rhs_ref) // add units								
+			);
+		}
+		if (lhs->kind() == Kind::int_literal && rhs->kind() == Kind::long_literal)
+		{
+			auto lhs_ref = *static_cast<Int*>(lhs);
+			auto rhs_ref = *static_cast<Int64*>(rhs);
+			return mk_int64_node(
+								value(lhs_ref)*value(rhs_ref), //multiply values
+								unit(lhs_ref)+unit(rhs_ref) // add units								
 			);
 		}
 		if (lhs->kind() == Kind::float_literal && rhs->kind() == Kind::float_literal)

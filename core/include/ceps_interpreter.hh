@@ -283,5 +283,20 @@ namespace ceps{
 }
 
 
+namespace ceps{
+	namespace interpreter{
+		using namespace ceps::ast;
+		using node_t = Nodebase_ptr;
+        using node_int64_t = Int64*;
+		using node_vec_t = std::vector<node_t>;
+		node_int64_t mk_int64_node(std::int64_t value);
+		node_int64_t mk_int64_node(std::int64_t value, Unit_rep u);
+		int read_int(node_t n);
+		node_vec_t get_args(Call_parameters& params);
+		node_t as_nodeset(node_t root_node, Symboltable & sym_table, Environment& env, node_t parent_node, node_t predecessor, Call_parameters& params);
+		node_t mktime(node_t root_node, Symboltable & sym_table, Environment& env,node_t parent_node, node_t predecessor, Call_parameters& params);
+	}
+}
+
 
 #endif

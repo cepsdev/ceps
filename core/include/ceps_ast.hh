@@ -163,9 +163,11 @@ template<Ast_node_kind what>
 AST_NODE_IS_LEAF(string_literal)
 AST_NODE_IS_LEAF(int_literal)
 AST_NODE_IS_LEAF(float_literal)
+AST_NODE_IS_LEAF(long_literal)
+AST_NODE_IS_LEAF(unsigned_long_literal)
 
 /**
- * All AST nodesn are derived from Nodebase
+ * All AST nodes are derived from Nodebase
  */
 class Nodebase
 {
@@ -1400,6 +1402,23 @@ inline getNth_type<1, Int>::type &  unit(Int& x)
 	return get<1>(x);
 }
 
+
+// Int64
+
+inline getNth_type<0, Int64>::type & value(Int64& x)
+{
+	return get<0>(x);
+}
+
+inline getNth_type<0, Int64>::type & neg(Int64& x)
+{
+	return get<0>(x) =  - get<0>(x);
+}
+
+inline getNth_type<1, Int64>::type &  unit(Int64& x)
+{
+	return get<1>(x);
+}
 
 // Valdef
 
