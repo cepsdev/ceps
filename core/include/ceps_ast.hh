@@ -1073,6 +1073,16 @@ inline Ifelse* as_ifelse_ptr(Nodebase_ptr p)
  {
 	return *as_int_ptr(p);
  }
+ 
+ inline Int64* as_int64_ptr(Nodebase_ptr p)
+ {
+	return static_cast<Int64*>(p);
+ }
+ inline Int64 & as_int64_ref(Nodebase_ptr p)
+ {
+	return *as_int64_ptr(p);
+ }
+
  inline Identifier & as_id_ref(Nodebase_ptr p)
   {
  	return *static_cast<Identifier_ptr>(p);

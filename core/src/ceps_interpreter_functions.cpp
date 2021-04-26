@@ -134,7 +134,9 @@ static void default_text_representation_impl(std::stringstream& ss,ceps::ast::No
             if (p && p->kind() !=  ceps::ast::Ast_node_kind::structdef) ss << ";";
         }
         ss << "};";
-    } else ss << *root_node;
+    } else if (root_node->kind() == ceps::ast::Ast_node_kind::long_literal) {
+		ss << value(as_int64_ref(root_node));
+	} else ss << *root_node;
 
 }
 
