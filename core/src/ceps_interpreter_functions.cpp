@@ -617,6 +617,7 @@ namespace ceps{
 		node_int64_t mk_int64_node(std::int64_t value, Unit_rep u){
 			return new ceps::ast::Int64(value, u, nullptr, nullptr, nullptr);
 		}
+
 		int read_int(node_t n){
 			if (n->kind() != ceps::ast::Ast_node_kind::int_literal) return 0;
 			return value(as_int_ref(n));

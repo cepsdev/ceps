@@ -144,3 +144,7 @@ void ceps::ast::flatten_func_args(ceps::ast::Nodebase_ptr r, std::vector<ceps::a
 	}
 	v.push_back(r);
 }
+
+ceps::ast::node_symbol_t ceps::ast::mk_symbol(std::string name, std::string kind){
+	return new ceps::ast::Symbol(name,kind,nullptr, nullptr, nullptr);
+}

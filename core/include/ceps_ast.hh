@@ -1439,12 +1439,12 @@ inline getNth_type<0,  Valdef>::type & name(Valdef& x)
 
 // Symbol
 
-inline getNth_type<0,  Symbol >::type & name(Symbol& x)
+inline getNth_type<0,  Symbol >::type & name(Symbol & x)
 {
 	return get<0>(x);
 }
 
-inline getNth_type<1,  Symbol >::type & kind(Symbol& x)
+inline getNth_type<1,  Symbol >::type & kind(Symbol & x)
 {
 	return get<1>(x);
 }
@@ -1548,6 +1548,15 @@ const std::valarray<int> CANDELA = {0,0,0,0,0,0,1};
 
 
 
+
+
+using node_t = Nodebase_ptr;
+using node_symbol_t = ceps::ast::Symbol*;
+using node_vec_t = std::vector<node_t>;
+node_symbol_t mk_symbol(std::string name, std::string kind);
+
+
+
 /***************************** Parsetree ***********************************/
 class Parsetree
 {
@@ -1616,6 +1625,17 @@ Nodebase_ptr box(ident const & s);
 
 
 Struct_ptr make_struct(std::string const & name);
+
+template<typename... Ts>
+	Struct_ptr make_struct(std::string const & name, Symbol& sym,Ts const &... args)
+	{
+
+		Struct_ptr p =  make_struct(name,args...);
+		p->children().insert(
+				p->children().begin(),
+				mk_symbol(ceps::ast::name(sym),kind(sym)));
+		return p;
+}
 
 template<typename... Ts>
 	Struct_ptr make_struct(std::string const & name, ident i,Ts const &... args)
