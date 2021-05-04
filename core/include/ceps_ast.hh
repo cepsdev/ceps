@@ -1546,14 +1546,31 @@ const std::valarray<int> CANDELA = {0,0,0,0,0,0,1};
 */
 
 
-
-
-
-
 using node_t = Nodebase_ptr;
 using node_symbol_t = ceps::ast::Symbol*;
 using node_vec_t = std::vector<node_t>;
 node_symbol_t mk_symbol(std::string name, std::string kind);
+node_t get_node_by_path(std::vector<std::string> v, std::vector<node_t> const & ns);
+
+template <typename T, typename U> 
+bool shallow_traverse(T const & ns, U f){
+	for(auto n : ns){
+		if(is<Ast_node_kind::stmts>(n) || is<Ast_node_kind::stmt>(n)) {
+            if(!shallow_traverse(nlf_ptr(n)->children(),f)) return false;
+        } else if (!f(n)) return false;
+	}//for
+    return true;
+}
+
+template <typename T1, typename T2, typename T3> 
+bool shallow_traverse_ex(T1 const & ns, T2 f, T3 p){
+	for(auto n : ns){
+		if(p(n)) {
+            if(!shallow_traverse_ex(nlf_ptr(n)->children(),f,p)) return false;
+        } else if (!f(n)) return false;
+	}
+    return true;
+}
 
 
 

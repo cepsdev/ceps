@@ -148,3 +148,23 @@ void ceps::ast::flatten_func_args(ceps::ast::Nodebase_ptr r, std::vector<ceps::a
 ceps::ast::node_symbol_t ceps::ast::mk_symbol(std::string name, std::string kind){
 	return new ceps::ast::Symbol(name,kind,nullptr, nullptr, nullptr);
 }
+
+ceps::ast::node_t ceps::ast::get_node_by_path(std::vector<std::string> v, std::vector<ceps::ast::node_t> const & ns){
+	if (v.size() == 0) return nullptr;
+	std::vector<node_t> const * nsp = &ns;
+	Struct* r = nullptr;
+	for(size_t i = 0; i < v.size(); ++i){
+		r = nullptr;
+		shallow_traverse(*nsp, [&](node_t n)->bool{
+			if (is<Ast_node_kind::structdef>(n)){
+			 auto&  strct{as_struct_ref(n)};
+			 if (name(strct) != v[i]) return true;
+			 r = as_struct_ptr(n);return false;
+			}	
+			return true;		
+		});
+		if (r == nullptr) return nullptr;
+		nsp = &r->children();
+	}
+	return r;
+} 
