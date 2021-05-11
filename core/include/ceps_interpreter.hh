@@ -288,11 +288,12 @@ namespace ceps{
 		using namespace ceps::ast;
 		using node_t = Nodebase_ptr;
         using node_int64_t = Int64*;
+		using node_double_t = Double*;
 		using node_symbol_t = ceps::ast::Symbol*;
 		using node_vec_t = std::vector<node_t>;
 		node_int64_t mk_int64_node(std::int64_t value);
 		node_int64_t mk_int64_node(std::int64_t value, Unit_rep u);
-		node_int64_t mk_int64_node(std::int64_t value, Unit_rep u);
+		node_double_t mk_double_node(double value, Unit_rep u);
 		node_symbol_t mk_symbol(std::string name, std::string kind);
 
 		int read_int(node_t n);

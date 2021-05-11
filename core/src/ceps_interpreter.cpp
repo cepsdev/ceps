@@ -366,16 +366,27 @@ ceps::ast::Nodebase_ptr ceps::interpreter::eval_binaryop(ceps::ast::Nodebase_ptr
 	 ceps::ast::Nodebase_ptr lhs = evaluate(binop.children()[0],sym_table,env,root_node,predecessor);
 	 ceps::ast::Nodebase_ptr rhs = evaluate(binop.children()[1],sym_table,env,root_node,predecessor);
 
-    // std::cout << "\n//------\n";
-    // std::cout << *lhs << std::endl;
-    // std::cout << *rhs << std::endl;
-    // std::cout << "------//"<<std::endl;
+	 //A single element nodeset, with no idx operand set, evaluates to its only element (execption: operator is '.')
+	 if(op(binop) != '.'){
+		if (is<Ast_node_kind::nodeset>(lhs)){
+			auto& ns = as_ast_nodeset_ref(lhs);
+			if (apply_idx_op_operand(ns) == "" && ns.children().size() == 1){				
+				lhs = ns.children()[0];
+			} 
+		}
+		if (is<Ast_node_kind::nodeset>(rhs)){
+			auto& ns = as_ast_nodeset_ref(rhs);
+			if (apply_idx_op_operand(ns) == "" && ns.children().size() == 1){				
+					rhs = ns.children()[0];
+			} 
+		}
+	 }
 
 	 if (lhs->kind() == ceps::ast::Ast_node_kind::nodeset && rhs->kind() == ceps::ast::Ast_node_kind::func_call) {
 		 //Case Nodeset.func
 		 result = handle_binop(root_node,ceps::ast::op(binop),lhs,rhs,sym_table,env,root_node);
 	 }
-	 else if ( /*lhs->kind() != ceps::ast::Ast_node_kind::nodeset && */(lhs->kind() == ceps::ast::Ast_node_kind::symbol
+	 else if ( (lhs->kind() == ceps::ast::Ast_node_kind::symbol
 		 || rhs->kind() == ceps::ast::Ast_node_kind::symbol
 		 || lhs->kind() == ceps::ast::Ast_node_kind::binary_operator
 		 || rhs->kind() == ceps::ast::Ast_node_kind::binary_operator
@@ -806,33 +817,15 @@ ceps::ast::Nodebase_ptr ceps::interpreter::handle_binop(	ceps::ast::Nodebase_ptr
 		return rhs;
 	}
 
-	//A single element nodeset, with no idx operand set, evaluates to its only element (execption: operator is '.')
-	if(op != '.'){
-		if (is<Ast_node_kind::nodeset>(lhs)){
-			auto& ns = as_ast_nodeset_ref(lhs);
-			if (apply_idx_op_operand(ns) == "" && ns.children().size() == 1){				
-				lhs = ns.children()[0];
-			} 
-		}
-		if (is<Ast_node_kind::nodeset>(rhs)){
-			auto& ns = as_ast_nodeset_ref(rhs);
-			if (apply_idx_op_operand(ns) == "" && ns.children().size() == 1){				
-					rhs = ns.children()[0];
-			} 
-		}
-	}
-
-
+	
 	//Promotions / Coercions
 	if (lhs->kind() == Kind::float_literal && rhs->kind() == Kind::int_literal && op != '^')
 	{
-		Double_ptr temp = new Double(static_cast<double>(value(as_int_ref(rhs))), unit(as_int_ref(rhs)), nullptr, nullptr, nullptr);
-		rhs = temp;
+		rhs = mk_double_node(value(as_int_ref(rhs)), unit(as_int_ref(rhs)));
 	}
 	else if (lhs->kind() == Kind::int_literal && rhs->kind() == Kind::float_literal)
 	{
-		Double_ptr temp = new Double( static_cast<double>(value(as_int_ref(lhs))), unit(as_int_ref(lhs)), nullptr, nullptr, nullptr);
-		lhs = temp;
+		lhs = mk_double_node(value(as_int_ref(lhs)), unit(as_int_ref(lhs)));
 	}
 
 	if (op == ceps::Cepsparser::token::REL_OP_EQ)
@@ -1512,7 +1505,6 @@ ceps::ast::Nodebase_ptr ceps::interpreter::handle_binop(	ceps::ast::Nodebase_ptr
 	}// Power
 	if(op == '.')
 	{
-		//std::cout << "////////////////////////" << *binop_node << std::endl;
 		if(lhs->kind() == Kind::nodeset)
 			return evaluate_nodeset_expr_dot(	lhs,
 												rhs ,
@@ -1522,9 +1514,6 @@ ceps::ast::Nodebase_ptr ceps::interpreter::handle_binop(	ceps::ast::Nodebase_ptr
 	}
 
 	return new Binary_operator{op,lhs,rhs};
-
-
-	return nullptr;
 }
 
 ceps::ast::Nodebase_ptr ceps::interpreter::evaluate(ceps::ast::Nonleafbase& root,
@@ -1535,21 +1524,15 @@ ceps::ast::Nodebase_ptr ceps::interpreter::evaluate(ceps::ast::Nonleafbase& root
 {
 	using namespace ceps::ast;
 	Nonleafbase::Container_t v;
-	//if (((ceps::ast::Nodebase_ptr)&root)->kind() != Ast_node_kind::call_parameters) predecessor = nullptr;
-
 
     auto old_scope = env.scope;
     env.scope = &v;
 	Nodebase* root_ptr = dynamic_cast<Nodebase*>(&root);
 	for(Nodebase_ptr p : root.children())
 	{
-
-
 		Nodebase_ptr r = evaluate(p,sym_table,env,(Nodebase_ptr)&root,predecessor);predecessor=r;
 		if(r == nullptr)
-		{
 			continue;
-		}
 		if (r->kind() == Ast_node_kind::stmts || r->kind() == Ast_node_kind::nodeset)
 		{
 			for(Nodebase_ptr elem : nlf_ptr(r)->children())
