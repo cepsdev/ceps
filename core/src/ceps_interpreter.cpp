@@ -806,19 +806,20 @@ ceps::ast::Nodebase_ptr ceps::interpreter::handle_binop(	ceps::ast::Nodebase_ptr
 		return rhs;
 	}
 
-	//A single element nodeset, with no idx operand set, evaluates to its only element. 
-
-	if (is<Ast_node_kind::nodeset>(lhs)){
-		auto& ns = as_ast_nodeset_ref(lhs);
-		if (apply_idx_op_operand(ns) == "" && ns.children().size() == 1){				
-			lhs = ns.children()[0];
-		} 
-	}
-	if (is<Ast_node_kind::nodeset>(rhs)){
-		auto& ns = as_ast_nodeset_ref(rhs);
-		if (apply_idx_op_operand(ns) == "" && ns.children().size() == 1){				
-				rhs = ns.children()[0];
-		} 
+	//A single element nodeset, with no idx operand set, evaluates to its only element (execption: operator is '.')
+	if(op != '.'){
+		if (is<Ast_node_kind::nodeset>(lhs)){
+			auto& ns = as_ast_nodeset_ref(lhs);
+			if (apply_idx_op_operand(ns) == "" && ns.children().size() == 1){				
+				lhs = ns.children()[0];
+			} 
+		}
+		if (is<Ast_node_kind::nodeset>(rhs)){
+			auto& ns = as_ast_nodeset_ref(rhs);
+			if (apply_idx_op_operand(ns) == "" && ns.children().size() == 1){				
+					rhs = ns.children()[0];
+			} 
+		}
 	}
 
 
