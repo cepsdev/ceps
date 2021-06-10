@@ -222,10 +222,42 @@ ceps::Cepsparser::token_type yylex(
 			in.putback(ch);
 
 		if(yylval != NULL)
+		{
+			yylval->sval = new std::string;//FIXME
+			*yylval->sval = s;
+		}
+
+		if (ch == '(' && (s == "op" || s == "opr" || s == "opl")){
+			in.get(ch); // get rid of '('
+			std::ostringstream in_str;
+			for(;in.get(ch) && ch != ')';)
+			{
+				if(yylloc) yylloc->end.column+=1;
+				if (ch == '\\')
 				{
-					yylval->sval = new std::string;//FIXME
-					*yylval->sval = s;
+					in.get(ch);
+					switch (ch)
+					{
+					case 'n' :
+						in_str << '\n';
+						break;
+					case 'r':
+						in_str << '\r';
+						break;
+					case 't':
+						in_str << '\t';
+						break;
+					default:
+						in_str << ch;
+					}
 				}
+				else in_str << ch;
+			}
+			delete yylval->sval;
+			yylval->sval = new std::string{in_str.str()};
+			if (s=="opr") return ceps::Cepsparser::token::OP_OPR;
+			return ceps::Cepsparser::token::OP_OP;
+		}
 
 		if (s == "struct")
 			return ceps::Cepsparser::token::STRUCT;

@@ -290,11 +290,16 @@ namespace ceps{
         using node_int64_t = Int64*;
 		using node_double_t = Double*;
 		using node_symbol_t = ceps::ast::Symbol*;
+		using node_binary_operator_t = ceps::ast::Binary_operator*;
+		using node_unary_operator_t = ceps::ast::Unary_operator*;
 		using node_vec_t = std::vector<node_t>;
+
 		node_int64_t mk_int64_node(std::int64_t value);
 		node_int64_t mk_int64_node(std::int64_t value, Unit_rep u);
 		node_double_t mk_double_node(double value, Unit_rep u);
 		node_symbol_t mk_symbol(std::string name, std::string kind);
+		node_binary_operator_t mk_bin_op(int op,node_t lhs = nullptr, node_t rhs = nullptr, std::string full_name = "");
+		node_unary_operator_t mk_unary_op(int op,node_t arg, std::string full_name = "");
 
 		int read_int(node_t n);
 		node_vec_t get_args(Call_parameters& params);

@@ -1,0 +1,11 @@
+kind Atom;
+
+Atom A,B,C,D,E,F;
+
+A+B+C;
+
+A+B+C op(plus) D;
+
+Atom Choose, Element, set;
+
+Choose op(an) Element op(in the set) A;

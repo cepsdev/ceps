@@ -20,7 +20,7 @@ Licensed under the Apache License, Version 2.0 (the "License");
 #include <cmath>
 #include "ceps_interpreter_loop.hh"
 #include "ceps_interpreter_nodeset.hh"
-#include"pugixml.hpp"
+#include "pugixml.hpp"
 
 
 int ceps::interpreter::Environment::lookup_kind(std::string const& k)
@@ -395,9 +395,7 @@ ceps::ast::Nodebase_ptr ceps::interpreter::eval_binaryop(ceps::ast::Nodebase_ptr
 	 {
 		 auto override_value = env.call_binop_resolver(&binop,lhs,rhs,parent_node);
 		 if (override_value) return override_value;
-		 ceps::ast::Binary_operator* t = new ceps::ast::Binary_operator( ceps::ast::op(binop) , nullptr,nullptr,nullptr );
-		 t->children().push_back(lhs);
-		 t->children().push_back(rhs);
+		 auto t = mk_bin_op(ceps::ast::op(binop),lhs,rhs,ceps::ast::op_str(binop));
 		 return t;
 	 }
 	 result = handle_binop(root_node,ceps::ast::op(binop),lhs,rhs,sym_table,env,root_node);
@@ -424,9 +422,7 @@ ceps::ast::Nodebase_ptr ceps::interpreter::eval_binaryop(ceps::ast::Nodebase_ptr
 		     lhs->kind() == ceps::ast::Ast_node_kind::unary_operator ||
 		     lhs->kind() == ceps::ast::Ast_node_kind::func_call )
 		 {
-			 ceps::ast::Binary_operator* t = new ceps::ast::Binary_operator( ceps::ast::op(binop) , nullptr,nullptr,nullptr );
-			 t->children().push_back(lhs);
-			 t->children().push_back(rhs);
+			 auto t = mk_bin_op(ceps::ast::op(binop),lhs,rhs,ceps::ast::op_str(binop));
 			 return t;
 		 }
 		 else result  = handle_binop(root_node,ceps::ast::op(binop),lhs,rhs,sym_table,env,root_node);
@@ -1512,8 +1508,7 @@ ceps::ast::Nodebase_ptr ceps::interpreter::handle_binop(	ceps::ast::Nodebase_ptr
 												env,binop_node
 											);
 	}
-
-	return new Binary_operator{op,lhs,rhs};
+	return mk_bin_op(op,lhs,rhs,ceps::ast::op_str(ceps::ast::as_binop_ref(binop_node)));
 }
 
 ceps::ast::Nodebase_ptr ceps::interpreter::evaluate(ceps::ast::Nonleafbase& root,

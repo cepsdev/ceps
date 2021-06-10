@@ -622,6 +622,18 @@ namespace ceps{
 			return new ceps::ast::Double(value, u, nullptr, nullptr, nullptr);
 		}
 
+		node_binary_operator_t mk_bin_op(int op,node_t lhs, node_t rhs, std::string full_name){
+			return new ceps::ast::Binary_operator(op, full_name, lhs, rhs, nullptr);
+		}
+
+		node_unary_operator_t mk_unary_op(int op,node_t arg, std::string full_name){
+			return new ceps::ast::Unary_operator(op, arg,nullptr, nullptr);
+		}
+
+		node_symbol_t mk_symbol(std::string name, std::string kind){
+			return new ceps::ast::Symbol(name,kind,nullptr,nullptr,nullptr);
+		}
+
 		int read_int(node_t n){
 			if (n->kind() != ceps::ast::Ast_node_kind::int_literal) return 0;
 			return value(as_int_ref(n));

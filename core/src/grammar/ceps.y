@@ -38,6 +38,7 @@ Licensed under the Apache License, Version 2.0 (the "License");
 #include "cepsparserdriver.hh"
 #include "cepslexer.hh"
 #include "ceps_ast.hh"
+#include "ceps_interpreter.hh"
 #include <valarray>
 }
 
@@ -79,6 +80,8 @@ Licensed under the Apache License, Version 2.0 (the "License");
 
 
 %left '#'
+%left <sval> OP_OP
+%right <sval> OP_OPR
 %left ','
 %left DOTDOT
 %left LEFTARROW
@@ -131,7 +134,7 @@ Licensed under the Apache License, Version 2.0 (the "License");
 %type <ast_node> macro_definition;
 %type <ast_list> attribute_list;
 
-%expect 43
+%expect 47
 
 %%
  
@@ -381,86 +384,98 @@ expr:
 
 |expr '#' expr
 {
- $$ = new ceps::ast::Binary_operator('#',$1,$3,nullptr); 
+ $$ = ceps::interpreter::mk_bin_op('#',$1,$3); 
+}
+
+|expr OP_OP expr
+{
+ $$ = ceps::interpreter::mk_bin_op(ceps::Cepsparser::token::OP_OP,$1,$3,*$2);
+ delete $2; 
+}
+
+|expr OP_OPR expr
+{
+ $$ = ceps::interpreter::mk_bin_op(ceps::Cepsparser::token::OP_OPR,$1,$3,*$2);
+ delete $2; 
 }
 
 |expr DOTDOT expr
 {
- $$ = new ceps::ast::Binary_operator(ceps::Cepsparser::token::DOTDOT,$1,$3,nullptr); 
+ $$ = ceps::interpreter::mk_bin_op(ceps::Cepsparser::token::DOTDOT,$1,$3); 
 }
 
 |expr ',' expr
 {
-	$$ = new ceps::ast::Binary_operator(',',$1,$3,nullptr); 
+	$$ = ceps::interpreter::mk_bin_op(',',$1,$3); 
 }
 
 |expr '|' expr
 {
-	$$ = new ceps::ast::Binary_operator('|',$1,$3,nullptr); 
+	$$ = ceps::interpreter::mk_bin_op('|',$1,$3); 
 }
 |expr '&' expr
 {
-	$$ = new ceps::ast::Binary_operator('&',$1,$3,nullptr); 
+	$$ = ceps::interpreter::mk_bin_op('&',$1,$3); 
 }
 
 |expr '+' expr 
 
 {
-	$$ = new ceps::ast::Binary_operator('+',$1,$3,nullptr); 
+	$$ = ceps::interpreter::mk_bin_op('+',$1,$3); 
 }
 |expr '-' expr
 
 {
-	$$ = new ceps::ast::Binary_operator('-',$1,$3,nullptr);
+	$$ = ceps::interpreter::mk_bin_op('-',$1,$3);
 }
 
 |expr '*' expr
 
 {
-	$$ = new ceps::ast::Binary_operator('*',$1,$3,nullptr);			
+	$$ = ceps::interpreter::mk_bin_op('*',$1,$3);			
 }
 |expr '/' expr
 
 {
-	$$ = new ceps::ast::Binary_operator('/',$1,$3,nullptr); 
+	$$ = ceps::interpreter::mk_bin_op('/',$1,$3); 
 }
 |expr '^' expr
 
 {
-	$$ = new ceps::ast::Binary_operator('^',$1,$3,nullptr); 
+	$$ = ceps::interpreter::mk_bin_op('^',$1,$3); 
 }
 |expr '.' expr
 {
-	$$ = new ceps::ast::Binary_operator('.',$1,$3,nullptr); 
+	$$ = ceps::interpreter::mk_bin_op('.',$1,$3); 
 }
 
 | expr '=' expr 
 {
-	$$ = new ceps::ast::Binary_operator('=',$1,$3,nullptr);
+	$$ = ceps::interpreter::mk_bin_op('=',$1,$3);
 } 
 | expr REL_OP_EQ expr 
 {
-	$$ = new ceps::ast::Binary_operator(ceps::Cepsparser::token::REL_OP_EQ,$1,$3,nullptr);
+	$$ = ceps::interpreter::mk_bin_op(ceps::Cepsparser::token::REL_OP_EQ,$1,$3);
 }
 | expr REL_OP_LT expr 
 {
-	$$ = new ceps::ast::Binary_operator(ceps::Cepsparser::token::REL_OP_LT,$1,$3,nullptr);
+	$$ = ceps::interpreter::mk_bin_op(ceps::Cepsparser::token::REL_OP_LT,$1,$3);
 }
 | expr REL_OP_GT expr 
 {
-	$$ = new ceps::ast::Binary_operator(ceps::Cepsparser::token::REL_OP_GT,$1,$3,nullptr);
+	$$ = ceps::interpreter::mk_bin_op(ceps::Cepsparser::token::REL_OP_GT,$1,$3);
 } 
 | expr REL_OP_LT_EQ expr 
 {
-	$$ = new ceps::ast::Binary_operator(ceps::Cepsparser::token::REL_OP_LT_EQ,$1,$3,nullptr);
+	$$ = ceps::interpreter::mk_bin_op(ceps::Cepsparser::token::REL_OP_LT_EQ,$1,$3);
 }
 | expr REL_OP_GT_EQ expr 
 {
-	$$ = new ceps::ast::Binary_operator(ceps::Cepsparser::token::REL_OP_GT_EQ,$1,$3,nullptr);
+	$$ = ceps::interpreter::mk_bin_op(ceps::Cepsparser::token::REL_OP_GT_EQ,$1,$3);
 }
 | expr REL_OP_NEQ expr 
 {
-	$$ = new ceps::ast::Binary_operator(ceps::Cepsparser::token::REL_OP_NEQ,$1,$3,nullptr);
+	$$ = ceps::interpreter::mk_bin_op(ceps::Cepsparser::token::REL_OP_NEQ,$1,$3);
 }
 |'('expr')' 
 {

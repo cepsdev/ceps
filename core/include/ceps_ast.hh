@@ -1,5 +1,5 @@
 /*
-Copyright 2014,2015,2016,2017,2018,2019,2020,2021 Tomas Prerovsky (cepsdev@hotmail.com).
+Copyright 2021 Tomas Prerovsky (cepsdev@hotmail.com).
 
 Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -773,7 +773,7 @@ inline Unit_rep candela_unit()
 
 typedef ast_node<Ast_node_kind::root> Root;
 typedef ast_node<Ast_node_kind::expr> Expression;
-typedef ast_node<Ast_node_kind::binary_operator,int> Binary_operator;
+typedef ast_node<Ast_node_kind::binary_operator,int,std::string> Binary_operator;
 typedef ast_node<Ast_node_kind::unary_operator,char> Unary_operator;
 typedef ast_node<Ast_node_kind::structdef,std::string>  Struct;
 typedef ast_node<Ast_node_kind::identifier,std::string> Identifier;
@@ -1294,7 +1294,15 @@ inline getNth_type<0,  Binary_operator >::type & op(Binary_operator& x)
 	return get<0>(x);
 }
 
+inline getNth_type<1,  Binary_operator >::type & op_str(Binary_operator& x)
+{
+	return get<1>(x);
+}
+
 inline std::string op_val(Binary_operator& x){
+
+	if (op_str(x).size()) return op_str(x);
+	
 	if(op(x) == '.') return ".";
 	if(op(x) == '+') return "+";
 	if(op(x) == '-') return "-";
