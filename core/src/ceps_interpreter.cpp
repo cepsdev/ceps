@@ -1507,6 +1507,12 @@ ceps::ast::Nodebase_ptr ceps::interpreter::handle_binop(	ceps::ast::Nodebase_ptr
 												sym_table,
 												env,binop_node
 											);
+		else if (lhs->kind() == Kind::structdef)
+			return evaluate_nodeset_expr_dot(	create_ast_nodeset("",as_struct_ref(lhs).children()),
+												rhs ,
+												sym_table,
+												env,binop_node
+											);		
 	}
 	return mk_bin_op(op,lhs,rhs,ceps::ast::op_str(ceps::ast::as_binop_ref(binop_node)));
 }
