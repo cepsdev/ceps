@@ -38,7 +38,7 @@ SOFTWARE.
 		#define TYPE_ALIAS(Type_A,Type_B) typedef Type_B Type_A ;
 #endif
 
-inline std::string mk_string(int j)
+inline std::string make_string(int j)
 {
 	auto const buf_size = 64;
 	char buffer[buf_size] = { 0 };
@@ -51,7 +51,7 @@ inline std::string mk_string(int j)
 }
 
 #define CEPSERROR(x) throw std::runtime_error{\
-						std::string{" In module "} + std::string{__FILE__} + std::string{", at line "} + mk_string(__LINE__) + std::string{": "} + std::string{x} };
+						std::string{" In module "} + std::string{__FILE__} + std::string{", at line "} + make_string(__LINE__) + std::string{": "} + std::string{x} };
 
 
 #endif

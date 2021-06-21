@@ -1,26 +1,18 @@
-/**
- The MIT License (MIT)
+/*
+Copyright 2021 Tomas Prerovsky (cepsdev@hotmail.com).
 
-Copyright (c) 2014,2015 The authors of ceps
+Licensed under the Apache License, Version 2.0 (the "License");
+   you may not use this file except in compliance with the License.
+   You may obtain a copy of the License at
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
+       http://www.apache.org/licenses/LICENSE-2.0
 
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
- **/
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+*/
 
 #ifndef CEPS_INTERPRETER_H_
 #define CEPS_INTERPRETER_H_
@@ -46,20 +38,15 @@ SOFTWARE.
 #include <mutex>
 #include <utility>
 #include <valarray>
-// C Headers
 
+// C Headers
 #include <stdio.h>
 #include <stdlib.h>
-
-
-
 #include "symtab.hh"
 #include "cepsparserdriver.hh"
 #include "ceps_ast.hh"
 #include "cepsnodeset.hh"
 #include "global_defs.hh"
-
-
 #include <sstream>
 #include <map>
 
@@ -95,10 +82,22 @@ namespace ceps{
 	 using Symboltable = ceps::parser_env::Symboltable;
 	 using Kind = ceps::ast::Ast_node_kind;
 
-	 ceps::ast::Nodebase_ptr evaluate(ceps::ast::Nonleafbase & root,
+	 ceps::ast::Nodebase_ptr evaluate_nonleaf(
+		 ceps::ast::Nonleafbase & root,
 		 Symboltable & sym_table,
-		 Environment& env, ceps::ast::Nodebase_ptr parent_node,ceps::ast::Nodebase_ptr predecessor
-		 );
+		 Environment& env, 
+		 ceps::ast::Nodebase_ptr parent_node,
+		 ceps::ast::Nodebase_ptr predecessor,
+	     ceps::ast::Nodebase_ptr this_ptr
+	 );
+
+    ceps::ast::Nodebase_ptr evaluate_generic(  ceps::ast::Nodebase_ptr root_node,
+    		 	 	 	 	 	 	 	 Symboltable & sym_table,
+    		 	 	 	 	 	 	 	 Environment& env,
+										 ceps::ast::Nodebase_ptr parent_node,
+										 ceps::ast::Nodebase_ptr predecessor,
+										 ceps::ast::Nodebase_ptr this_ptr
+    		 	 	 	 	 	 	 	 );
 
  	 struct Environment
  	 {
@@ -181,12 +180,9 @@ namespace ceps{
 #ifndef _MSC_VER
 		 friend ceps::ast::Nodebase_ptr evaluate(ceps::ast::Nodebase_ptr,
 				  ceps::parser_env::Symboltable & ,
-				  ceps::interpreter::Environment&,ceps::ast::Nodebase_ptr,ceps::ast::Nodebase_ptr predecessor);
+				  ceps::interpreter::Environment&,ceps::ast::Nodebase_ptr,ceps::ast::Nodebase_ptr,ceps::ast::Nodebase_ptr);
 #endif
  	 };
-
-    
-
   
  	ceps::ast::Nodebase_ptr eval_kinddef(ceps::ast::Nodebase_ptr root_node,
 			ceps::parser_env::Symboltable & sym_table,
@@ -212,7 +208,8 @@ namespace ceps{
 			ceps::parser_env::Symboltable & sym_table,
 			ceps::interpreter::Environment& env,
 			ceps::ast::Nodebase_ptr parent_node,
-			ceps::ast::Nodebase_ptr predecessor);
+			ceps::ast::Nodebase_ptr predecessor,
+			ceps::ast::Nodebase_ptr this_ptr);
  	ceps::ast::Nodebase_ptr eval_binaryop(ceps::ast::Nodebase_ptr root_node,
 			ceps::parser_env::Symboltable & sym_table,
 			ceps::interpreter::Environment& env,
@@ -254,6 +251,7 @@ namespace ceps{
     		 	 	 Environment& env,
     		 	 	 std::vector<ceps::ast::Nodebase_ptr>* generated_nodes = nullptr
     		 	 	 );
+
      void evaluate_without_modifying_universe (	 ceps::ast::Nodeset & universe,
                                                  ceps::ast::Nodebase_ptr root,
                                                  Symboltable & sym_table,
@@ -266,13 +264,12 @@ namespace ceps{
     		 	 	 	 	 	 	 	 	ceps::ast::Nodebase_ptr lhs,
     		 	 	 	 	 	 	 	 	ceps::ast::Nodebase_ptr rhs,
     		 	 	 	 	 	 	 	 	Symboltable & sym_table,
-    		 	 	 	 	 	 	 	 	Environment& env,ceps::ast::Nodebase_ptr parent_node
-    		 	 	 	 	 	 	 	 	);
+    		 	 	 	 	 	 	 	 	Environment& env,
+											ceps::ast::Nodebase_ptr parent_node,
+											ceps::ast::Nodebase_ptr this_ptr
+    		 	 	 	 	 	 	 	);
 
-     ceps::ast::Nodebase_ptr evaluate(  ceps::ast::Nodebase_ptr root_node,
-    		 	 	 	 	 	 	 	 Symboltable & sym_table,
-    		 	 	 	 	 	 	 	 Environment& env,ceps::ast::Nodebase_ptr parent_node,ceps::ast::Nodebase_ptr predecessor
-    		 	 	 	 	 	 	 	 );
+     
 
      ceps::ast::Nodebase_ptr evaluate_and_remove(ceps::ast::Nonleafbase& root);
      ceps::ast::Nodebase_ptr evaluate(ceps::ast::Stmt& stmt);
@@ -281,8 +278,6 @@ namespace ceps{
 
  }
 }
-
-
 namespace ceps{
 	namespace interpreter{
 		using namespace ceps::ast;
@@ -307,6 +302,4 @@ namespace ceps{
 		node_t mktime(node_t root_node, Symboltable & sym_table, Environment& env,node_t parent_node, node_t predecessor, Call_parameters& params);
 	}
 }
-
-
 #endif

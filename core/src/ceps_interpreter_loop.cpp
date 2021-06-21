@@ -85,7 +85,7 @@ static void loop( std::vector<ceps::ast::Nodebase_ptr>& result,
 	bool is_range_loop = false;
 	bool last_head = i*2 +1 == loop_head.children().size() - 1;
 	ceps::ast::Identifier& id  = ceps::ast::as_id_ref(loop_head.children()[2*i]);
-	ceps::ast::Nodebase_ptr coll_  = evaluate(loop_head.children()[2*i+1],sym_table,env,&loop_head,loop_head.children()[2*i]);
+	ceps::ast::Nodebase_ptr coll_  = evaluate_generic(loop_head.children()[2*i+1],sym_table,env,&loop_head,loop_head.children()[2*i],nullptr);
 	std::vector<ceps::ast::Nodebase_ptr> collection;
 
 
@@ -129,7 +129,7 @@ static void loop( std::vector<ceps::ast::Nodebase_ptr>& result,
 			value(counter_node) = h;
 			if (last_head)
 			{
-				auto new_node = evaluate(body,sym_table,env,rootnode,predecessor);
+				auto new_node = evaluate_generic(body,sym_table,env,rootnode,predecessor,nullptr);
 				if (new_node != nullptr)
 				{
 					if (new_node->kind() == ceps::ast::Ast_node_kind::stmts)
@@ -160,7 +160,7 @@ static void loop( std::vector<ceps::ast::Nodebase_ptr>& result,
 		if (last_head)
 		{
 
-			auto new_node = evaluate(body,sym_table,env,rootnode,predecessor);
+			auto new_node = evaluate_generic(body,sym_table,env,rootnode,predecessor,nullptr);
 			if (new_node != nullptr)
 			{
 				if (new_node->kind() == ceps::ast::Ast_node_kind::stmts)

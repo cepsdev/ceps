@@ -1,26 +1,18 @@
-/**
- The MIT License (MIT)
+/*
+Copyright 2021 Tomas Prerovsky (cepsdev@hotmail.com).
 
-Copyright (c) 2014 The authors of ceps
+Licensed under the Apache License, Version 2.0 (the "License");
+   you may not use this file except in compliance with the License.
+   You may obtain a copy of the License at
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
+       http://www.apache.org/licenses/LICENSE-2.0
 
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
- **/
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+*/
 
 
 #include "ceps_interpreter.hh"
@@ -28,7 +20,7 @@ SOFTWARE.
 #include <cmath>
 #include "ceps_interpreter_loop.hh"
 #include "ceps_interpreter_nodeset.hh"
-#include"pugixml.hpp"
+#include "pugixml.hpp"
 #include <random>
 #include <unordered_map>;
 #include <time.h>
@@ -634,6 +626,7 @@ namespace ceps{
 			return new ceps::ast::Symbol(name,kind,nullptr,nullptr,nullptr);
 		}
 
+
 		int read_int(node_t n){
 			if (n->kind() != ceps::ast::Ast_node_kind::int_literal) return 0;
 			return value(as_int_ref(n));
@@ -688,14 +681,29 @@ static std::unordered_map< std::string, ceps::ast::Nodebase_ptr  (*) (ceps::ast:
 		    											ceps::ast::Nodebase_ptr parent_node,ceps::ast::Nodebase_ptr predecessor,ceps::ast::Call_parameters& params) > func_cache;
 
 
+
+template<typename P>
+	bool contains_at_least_one_non_terminal_subexpression(ceps::ast::node_t n,P p){
+		if (n == nullptr) return false;
+		if (p(n)) return true;
+        if (!is_leaf(n->kind())){
+			for(auto e : nlf_ptr(n)->children() ){
+				if (contains_at_least_one_non_terminal_subexpression(e,p)) return true;
+			}
+		}
+		return false;
+	}
+
 ceps::ast::Nodebase_ptr ceps::interpreter::eval_funccall(ceps::ast::Nodebase_ptr root_node,
 		                                                 ceps::parser_env::Symboltable & sym_table,
 		                                                 ceps::interpreter::Environment& env,
 		                                                 ceps::ast::Nodebase_ptr parent_node,
-		                                                 ceps::ast::Nodebase_ptr predecessor)
+		                                                 ceps::ast::Nodebase_ptr predecessor,
+														 ceps::ast::Nodebase_ptr this_ptr)
 {
 	auto func_call = as_func_call_ref(root_node);
 	auto fcall_target = func_call_target(func_call);
+
 
 	if (is_an_identifier(func_call_target(func_call)))
 	 {
@@ -703,8 +711,15 @@ ceps::ast::Nodebase_ptr ceps::interpreter::eval_funccall(ceps::ast::Nodebase_ptr
         ceps::ast::Nodebase_ptr params_ = nullptr;
 		 
 		if (env.is_lazy_func != nullptr && env.is_lazy_func(name(id))) params_ = func_call.children()[1];
-		else params_ = evaluate(func_call.children()[1],sym_table,env,root_node,predecessor);
+		else params_ = evaluate_generic(func_call.children()[1],sym_table,env,root_node,predecessor,nullptr);
 		ceps::ast::Call_parameters& params = *dynamic_cast<ceps::ast::Call_parameters*>(params_);
+
+		if (this_ptr != nullptr){
+			ceps::ast::Func_call* f = new ceps::ast::Func_call();
+		 	f->children_.push_back(new ceps::ast::Identifier(name(id), nullptr, nullptr, nullptr));
+		 	f->children_.push_back(params_);
+		 	return f;
+		}
 
 		auto rr = env.call_func_callback(ceps::ast::name(id),&params,sym_table);
 		if (rr != nullptr) return rr;
@@ -714,18 +729,51 @@ ceps::ast::Nodebase_ptr ceps::interpreter::eval_funccall(ceps::ast::Nodebase_ptr
 		}
 
 		if (is_macro(name(id), sym_table)) {
-			 std::vector<ceps::ast::Nodebase_ptr> args;
-			 flatten_args(params.children()[0], args);
+			bool do_eval_macro = !contains_at_least_one_non_terminal_subexpression(&params, [&](node_t n){
+				if(n->kind() == ceps::ast::Ast_node_kind::func_call){
+					auto func_call = as_func_call_ref(n);
+					auto fcall_target = func_call_target(func_call);
+					if (is_an_identifier(func_call_target(func_call))){
+						ceps::ast::Identifier& id = as_id_ref(fcall_target);
+						if (name(id) == "argv") return true;
+					}
+				}
+				return false;
+			}); 
+			if (!do_eval_macro){
+				ceps::ast::Func_call* f = new ceps::ast::Func_call();
+		 		f->children_.push_back(new ceps::ast::Identifier(name(id), nullptr, nullptr, nullptr));
+		 		f->children_.push_back(params_);
+				return f;
+				//return new ceps::ast::Func_call{fcall_target,&params};
+			}
+			std::vector<ceps::ast::Nodebase_ptr> args = extract_functioncall_arguments_from_param_block(params);
 
-			 auto result =  eval_macro(root_node,
+			ceps::interpreter::Environment::func_callback_t old_callback;
+			void * old_func_callback_context_data;
+			ceps::interpreter::Environment::func_binop_resolver_t old_binop_res;
+			void * old_cxt;
+
+			env.get_func_callback(old_callback,old_func_callback_context_data);
+	        env.get_binop_resolver(old_binop_res,old_cxt);
+
+			env.set_func_callback(nullptr,nullptr);
+			env.set_binop_resolver(nullptr,nullptr);
+
+			sym_table.push_scope();
+			auto result =  eval_macro(root_node,
 					  sym_table.lookup(name(id)),
 		 			  sym_table,
 		 			  env,
 		 			  parent_node,
 		 			  predecessor,
 					  &args);
+			sym_table.pop_scope();
 
-			 return result;
+			env.set_func_callback(old_callback,old_func_callback_context_data);
+			env.set_binop_resolver(old_binop_res,old_cxt);
+			
+			return result;
 		 }
 
 		if (name(id) == "hd"){
@@ -951,7 +999,7 @@ ceps::ast::Nodebase_ptr ceps::interpreter::eval_funccall(ceps::ast::Nodebase_ptr
 
 			 if (args.size() == 1){
 			  ceps::ast::Nodebase_ptr arg_ = params.children()[0];
-			  auto arg = evaluate(arg_,sym_table,env,root_node,nullptr);
+			  auto arg = evaluate_generic(arg_,sym_table,env,root_node,nullptr,nullptr);
 			  if (arg->kind() != Kind::string_literal)
 				 throw semantic_exception{root_node,"include_xml: Illformed argument"};
 			  return include_xml_file(ceps::ast::value(ceps::ast::as_string_ref(arg)));
@@ -1011,7 +1059,7 @@ ceps::ast::Nodebase_ptr ceps::interpreter::eval_funccall(ceps::ast::Nodebase_ptr
 				 throw semantic_exception{root_node,"sin: Expecting 1 argument"};
 			 ceps::ast::Nodebase_ptr arg_ = params.children()[0];
 
-			 auto arg = evaluate(arg_,sym_table,env,root_node,nullptr);
+			 auto arg = evaluate_generic(arg_,sym_table,env,root_node,nullptr,nullptr);
 
 
 
@@ -1041,7 +1089,7 @@ ceps::ast::Nodebase_ptr ceps::interpreter::eval_funccall(ceps::ast::Nodebase_ptr
 				 throw semantic_exception{root_node,"sin: Expecting 1 argument"};
 			 ceps::ast::Nodebase_ptr arg_ = params.children()[0];
 
-			 auto arg = evaluate(arg_,sym_table,env,root_node,nullptr);
+			 auto arg = evaluate_generic(arg_,sym_table,env,root_node,nullptr,nullptr);
 
 
 
@@ -1071,7 +1119,7 @@ ceps::ast::Nodebase_ptr ceps::interpreter::eval_funccall(ceps::ast::Nodebase_ptr
 				 throw semantic_exception{root_node,"sin: Expecting 1 argument"};
 			 ceps::ast::Nodebase_ptr arg_ = params.children()[0];
 
-			 auto arg = evaluate(arg_,sym_table,env,root_node,nullptr);
+			 auto arg = evaluate_generic(arg_,sym_table,env,root_node,nullptr,nullptr);
 
 
 
@@ -1101,7 +1149,7 @@ ceps::ast::Nodebase_ptr ceps::interpreter::eval_funccall(ceps::ast::Nodebase_ptr
 				 throw semantic_exception{root_node,"sin: Expecting 1 argument"};
 			 ceps::ast::Nodebase_ptr arg_ = params.children()[0];
 
-			 auto arg = evaluate(arg_,sym_table,env,root_node,nullptr);
+			 auto arg = evaluate_generic(arg_,sym_table,env,root_node,nullptr,nullptr);
 
 
 
@@ -1131,7 +1179,7 @@ ceps::ast::Nodebase_ptr ceps::interpreter::eval_funccall(ceps::ast::Nodebase_ptr
 				 throw semantic_exception{root_node,"sin: Expecting 1 argument"};
 			 ceps::ast::Nodebase_ptr arg_ = params.children()[0];
 
-			 auto arg = evaluate(arg_,sym_table,env,root_node,nullptr);
+			 auto arg = evaluate_generic(arg_,sym_table,env,root_node,nullptr,nullptr);
 
 
 
@@ -1162,7 +1210,7 @@ ceps::ast::Nodebase_ptr ceps::interpreter::eval_funccall(ceps::ast::Nodebase_ptr
 				 throw semantic_exception{root_node,"sin: Expecting 1 argument"};
 			 ceps::ast::Nodebase_ptr arg_ = params.children()[0];
 
-			 auto arg = evaluate(arg_,sym_table,env,root_node,nullptr);
+			 auto arg = evaluate_generic(arg_,sym_table,env,root_node,nullptr,nullptr);
 
 
 
@@ -1193,7 +1241,7 @@ ceps::ast::Nodebase_ptr ceps::interpreter::eval_funccall(ceps::ast::Nodebase_ptr
 				 throw semantic_exception{root_node,"sin: Expecting 1 argument"};
 			 ceps::ast::Nodebase_ptr arg_ = params.children()[0];
 
-			 auto arg = evaluate(arg_,sym_table,env,root_node,nullptr);
+			 auto arg = evaluate_generic(arg_,sym_table,env,root_node,nullptr,nullptr);
 
 
 
@@ -1224,7 +1272,7 @@ ceps::ast::Nodebase_ptr ceps::interpreter::eval_funccall(ceps::ast::Nodebase_ptr
 				 throw semantic_exception{root_node,"sin: Expecting 1 argument"};
 			 ceps::ast::Nodebase_ptr arg_ = params.children()[0];
 
-			 auto arg = evaluate(arg_,sym_table,env,root_node,nullptr);
+			 auto arg = evaluate_generic(arg_,sym_table,env,root_node,nullptr,nullptr);
 
 
 

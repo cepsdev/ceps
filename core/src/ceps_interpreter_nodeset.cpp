@@ -139,6 +139,9 @@ ceps::ast::Nodebase_ptr ceps::interpreter::evaluate_nodeset_expr_dot(	ceps::ast:
 					for(auto pes: as_struct_ref(pe).children()) v.push_back(pes);
 				}
 				result.nodes_ = v;
+			} else if (method_name == "strip"){
+				if(result.nodes().size() == 0) return nullptr;
+				return result.nodes()[0];
 			} else if (method_name == "size"){
 				return new ceps::ast::Int(result.nodes().size(),ceps::ast::all_zero_unit(),nullptr,nullptr,nullptr);
 			} else if (method_name == "first"){
@@ -170,8 +173,8 @@ ceps::ast::Nodebase_ptr ceps::interpreter::evaluate_nodeset_expr_dot(	ceps::ast:
             } else if (method_name == "to_text") {
                 std::vector<ceps::ast::Nodebase_ptr> v;
                 for(auto p: result.nodes_)
-                   v.push_back(new ceps::ast::String(default_text_representation(p)));
-                result.nodes_ = v;
+                   v.push_back(ceps::ast::mk_string(default_text_representation(p)));
+                result.nodes_ = v;				
             } else if (method_name == "sort") {
                 last_identifier = last_identifier_save;
                 if (args.size () == 0)

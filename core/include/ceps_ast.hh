@@ -18,7 +18,7 @@ Licensed under the Apache License, Version 2.0 (the "License");
 #define CEPS_AST_H_
 
 
-#include<map>
+#include <map>
 #include <string>
 #include <vector>
 #include <iostream>
@@ -166,6 +166,13 @@ AST_NODE_IS_LEAF(float_literal)
 AST_NODE_IS_LEAF(long_literal)
 AST_NODE_IS_LEAF(unsigned_long_literal)
 
+inline bool is_leaf(Ast_node_kind kind){
+	return 	kind == Ast_node_kind::string_literal ||
+			kind == Ast_node_kind::int_literal || 
+			kind == Ast_node_kind::float_literal || 
+			kind == Ast_node_kind::long_literal || 
+			kind == Ast_node_kind::unsigned_long_literal;
+}
 /**
  * All AST nodes are derived from Nodebase
  */
@@ -320,10 +327,6 @@ struct Nonleafbase
 	virtual ~Nonleafbase()
 	{
 
-		if (owns_children_ ) for(Nodebase_ptr p : children())
-		{
-			delete p;
-		}
 	}
 
 };
@@ -1558,7 +1561,10 @@ using node_t = Nodebase_ptr;
 using node_symbol_t = ceps::ast::Symbol*;
 using node_vec_t = std::vector<node_t>;
 node_symbol_t mk_symbol(std::string name, std::string kind);
+node_t mk_string(std::string v);
 node_t get_node_by_path(std::vector<std::string> v, std::vector<node_t> const & ns);
+
+std::vector<node_t> extract_functioncall_arguments_from_param_block(ceps::ast::Call_parameters& params);
 
 template <typename T, typename U> 
 bool shallow_traverse(T const & ns, U f){

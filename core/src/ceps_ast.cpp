@@ -1,26 +1,19 @@
-/**
- The MIT License (MIT)
+/*
+Copyright 2021 Tomas Prerovsky (cepsdev@hotmail.com).
 
-Copyright (c) 2014 The authors of ceps
+Licensed under the Apache License, Version 2.0 (the "License");
+   you may not use this file except in compliance with the License.
+   You may obtain a copy of the License at
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
+       http://www.apache.org/licenses/LICENSE-2.0
 
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+*/
 
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
- **/
 
 #include "ceps_ast.hh"
 
@@ -148,6 +141,29 @@ void ceps::ast::flatten_func_args(ceps::ast::Nodebase_ptr r, std::vector<ceps::a
 ceps::ast::node_symbol_t ceps::ast::mk_symbol(std::string name, std::string kind){
 	return new ceps::ast::Symbol(name,kind,nullptr, nullptr, nullptr);
 }
+
+ceps::ast::node_t ceps::ast::mk_string(std::string v){
+	return new ceps::ast::String(v,nullptr,nullptr,nullptr);
+}
+
+
+std::vector<ceps::ast::node_t> ceps::ast::extract_functioncall_arguments_from_param_block(ceps::ast::Call_parameters& params){
+	std::vector<ceps::ast::node_t> r;
+	auto & args = params.children();
+	if (args.size()){
+		for(size_t i = 0; i != args.size(); ++i){
+			std::vector<ceps::ast::node_t> t;
+		   	flatten_func_args(args[i],t);
+			if (t.size() == 0) continue;
+			auto insert_pos = r.size();
+			r.resize(insert_pos + t.size());
+			for(size_t j = 0; j != t.size(); ++j)
+			 r[insert_pos + j] = t[j];
+		}		
+	}
+	return r;
+}
+
 
 ceps::ast::node_t ceps::ast::get_node_by_path(std::vector<std::string> v, std::vector<ceps::ast::node_t> const & ns){
 	if (v.size() == 0) return nullptr;
