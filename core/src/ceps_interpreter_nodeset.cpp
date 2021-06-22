@@ -151,6 +151,31 @@ ceps::ast::Nodebase_ptr ceps::interpreter::evaluate_nodeset_expr_dot(	ceps::ast:
 				v.push_back(result.nodes()[0]);
 				result.nodes_ = v;
 				}
+			} else if (method_name == "contains_symbol"){
+				std::vector<std::string> symbol_kinds;
+				bool match_any_symbol = symbol_kinds.size() == 0;
+
+				auto match_symbol = [&](std::string symbol_kind) -> bool {
+					for(auto e : symbol_kinds) 
+					 if (e == symbol_kind) return true;
+					return false;
+				};
+
+				std::vector<ceps::ast::Nodebase_ptr> v;
+				for(auto e : result.nodes())
+				{
+					if (ceps::ast::is_leaf(e->kind())) continue;
+					auto & elements = nlf_ptr(e)->children();
+					for (auto f: elements){
+						if ( !is_a_symbol(f) ) continue;
+						if (match_any_symbol) {
+							v.push_back(e);break;
+						} else if (match_symbol( kind(as_symbol_ref(f) )) ){
+							v.push_back(e);break;
+						}
+					}					
+				}
+				result.nodes_ = v;				
 			} else if (method_name == "second"){
 				if (result.nodes().size() < 2) result.nodes_.clear();
 				else{
