@@ -544,6 +544,8 @@ ceps::ast::Nodebase_ptr ceps::interpreter::eval_id(ceps::ast::Nodebase_ptr root_
 	 }
 	 else if (sym.category != ceps::parser_env::Symbol::Category::VAR)
 		 throw semantic_exception{root_node,"Variable '" +name(id)+"' is not defined."};
+	
+	if (sym.payload == nullptr) return new ceps::ast::Undefined(nullptr,nullptr,nullptr);
 
 	 ceps::ast::Nodebase_ptr node_ptr = reinterpret_cast<ceps::ast::Nodebase_ptr>(sym.payload);
 
