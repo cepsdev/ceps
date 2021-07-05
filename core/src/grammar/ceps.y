@@ -164,6 +164,10 @@ stmts :
 stmt :
 
  '{' stmts '}' { $$ = new ceps::ast::Scope{$2};}
+| LABEL {driver.symboltable().push_scope();} struct_initialization {driver.symboltable().pop_scope();}
+{
+ $$ = new ceps::ast::Struct(std::string{"label"},$3,nullptr,nullptr);
+}
 | LABEL general_id attribute_list';'
 {
   $$ = new ceps::ast::Label(*$2,*$3,nullptr,nullptr,nullptr,nullptr);
