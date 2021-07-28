@@ -1578,9 +1578,10 @@ bool shallow_traverse(T const & ns, U f){
 
 template <typename T1, typename T2, typename T3> 
 bool shallow_traverse_ex(T1 const & ns, T2 f, T3 p){
-	for(auto n : ns){
+	for(auto n : ns){ if (n == nullptr) continue;
 		if(p(n)) {
-            if(!shallow_traverse_ex(nlf_ptr(n)->children(),f,p)) return false;
+			if(!is_leaf(n->kind())) 
+			 if(!shallow_traverse_ex(nlf_ptr(n)->children(),f,p)) return false;
         } else if (!f(n)) return false;
 	}
     return true;
