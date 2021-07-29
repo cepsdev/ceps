@@ -1587,6 +1587,16 @@ bool shallow_traverse_ex(T1 const & ns, T2 f, T3 p){
     return true;
 }
 
+template <typename T1, typename T2, typename T3, typename T4> 
+bool shallow_traverse_ex2(T1 const & ns, T2 f, T3 p, T4 arguments){
+	for(auto n : ns){ if (n == nullptr) continue;
+		if(p(n,arguments)) {
+			if(!is_leaf(n->kind())) 
+			 if(!shallow_traverse_ex2(nlf_ptr(n)->children(),f,p,arguments)) return false;
+        } else if (!f(n,arguments)) return false;
+	}
+    return true;
+}
 
 
 /***************************** Parsetree ***********************************/
