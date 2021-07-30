@@ -1598,6 +1598,13 @@ bool shallow_traverse_ex2(T1 const & ns, T2 f, T3 p, T4 arguments){
     return true;
 }
 
+inline bool traversable_fragment(Nodebase_ptr tree_node){
+	return is<Ast_node_kind::stmt>(tree_node) || is<Ast_node_kind::stmts>(tree_node) || 
+        is<Ast_node_kind::structdef>(tree_node) || is<Ast_node_kind::scope>(tree_node) || 
+        is<Ast_node_kind::ifelse>(tree_node) || is<Ast_node_kind::func_call>(tree_node) || 
+        is<Ast_node_kind::expr>(tree_node) || is<Ast_node_kind::binary_operator>(tree_node) || 
+        is<Ast_node_kind::unary_operator>(tree_node) || is<Ast_node_kind::for_loop_head>(tree_node);
+}
 
 /***************************** Parsetree ***********************************/
 class Parsetree
