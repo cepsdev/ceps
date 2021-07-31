@@ -22,6 +22,7 @@ Licensed under the Apache License, Version 2.0 (the "License");
 #include "ceps_interpreter_nodeset.hh"
 #include "pugixml.hpp"
 
+bool ceps::interpreter::DEBUG_OUTPUT = false;
 
 int ceps::interpreter::Environment::lookup_kind(std::string const& k)
 {
@@ -188,7 +189,6 @@ void ceps::interpreter::evaluate_without_modifying_universe(ceps::ast::Nodeset &
 
         if (ev != nullptr && ev->kind() == Kind::nodeset)
         {
-            auto& ndeset = as_ast_nodeset_ref(ev);
             universe.nodes().insert(universe.nodes().end(),as_ast_nodeset_ptr(ev)->children().begin(),as_ast_nodeset_ptr(ev)->children().end());
             if (generated_nodes != nullptr)
                                     generated_nodes->insert(generated_nodes->end(),as_ast_nodeset_ptr(ev)->children().begin(),as_ast_nodeset_ptr(ev)->children().end());
@@ -282,39 +282,44 @@ ceps::ast::Nodebase_ptr ceps::interpreter::eval_unaryop(ceps::ast::Nodebase_ptr 
 		ceps::ast::Nodebase_ptr parent_node,
 		ceps::ast::Nodebase_ptr predecessor){
 
-ceps::ast::Unary_operator& unop = *dynamic_cast<ceps::ast::Unary_operator*>(root_node);
-if (op(unop) == '-')
-{
- ceps::ast::Nodebase_ptr operand = evaluate_generic(unop.children()[0],sym_table,env,root_node,nullptr,nullptr);
- if (operand->kind() == Kind::int_literal)
- {
-  value(as_int_ref(operand)) *= -1;
- }
- else if (operand->kind() == Kind::float_literal)
- {
-  value(as_double_ref(operand)) *= -1.0;
- }
- return operand;
-}
-else if (op(unop) == '!')
-{
- ceps::ast::Nodebase_ptr operand = evaluate_generic(unop.children()[0],sym_table,env,root_node,nullptr,nullptr);
- if (operand->kind() == Kind::int_literal)
- {
- 	if ( value(as_int_ref(operand)) == 0)
- 		return new ceps::ast::Int(1,ceps::ast::all_zero_unit(), nullptr, nullptr, nullptr);
- 	else return new ceps::ast::Int(0,ceps::ast::all_zero_unit(), nullptr, nullptr, nullptr);
- } else if (operand->kind() == Kind::symbol ||
-	    operand->kind() == Kind::binary_operator ||
-	    operand->kind() == Kind::unary_operator ||
-	    operand->kind() == Kind::func_call
-	    )
- {
-	 return new ceps::ast::Unary_operator(op(unop),operand);
- }
-}
-throw semantic_exception{root_node,"Illformed unary operator expression"};
+	ceps::ast::Unary_operator& unop = as_unary_op_ref(root_node);
+	auto operand = evaluate_generic(unop.children()[0],sym_table,env,root_node,nullptr,nullptr);
+	bool operand_boolean{false};
+	bool operand_bool_equiv{false};
 
+	//Check for a node set
+	if (is<Ast_node_kind::nodeset>(operand)){
+		auto& set_of_nodes{as_ast_nodeset_ref(operand)};
+		if (!set_of_nodes.children().size()) {operand_boolean=true;operand_bool_equiv = true;}
+		else
+			operand = set_of_nodes.children()[0];
+	}
+
+	if (op(unop) == '-')
+	{
+		if (operand->kind() == Kind::int_literal)
+			value(as_int_ref(operand)) *= -1;
+		else if (operand->kind() == Kind::float_literal)
+			value(as_double_ref(operand)) *= -1.0;
+		return operand;
+	}
+	else if (op(unop) == '!')
+	{
+		if (operand_bool_equiv){
+			return operand_boolean ? mk_int_node(1) : mk_int_node(0);
+		} else {
+			if (operand->kind() == Kind::int_literal)
+			{
+				if ( value(as_int_ref(operand)) == 0)
+					return mk_int_node(1);
+				else 
+					return mk_int_node(0);
+			} else if (	is<Ast_node_kind::symbol> (operand) || is<Ast_node_kind::binary_operator> (operand) ||
+						is<Ast_node_kind::unary_operator> (operand) || is<Ast_node_kind::func_call> (operand))
+				return mk_unary_op_node(op(unop),operand);
+		}
+	}
+	throw semantic_exception{root_node,"Illformed unary operator expression"};
 }
 
 ceps::ast::Nodebase_ptr ceps::interpreter::eval_ifelse(ceps::ast::Nodebase_ptr root_node,
@@ -335,7 +340,6 @@ ceps::ast::Nodebase_ptr ceps::interpreter::eval_ifelse(ceps::ast::Nodebase_ptr r
 	 }
 	 if (r == nullptr || r->kind() != ceps::ast::Ast_node_kind::scope) return r;
 	 auto& scope = *ceps::ast::nlf_ptr(r);
-	 //std::cout << "***********" << *r << std::endl;
 	 if (scope.children().size() == 0) return nullptr;
 	 if (scope.children().size() == 1) return scope.children()[0];
 	 return create_ast_nodeset("", scope.children());
@@ -398,6 +402,12 @@ ceps::ast::Nodebase_ptr ceps::interpreter::eval_binaryop(ceps::ast::Nodebase_ptr
 											);
 		else if (lhs->kind() == Kind::structdef)
 			return evaluate_nodeset_expr_dot(	create_ast_nodeset("",as_struct_ref(lhs).children()),
+												rhs ,
+												sym_table,
+												env,root_node
+											);
+		else if (lhs->kind() == Kind::scope)
+			return evaluate_nodeset_expr_dot(	create_ast_nodeset("",as_scope_ref(lhs).children()),
 												rhs ,
 												sym_table,
 												env,root_node
@@ -586,6 +596,7 @@ ceps::ast::Nodebase_ptr ceps::interpreter::evaluate_generic(ceps::ast::Nodebase_
  {
 	 if(!root_node)
 		 return nullptr;
+	 if (ceps::interpreter::DEBUG_OUTPUT) std::cerr << "ceps::interpreter::evaluate_generic " << *root_node << std::endl;
 
 	 switch(root_node->kind())
 	 {
@@ -712,6 +723,7 @@ ceps::ast::Nodebase_ptr ceps::interpreter::evaluate_generic(ceps::ast::Nodebase_
 	 }
 	 case Kind::func_call:
 	 {
+		 if (ceps::interpreter::DEBUG_OUTPUT) std::cerr << "ceps::interpreter::evaluate_generic Kind::func_call:\n";
 		 return eval_funccall(root_node,
 		 			  sym_table,
 		 			  env,
@@ -788,10 +800,19 @@ ceps::ast::Nodebase_ptr ceps::interpreter::evaluate_generic(ceps::ast::Nodebase_
 	 {
 		 std::string kind = ceps::ast::kind(ceps::ast::as_symbol_ref(root_node));
 		 std::string name = ceps::ast::name(ceps::ast::as_symbol_ref(root_node));
+		 if (ceps::interpreter::DEBUG_OUTPUT) 
+		  std::cerr << "ceps::interpreter::evaluate_generic Kind::symbol: kind(" << kind<< ") name("<< name << ")" << std::endl;
 		 if (env.symbol_mapping()[kind] != nullptr)
 		 {
+
 			 auto r = (*env.symbol_mapping()[kind])[name];
-			 if (r != nullptr) return evaluate_generic(r,sym_table, env,root_node,predecessor,this_ptr);
+			 
+			 if (r != nullptr) {
+				auto rv = evaluate_generic(r,sym_table, env,root_node,predecessor,this_ptr);
+				if (ceps::interpreter::DEBUG_OUTPUT) 
+		      		std::cerr << "ceps::interpreter::evaluate_generic Kind::symbol: kind(" << kind<< ") name("<< name << ") -> "<<*rv << std::endl;
+				 return rv;
+			 }
 			 return env.call_sym_undefined_clbk(root_node,parent_node);
 		 }
          return new ceps::ast::Symbol(name,kind);
@@ -1569,6 +1590,9 @@ ceps::ast::Nodebase_ptr ceps::interpreter::evaluate_nonleaf(ceps::ast::Nonleafba
 		else v.push_back(r);
 	}
 	env.scope = old_scope;
+	root.children() = v;
+	return root_ptr;
+	/*
 
 
 	if (root_ptr->kind() == ceps::ast::Ast_node_kind::root)
@@ -1609,7 +1633,7 @@ ceps::ast::Nodebase_ptr ceps::interpreter::evaluate_nonleaf(ceps::ast::Nonleafba
 		return result;
 	}
 
-	CEPSERROR("Internal Error.")
+	CEPSERROR("Internal Error.") */
 
 }
 

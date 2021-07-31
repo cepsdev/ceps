@@ -151,6 +151,23 @@ ceps::ast::Nodebase_ptr ceps::interpreter::evaluate_nodeset_expr_dot(	ceps::ast:
 				v.push_back(result.nodes()[0]);
 				result.nodes_ = v;
 				}
+			} else if (method_name == "contains") {
+				std::vector<ceps::ast::Nodebase_ptr> v;
+				for(auto e: args){
+					if (v.size()) break;
+					if (is<Ast_node_kind::string_literal>(e)){
+						auto s = value(as_string_ref(e));
+						for(auto n:result.nodes()){
+							if (!is<Ast_node_kind::string_literal>(n)) continue;
+							if ( s == value(as_string_ref(n)) ){
+							 v = {mk_int_node(1)};
+							 break;
+							}
+						}
+					}
+				}
+				if (v.size() == 0) v = {mk_int_node(0)};
+				result.nodes_ = v;
 			} else if (method_name == "contains_symbol"){
 				std::vector<std::string> symbol_kinds;
 				bool match_any_symbol = symbol_kinds.size() == 0;

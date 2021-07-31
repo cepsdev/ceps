@@ -579,6 +579,9 @@ static std::string get_meta_info(ceps::ast::Nodeset * universe,ceps::ast::Nodeba
 
 static std::random_device randomd;
 static std::default_random_engine e1(randomd());
+static bool contains_symbols(ceps::ast::Nodebase_ptr node){
+	return ceps::ast::is<ceps::ast::Ast_node_kind::symbol>(node);
+}
 
 void peel_off_nodesets(ceps::ast::Nodebase_ptr p,std::vector<ceps::ast::Nodebase_ptr> & v){
     if(p == nullptr) return;
@@ -601,6 +604,14 @@ namespace ceps{
 		using node_t = Nodebase_ptr;
         using node_int64_t = Int64*;
 		using node_vec_t = std::vector<node_t>;
+
+		node_unaryop_t mk_unary_op_node(char op, node_t operand){
+			return new ceps::ast::Unary_operator(op,operand);
+		}
+
+		node_int_t mk_int_node(int value){
+			return new ceps::ast::Int(value, ceps::ast::all_zero_unit(), nullptr, nullptr, nullptr);
+		}
 
 		node_int64_t mk_int64_node(std::int64_t value){
 			return new ceps::ast::Int64(value, ceps::ast::all_zero_unit(), nullptr, nullptr, nullptr);
@@ -635,7 +646,7 @@ namespace ceps{
 
 		node_vec_t get_args(Call_parameters& params){
         	node_vec_t v;
-            if (params.children().size()) flatten_args(params.children()[0], v);
+            if (params.children().size()) //flatten_args(params.children()[0], v);
 			 for(auto e : params.children()){
 				 node_vec_t args_temp;
 				 flatten_args(e, args_temp);
@@ -644,24 +655,34 @@ namespace ceps{
 			 return v;
 		}
 
-		node_t as_nodeset(node_t root_node, Symboltable & sym_table, Environment& env, node_t parent_node, node_t predecessor, Call_parameters& params)
+		node_t mod(node_t root_node, Symboltable & sym_table, Environment& env, node_t parent_node, node_t predecessor, Call_parameters* params)
 		{
-        	node_vec_t args;
-            if (params.children().size()) flatten_args(params.children()[0], args);
-			 for(auto e : params.children()){
-				 node_vec_t args_temp;
-				 flatten_args(e, args_temp);
-				 args.insert(args.end(), args_temp.begin(),args_temp.end());				 
-			 }
+			using namespace ceps::ast;
+        	node_vec_t args{get_args(*params)};
+            if(args.size() != 2)
+                 throw semantic_exception{root_node,"mod() requires two arguments."};
+
+			if ( is<Ast_node_kind::int_literal>(args[0]) && is<Ast_node_kind::int_literal>(args[1]))
+              return mk_int_node(value(as_int_ref(args[0])) % value(as_int_ref(args[1])));
+
+            ceps::ast::Func_call* f = new ceps::ast::Func_call();
+		 	f->children_.push_back(new ceps::ast::Identifier("mod", nullptr, nullptr, nullptr));
+		 	f->children_.push_back(params);
+		 	return f;
+		}
+
+		node_t as_nodeset(node_t root_node, Symboltable & sym_table, Environment& env, node_t parent_node, node_t predecessor, Call_parameters* params)
+		{
+        	node_vec_t args{get_args(*params)};
             if(args.size() == 0)
                  throw semantic_exception{root_node,"as_nodeset(): argument has to be a non empty list of nodes."};
 
             return ceps::ast::create_ast_nodeset("",args);
 		}
 
-		node_t mktime(node_t root_node, Symboltable & sym_table, Environment& env,node_t parent_node, node_t predecessor, Call_parameters& params)
+		node_t mktime(node_t root_node, Symboltable & sym_table, Environment& env,node_t parent_node, node_t predecessor, Call_parameters* params)
 		{
-        	node_vec_t args{get_args(params)};
+        	node_vec_t args{get_args(*params)};
             if(args.size() == 0) return mk_int64_node(0);
 			tm timeinfo = {};
 			if (args.size() > 0) timeinfo.tm_year = read_int(args[0]) - 1900;
@@ -674,11 +695,47 @@ namespace ceps{
 			auto r =::mktime(&timeinfo);
 			return(mk_int64_node(r));
 		}
+
+		node_t push_back(node_t root_node, Symboltable & sym_table, Environment& env,node_t parent_node, node_t predecessor, Call_parameters* params)
+		{
+			using namespace ceps::ast;
+			if (ceps::interpreter::DEBUG_OUTPUT) 
+		      std::cerr << "ceps::interpreter::push_back() " << std::endl;
+
+        	node_vec_t args{get_args(*params)};
+			if (ceps::interpreter::DEBUG_OUTPUT)  
+			 for(auto e: args)
+			  std::cerr << " ceps::interpreter::push_back() argument:" <<  *e << std::endl;
+			
+			if (args.size() < 2)
+			 throw semantic_exception{root_node,"push_back(): at least two  arguments expected."};
+			if (contains_symbols(args[0])) {
+				ceps::ast::Func_call* f = new ceps::ast::Func_call();
+		 		f->children_.push_back(new ceps::ast::Identifier("push_back", nullptr, nullptr, nullptr));
+		 		f->children_.push_back(params);
+		 		return f;
+			}
+
+			if (!is_leaf(args[0]->kind())){
+			  auto& v = nlf_ptr(args[0])->children();
+			  for(size_t i = 1; i < args.size(); ++i  ){
+				  v.push_back(args[i]);
+			  }
+			}
+
+
+            return args[0];
+		}
 	}
 }
 
-static std::unordered_map< std::string, ceps::ast::Nodebase_ptr  (*) (ceps::ast::Nodebase_ptr root_node,ceps::parser_env::Symboltable & sym_table,ceps::interpreter::Environment& env,
-		    											ceps::ast::Nodebase_ptr parent_node,ceps::ast::Nodebase_ptr predecessor,ceps::ast::Call_parameters& params) > func_cache;
+static std::unordered_map< std::string, 
+                           ceps::ast::Nodebase_ptr  (*) (	ceps::ast::Nodebase_ptr root_node,
+						   									ceps::parser_env::Symboltable & sym_table,
+															ceps::interpreter::Environment& env,
+		    												ceps::ast::Nodebase_ptr parent_node,
+															ceps::ast::Nodebase_ptr predecessor,
+															ceps::ast::Call_parameters* params) > func_cache;
 
 
 
@@ -701,6 +758,8 @@ ceps::ast::Nodebase_ptr ceps::interpreter::eval_funccall(ceps::ast::Nodebase_ptr
 		                                                 ceps::ast::Nodebase_ptr predecessor,
 														 ceps::ast::Nodebase_ptr this_ptr)
 {
+	if (ceps::interpreter::DEBUG_OUTPUT) std::cerr << "ceps::interpreter::eval_funccall:" << *root_node << std::endl;
+
 	auto func_call = as_func_call_ref(root_node);
 	auto fcall_target = func_call_target(func_call);
 
@@ -712,7 +771,8 @@ ceps::ast::Nodebase_ptr ceps::interpreter::eval_funccall(ceps::ast::Nodebase_ptr
 		 
 		if (env.is_lazy_func != nullptr && env.is_lazy_func(name(id))) params_ = func_call.children()[1];
 		else params_ = evaluate_generic(func_call.children()[1],sym_table,env,root_node,predecessor,nullptr);
-		ceps::ast::Call_parameters& params = *dynamic_cast<ceps::ast::Call_parameters*>(params_);
+		ceps::ast::Call_parameters& params = *static_cast<ceps::ast::Call_parameters*>(params_);
+		if (ceps::interpreter::DEBUG_OUTPUT) std::cerr << "ceps::interpreter::eval_funccall: params:" << params << std::endl;
 
 		if (this_ptr != nullptr){
 			ceps::ast::Func_call* f = new ceps::ast::Func_call();
@@ -725,7 +785,7 @@ ceps::ast::Nodebase_ptr ceps::interpreter::eval_funccall(ceps::ast::Nodebase_ptr
 		if (rr != nullptr) return rr;
 		auto fit = func_cache.find(name(id));
 		if (fit != func_cache.end()){
-		  	return fit->second(root_node,sym_table,env,parent_node,predecessor,params);
+		  	return fit->second(root_node,sym_table,env,parent_node,predecessor,static_cast<ceps::ast::Call_parameters*> (params_));
 		}
 
 		if (is_macro(name(id), sym_table)) {
@@ -799,10 +859,16 @@ ceps::ast::Nodebase_ptr ceps::interpreter::eval_funccall(ceps::ast::Nodebase_ptr
 			return ceps::ast::create_ast_nodeset("",a);
         } else if (name(id)=="as_nodeset"){
 			 func_cache[name(id)] = ceps::interpreter::as_nodeset; 
-			 return ceps::interpreter::as_nodeset(root_node,sym_table,env,parent_node,predecessor,params);
+			 return ceps::interpreter::as_nodeset(root_node,sym_table,env,parent_node,predecessor,static_cast<ceps::ast::Call_parameters*>(params_));
         } else if (name(id)=="mktime"){
 			 func_cache[name(id)] = ceps::interpreter::mktime; 
-			 return ceps::interpreter::mktime(root_node,sym_table,env,parent_node,predecessor,params);
+			 return ceps::interpreter::mktime(root_node,sym_table,env,parent_node,predecessor,static_cast<ceps::ast::Call_parameters*>(params_));
+        } else if (name(id)=="push_back"){
+			 func_cache[name(id)] = ceps::interpreter::push_back; 
+			 return ceps::interpreter::push_back(root_node,sym_table,env,parent_node,predecessor,static_cast<ceps::ast::Call_parameters*>(params_));
+        } else if (name(id)=="mod"){
+			 func_cache[name(id)] = ceps::interpreter::mod; 
+			 return ceps::interpreter::mod(root_node,sym_table,env,parent_node,predecessor,static_cast<ceps::ast::Call_parameters*>(params_));
         } else if (name(id) == "tail"){
 			if(params.children().size() == 0)
 				throw semantic_exception{root_node,"tail(): argument has to be a non empty list of nodes."};
@@ -1043,17 +1109,6 @@ ceps::ast::Nodebase_ptr ceps::interpreter::eval_funccall(ceps::ast::Nodebase_ptr
              std::uniform_int_distribution<int> uniform_dist(ceps::ast::value(ceps::ast::as_int_ref(args[0])),ceps::ast::value(ceps::ast::as_int_ref(args[1])));
              return new ceps::ast::Int(uniform_dist(e1), ceps::ast::all_zero_unit(), nullptr, nullptr, nullptr);
 
-         } else if (name(id) == "mod") {
-             std::vector<ceps::ast::Nodebase_ptr> args;
-             flatten_args(params.children()[0], args);
-
-             if (args.size() != 2)
-                 throw semantic_exception{root_node,"mod: Expecting two arguments"};
-
-             if (args[0]->kind() != Kind::int_literal || args[1]->kind() != Kind::int_literal)
-              throw semantic_exception{root_node,"mod: Expecting two int arguments"};
-
-             return new ceps::ast::Int{ value(as_int_ref(args[0])) % value(as_int_ref(args[1])),ceps::ast::all_zero_unit()};
          } else if (name(id) == "sin") {
 			 if (params.children().size() != 1)
 				 throw semantic_exception{root_node,"sin: Expecting 1 argument"};

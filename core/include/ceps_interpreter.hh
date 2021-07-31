@@ -50,8 +50,12 @@ Licensed under the Apache License, Version 2.0 (the "License");
 #include <sstream>
 #include <map>
 
+
+
 namespace ceps{
  namespace interpreter{
+	 extern bool DEBUG_OUTPUT; 
+
  	 class semantic_exception {
  		 ceps::ast::Nodebase_ptr loc_;
  		 std::string msg_;
@@ -283,12 +287,16 @@ namespace ceps{
 		using namespace ceps::ast;
 		using node_t = Nodebase_ptr;
         using node_int64_t = Int64*;
+		using node_int_t = Int*;
 		using node_double_t = Double*;
 		using node_symbol_t = ceps::ast::Symbol*;
 		using node_binary_operator_t = ceps::ast::Binary_operator*;
 		using node_unary_operator_t = ceps::ast::Unary_operator*;
 		using node_vec_t = std::vector<node_t>;
+		using node_unaryop_t = ceps::ast::Unary_operator*;
 
+		node_unaryop_t mk_unary_op_node(char op, node_t operand);
+		node_int_t mk_int_node(int value);
 		node_int64_t mk_int64_node(std::int64_t value);
 		node_int64_t mk_int64_node(std::int64_t value, Unit_rep u);
 		node_double_t mk_double_node(double value, Unit_rep u);
@@ -300,6 +308,7 @@ namespace ceps{
 		node_vec_t get_args(Call_parameters& params);
 		node_t as_nodeset(node_t root_node, Symboltable & sym_table, Environment& env, node_t parent_node, node_t predecessor, Call_parameters& params);
 		node_t mktime(node_t root_node, Symboltable & sym_table, Environment& env,node_t parent_node, node_t predecessor, Call_parameters& params);
+		node_t push_back(node_t root_node, Symboltable & sym_table, Environment& env,node_t parent_node, node_t predecessor, Call_parameters& params);
 	}
 }
 #endif
