@@ -50,7 +50,7 @@ namespace ceps {
 		float_literal,
 		expr,
 		si_unit_or_derived,
-		binary_operator,
+		binary_operator, /*8*/
 		stmts,
 		stmt,
 		valdef,
@@ -72,7 +72,7 @@ namespace ceps {
 		symbol, /*27*/
 		loop,
 		for_loop_head,
-		nodeset,
+		nodeset, /* 30*/
 		nodeset_path_expr,
 		template_definition,
 		template_id,
@@ -82,7 +82,7 @@ namespace ceps {
         error,
         undef,
         none,
-		macro_definition,
+		macro_definition,/*40*/
 		algorithm_definition,
 		label,
 		let,
@@ -176,6 +176,11 @@ inline bool is_leaf(Ast_node_kind kind){
 /**
  * All AST nodes are derived from Nodebase
  */
+
+class Nodebase;
+std::ostream& operator << (std::ostream & out, Nodebase const & n);
+
+
 class Nodebase
 {
 public:
@@ -214,15 +219,9 @@ public:
 
 	}
 
-	virtual ~Nodebase()
-	{
+	virtual ~Nodebase() {}
 
-	}
-
-	virtual Nodebase* clone()
-	{
-		return new Nodebase(*this);
-	}
+	virtual Nodebase* clone() = 0;
 
 	virtual void copy_children(std::vector<Nodebase*> &)
 	{
@@ -267,8 +266,10 @@ struct Leafbase
 struct Nonleafbase
 {
 	using Container_t = std::vector<Nodebase_ptr>;
-	std::vector<Nodebase_ptr> children_;
-	bool owns_children_ = true;
+	std::vector<Nodebase_ptr> children_;	
+	bool owns_children_{false};
+	bool& owns_children () {return owns_children_ ;}
+	bool owns_children () const {return owns_children_ ;}
 
 	Nonleafbase(Nonleafbase const & rhs)
 	{
@@ -321,14 +322,17 @@ struct Nonleafbase
 
 	}
 
-	bool owns_children () const {return owns_children_ ;}
-	bool& owns_children () {return owns_children_ ;}
 
+	virtual void copy_children(std::vector<Nodebase*> & v)
+	{
+		for(auto e: children()) if (e) v.push_back(e->clone());
+	}
 	virtual ~Nonleafbase()
 	{
-
+		if (!owns_children ()) return;
+		for (auto e: children()) if (e) delete e;
+		children().clear();
 	}
-
 };
 
 
@@ -360,14 +364,15 @@ template <Ast_node_kind what>
 		 {
 		    int pre_indent = indent;
 			indent+=PRETTY_PRINT_INDENT_STEP_SIZE;
-			 for(auto p : Nonleafbase::children())
+			for(auto p : Nonleafbase::children())
 			 {
-					if(pretty_print)
-					{
-						out << "\n";
-						Nodebase::print_ws(out,indent);
-					}
-				 p->print(out,pretty_print,indent);
+				if (!p) continue;
+				if(pretty_print)
+				{
+					out << "\n";
+					Nodebase::print_ws(out,indent);
+				}
+				p->print(out,pretty_print,indent);
 			 }
 			 indent = pre_indent;
 			if(pretty_print){out << "\n";Nodebase::print_ws(out,indent);}
@@ -382,10 +387,11 @@ template <Ast_node_kind what>
 		{
 
 		}
-		Nodebase* clone()
-		{
+		Nodebase* clone() override;
+		/*{
+			owns_children ()  = true;
 			return new This_type(*this);
-		}
+		}*/
 
 };
 
@@ -473,12 +479,18 @@ template <Ast_node_kind what,typename... rest>
 			out <<"\""<< x<< "\"";Base::print_value(out);
 		}
 
-		Nodebase* clone()
-		{
-			return new This_type(*this);
-		}
+		virtual ~ast_node<what,std::string,rest...>() {}
 
+		Nodebase* clone() override;
 	};
+
+template<>
+ ceps::ast::Nodebase*  ast_node<Ast_node_kind::structdef,std::string>::clone();
+template<>
+ ceps::ast::Nodebase*  ast_node<Ast_node_kind::symbol,std::string,std::string>::clone();
+
+template<>
+ ceps::ast::Nodebase*  ast_node<Ast_node_kind::string_literal,std::string>::clone();
 
 template <Ast_node_kind what,typename... rest>
 	struct ast_node<what,std::vector<std::string>,rest...>: public ast_node<what,rest...>
@@ -510,8 +522,9 @@ template <Ast_node_kind what,typename... rest>
 			}
 			Base::print_value(out);
 		}
+		virtual ~ast_node<what,std::vector<std::string>,rest...>() {}
 
-		Nodebase* clone()
+		Nodebase* clone() override
 		{
 			return new This_type(*this);
 		}
@@ -549,9 +562,13 @@ template <Ast_node_kind what,typename... rest>
 			Base::print_value(out);
 		}
 
-		Nodebase* clone()
+		Nodebase* clone() override
 		{
 			return new This_type(*this);
+		}
+
+		virtual ~ast_node<what,std::vector<unsigned char>,rest...>(){
+					
 		}
 
 	};
@@ -612,10 +629,11 @@ template <typename... rest>
 			Base::print_value(out);
 		}
 
-		Nodebase* clone()
-		{
-			return new This_type(*this);
+		Nodebase* clone() override;
+		virtual ~ast_node<Ast_node_kind::binary_operator,int,rest...>(){
+					
 		}
+
 
 	};
 
@@ -641,7 +659,7 @@ template<int N,Ast_node_kind what,typename... Ts>
 	}
 
 
-std::ostream& operator << (std::ostream & out, Nodebase const & n);
+
 
 inline Nonleafbase* nlf_ptr(Nodebase* n)
 {
@@ -842,8 +860,6 @@ typedef ast_node<Ast_node_kind::undef> Undefined;
 typedef ast_node<Ast_node_kind::none> None;
 
 typedef ast_node<Ast_node_kind::user_defined,int,void*> User_defined;
-
-
 
 
 
@@ -1128,7 +1144,7 @@ inline Ifelse* as_ifelse_ptr(Nodebase_ptr p)
 
 inline Binary_operator* as_binop_ptr(Nodebase_ptr p)
 {
- return dynamic_cast<Binary_operator*>(p);
+ return static_cast<Binary_operator*>(p);
 }
 
   inline Binary_operator & as_binop_ref(Nodebase_ptr p)

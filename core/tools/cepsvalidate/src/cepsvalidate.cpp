@@ -171,9 +171,6 @@ int main(int argc, char*argv[])
 			//ceps_env.eval_and_merge( driver.parsetree() , false);
 			if (evaluate)
 			{
-				/*ceps::ast::Nodebase_ptr p = ceps::interpreter::evaluate(	driver.parsetree().get_root(),
-																			ceps_env.get_global_symboltable(),
-																			ceps_env.interpreter_env());*/
 
 				std::vector<ceps::ast::Nodebase_ptr> generated_nodes;
 
@@ -182,9 +179,11 @@ int main(int argc, char*argv[])
 						                    ceps_env.get_global_symboltable(),
 						                    ceps_env.interpreter_env(),&generated_nodes);
 
-				auto p = new Root();
-				//p->children().insert(p->children().end(), universe.nodes().begin(), universe.nodes().end());
-				p->children().insert(p->children().end(), generated_nodes.begin(), generated_nodes.end());
+				auto temp = new Root();
+				temp->children().insert(temp->children().end(), generated_nodes.begin(), generated_nodes.end());
+
+				Root  * p = static_cast<Root*> (temp->clone());
+
 
 
 				if (print_evaluated)
@@ -204,6 +203,7 @@ int main(int argc, char*argv[])
 						}
 					}
 				}
+				delete p;
 			}
 		} catch (ceps::interpreter::semantic_exception & se)
 		{

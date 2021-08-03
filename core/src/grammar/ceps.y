@@ -585,7 +585,7 @@ for_loop:
 template:
  TEMPLATE general_id '(' id_list ')' '{' stmts '}'
 {
-  auto temp = new ceps::ast::Template_defintion(*$2,*$4,nullptr,nullptr,nullptr);
+  $$ = new ceps::ast::Template_defintion(*$2,*$4,nullptr,nullptr,nullptr);
   
 }
 |

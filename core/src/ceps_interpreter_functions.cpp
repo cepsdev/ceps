@@ -546,8 +546,8 @@ static void dump_html(std::ofstream& fout, ceps::ast::Struct& html){
 
 static bool find_node(ceps::ast::Nodebase_ptr root, ceps::ast::Nodebase_ptr p){
 	if (p == root) return true;
-	if (root->kind() == ceps::ast::Ast_node_kind::string_literal || root->kind() == ceps::ast::Ast_node_kind::int_literal || root->kind() == ceps::ast::Ast_node_kind::float_literal)
-		return false;
+	if (is_leaf(root->kind())) return false;
+	
 	auto r = ceps::ast::nlf_ptr(root);
 	for(auto e: r->children())
 		if (find_node(e,p)) return true;

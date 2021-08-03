@@ -39,7 +39,7 @@ testcase
 };
 
 template Title(T) {
-  B{title{T;};};
+  //B{title{T;};};
 };
 
 

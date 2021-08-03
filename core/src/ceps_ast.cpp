@@ -19,8 +19,15 @@ Licensed under the Apache License, Version 2.0 (the "License");
 
 using namespace ceps::ast;
 
-const char * ceps::ast::ast_node_kind_to_text[] = {	"ROOT","STRUCT","ID","STRING","INT",
-													"FLOAT","EXPR","SI_UNIT","OPERATOR",
+const char * ceps::ast::ast_node_kind_to_text[] = {	"ROOT",
+													"STRUCT",
+													"ID",
+													"STRING",
+													"INT",
+													"FLOAT",
+													"EXPR",
+													"SI_UNIT",
+													"OPERATOR",
 													"STMTS","STMT","VAL","LAMBDA","PARAMS",
 													"PARAM","LAMBDA_BODY","RAWMAP","ATOMS",
 													"VEC","UNARY_OPERATOR","SCOPE","FUNC_CALL",
@@ -31,11 +38,13 @@ const char * ceps::ast::ast_node_kind_to_text[] = {	"ROOT","STRUCT","ID","STRING
 													"ERROR","UNDEFINED","NONE","MACRO","ALGORITHM",
 													"LABEL","LET"};
 
+
 const int ceps::ast::Nodebase::iword_index = std::ios_base::xalloc();
 
 
 inline const char * ceps::ast::c_str(ceps::ast::Ast_node_kind k)
 {
+	if ( (sizeof(ceps::ast::ast_node_kind_to_text) / sizeof(char *)) <= (unsigned int) k) return "UNDEFINED";
 	return ast_node_kind_to_text[(int)k];
 }
 
@@ -69,7 +78,7 @@ void ceps::ast::Nodebase::print(std::ostream& out,bool pretty_print,int indent) 
 {
 	if (kind() == ceps::ast::Ast_node_kind::string_literal) print_content(out,pretty_print,indent);
 	else {
-		out << "("<<ast_node_kind_to_text[(int)kind()] << ' '; print_content(out,pretty_print,indent); out << ")";
+		out << "("<<ceps::ast::c_str(kind()) << ' '; print_content(out,pretty_print,indent); out << ")";
 	}
 }
 
@@ -184,3 +193,408 @@ ceps::ast::node_t ceps::ast::get_node_by_path(std::vector<std::string> v, std::v
 	}
 	return r;
 } 
+
+
+template<>
+ceps::ast::Nodebase* ceps::ast::ast_node<ceps::ast::Ast_node_kind::string_literal>::clone(){
+	return new This_type(*this);
+}
+template<>
+ceps::ast::Nodebase* ceps::ast::ast_node<ceps::ast::Ast_node_kind::int_literal>::clone(){
+	return new This_type(*this);
+}
+template<>
+ceps::ast::Nodebase* ceps::ast::ast_node<ceps::ast::Ast_node_kind::float_literal>::clone(){
+	return new This_type(*this);
+}
+template<>
+ceps::ast::Nodebase* ceps::ast::ast_node<ceps::ast::Ast_node_kind::long_literal>::clone(){
+	return new This_type(*this);
+}
+template<>
+ceps::ast::Nodebase* ceps::ast::ast_node<ceps::ast::Ast_node_kind::unsigned_long_literal>::clone(){
+	return new This_type(*this);
+}
+
+
+
+
+template<>
+ceps::ast::Nodebase* ceps::ast::ast_node<ceps::ast::Ast_node_kind::root>::clone(){
+	auto r =  new This_type(*this);
+	r->owns_children() = true;
+	return r;
+}
+template<>
+ceps::ast::Nodebase* ceps::ast::ast_node<ceps::ast::Ast_node_kind::structdef>::clone(){
+	auto r =  new This_type(*this);
+	r->owns_children() = true;
+	return r;
+}
+template<>
+ceps::ast::Nodebase* ceps::ast::ast_node<ceps::ast::Ast_node_kind::identifier>::clone(){
+	auto r =  new This_type(*this);
+	r->owns_children() = true;
+	return r;
+}
+template<>
+ceps::ast::Nodebase* ceps::ast::ast_node<ceps::ast::Ast_node_kind::expr>::clone(){
+	auto r =  new This_type(*this);
+	r->owns_children() = true;
+	return r;
+}
+template<>
+ceps::ast::Nodebase* ceps::ast::ast_node<ceps::ast::Ast_node_kind::si_unit_or_derived>::clone(){
+	auto r =  new This_type(*this);
+	r->owns_children() = true;
+	return r;
+}
+template<>
+ceps::ast::Nodebase* ceps::ast::ast_node<ceps::ast::Ast_node_kind::binary_operator>::clone(){
+	auto r =  new This_type(*this);
+	r->owns_children() = true;
+	return r;
+}
+template<>
+ceps::ast::Nodebase* ceps::ast::ast_node<ceps::ast::Ast_node_kind::stmts>::clone(){
+	auto r =  new This_type(*this);
+	r->owns_children() = true;
+	return r;
+}
+template<>
+ceps::ast::Nodebase* ceps::ast::ast_node<ceps::ast::Ast_node_kind::stmt>::clone(){	
+	auto r =  new This_type(*this);
+	r->owns_children() = true;
+	return r;
+}
+
+template<>
+ceps::ast::Nodebase* ceps::ast::ast_node<ceps::ast::Ast_node_kind::lambda>::clone(){
+	auto r =  new This_type(*this);
+	r->owns_children() = true;
+	return r;
+}
+template<>
+ceps::ast::Nodebase* ceps::ast::ast_node<ceps::ast::Ast_node_kind::formal_parameters>::clone(){
+	auto r =  new This_type(*this);
+	r->owns_children() = true;
+	return r;
+}
+template<>
+ceps::ast::Nodebase* ceps::ast::ast_node<ceps::ast::Ast_node_kind::formal_parameter>::clone(){
+	auto r =  new This_type(*this);
+	r->owns_children() = true;
+	return r;
+}
+template<>
+ceps::ast::Nodebase* ceps::ast::ast_node<ceps::ast::Ast_node_kind::lambda_body>::clone(){
+	auto r =  new This_type(*this);
+	r->owns_children() = true;
+	return r;
+}
+template<>
+ceps::ast::Nodebase* ceps::ast::ast_node<ceps::ast::Ast_node_kind::atoms>::clone(){
+	auto r =  new This_type(*this);
+	r->owns_children() = true;
+	return r;
+}
+template<>
+ceps::ast::Nodebase* ceps::ast::ast_node<ceps::ast::Ast_node_kind::vector>::clone(){
+	auto r =  new This_type(*this);
+	r->owns_children() = true;
+	return r;
+}
+template<>
+ceps::ast::Nodebase* ceps::ast::ast_node<ceps::ast::Ast_node_kind::unary_operator>::clone(){
+	auto r =  new This_type(*this);
+	r->owns_children() = true;
+	return r;
+}
+
+template<>
+ceps::ast::Nodebase* ceps::ast::ast_node<ceps::ast::Ast_node_kind::func_call>::clone(){
+	auto r =  new This_type(*this);
+	r->owns_children() = true;
+	return r;
+}
+template<>
+ceps::ast::Nodebase* ceps::ast::ast_node<ceps::ast::Ast_node_kind::call_parameters>::clone(){
+	auto r =  new This_type(*this);
+	r->owns_children() = true;
+	return r;
+}
+template<>
+ceps::ast::Nodebase* ceps::ast::ast_node<ceps::ast::Ast_node_kind::kind_def>::clone(){
+	auto r =  new This_type(*this);
+	r->owns_children() = true;
+	return r;
+}
+template<>
+ceps::ast::Nodebase* ceps::ast::ast_node<ceps::ast::Ast_node_kind::kind>::clone(){
+	auto r =  new This_type(*this);
+	r->owns_children() = true;
+	return r;
+}
+template<>
+ceps::ast::Nodebase* ceps::ast::ast_node<ceps::ast::Ast_node_kind::symbol>::clone(){
+	auto r =  new This_type(*this);
+	r->owns_children() = true;
+	return r;
+}
+template<>
+ceps::ast::Nodebase* ceps::ast::ast_node<ceps::ast::Ast_node_kind::loop>::clone(){
+	auto r =  new This_type(*this);
+	r->owns_children() = true;
+	return r;
+}
+template<>
+ceps::ast::Nodebase* ceps::ast::ast_node<ceps::ast::Ast_node_kind::for_loop_head>::clone(){
+	auto r =  new This_type(*this);
+	r->owns_children() = true;
+	return r;
+}
+template<>
+ceps::ast::Nodebase* ceps::ast::ast_node<ceps::ast::Ast_node_kind::nodeset>::clone(){
+	auto r =  new This_type(*this);
+	r->owns_children() = true;
+	return r;
+}
+template<>
+ceps::ast::Nodebase* ceps::ast::ast_node<ceps::ast::Ast_node_kind::nodeset_path_expr>::clone(){
+	auto r =  new This_type(*this);
+	r->owns_children() = true;
+	return r;
+}
+template<>
+ceps::ast::Nodebase* ceps::ast::ast_node<ceps::ast::Ast_node_kind::template_definition>::clone(){
+	auto r =  new This_type(*this);
+	r->owns_children() = true;
+	return r;
+}
+template<>
+ceps::ast::Nodebase* ceps::ast::ast_node<ceps::ast::Ast_node_kind::template_id>::clone(){
+	auto r =  new This_type(*this);
+	r->owns_children() = true;
+	return r;
+}
+template<>
+ceps::ast::Nodebase* ceps::ast::ast_node<ceps::ast::Ast_node_kind::ifelse>::clone(){
+	auto r =  new This_type(*this);
+	r->owns_children() = true;
+	return r;
+}
+template<>
+ceps::ast::Nodebase* ceps::ast::ast_node<ceps::ast::Ast_node_kind::ret>::clone(){
+	auto r =  new This_type(*this);
+	r->owns_children() = true;
+	return r;
+}
+template<>
+ceps::ast::Nodebase* ceps::ast::ast_node<ceps::ast::Ast_node_kind::byte_array>::clone(){
+	auto r =  new This_type(*this);
+	r->owns_children() = true;
+	return r;
+}
+template<>
+ceps::ast::Nodebase* ceps::ast::ast_node<ceps::ast::Ast_node_kind::error>::clone(){
+	auto r =  new This_type(*this);
+	r->owns_children() = true;
+	return r;
+}
+template<>
+ceps::ast::Nodebase* ceps::ast::ast_node<ceps::ast::Ast_node_kind::undef>::clone(){
+	auto r =  new This_type(*this);
+	r->owns_children() = true;
+	return r;
+}
+template<>
+ceps::ast::Nodebase* ceps::ast::ast_node<ceps::ast::Ast_node_kind::none>::clone(){
+	auto r =  new This_type(*this);
+	r->owns_children() = true;
+	return r;
+}
+template<>
+ceps::ast::Nodebase* ceps::ast::ast_node<ceps::ast::Ast_node_kind::macro_definition>::clone(){
+	auto r =  new This_type(*this);
+	r->owns_children() = true;
+	return r;
+}
+template<>
+ceps::ast::Nodebase* ceps::ast::ast_node<ceps::ast::Ast_node_kind::algorithm_definition>::clone(){
+	auto r = new This_type(*this);
+	r->owns_children() = true;
+	return r;
+}
+template<>
+ceps::ast::Nodebase* ceps::ast::ast_node<ceps::ast::Ast_node_kind::label>::clone(){
+	auto r  = new This_type(*this);
+	r->owns_children() = true;
+	return r;
+}
+template<>
+ceps::ast::Nodebase* ceps::ast::ast_node<ceps::ast::Ast_node_kind::let>::clone(){
+	auto r = new This_type(*this);
+	r->owns_children() = true;
+	return r;
+}
+template<>
+ceps::ast::Nodebase* ceps::ast::ast_node<ceps::ast::Ast_node_kind::rawmap>::clone(){
+	auto r  = new This_type(*this);
+	r->owns_children() = true;
+	return r;
+}
+
+
+template<>
+ceps::ast::Nodebase* ceps::ast::Error::clone(){
+	auto r = new This_type(*this);
+	r->owns_children() = true;
+	return r;
+}
+
+template<>
+ceps::ast::Nodebase* ceps::ast::Binary_operator::clone(){
+	auto r = new This_type(*this);
+	r->owns_children() = true;
+	return r;
+}
+
+template<>
+ceps::ast::Nodebase* ceps::ast::Struct::clone(){
+	auto r = new This_type(*this);
+	r->owns_children() = true;
+	return r;
+}
+
+template<>
+ceps::ast::Nodebase* ceps::ast::Scope::clone(){
+	auto r = new This_type(*this);
+	r->owns_children() = true;
+	return r;
+}
+
+template<>
+ceps::ast::Nodebase* ceps::ast::Identifier::clone(){
+	auto r = new This_type(*this);
+	r->owns_children() = true;
+	return r;
+}
+
+template<>
+ceps::ast::Nodebase* ceps::ast::Valdef::clone(){
+	auto r = new This_type(*this);
+	r->owns_children() = true;
+	return r;
+}
+
+template<>
+ceps::ast::Nodebase* ceps::ast::Kind::clone(){
+
+	auto r = new This_type(*this);
+	r->owns_children() = true;
+	return r;
+}
+
+template<>
+ceps::ast::Nodebase* ceps::ast::Kinddef::clone(){
+
+	auto r = new This_type(*this);
+	r->owns_children() = true;
+	return r;
+}
+
+template<>
+ceps::ast::Nodebase* ceps::ast::Ast_nodeset::clone(){
+
+	auto r = new This_type(*this);
+	r->owns_children() = true;
+	return r;
+}
+
+template<>
+ceps::ast::Nodebase* ceps::ast::Symbol::clone(){
+
+	auto r = new This_type(*this);
+	r->owns_children() = true;
+	return r;
+}
+
+template<>
+ceps::ast::Nodebase* ceps::ast::Template_id::clone(){
+
+	auto r = new This_type(*this);
+	r->owns_children() = true;
+	return r;
+}
+
+
+template<>
+ceps::ast::Nodebase* ceps::ast::Let::clone(){
+
+	auto r = new This_type(*this);
+	r->owns_children() = true;
+	return r;
+}
+
+
+template<>
+ceps::ast::Nodebase* ceps::ast::Macrodef::clone(){
+
+	auto r = new This_type(*this);
+	r->owns_children() = true;
+	return r;
+}
+
+
+template<>
+ceps::ast::Nodebase* ceps::ast::String::clone(){
+
+	auto r = new This_type(*this);
+	
+	return r;
+}
+
+template<>
+ceps::ast::Nodebase* ceps::ast::Template_defintion::clone(){
+
+	auto r = new This_type(*this);
+	r->owns_children() = true;
+	
+	return r;
+}
+
+
+template<>
+ceps::ast::Nodebase* ceps::ast::Label::clone(){
+
+	auto r = new This_type(*this);
+	r->owns_children() = true;
+	
+	return r;
+}
+
+template<>
+ceps::ast::Nodebase* ceps::ast::User_defined::clone(){
+
+	auto r = new This_type(*this);
+	r->owns_children() = true;
+	
+	return r;
+}
+
+template<>
+ceps::ast::Nodebase* ceps::ast::ast_node<ceps::ast::Ast_node_kind::user_defined>::clone(){
+
+	auto r = new This_type(*this);
+		
+	return r;
+}
+
+
+template<>
+ ceps::ast::Nodebase*  ast_node<Ast_node_kind::symbol,std::string>::clone() {std::cerr << "** Undefined." << std::endl;}
+template<>
+ ceps::ast::Nodebase*  ast_node<Ast_node_kind::binary_operator,std::string>::clone() {std::cerr << "** Undefined." << std::endl;}
+
+ template<>
+ceps::ast::Nodebase* ceps::ast::ast_node<ceps::ast::Ast_node_kind::valdef>::clone(){std::cerr << "** Undefined." << std::endl;}

@@ -1,32 +1,58 @@
 123;
 1+1;
-statemachine{1;};
+h+j;
+{
+
+}
+
+statemachine{
+  S;
+};
 
 a+1;
 
-sm{
-  id{"haubeauf";};
+sn{
+  haubeauf;
   t{1;1;};
   t{2;2;};
 };
 
-sm{
-  id{"haubezu";};
+sn{
+  haubezu;
   t{1;1;};
   t{2;2;};
 };
 
-sm{
-  id{"haubezuzu";};
+sn{
+  haubezuzu;
   t{1;1;};
   t{2;2;};
 };
 
+sn{
+  haubezuzuzu;
+  t{1;1;};
+  t{2;2;};
+};
+
+sn{
+  haubezuzuzuzu;
+  t{1;1;};
+  t{2;2;};
+};
+
+sn{
+  haubezuzuzuzuzu;
+  t{1;1;};
+  t{2;2;};
+};
+
+f(h(1,2,g(h,j,k)));
+f();
 html{
   ul{
-for(sm:root.sm){
-  
-    li{sm.id.content();};
-}
+    for(gg:root.sn){      
+        li{gg.content().is_id();};
+    }
   };
 };
