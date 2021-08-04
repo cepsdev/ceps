@@ -267,7 +267,7 @@ struct Nonleafbase
 {
 	using Container_t = std::vector<Nodebase_ptr>;
 	std::vector<Nodebase_ptr> children_;	
-	bool owns_children_{false};
+	bool owns_children_{true};
 	bool& owns_children () {return owns_children_ ;}
 	bool owns_children () const {return owns_children_ ;}
 
@@ -1576,9 +1576,24 @@ const std::valarray<int> CANDELA = {0,0,0,0,0,0,1};
 using node_t = Nodebase_ptr;
 using node_symbol_t = ceps::ast::Symbol*;
 using node_vec_t = std::vector<node_t>;
+
+using node_root_t = ceps::ast::Root*;
+using node_stmts_t = ceps::ast::Stmts*;
+using node_stmt_t = ceps::ast::Stmt*;
+using node_struct_t = ceps::ast::Struct*;
+using node_scope_t = ceps::ast::Scope*;
+using node_callparameters_t = ceps::ast::Call_parameters*;
+
 node_symbol_t mk_symbol(std::string name, std::string kind);
 node_t mk_string(std::string v);
 node_t get_node_by_path(std::vector<std::string> v, std::vector<node_t> const & ns);
+node_root_t mk_root();
+node_stmts_t mk_stmts();
+node_stmt_t mk_stmt();
+node_struct_t mk_struct(std::string);
+node_scope_t mk_scope();
+node_callparameters_t mk_callparameters();
+
 
 std::vector<node_t> extract_functioncall_arguments_from_param_block(ceps::ast::Call_parameters& params);
 

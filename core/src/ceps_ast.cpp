@@ -155,6 +155,26 @@ ceps::ast::node_t ceps::ast::mk_string(std::string v){
 	return new ceps::ast::String(v,nullptr,nullptr,nullptr);
 }
 
+ceps::ast::node_root_t ceps::ast::mk_root(){
+	return new Root{};
+}
+ceps::ast::node_stmts_t ceps::ast::mk_stmts(){
+	return new Stmts{};
+}
+ceps::ast::node_stmt_t ceps::ast::mk_stmt(){
+	return new Stmt{};
+}
+ceps::ast::node_struct_t ceps::ast::mk_struct(std::string struct_name){
+	return new Struct{struct_name};
+}
+ceps::ast::node_scope_t ceps::ast::mk_scope(){
+	return new Scope{};
+}
+ceps::ast::node_callparameters_t ceps::ast::mk_callparameters(){
+	return new Call_parameters{};
+}
+
+
 
 std::vector<ceps::ast::node_t> ceps::ast::extract_functioncall_arguments_from_param_block(ceps::ast::Call_parameters& params){
 	std::vector<ceps::ast::node_t> r;
@@ -468,7 +488,7 @@ ceps::ast::Nodebase* ceps::ast::Struct::clone(){
 
 template<>
 ceps::ast::Nodebase* ceps::ast::Scope::clone(){
-	auto r = new This_type(*this);
+	auto r = new Scope(*this);
 	r->owns_children() = true;
 	return r;
 }
