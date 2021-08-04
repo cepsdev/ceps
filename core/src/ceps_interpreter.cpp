@@ -1590,50 +1590,47 @@ ceps::ast::Nodebase_ptr ceps::interpreter::evaluate_nonleaf(ceps::ast::Nonleafba
 		else v.push_back(r);
 	}
 	env.scope = old_scope;
-	root.children() = v;
-	return root_ptr;
-	/*
 
-
-	if (root_ptr->kind() == ceps::ast::Ast_node_kind::root)
-	{
-		Root* result = new Root{};
-		result->children() = v;
-		return result;
+	switch (root_ptr->kind()){
+		case Ast_node_kind::root:
+		{
+			Root* result = mk_root();
+			result->children() = v;
+			return result;
+		}
+		case Ast_node_kind::stmts:
+		{
+			Stmts* result = mk_stmts();
+			result->children() = v;
+			return result;
+		}
+		case Ast_node_kind::stmt:
+		{
+			Stmt* result = mk_stmt();
+			result->children() = v;
+			return result;
+		}
+		case Ast_node_kind::structdef:
+		{
+			ceps::ast::Struct& s = as_struct_ref(root_ptr);
+			Struct* result = make_struct(name(s));
+			result->children() = v;
+			return result;
+		}
+		case Ast_node_kind::scope:
+		{
+			Scope* result = mk_scope();
+			result->children() = v;
+			return result;
+		}
+		case Ast_node_kind::call_parameters:
+		{
+			Call_parameters* result = mk_callparameters();
+			result->children() = v;
+			return result;
+		}
+		default:
+		CEPSERROR("Internal Error.")
 	}
-	else if (root_ptr->kind() == ceps::ast::Ast_node_kind::stmts)
-	{
-		Stmts* result = new Stmts{};
-		result->children() = v;
-		return result;
-	}
-	else if (root_ptr->kind() == ceps::ast::Ast_node_kind::stmt)
-	{
-		Stmt* result = new Stmt();
-		result->children() = v;
-		return result;
-	}
-	else if (root_ptr->kind() == ceps::ast::Ast_node_kind::structdef)
-	{
-		ceps::ast::Struct& s = *dynamic_cast<ceps::ast::Struct*>(&root);
-		Struct* result = new Struct(name(s), nullptr, nullptr, nullptr);
-		result->children() = v;
-		return result;
-	}
-	else if (root_ptr->kind() == ceps::ast::Ast_node_kind::scope)
-	{
-		Scope* result = new Scope();
-		result->children() = v;
-		return result;
-	}
-	else if (root_ptr->kind() == ceps::ast::Ast_node_kind::call_parameters)
-	{
-		Call_parameters* result = new Call_parameters();
-		result->children() = v;
-		return result;
-	}
-
-	CEPSERROR("Internal Error.") */
-
 }
 
