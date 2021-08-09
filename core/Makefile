@@ -82,7 +82,7 @@ include/include_gen/ceps.tab.hh $(BISONGENDIR)/ceps.tab.cpp: src/grammar/ceps.y
 	@mv $(BISONGENDIR)/location.hh include/include_gen
 	@cp $(BISONGENDIR)/ceps.tab.h include/include_gen/ceps.tab.h
 	@mv $(BISONGENDIR)/ceps.tab.h include/include_gen/ceps.tab.hh
-	-mv $(BISONGNDIR)/stack.hh include/include_gen/stack.hh
+	-mv $(BISONGENDIR)/stack.hh include/include_gen/stack.hh
 	-mv $(BISONGENDIR)/position.hh include/include_gen/position.hh
 	@mv $(BISONGENDIR)/ceps.tab.c $(BISONGENDIR)/ceps.tab.cpp
 	@ls -al include/include_gen
