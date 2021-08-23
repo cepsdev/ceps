@@ -929,6 +929,43 @@ ceps::ast::Nodebase_ptr ceps::interpreter::handle_binop(	ceps::ast::Nodebase_ptr
 			}
 			return new Int( (value(lhs_ref) == value(rhs_ref)) ? 1 : 0, ceps::ast::all_zero_unit(), nullptr, nullptr, nullptr);
 		}
+		if (is<Ast_node_kind::scope>(lhs) && is<Ast_node_kind::scope>(rhs))
+		{
+			auto& lhs_set = as_scope_ref(lhs);
+			auto& rhs_set = as_scope_ref(rhs);
+			if (lhs_set.children().size () == 0 && rhs_set.children().size() == 0)
+			 return mk_int_node(1);
+			if (lhs_set.children().size () == 0 && rhs_set.children().size() != 0)
+			 return mk_int_node(0);
+			if (lhs_set.children().size () != 0 && rhs_set.children().size() == 0)
+			 return mk_int_node(0);
+			std::vector<std::string> v1,v2;
+
+			for(auto e: lhs_set.children())
+			 {
+				 if (e == nullptr) continue;
+				 std::stringstream ss; ss << *e;v1.push_back(std::move(ss.str()));
+			 }
+
+			for(auto e: rhs_set.children())
+			 {
+				 if (e == nullptr) continue;
+				 std::stringstream ss; ss << *e;v2.push_back(std::move(ss.str()));
+			 }
+
+			 std::sort(v1.begin(),v1.end());
+			 std::sort(v2.begin(),v2.end());
+			 auto l1 = std::unique(v1.begin(),v1.end());
+			 auto l2 = std::unique(v2.begin(),v2.end());
+			 if (l1 - v1.begin() != l2 - v2.begin()) return mk_int_node(0);
+			 auto it1 = v1.begin();
+			 auto it2 = v2.begin();
+			 for(;it1 != l1 && it2 != l2; ++it1,++it2){
+				 if (*it1 != *it2) return mk_int_node(0);
+			 }
+
+			return mk_int_node(1);
+		}
 	}
 	if (op == ceps::Cepsparser::token::REL_OP_NEQ)
 	{
