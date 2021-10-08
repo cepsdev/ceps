@@ -648,15 +648,15 @@ ceps::ast::Nodebase_ptr ceps::interpreter::evaluate_generic(ceps::ast::Nodebase_
 		sym_table.push_scope();
 		std::string id = ceps::ast::name(ceps::ast::as_struct_ref(root_node));
 
-		ceps::parser_env::Symbol* sym_ptr;
-		if ( (sym_ptr = sym_table.lookup(id)) != nullptr && sym_ptr->category ==  ceps::parser_env::Symbol::Category::MACRO){
+		ceps::parser_env::Symbol* sym_ptr = sym_table.lookup(id);
+		if ( sym_ptr  != nullptr && sym_ptr->category ==  ceps::parser_env::Symbol::Category::MACRO){
 			result =  eval_macro(root_node,
 					  sym_ptr,
 		 			  sym_table,
 		 			  env,
 		 			  parent_node,
 		 			  predecessor);
-		} else if ( (sym_ptr = sym_table.lookup(id)) != nullptr && sym_ptr->category ==  ceps::parser_env::Symbol::Category::REWRITE){
+		} else if ( sym_ptr != nullptr && sym_ptr->category ==  ceps::parser_env::Symbol::Category::REWRITE){
 			result =  eval_rewrite(root_node,
 					  sym_ptr,
 		 			  sym_table,
@@ -664,7 +664,7 @@ ceps::ast::Nodebase_ptr ceps::interpreter::evaluate_generic(ceps::ast::Nodebase_
 		 			  parent_node,
 		 			  predecessor);
 		} else if (
-				(sym_ptr = sym_table.lookup(id)) != nullptr &&
+				sym_ptr != nullptr &&
 				sym_ptr->category ==  ceps::parser_env::Symbol::Category::VAR &&
 				sym_ptr->payload != nullptr &&
 
@@ -685,7 +685,19 @@ ceps::ast::Nodebase_ptr ceps::interpreter::evaluate_generic(ceps::ast::Nodebase_
 			result = evaluate_nonleaf(*dynamic_cast<ceps::ast::Nonleafbase*>(root_node),sym_table,env,root_node,predecessor,this_ptr);
 			if (id.length()) ceps::ast::name(ceps::ast::as_struct_ref(result)) = id;
 
-		} else result = evaluate_nonleaf(*dynamic_cast<ceps::ast::Nonleafbase*>(root_node),sym_table,env,root_node,predecessor,this_ptr);
+		}  else if (
+				sym_ptr != nullptr &&
+				sym_ptr->category ==  ceps::parser_env::Symbol::Category::VAR &&
+				sym_ptr->payload != nullptr &&
+
+				(
+				 (((ceps::ast::Nodebase_ptr)sym_ptr->payload)->kind() == ceps::ast::Ast_node_kind::identifier)
+				)
+		){
+			result = evaluate_nonleaf(*dynamic_cast<ceps::ast::Nonleafbase*>(root_node),sym_table,env,root_node,predecessor,this_ptr);
+			name(as_struct_ref(result)) = name(as_id_ref((ceps::ast::Nodebase_ptr)(sym_ptr->payload)));
+		}
+		else result = evaluate_nonleaf(*dynamic_cast<ceps::ast::Nonleafbase*>(root_node),sym_table,env,root_node,predecessor,this_ptr);
 		sym_table.pop_scope();
 		if (id == "ignore_value") return nullptr;
 		if (id == "comment_stmt") return nullptr;
