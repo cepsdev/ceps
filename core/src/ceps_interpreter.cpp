@@ -331,6 +331,8 @@ ceps::ast::Nodebase_ptr ceps::interpreter::eval_ifelse(ceps::ast::Nodebase_ptr r
  ceps::ast::Ifelse& ifelse = ceps::ast::as_ifelse_ref(root_node);
  ceps::ast::Nodebase_ptr cond = evaluate_generic(ifelse.children()[0],sym_table,env,root_node,nullptr,nullptr);
  ceps::ast::Nodebase_ptr left_branch = nullptr,right_branch=nullptr;
+
+ 
  if (cond->kind() == ceps::ast::Ast_node_kind::int_literal){
 	 ceps::ast::Nodebase_ptr r = nullptr;
 	 if (ceps::ast::value(ceps::ast::as_int_ref(cond)) != 0 ){
@@ -345,8 +347,9 @@ ceps::ast::Nodebase_ptr ceps::interpreter::eval_ifelse(ceps::ast::Nodebase_ptr r
 	 return create_ast_nodeset("", scope.children());
  }
 
- if (ifelse.children().size() > 1) left_branch = evaluate_generic(ifelse.children()[1],sym_table,env,root_node,ifelse.children()[0],nullptr);
- if (ifelse.children().size() > 2) right_branch = evaluate_generic(ifelse.children()[2],sym_table,env,root_node,ifelse.children()[1],nullptr);
+
+ if (ifelse.children().size() > 1) left_branch = ifelse.children()[1]->clone(); //evaluate_generic(ifelse.children()[1],sym_table,env,root_node,ifelse.children()[0],nullptr); 
+ if (ifelse.children().size() > 2) right_branch = ifelse.children()[2]->clone(); // evaluate_generic(ifelse.children()[2],sym_table,env,root_node,ifelse.children()[1],nullptr);
  return new ceps::ast::Ifelse(cond,left_branch,right_branch);
 }
 
@@ -366,6 +369,7 @@ ceps::ast::Nodebase_ptr ceps::interpreter::eval_binaryop(ceps::ast::Nodebase_ptr
 		ceps::ast::Nodebase_ptr parent_node,
 		ceps::ast::Nodebase_ptr predecessor)
 {
+
 	ceps::ast::Binary_operator& binop = *dynamic_cast<ceps::ast::Binary_operator*>(root_node);
 	if (binop.children().size() != 2)
 	{
@@ -374,10 +378,12 @@ ceps::ast::Nodebase_ptr ceps::interpreter::eval_binaryop(ceps::ast::Nodebase_ptr
 	ceps::ast::Nodebase_ptr result;
 
 
-	if (op(binop) != '=')
+	if (op_val(binop) != "=")
 	{
 	 ceps::ast::Nodebase_ptr lhs = evaluate_generic(binop.children()[0],sym_table,env,root_node,predecessor,nullptr);
 	 ceps::ast::Nodebase_ptr rhs = evaluate_generic(binop.children()[1],sym_table,env,root_node,predecessor, op(binop) == '.' ? lhs : nullptr );
+
+
 
 	 //A single element nodeset, with no idx operand set, evaluates to its only element (execption: operator is '.')
 	 if(op(binop) != '.'){
@@ -414,7 +420,7 @@ ceps::ast::Nodebase_ptr ceps::interpreter::eval_binaryop(ceps::ast::Nodebase_ptr
 											);
 	 }
 
-	if ( (lhs->kind() == ceps::ast::Ast_node_kind::symbol
+	 if ( (lhs->kind() == ceps::ast::Ast_node_kind::symbol
 		 || rhs->kind() == ceps::ast::Ast_node_kind::symbol
 		 || lhs->kind() == ceps::ast::Ast_node_kind::binary_operator
 		 || rhs->kind() == ceps::ast::Ast_node_kind::binary_operator
@@ -426,6 +432,8 @@ ceps::ast::Nodebase_ptr ceps::interpreter::eval_binaryop(ceps::ast::Nodebase_ptr
 		 auto t = mk_bin_op(ceps::ast::op(binop),lhs,rhs,ceps::ast::op_str(binop));
 		 return t;
 	 }
+
+
 	 result = handle_binop(root_node,ceps::ast::op(binop),lhs,rhs,sym_table,env,root_node,op(binop) == '.' ? lhs : nullptr);
 	}
 	else /* operator is = */
@@ -578,9 +586,7 @@ ceps::ast::Nodebase_ptr ceps::interpreter::eval_id(ceps::ast::Nodebase_ptr root_
 	 else if (node_ptr->kind() == ceps::ast::Ast_node_kind::symbol)
 	 {
 	 	 auto & v = as_symbol_ref(node_ptr);
-	 	 //std::cerr << v << std::endl;
 		 return new ceps::ast::Symbol(name(v), kind(v), nullptr, nullptr, nullptr);
-
 	 }
 	 else
 		 return node_ptr;
@@ -884,6 +890,19 @@ ceps::ast::Nodebase_ptr ceps::interpreter::handle_binop(	ceps::ast::Nodebase_ptr
 
 		return rhs;
 	}
+    
+	if (
+		is<Ast_node_kind::identifier>(lhs) || 
+		is<Ast_node_kind::identifier>(rhs) || 
+		is<Ast_node_kind::func_call>(rhs)  || 
+		is<Ast_node_kind::func_call>(lhs)  || 
+		is<Ast_node_kind::binary_operator>(rhs) || 
+		is<Ast_node_kind::binary_operator>(lhs) || 
+		is<Ast_node_kind::unary_operator>(lhs) || 
+		is<Ast_node_kind::unary_operator>(rhs) ||  
+		is<Ast_node_kind::symbol>(lhs) || 
+		is<Ast_node_kind::symbol>(rhs) 		
+		) return mk_bin_op(op,lhs,rhs,ceps::ast::op_str(ceps::ast::as_binop_ref(binop_node)));
 
 	
 	//Promotions / Coercions
@@ -898,8 +917,6 @@ ceps::ast::Nodebase_ptr ceps::interpreter::handle_binop(	ceps::ast::Nodebase_ptr
 
 	if (op == ceps::Cepsparser::token::REL_OP_EQ)
 	{
-        if (lhs->kind() == ceps::ast::Ast_node_kind::identifier || rhs->kind() == ceps::ast::Ast_node_kind::identifier)
-            return binop_node;
 
 		if (lhs->kind() == Kind::string_literal && rhs->kind() == Kind::string_literal)
 		{
@@ -979,10 +996,8 @@ ceps::ast::Nodebase_ptr ceps::interpreter::handle_binop(	ceps::ast::Nodebase_ptr
 			return mk_int_node(1);
 		}
 	}
-	if (op == ceps::Cepsparser::token::REL_OP_NEQ)
+	else if (op == ceps::Cepsparser::token::REL_OP_NEQ)
 	{
-        if (lhs->kind() == ceps::ast::Ast_node_kind::identifier || rhs->kind() == ceps::ast::Ast_node_kind::identifier)
-            return binop_node;
 
 		if (lhs->kind() == Kind::string_literal && rhs->kind() == Kind::string_literal)
 		{
@@ -1025,10 +1040,8 @@ ceps::ast::Nodebase_ptr ceps::interpreter::handle_binop(	ceps::ast::Nodebase_ptr
 			return new Int( (value(lhs_ref) == value(rhs_ref)) ? 0 : 1, ceps::ast::all_zero_unit(), nullptr, nullptr, nullptr);
 		}
 	}
-	if (op == ceps::Cepsparser::token::REL_OP_GT)
+	else if (op == ceps::Cepsparser::token::REL_OP_GT)
 	{
-        if (lhs->kind() == ceps::ast::Ast_node_kind::identifier || rhs->kind() == ceps::ast::Ast_node_kind::identifier)
-            return binop_node;
 
 		if (lhs->kind() == Kind::string_literal && rhs->kind() == Kind::string_literal)
 		{
@@ -1071,17 +1084,8 @@ ceps::ast::Nodebase_ptr ceps::interpreter::handle_binop(	ceps::ast::Nodebase_ptr
 			return new Int( (value(lhs_ref) > value(rhs_ref)) ? 1 : 0, ceps::ast::all_zero_unit(), nullptr, nullptr, nullptr);
 		}
 	}
-	if (op == ceps::Cepsparser::token::REL_OP_LT)
+	else if (op == ceps::Cepsparser::token::REL_OP_LT)
 	{
-        if (lhs->kind() == ceps::ast::Ast_node_kind::identifier || rhs->kind() == ceps::ast::Ast_node_kind::identifier)
-            return binop_node;
-
-        if (lhs->kind() == ceps::ast::Ast_node_kind::identifier || rhs->kind() == ceps::ast::Ast_node_kind::identifier)
-            return binop_node;
-
-        if (lhs->kind() == ceps::ast::Ast_node_kind::identifier || rhs->kind() == ceps::ast::Ast_node_kind::identifier)
-            return binop_node;
-
 		if (lhs->kind() == Kind::string_literal && rhs->kind() == Kind::string_literal)
 		{
 			String lhs_ref = *dynamic_cast<String*>(lhs);
@@ -1123,10 +1127,8 @@ ceps::ast::Nodebase_ptr ceps::interpreter::handle_binop(	ceps::ast::Nodebase_ptr
 			return new Int( (value(lhs_ref) < value(rhs_ref)) ? 1 : 0, ceps::ast::all_zero_unit(), nullptr, nullptr, nullptr);
 		}
 	}
-	if (op == ceps::Cepsparser::token::REL_OP_GT_EQ)
+	else if (op == ceps::Cepsparser::token::REL_OP_GT_EQ)
 	{
-        if (lhs->kind() == ceps::ast::Ast_node_kind::identifier || rhs->kind() == ceps::ast::Ast_node_kind::identifier)
-            return binop_node;
 
 		if (lhs->kind() == Kind::string_literal && rhs->kind() == Kind::string_literal)
 		{
@@ -1169,13 +1171,8 @@ ceps::ast::Nodebase_ptr ceps::interpreter::handle_binop(	ceps::ast::Nodebase_ptr
 			return new Int( (value(lhs_ref) >= value(rhs_ref)) ? 1 : 0, ceps::ast::all_zero_unit(), nullptr, nullptr, nullptr);
 		}
 	}
-	if (op == ceps::Cepsparser::token::REL_OP_LT_EQ)
+	else if (op == ceps::Cepsparser::token::REL_OP_LT_EQ)
 	{
-        if (lhs->kind() == ceps::ast::Ast_node_kind::identifier || rhs->kind() == ceps::ast::Ast_node_kind::identifier)
-            return binop_node;
-
-        if (lhs->kind() == ceps::ast::Ast_node_kind::identifier || rhs->kind() == ceps::ast::Ast_node_kind::identifier)
-            return binop_node;
 
 		if (lhs->kind() == Kind::string_literal && rhs->kind() == Kind::string_literal)
 		{
@@ -1219,10 +1216,8 @@ ceps::ast::Nodebase_ptr ceps::interpreter::handle_binop(	ceps::ast::Nodebase_ptr
 		}
 	}
 	/** Addition **/
-	if (op == '+')
+	else  if (op == '+')
 	{
-        if (lhs->kind() == ceps::ast::Ast_node_kind::identifier || rhs->kind() == ceps::ast::Ast_node_kind::identifier)
-            return binop_node;
 
 		if (lhs->kind() == Kind::string_literal && rhs->kind() == Kind::string_literal)
 		{
@@ -1299,7 +1294,7 @@ ceps::ast::Nodebase_ptr ceps::interpreter::handle_binop(	ceps::ast::Nodebase_ptr
 		}
 	}// Addition
     /** Modulo **/
-    if (op == '%')
+    else if (op == '%')
     {
 
         if (lhs->kind() == Kind::int_literal && rhs->kind() == Kind::int_literal)
@@ -1315,7 +1310,7 @@ ceps::ast::Nodebase_ptr ceps::interpreter::handle_binop(	ceps::ast::Nodebase_ptr
     }// Modulo
 
 	/*Logical And*/
-	if (op == '&')
+	else if (op == '&')
 		{
 			if (lhs->kind() == Kind::string_literal && rhs->kind() == Kind::string_literal)
 			{
@@ -1347,7 +1342,7 @@ ceps::ast::Nodebase_ptr ceps::interpreter::handle_binop(	ceps::ast::Nodebase_ptr
 			}
 		}// Addition
 
-	if (op == '|')
+	else if (op == '|')
 			{
 				if (lhs->kind() == Kind::string_literal && rhs->kind() == Kind::string_literal)
 				{
@@ -1381,7 +1376,7 @@ ceps::ast::Nodebase_ptr ceps::interpreter::handle_binop(	ceps::ast::Nodebase_ptr
 
 
 	/** Subtraction **/
-	if (op == '-')
+	else if (op == '-')
 	{
 		if (lhs->kind() == Kind::string_literal && rhs->kind() == Kind::string_literal)
 		{
@@ -1420,7 +1415,7 @@ ceps::ast::Nodebase_ptr ceps::interpreter::handle_binop(	ceps::ast::Nodebase_ptr
 
 
 	/****** Multiplication *******/
-	if (op == '*')
+	else if (op == '*')
 	{
 		if (lhs->kind() == Kind::string_literal && rhs->kind() == Kind::string_literal)
 		{
@@ -1503,7 +1498,7 @@ ceps::ast::Nodebase_ptr ceps::interpreter::handle_binop(	ceps::ast::Nodebase_ptr
 	}// Multiplication
 
 	/****** Division *******/
-	if (op == '/')
+	else if (op == '/')
 	{
 		if (lhs->kind() == Kind::string_literal && rhs->kind() == Kind::string_literal)
 		{
@@ -1544,7 +1539,7 @@ ceps::ast::Nodebase_ptr ceps::interpreter::handle_binop(	ceps::ast::Nodebase_ptr
 		}
 	}// Division
 	/****** Power *******/
-	if (op == '^')
+	else if (op == '^')
 	{
 		if ( (lhs->kind() == Kind::string_literal || rhs->kind() == Kind::string_literal))
 		{
@@ -1608,6 +1603,7 @@ ceps::ast::Nodebase_ptr ceps::interpreter::handle_binop(	ceps::ast::Nodebase_ptr
 			return new Double(std::pow(value(lhs_ref), value(rhs_ref)), unit(lhs_ref), nullptr, nullptr, nullptr);
 		}
 	}// Power
+
 	return mk_bin_op(op,lhs,rhs,ceps::ast::op_str(ceps::ast::as_binop_ref(binop_node)));
 }
 

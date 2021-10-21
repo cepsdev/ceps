@@ -1371,9 +1371,10 @@ ceps::ast::Nodebase_ptr ceps::interpreter::eval_funccall(ceps::ast::Nodebase_ptr
 			 return create_ast_nodeset( "", result);
 		 }
 
+
 		 ceps::ast::Func_call* f = new ceps::ast::Func_call();
 		 f->children_.push_back(new ceps::ast::Identifier(name(id), nullptr, nullptr, nullptr));
-		 f->children_.push_back(params_);
+		 f->children_.push_back(params_->clone());
 		 return f;
 	 }
 	 return nullptr;
