@@ -893,6 +893,14 @@ TYPE_ALIAS(Nodeset_path_expr_ptr, Nodeset_path_expr*)
 
 typedef ast_node<Ast_node_kind::error, std::string , int , void* > Error;
 
+///////////// helper functions
+
+Nodebase_ptr get_first_child(Nodebase_ptr node){
+	auto nlf = nlf_ptr(node);
+	if (!nlf) return nullptr;
+	return nlf->children()[0];
+}
+
 
 ///////////// is_* predicates
 
@@ -1594,6 +1602,7 @@ node_struct_t mk_struct(std::string);
 node_scope_t mk_scope();
 node_callparameters_t mk_callparameters();
 
+void gc(node_t){}
 
 std::vector<node_t> extract_functioncall_arguments_from_param_block(ceps::ast::Call_parameters& params);
 
