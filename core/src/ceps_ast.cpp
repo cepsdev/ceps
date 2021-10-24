@@ -618,3 +618,17 @@ template<>
 
  template<>
 ceps::ast::Nodebase* ceps::ast::ast_node<ceps::ast::Ast_node_kind::valdef>::clone(){std::cerr << "** Undefined." << std::endl;}
+
+
+
+void ceps::ast::gc(ceps::ast::node_t){}
+
+ceps::ast::Nodebase_ptr ceps::ast::get_first_child(ceps::ast::Nodebase_ptr node){
+	auto nlf = nlf_ptr(node);
+	if (!nlf) return nullptr;
+	return nlf->children()[0];
+}
+
+
+
+
