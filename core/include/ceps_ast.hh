@@ -330,7 +330,7 @@ struct Nonleafbase
 	virtual ~Nonleafbase()
 	{
 		if (!owns_children ()) return;
-		for (auto e: children()) if (e) delete e;
+		//for (auto e: children()) if (e) delete e;
 		children().clear();
 	}
 };
@@ -1587,6 +1587,8 @@ using node_stmt_t = ceps::ast::Stmt*;
 using node_struct_t = ceps::ast::Struct*;
 using node_scope_t = ceps::ast::Scope*;
 using node_callparameters_t = ceps::ast::Call_parameters*;
+using node_nodeset_t = ceps::ast::Ast_nodeset*;
+
 
 node_symbol_t mk_symbol(std::string name, std::string kind);
 node_t mk_string(std::string v);
@@ -1597,6 +1599,7 @@ node_stmt_t mk_stmt();
 node_struct_t mk_struct(std::string);
 node_scope_t mk_scope();
 node_callparameters_t mk_callparameters();
+node_nodeset_t mk_nodeset ();
 
 void gc(node_t);
 

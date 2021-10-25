@@ -1607,6 +1607,37 @@ ceps::ast::Nodebase_ptr ceps::interpreter::handle_binop(	ceps::ast::Nodebase_ptr
 	return mk_bin_op(op,lhs,rhs,ceps::ast::op_str(ceps::ast::as_binop_ref(binop_node)));
 }
 
+static void rec_flatten_tree(	ceps::ast::Nonleafbase::Container_t& v, 
+					  			ceps::ast::Nonleafbase& root,
+								ceps::parser_env::Symboltable & sym_table,
+		                        ceps::interpreter::Environment& env, 
+								ceps::ast::Nodebase_ptr parent_node,
+								ceps::ast::Nodebase_ptr predecessor,
+								ceps::ast::Nodebase_ptr this_ptr, 
+								bool eval)
+{
+	using namespace ceps::ast;
+	for(Nodebase_ptr p : root.children())
+	{
+		Nodebase_ptr r =  eval ? evaluate_generic(p,sym_table,env,(Nodebase_ptr)&root,predecessor,this_ptr) : p;
+		predecessor=r;
+		if(r == nullptr)
+			continue;
+		if (r->kind() == Ast_node_kind::stmts || r->kind() == Ast_node_kind::nodeset)
+		{
+			rec_flatten_tree(	v, 
+					  			*nlf_ptr(r),
+								sym_table,
+		                        env, 
+								parent_node,
+								predecessor,
+								this_ptr,
+								false);
+		}
+		else v.push_back(r);
+	}
+}
+
 ceps::ast::Nodebase_ptr ceps::interpreter::evaluate_nonleaf(ceps::ast::Nonleafbase& root,
 		                                            ceps::parser_env::Symboltable & sym_table,
 		                                            ceps::interpreter::Environment& env, 
@@ -1628,12 +1659,13 @@ ceps::ast::Nodebase_ptr ceps::interpreter::evaluate_nonleaf(ceps::ast::Nonleafba
 		if (r->kind() == Ast_node_kind::stmts || r->kind() == Ast_node_kind::nodeset)
 		{
 			for(Nodebase_ptr elem : nlf_ptr(r)->children())
-			{
 				v.push_back(elem);
-			}
 		}
 		else v.push_back(r);
 	}
+
+	//rec_flatten_tree(v, root, sym_table, env, parent_node, predecessor, this_ptr, true);
+
 	env.scope = old_scope;
 
 	switch (root_ptr->kind()){

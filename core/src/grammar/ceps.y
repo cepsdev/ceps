@@ -262,6 +262,20 @@ decl:
 	$$ = new ceps::ast::Valdef(*$2,$4);
 	delete $2;
 }
+| VAL ID '=' struct_initialization 
+{
+  ceps::ast::Scope* t = new ceps::ast::Scope();
+  t->children_ = ceps::ast::nlf_ptr($4)->children();
+	$$ = new ceps::ast::Valdef(*$2,t);
+	delete $2;
+}
+| VAL STRUCTID '=' struct_initialization 
+{
+  ceps::ast::Scope* t = new ceps::ast::Scope();
+  t->children_ = ceps::ast::nlf_ptr($4)->children();
+	$$ = new ceps::ast::Valdef(*$2,t);
+	delete $2;
+}
 
 |STRUCT ID 
 {
