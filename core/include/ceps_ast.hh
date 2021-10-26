@@ -1589,6 +1589,8 @@ using node_scope_t = ceps::ast::Scope*;
 using node_callparameters_t = ceps::ast::Call_parameters*;
 using node_nodeset_t = ceps::ast::Ast_nodeset*;
 
+using nodes_t = std::vector<ceps::ast::node_t>;
+using function_target_t = std::string;
 
 node_symbol_t mk_symbol(std::string name, std::string kind);
 node_t mk_string(std::string v);
