@@ -28,6 +28,7 @@ SOFTWARE.
 #include <iterator>
 #include <set>
 #include "ceps_ast.hh"
+#include <optional>
 
 namespace ceps
  {
@@ -388,7 +389,24 @@ namespace ceps
 			CEPSERROR("Cannot convert to int");
 	
 		}
+
+		std::optional<int> as_int_noexcept() const
+		{
+			if (size() != 1)
+				return {};
+			if (nodes_[0]->kind() != Ast_node_kind::int_literal
+				&&
+				nodes_[0]->kind() != Ast_node_kind::float_literal
+				)
+				return {};
 	
+			if (nodes_[0]->kind() == Ast_node_kind::int_literal)
+				return value(as_int_ref(nodes_[0]));
+			if (nodes_[0]->kind() == Ast_node_kind::float_literal)
+				return (int)value(as_double_ref(nodes_[0]));
+			return {};	
+		}
+
 		double as_double() const
 		{
 			if (size() != 1)

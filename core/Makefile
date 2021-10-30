@@ -1,4 +1,4 @@
-cflags :=  -O0 -g3 -Wall -fmessage-length=0 -std=c++11 -fPIC
+cflags :=  -O0 -g3 -Wall -fmessage-length=0 -std=c++17 -fPIC
 TARGET :=
 OBJDIR := bin$(TARGET)
 objfiles_orig := ceps.tab.o symtab.o cepslexer.o cepsparserdriver.o cepsruntime.o ceps_ast.o ceps_interpreter.o \

@@ -3,7 +3,7 @@
 #
 
 includes :=  -I"include" -I"../../include" -I"../../include/include-gen"
-cflags := -O0 -g3 -Wall -fmessage-length=0 -std=c++11
+cflags := -O0 -g3 -Wall -fmessage-length=0 -std=c++17
 OBJDIR := bin
 objfiles := $(patsubst %,$(OBJDIR)/%,$(objfiles))
 CEPSLIB := ../../bin/libcepscore.a
