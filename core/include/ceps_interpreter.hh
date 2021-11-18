@@ -56,6 +56,11 @@ namespace ceps{
  namespace interpreter{
 	 extern bool DEBUG_OUTPUT; 
 
+	 enum class thoroughness_t{
+		 normal,
+		 shallow
+	 };
+
  	 class semantic_exception {
  		 ceps::ast::Nodebase_ptr loc_;
  		 std::string msg_;
@@ -86,22 +91,6 @@ namespace ceps{
 	 using Symboltable = ceps::parser_env::Symboltable;
 	 using Kind = ceps::ast::Ast_node_kind;
 
-	 ceps::ast::Nodebase_ptr evaluate_nonleaf(
-		 ceps::ast::Nonleafbase & root,
-		 Symboltable & sym_table,
-		 Environment& env, 
-		 ceps::ast::Nodebase_ptr parent_node,
-		 ceps::ast::Nodebase_ptr predecessor,
-	     ceps::ast::Nodebase_ptr this_ptr
-	 );
-
-    ceps::ast::Nodebase_ptr evaluate_generic(  ceps::ast::Nodebase_ptr root_node,
-    		 	 	 	 	 	 	 	 Symboltable & sym_table,
-    		 	 	 	 	 	 	 	 Environment& env,
-										 ceps::ast::Nodebase_ptr parent_node,
-										 ceps::ast::Nodebase_ptr predecessor,
-										 ceps::ast::Nodebase_ptr this_ptr
-    		 	 	 	 	 	 	 	 );
 
  	 struct Environment
  	 {
@@ -187,91 +176,136 @@ namespace ceps{
 				  ceps::interpreter::Environment&,ceps::ast::Nodebase_ptr,ceps::ast::Nodebase_ptr,ceps::ast::Nodebase_ptr);
 #endif
  	 };
-  
+
+	ceps::ast::Nodebase_ptr evaluate_nonleaf(
+		ceps::ast::Nonleafbase & root,
+		Symboltable & sym_table,
+		Environment& env, 
+		ceps::ast::Nodebase_ptr parent_node,
+		ceps::ast::Nodebase_ptr predecessor,
+	    ceps::ast::Nodebase_ptr this_ptr,
+		thoroughness_t thoroughness = thoroughness_t::normal
+	);
+
+    ceps::ast::Nodebase_ptr evaluate_generic(  
+		ceps::ast::Nodebase_ptr root_node,
+    	Symboltable & sym_table,
+    	Environment& env,
+		ceps::ast::Nodebase_ptr parent_node,
+		ceps::ast::Nodebase_ptr predecessor,
+		ceps::ast::Nodebase_ptr this_ptr,
+		thoroughness_t thoroughness  = thoroughness_t::normal
+    );
+
  	ceps::ast::Nodebase_ptr eval_kinddef(ceps::ast::Nodebase_ptr root_node,
-			ceps::parser_env::Symboltable & sym_table,
-			ceps::interpreter::Environment& env,
-			ceps::ast::Nodebase_ptr parent_node,
-			ceps::ast::Nodebase_ptr predecessor);
+		ceps::parser_env::Symboltable & sym_table,
+		ceps::interpreter::Environment& env,
+		ceps::ast::Nodebase_ptr parent_node,
+		ceps::ast::Nodebase_ptr predecessor,
+		thoroughness_t thoroughness  = thoroughness_t::normal
+	);
+
  	ceps::ast::Nodebase_ptr eval_valdef(ceps::ast::Nodebase_ptr root_node,
-			ceps::parser_env::Symboltable & sym_table,
-			ceps::interpreter::Environment& env,
-			ceps::ast::Nodebase_ptr parent_node,
-			ceps::ast::Nodebase_ptr predecessor);
+		ceps::parser_env::Symboltable & sym_table,
+		ceps::interpreter::Environment& env,
+		ceps::ast::Nodebase_ptr parent_node,
+		ceps::ast::Nodebase_ptr predecessor,
+		thoroughness_t thoroughness  = thoroughness_t::normal
+	);
+
  	ceps::ast::Nodebase_ptr eval_unaryop(ceps::ast::Nodebase_ptr root_node,
-			ceps::parser_env::Symboltable & sym_table,
-			ceps::interpreter::Environment& env,
-			ceps::ast::Nodebase_ptr parent_node,
-			ceps::ast::Nodebase_ptr predecessor);
+		ceps::parser_env::Symboltable & sym_table,
+		ceps::interpreter::Environment& env,
+		ceps::ast::Nodebase_ptr parent_node,
+		ceps::ast::Nodebase_ptr predecessor,
+		thoroughness_t thoroughness  = thoroughness_t::normal 
+	);
+
  	ceps::ast::Nodebase_ptr eval_ifelse(ceps::ast::Nodebase_ptr root_node,
-			ceps::parser_env::Symboltable & sym_table,
-			ceps::interpreter::Environment& env,
-			ceps::ast::Nodebase_ptr parent_node,
-			ceps::ast::Nodebase_ptr predecessor);
+		ceps::parser_env::Symboltable & sym_table,
+		ceps::interpreter::Environment& env,
+		ceps::ast::Nodebase_ptr parent_node,
+		ceps::ast::Nodebase_ptr predecessor,
+		thoroughness_t thoroughness  = thoroughness_t::normal
+	);
+
  	ceps::ast::Nodebase_ptr eval_funccall(ceps::ast::Nodebase_ptr root_node,
-			ceps::parser_env::Symboltable & sym_table,
-			ceps::interpreter::Environment& env,
-			ceps::ast::Nodebase_ptr parent_node,
-			ceps::ast::Nodebase_ptr predecessor,
-			ceps::ast::Nodebase_ptr this_ptr);
+		ceps::parser_env::Symboltable & sym_table,
+		ceps::interpreter::Environment& env,
+		ceps::ast::Nodebase_ptr parent_node,
+		ceps::ast::Nodebase_ptr predecessor,
+		ceps::ast::Nodebase_ptr this_ptr,
+		thoroughness_t thoroughness  = thoroughness_t::normal
+	);
+
  	ceps::ast::Nodebase_ptr eval_binaryop(ceps::ast::Nodebase_ptr root_node,
-			ceps::parser_env::Symboltable & sym_table,
-			ceps::interpreter::Environment& env,
-			ceps::ast::Nodebase_ptr parent_node,
-			ceps::ast::Nodebase_ptr predecessor);
+		ceps::parser_env::Symboltable & sym_table,
+		ceps::interpreter::Environment& env,
+		ceps::ast::Nodebase_ptr parent_node,
+		ceps::ast::Nodebase_ptr predecessor,
+		thoroughness_t thoroughness  = thoroughness_t::normal
+	);
+
  	ceps::ast::Nodebase_ptr eval_id(ceps::ast::Nodebase_ptr root_node,
-			ceps::parser_env::Symboltable & sym_table,
-			ceps::interpreter::Environment& env,
-			ceps::ast::Nodebase_ptr parent_node,
-			ceps::ast::Nodebase_ptr predecessor);
+		ceps::parser_env::Symboltable & sym_table,
+		ceps::interpreter::Environment& env,
+		ceps::ast::Nodebase_ptr parent_node,
+		ceps::ast::Nodebase_ptr predecessor,
+		thoroughness_t thoroughness  = thoroughness_t::normal
+	);
 
  	ceps::ast::Nodebase_ptr eval_macro(ceps::ast::Nodebase_ptr root_node,
-	                                   ceps::parser_env::Symbol* sym_ptr,
-			                           ceps::parser_env::Symboltable & sym_table,
-			                           ceps::interpreter::Environment& env,
-			                           ceps::ast::Nodebase_ptr parent_node,
-			                           ceps::ast::Nodebase_ptr predecessor,
-									   std::vector<ceps::ast::Nodebase_ptr>* args = nullptr);
+	    ceps::parser_env::Symbol* sym_ptr,
+		ceps::parser_env::Symboltable & sym_table,
+		ceps::interpreter::Environment& env,
+		ceps::ast::Nodebase_ptr parent_node,
+		ceps::ast::Nodebase_ptr predecessor,
+		thoroughness_t thoroughness,
+		std::vector<ceps::ast::Nodebase_ptr>* args = nullptr
+	);
 
  	ceps::ast::Nodebase_ptr eval_rewrite(ceps::ast::Nodebase_ptr root_node,ceps::parser_env::Symbol* sym_ptr,
-			ceps::parser_env::Symboltable & sym_table,
-			ceps::interpreter::Environment& env,
-			ceps::ast::Nodebase_ptr parent_node,
-			ceps::ast::Nodebase_ptr predecessor);
+		ceps::parser_env::Symboltable & sym_table,
+		ceps::interpreter::Environment& env,
+		ceps::ast::Nodebase_ptr parent_node,
+		ceps::ast::Nodebase_ptr predecessor,
+		thoroughness_t thoroughness  = thoroughness_t::normal
+	);
 
  	using struct_rewrite_fn_t = ceps::ast::Nodeset (*)(
- 				ceps::ast::Struct_ptr,
- 				ceps::ast::Nodebase_ptr,ceps::parser_env::Symbol* ,
- 				ceps::parser_env::Symboltable &,
- 				ceps::interpreter::Environment& ,
- 				ceps::ast::Nodebase_ptr ,
- 				ceps::ast::Nodebase_ptr );
+ 		ceps::ast::Struct_ptr,
+ 		ceps::ast::Nodebase_ptr,ceps::parser_env::Symbol* ,
+ 		ceps::parser_env::Symboltable &,
+ 		ceps::interpreter::Environment& ,
+ 		ceps::ast::Nodebase_ptr ,
+ 		ceps::ast::Nodebase_ptr );
 
  	void register_struct_rewrite_rule(ceps::parser_env::Symboltable &,std::string which_struct, struct_rewrite_fn_t fn, void* ctxt);
 
-     void evaluate(	 ceps::ast::Nodeset & universe,
-    		 	 	 ceps::ast::Nodebase_ptr root,
-    		 	 	 Symboltable & sym_table,
-    		 	 	 Environment& env,
-    		 	 	 std::vector<ceps::ast::Nodebase_ptr>* generated_nodes = nullptr
-    		 	 	 );
+    void evaluate(	 ceps::ast::Nodeset & universe,
+    	ceps::ast::Nodebase_ptr root,
+    	Symboltable & sym_table,
+    	Environment& env,
+    	std::vector<ceps::ast::Nodebase_ptr>* generated_nodes = nullptr
+    );
 
-     void evaluate_without_modifying_universe (	 ceps::ast::Nodeset & universe,
-                                                 ceps::ast::Nodebase_ptr root,
-                                                 Symboltable & sym_table,
-                                                 Environment& env,
-                                                 std::vector<ceps::ast::Nodebase_ptr>* generated_nodes = nullptr
-                                                 );
+    void evaluate_without_modifying_universe (	 ceps::ast::Nodeset & universe,
+        ceps::ast::Nodebase_ptr root,
+        Symboltable & sym_table,
+        Environment& env,
+        std::vector<ceps::ast::Nodebase_ptr>* generated_nodes = nullptr
+    );
 
      ceps::ast::Nodebase_ptr handle_binop(	ceps::ast::Nodebase_ptr binop_node,
-    		 	 	 	 	 	 	 	 	int op,
-    		 	 	 	 	 	 	 	 	ceps::ast::Nodebase_ptr lhs,
-    		 	 	 	 	 	 	 	 	ceps::ast::Nodebase_ptr rhs,
-    		 	 	 	 	 	 	 	 	Symboltable & sym_table,
-    		 	 	 	 	 	 	 	 	Environment& env,
-											ceps::ast::Nodebase_ptr parent_node,
-											ceps::ast::Nodebase_ptr this_ptr
-    		 	 	 	 	 	 	 	);
+    	int op,
+    	ceps::ast::Nodebase_ptr lhs,
+    	ceps::ast::Nodebase_ptr rhs,
+    	Symboltable & sym_table,
+    	Environment& env,
+		ceps::ast::Nodebase_ptr parent_node,
+		ceps::ast::Nodebase_ptr this_ptr, 
+		thoroughness_t thoroughness
+    );
 
      
 

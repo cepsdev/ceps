@@ -1,26 +1,19 @@
-/**
- The MIT License (MIT)
+/*
+Copyright 2021 Tomas Prerovsky (cepsdev@hotmail.com).
 
-Copyright (c) 2014 The authors of ceps
+Licensed under the Apache License, Version 2.0 (the "License");
+   you may not use this file except in compliance with the License.elete
+   You may obtain a copy of the License at
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
+       http://www.apache.org/licenses/LICENSE-2.0
 
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+*/
 
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
- **/
 
 #include "ceps_interpreter_loop.hh"
 #include "cepsnodeset.hh"
@@ -77,15 +70,15 @@ static void loop( std::vector<ceps::ast::Nodebase_ptr>& result,
 		   ceps::ast::Loop_head& loop_head,
 		   int i,
 		   ceps::parser_env::Symboltable & sym_table,
-		   ceps::interpreter::Environment& env,ceps::ast::Nodebase_ptr rootnode,ceps::ast::Nodebase_ptr predecessor)
+		   ceps::interpreter::Environment& env,ceps::ast::Nodebase_ptr rootnode,ceps::ast::Nodebase_ptr predecessor, ceps::interpreter::thoroughness_t thoroughness)
 {
 	using namespace ceps::parser_env;
 
 
 	bool is_range_loop = false;
-	bool last_head = i*2 +1 == loop_head.children().size() - 1;
+	bool last_head = (size_t)(i*2 +1) == loop_head.children().size() - 1;
 	ceps::ast::Identifier& id  = ceps::ast::as_id_ref(loop_head.children()[2*i]);
-	ceps::ast::Nodebase_ptr coll_  = evaluate_generic(loop_head.children()[2*i+1],sym_table,env,&loop_head,loop_head.children()[2*i],nullptr);
+	ceps::ast::Nodebase_ptr coll_  = evaluate_generic(loop_head.children()[2*i+1],sym_table,env,&loop_head,loop_head.children()[2*i],nullptr,thoroughness);
 	std::vector<ceps::ast::Nodebase_ptr> collection;
 
 
@@ -129,7 +122,7 @@ static void loop( std::vector<ceps::ast::Nodebase_ptr>& result,
 			value(counter_node) = h;
 			if (last_head)
 			{
-				auto new_node = evaluate_generic(body,sym_table,env,rootnode,predecessor,nullptr);
+				auto new_node = evaluate_generic(body,sym_table,env,rootnode,predecessor,nullptr,thoroughness);
 				if (new_node != nullptr)
 				{
 					if (new_node->kind() == ceps::ast::Ast_node_kind::stmts)
@@ -140,12 +133,12 @@ static void loop( std::vector<ceps::ast::Nodebase_ptr>& result,
 					else result.push_back(new_node);
 				}
 
-			} else loop (result,body,loop_head,i+1,sym_table,env,rootnode,predecessor);
+			} else loop (result,body,loop_head,i+1,sym_table,env,rootnode,predecessor, thoroughness);
 
 		}
 
 	}
-	else for(auto k = 0; k!= collection.size(); ++k)
+	else for(size_t k = 0; k!= collection.size(); ++k)
 	{
 		auto col_node = collection[k];
 		sym_ptr->payload = col_node;//TODO: See comment in symtab.hh
@@ -160,7 +153,7 @@ static void loop( std::vector<ceps::ast::Nodebase_ptr>& result,
 		if (last_head)
 		{
 
-			auto new_node = evaluate_generic(body,sym_table,env,rootnode,predecessor,nullptr);
+			auto new_node = evaluate_generic(body,sym_table,env,rootnode,predecessor,nullptr,thoroughness);
 			if (new_node != nullptr)
 			{
 				if (new_node->kind() == ceps::ast::Ast_node_kind::stmts)
@@ -174,7 +167,7 @@ static void loop( std::vector<ceps::ast::Nodebase_ptr>& result,
 		}
 		else
 		{
-			loop (result,body,loop_head,i+1,sym_table,env,rootnode,predecessor);
+			loop (result,body,loop_head,i+1,sym_table,env,rootnode,predecessor, thoroughness);
 		}
 
 
@@ -187,13 +180,13 @@ static void loop( std::vector<ceps::ast::Nodebase_ptr>& result,
 /*
  *
  *  LOOP = LOOP_HEADER BODY
- *
- *
- *
  * */
 ceps::ast::Nodebase_ptr  ceps::interpreter::evaluate_loop(ceps::ast::Loop_ptr loop_node,
 									  ceps::parser_env::Symboltable & sym_table,
-									  ceps::interpreter::Environment& env,ceps::ast::Nodebase_ptr rootnode,ceps::ast::Nodebase_ptr predecessor)
+									  ceps::interpreter::Environment& env,
+									  ceps::ast::Nodebase_ptr rootnode,
+									  ceps::ast::Nodebase_ptr predecessor,
+									  ceps::interpreter::thoroughness_t thoroughness)
 {
 	const auto for_loop_head = 0;
 	const auto for_loop_body = 1;
@@ -205,7 +198,7 @@ ceps::ast::Nodebase_ptr  ceps::interpreter::evaluate_loop(ceps::ast::Loop_ptr lo
 
 	std::vector<ceps::ast::Nodebase_ptr> result_vec;
 
-	loop(result_vec, body, loop_head, 0, sym_table, env,rootnode,predecessor);
+	loop(result_vec, body, loop_head, 0, sym_table, env,rootnode,predecessor, thoroughness);
 
 	ceps::ast::Stmts * result = new ceps::ast::Stmts{};
 	for(auto p : result_vec)
@@ -215,9 +208,3 @@ ceps::ast::Nodebase_ptr  ceps::interpreter::evaluate_loop(ceps::ast::Loop_ptr lo
 
 	return result;
 }
-
-
-
-
-
-

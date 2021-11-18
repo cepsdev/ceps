@@ -28,6 +28,7 @@ ceps::ast::Nodebase_ptr ceps::interpreter::eval_macro(
 			ceps::interpreter::Environment& env,
 			ceps::ast::Nodebase_ptr parent_node,
 			ceps::ast::Nodebase_ptr predecessor,
+			ceps::interpreter::thoroughness_t thoroughness,
 			std::vector<ceps::ast::Nodebase_ptr>* args)
 {
 	ceps::ast::Nodebase_ptr body = (ceps::ast::Nodebase_ptr)(sym_ptr->payload);
@@ -39,11 +40,11 @@ ceps::ast::Nodebase_ptr ceps::interpreter::eval_macro(
 	 env,
 	 root_node,
 	 predecessor,
-	 nullptr))->children());
+	 nullptr, thoroughness))->children());
 	auto symbol = sym_table.lookup("arglist",true,true,false);
 	symbol->category = ceps::parser_env::Symbol::NODESET;
 	symbol->payload = (void*)(arglist);
-	result = ceps::ast::as_stmts_ptr(evaluate_nonleaf(*dynamic_cast<ceps::ast::Nonleafbase*>(body),sym_table,env,root_node,predecessor,nullptr));
+	result = ceps::ast::as_stmts_ptr(evaluate_nonleaf(*dynamic_cast<ceps::ast::Nonleafbase*>(body),sym_table,env,root_node,predecessor,nullptr,thoroughness));
 	return create_ast_nodeset("",result->children());
 }
 
@@ -51,13 +52,14 @@ ceps::ast::Nodebase_ptr ceps::interpreter::eval_rewrite(ceps::ast::Nodebase_ptr 
 			ceps::parser_env::Symboltable & sym_table,
 			ceps::interpreter::Environment& env,
 			ceps::ast::Nodebase_ptr parent_node,
-			ceps::ast::Nodebase_ptr predecessor)
+			ceps::ast::Nodebase_ptr predecessor,
+			ceps::interpreter::thoroughness_t thoroughness)
 {
 	ceps::ast::Nodeset result;
 	if (sym_ptr->payload == nullptr) return create_ast_nodeset("",result.nodes());
 	auto fn = (ceps::interpreter::struct_rewrite_fn_t)(sym_ptr->payload);
 	ceps::ast::Struct_ptr arglist_ = nullptr;
-	arglist_ = ceps::ast::as_struct_ptr(evaluate_nonleaf(*dynamic_cast<ceps::ast::Nonleafbase*>(root_node),sym_table,env,root_node,predecessor,nullptr));
+	arglist_ = ceps::ast::as_struct_ptr(evaluate_nonleaf(*dynamic_cast<ceps::ast::Nonleafbase*>(root_node),sym_table,env,root_node,predecessor,nullptr,thoroughness));
 	result = fn(arglist_,root_node,sym_ptr,sym_table,env,parent_node,predecessor);
 	return create_ast_nodeset("",result.nodes());
 }

@@ -2,7 +2,8 @@ cflags :=  -O0 -g3 -Wall -fmessage-length=0 -std=c++17 -fPIC
 TARGET :=
 OBJDIR := bin$(TARGET)
 objfiles_orig := ceps.tab.o symtab.o cepslexer.o cepsparserdriver.o cepsruntime.o ceps_ast.o ceps_interpreter.o \
- ceps_serialize.o ceps_interpreter_loop.o ceps_interpreter_nodeset.o pugixml.o ceps_interpreter_functions.o ceps_interpreter_macros.o
+ ceps_serialize.o ceps_interpreter_loop.o ceps_interpreter_nodeset.o pugixml.o ceps_interpreter_functions.o ceps_interpreter_macros.o \
+ ceps_interpreter_ifelse.o ceps_interpreter_eval_id.o ceps_interpreter_generic.o ceps_interpreter_binop.o
 objfiles := $(patsubst %,$(OBJDIR)/%,$(objfiles_orig))
 objfilesx86 := $(patsubst %,$(OBJDIR)/x86/%,$(objfiles_orig))
 
@@ -71,7 +72,15 @@ $(OBJDIR)/ceps_interpreter_functions.o: $(src)/ceps_interpreter_functions.cpp in
 	$(CXX) -c $(cflags) $(includes) $(src)/ceps_interpreter_functions.cpp -o $(OBJDIR)/ceps_interpreter_functions.o
 $(OBJDIR)/ceps_interpreter_macros.o: $(src)/ceps_interpreter_macros.cpp include/ceps_interpreter.hh include/ceps_ast.hh include/include_gen/ceps.tab.hh
 	$(CXX) -c $(cflags) $(includes) $(src)/ceps_interpreter_macros.cpp -o $(OBJDIR)/ceps_interpreter_macros.o
-		
+$(OBJDIR)/ceps_interpreter_ifelse.o: $(src)/ceps_interpreter_ifelse.cpp include/ceps_interpreter.hh include/ceps_ast.hh include/include_gen/ceps.tab.hh
+	$(CXX) -c $(cflags) $(includes) $(src)/ceps_interpreter_ifelse.cpp -o $(OBJDIR)/ceps_interpreter_ifelse.o
+$(OBJDIR)/ceps_interpreter_eval_id.o: $(src)/ceps_interpreter_eval_id.cpp include/ceps_interpreter.hh include/ceps_ast.hh include/include_gen/ceps.tab.hh
+	$(CXX) -c $(cflags) $(includes) $(src)/ceps_interpreter_eval_id.cpp -o $(OBJDIR)/ceps_interpreter_eval_id.o
+$(OBJDIR)/ceps_interpreter_generic.o: $(src)/ceps_interpreter_generic.cpp include/ceps_interpreter.hh include/ceps_ast.hh include/include_gen/ceps.tab.hh
+	$(CXX) -c $(cflags) $(includes) $(src)/ceps_interpreter_generic.cpp -o $(OBJDIR)/ceps_interpreter_generic.o
+$(OBJDIR)/ceps_interpreter_binop.o: $(src)/ceps_interpreter_binop.cpp include/ceps_interpreter.hh include/ceps_ast.hh include/include_gen/ceps.tab.hh
+	$(CXX) -c $(cflags) $(includes) $(src)/ceps_interpreter_binop.cpp -o $(OBJDIR)/ceps_interpreter_binop.o
+
 $(OBJDIR)/pugixml.o: $(pugixml)/pugixml.cpp $(pugixml)/pugixml.hpp
 	$(CXX) -c $(cflags) $(includes)  $(pugixml)/pugixml.cpp -o $(OBJDIR)/pugixml.o
 

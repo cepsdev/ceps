@@ -618,12 +618,12 @@ ceps::ast::Nodebase* ceps::ast::ast_node<ceps::ast::Ast_node_kind::user_defined>
 
 
 template<>
- ceps::ast::Nodebase*  ast_node<Ast_node_kind::symbol,std::string>::clone() {std::cerr << "** Undefined." << std::endl;}
+ ceps::ast::Nodebase*  ast_node<Ast_node_kind::symbol,std::string>::clone() {std::cerr << "** Undefined." << std::endl; return nullptr;}
 template<>
- ceps::ast::Nodebase*  ast_node<Ast_node_kind::binary_operator,std::string>::clone() {std::cerr << "** Undefined." << std::endl;}
+ ceps::ast::Nodebase*  ast_node<Ast_node_kind::binary_operator,std::string>::clone() {std::cerr << "** Undefined." << std::endl; return nullptr;}
 
  template<>
-ceps::ast::Nodebase* ceps::ast::ast_node<ceps::ast::Ast_node_kind::valdef>::clone(){std::cerr << "** Undefined." << std::endl;}
+ceps::ast::Nodebase* ceps::ast::ast_node<ceps::ast::Ast_node_kind::valdef>::clone(){std::cerr << "** Undefined." << std::endl;return nullptr;}
 
 
 

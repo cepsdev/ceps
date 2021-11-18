@@ -70,7 +70,9 @@ extern std::string default_text_representation(std::vector<ceps::ast::Nodebase_p
 ceps::ast::Nodebase_ptr ceps::interpreter::evaluate_nodeset_expr_dot(	ceps::ast::Nodebase_ptr lhs,
 															ceps::ast::Nodebase_ptr rhs ,
 															ceps::parser_env::Symboltable & sym_table,
-															ceps::interpreter::Environment& env,ceps::ast::Nodebase_ptr )
+															ceps::interpreter::Environment& env,
+															ceps::ast::Nodebase_ptr, 
+															ceps::interpreter::thoroughness_t thoroughness )
 {
 	//INVARIANT: lhs is a nodeset
 
@@ -209,11 +211,13 @@ ceps::ast::Nodebase_ptr ceps::interpreter::evaluate_nodeset_expr_dot(	ceps::ast:
 					 if(!range_start.first) throw ceps::interpreter::semantic_exception{nullptr,"'"+method_name+"' expects integer as parameter."};
 					 if(!range_end.first) throw ceps::interpreter::semantic_exception{nullptr,"'"+method_name+"' expects integer as parameter."};
 					 if ((size_t)range_start.second < result.nodes().size()){
-						 if (range_start.second <= range_end.second )
-						  if(range_end.second < result.nodes().size()) 
+						if (range_start.second <= range_end.second )
+						{
+						  if((size_t)range_end.second < result.nodes().size()) 
 						   std::copy(result.nodes().begin()+range_start.second, result.nodes().begin()+range_end.second,std::back_inserter(t));
-						 else
-						  std::copy(result.nodes().begin()+range_start.second, result.nodes().end(),std::back_inserter(t));
+						  else
+						   std::copy(result.nodes().begin()+range_start.second, result.nodes().end(),std::back_inserter(t));
+						}
 					 }
 					 result.nodes_ = t;
 				} 
@@ -286,7 +290,7 @@ ceps::ast::Nodebase_ptr ceps::interpreter::evaluate_nodeset_expr_dot(	ceps::ast:
 				 if (ceps::ast::as_ast_nodeset_ref(a1).children().size())
 					 a1 = ceps::ast::as_ast_nodeset_ref(a1).children()[0];
 
-				for(int i = 0; i != result.nodes().size(); i+=2){
+				for(size_t i = 0; i != result.nodes().size(); i+=2){
 					auto v = result.nodes()[i];
 
 					if (v->kind() != a0->kind()) continue;
@@ -329,9 +333,7 @@ ceps::ast::Nodebase_ptr ceps::interpreter::evaluate_nodeset_expr_dot(	ceps::ast:
 			  result.nodes_ = v;
 			} else if (method_name == "text_value_of_content_equals" && args.size() == 1 && args[0]->kind() == ceps::ast::Ast_node_kind::string_literal){
 			  std::string cv = value(as_string_ref(args[0]));
-
 			  std::vector<ceps::ast::Nodebase_ptr> v;
-
 			  for(auto pe : result.nodes())
 			  {
 
@@ -345,7 +347,6 @@ ceps::ast::Nodebase_ptr ceps::interpreter::evaluate_nodeset_expr_dot(	ceps::ast:
 				  if (c!=cv) continue;
 				  v.push_back(pe);
 			  }
-			  //if (v.size() != 1) throw ceps::interpreter::semantic_exception{nullptr,"first_struct_with_name(): no matching node found."};
 			  result.nodes_ = v;
 			}
 
@@ -356,11 +357,9 @@ ceps::ast::Nodebase_ptr ceps::interpreter::evaluate_nodeset_expr_dot(	ceps::ast:
 			auto r_int = is_int(acc[i]);
 			if(r_int.first)
 			{
-				//std::cout << "################GAGAGAG " << result << std::endl;
 				result = result[ceps::ast::nth{r_int.second}];last_identifier = std::string{};
 
 			}else {
-				//std::cout << "!!!!!!!!!!!!!!!!!!!!" << (int)acc[i]->kind() << std::endl;
 				last_identifier = std::string{};
 			}
 		}

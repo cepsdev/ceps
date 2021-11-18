@@ -1,0 +1,11 @@
+kind Systemstate;
+
+Systemstate a,b,c;
+
+a = 0;
+
+if (a > 1) {
+ if (b == 0) {
+  call_a_function(a+b,c*2);
+ }
+}

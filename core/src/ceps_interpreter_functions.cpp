@@ -22,7 +22,7 @@ Licensed under the Apache License, Version 2.0 (the "License");
 #include "ceps_interpreter_nodeset.hh"
 #include "pugixml.hpp"
 #include <random>
-#include <unordered_map>;
+#include <unordered_map>
 #include <time.h>
 
 extern char **environ;
@@ -325,15 +325,33 @@ static void dump_digraph_edge( ceps::ast::Struct& edge, std::ostream& fout,Inden
 	Nodebase_ptr port_to = nullptr;
     for(auto child:edge.children()){
     	if ( (child->kind() == Ast_node_kind::structdef && (name(as_struct_ref(child)) == "subgraph" )))
-    		if (from == nullptr) from = child;else to=child;
+    		{
+				if (from == nullptr) 
+					from = child;
+				else 
+					to=child;
+			}
     	if (child->kind() == Ast_node_kind::identifier ){
     		if (name(as_id_ref(child)) == "undirected") directed = false;
-    		else{if (from == nullptr) from = child;else to=child;}
+    		else {
+				if (from == nullptr) 
+					from = child;
+				else 
+					to=child;
+			}
     	}
-    	if (child->kind() == Ast_node_kind::string_literal )
-    		if (from == nullptr) from = child;else to=child;
-    	if ( (child->kind() == Ast_node_kind::structdef && (name(as_struct_ref(child)) == "port" )))
-    		if (from == nullptr) port_from = child;else port_to=child;
+    	if (child->kind() == Ast_node_kind::string_literal ){
+    		if (from == nullptr) 
+				from = child;
+			else 
+				to=child;
+		}
+    	if ( (child->kind() == Ast_node_kind::structdef && (name(as_struct_ref(child)) == "port" ))){
+    		if (from == nullptr) 
+				port_from = child;
+			else 
+				port_to=child;
+		}
     }
 
     dump_endpoint(from,fout,indent);
@@ -756,7 +774,8 @@ ceps::ast::Nodebase_ptr ceps::interpreter::eval_funccall(ceps::ast::Nodebase_ptr
 		                                                 ceps::interpreter::Environment& env,
 		                                                 ceps::ast::Nodebase_ptr parent_node,
 		                                                 ceps::ast::Nodebase_ptr predecessor,
-														 ceps::ast::Nodebase_ptr this_ptr)
+														 ceps::ast::Nodebase_ptr this_ptr,
+														 ceps::interpreter::thoroughness_t thoroughness)
 {
 	if (ceps::interpreter::DEBUG_OUTPUT) std::cerr << "ceps::interpreter::eval_funccall:" << *root_node << std::endl;
 
@@ -770,7 +789,7 @@ ceps::ast::Nodebase_ptr ceps::interpreter::eval_funccall(ceps::ast::Nodebase_ptr
         ceps::ast::Nodebase_ptr params_ = nullptr;
 		 
 		if (env.is_lazy_func != nullptr && env.is_lazy_func(name(id))) params_ = func_call.children()[1];
-		else params_ = evaluate_generic(func_call.children()[1],sym_table,env,root_node,predecessor,nullptr);
+		else params_ = evaluate_generic(func_call.children()[1],sym_table,env,root_node,predecessor,nullptr,thoroughness);
 		ceps::ast::Call_parameters& params = *static_cast<ceps::ast::Call_parameters*>(params_);
 		if (ceps::interpreter::DEBUG_OUTPUT) std::cerr << "ceps::interpreter::eval_funccall: params:" << params << std::endl;
 
@@ -826,7 +845,7 @@ ceps::ast::Nodebase_ptr ceps::interpreter::eval_funccall(ceps::ast::Nodebase_ptr
 		 			  sym_table,
 		 			  env,
 		 			  parent_node,
-		 			  predecessor,
+		 			  predecessor,thoroughness,
 					  &args);
 			sym_table.pop_scope();
 
@@ -921,7 +940,8 @@ ceps::ast::Nodebase_ptr ceps::interpreter::eval_funccall(ceps::ast::Nodebase_ptr
                            sym_table,
                            env,
                            nullptr,
-                           nullptr);
+                           nullptr,
+						   thoroughness);
              }
 
              return n;
@@ -1065,7 +1085,7 @@ ceps::ast::Nodebase_ptr ceps::interpreter::eval_funccall(ceps::ast::Nodebase_ptr
 
 			 if (args.size() == 1){
 			  ceps::ast::Nodebase_ptr arg_ = params.children()[0];
-			  auto arg = evaluate_generic(arg_,sym_table,env,root_node,nullptr,nullptr);
+			  auto arg = evaluate_generic(arg_,sym_table,env,root_node,nullptr,nullptr,thoroughness);
 			  if (arg->kind() != Kind::string_literal)
 				 throw semantic_exception{root_node,"include_xml: Illformed argument"};
 			  return include_xml_file(ceps::ast::value(ceps::ast::as_string_ref(arg)));
@@ -1114,7 +1134,7 @@ ceps::ast::Nodebase_ptr ceps::interpreter::eval_funccall(ceps::ast::Nodebase_ptr
 				 throw semantic_exception{root_node,"sin: Expecting 1 argument"};
 			 ceps::ast::Nodebase_ptr arg_ = params.children()[0];
 
-			 auto arg = evaluate_generic(arg_,sym_table,env,root_node,nullptr,nullptr);
+			 auto arg = evaluate_generic(arg_,sym_table,env,root_node,nullptr,nullptr,thoroughness);
 
 
 
@@ -1144,7 +1164,7 @@ ceps::ast::Nodebase_ptr ceps::interpreter::eval_funccall(ceps::ast::Nodebase_ptr
 				 throw semantic_exception{root_node,"sin: Expecting 1 argument"};
 			 ceps::ast::Nodebase_ptr arg_ = params.children()[0];
 
-			 auto arg = evaluate_generic(arg_,sym_table,env,root_node,nullptr,nullptr);
+			 auto arg = evaluate_generic(arg_,sym_table,env,root_node,nullptr,nullptr,thoroughness);
 
 
 
@@ -1174,7 +1194,7 @@ ceps::ast::Nodebase_ptr ceps::interpreter::eval_funccall(ceps::ast::Nodebase_ptr
 				 throw semantic_exception{root_node,"sin: Expecting 1 argument"};
 			 ceps::ast::Nodebase_ptr arg_ = params.children()[0];
 
-			 auto arg = evaluate_generic(arg_,sym_table,env,root_node,nullptr,nullptr);
+			 auto arg = evaluate_generic(arg_,sym_table,env,root_node,nullptr,nullptr,thoroughness);
 
 
 
@@ -1204,7 +1224,7 @@ ceps::ast::Nodebase_ptr ceps::interpreter::eval_funccall(ceps::ast::Nodebase_ptr
 				 throw semantic_exception{root_node,"sin: Expecting 1 argument"};
 			 ceps::ast::Nodebase_ptr arg_ = params.children()[0];
 
-			 auto arg = evaluate_generic(arg_,sym_table,env,root_node,nullptr,nullptr);
+			 auto arg = evaluate_generic(arg_,sym_table,env,root_node,nullptr,nullptr,thoroughness);
 
 
 
@@ -1234,7 +1254,7 @@ ceps::ast::Nodebase_ptr ceps::interpreter::eval_funccall(ceps::ast::Nodebase_ptr
 				 throw semantic_exception{root_node,"sin: Expecting 1 argument"};
 			 ceps::ast::Nodebase_ptr arg_ = params.children()[0];
 
-			 auto arg = evaluate_generic(arg_,sym_table,env,root_node,nullptr,nullptr);
+			 auto arg = evaluate_generic(arg_,sym_table,env,root_node,nullptr,nullptr,thoroughness);
 
 
 
@@ -1265,7 +1285,7 @@ ceps::ast::Nodebase_ptr ceps::interpreter::eval_funccall(ceps::ast::Nodebase_ptr
 				 throw semantic_exception{root_node,"sin: Expecting 1 argument"};
 			 ceps::ast::Nodebase_ptr arg_ = params.children()[0];
 
-			 auto arg = evaluate_generic(arg_,sym_table,env,root_node,nullptr,nullptr);
+			 auto arg = evaluate_generic(arg_,sym_table,env,root_node,nullptr,nullptr,thoroughness);
 
 
 
@@ -1296,7 +1316,7 @@ ceps::ast::Nodebase_ptr ceps::interpreter::eval_funccall(ceps::ast::Nodebase_ptr
 				 throw semantic_exception{root_node,"sin: Expecting 1 argument"};
 			 ceps::ast::Nodebase_ptr arg_ = params.children()[0];
 
-			 auto arg = evaluate_generic(arg_,sym_table,env,root_node,nullptr,nullptr);
+			 auto arg = evaluate_generic(arg_,sym_table,env,root_node,nullptr,nullptr,thoroughness);
 
 
 
@@ -1327,7 +1347,7 @@ ceps::ast::Nodebase_ptr ceps::interpreter::eval_funccall(ceps::ast::Nodebase_ptr
 				 throw semantic_exception{root_node,"sin: Expecting 1 argument"};
 			 ceps::ast::Nodebase_ptr arg_ = params.children()[0];
 
-			 auto arg = evaluate_generic(arg_,sym_table,env,root_node,nullptr,nullptr);
+			 auto arg = evaluate_generic(arg_,sym_table,env,root_node,nullptr,nullptr,thoroughness);
 
 
 
@@ -1353,13 +1373,6 @@ ceps::ast::Nodebase_ptr ceps::interpreter::eval_funccall(ceps::ast::Nodebase_ptr
 		 }
 		 if (name(id) == "value" )
 		 {
-			 //std::cout << ceps::ast::Nodeset{&params} << std::endl;
-			 //std::cout << params.children().size()  << std::endl;
-			 /*if (params.children().size() != 1)
-				 throw semantic_exception{root_node,"value: Expecting 1 argument"};
-			 ceps::ast::Nodebase_ptr arg_ = params.children()[0];
-			 if (!is_a_nodeset(arg_))
-				 throw semantic_exception{root_node,"value: wrong argument type, expecting a node set."};*/
 
 			 std::vector<ceps::ast::Nodebase_ptr> result;
 			 for ( auto & param : params.children() )

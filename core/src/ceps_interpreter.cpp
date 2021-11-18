@@ -1,5 +1,5 @@
 /*
-Copyright 2014,2015,2016,2017,2018,2019,2020,2021 Tomas Prerovsky (cepsdev@hotmail.com).
+Copyright 2021 Tomas Prerovsky (cepsdev@hotmail.com).
 
 Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.elete
@@ -66,8 +66,7 @@ void ceps::interpreter::evaluate(	 ceps::ast::Nodeset & universe,
 									 ceps::ast::Nodebase_ptr root_,
   		 	 	 	 	 	 	 	 ceps::parser_env::Symboltable & sym_table,
   		 	 	 	 	 	 	 	 ceps::interpreter::Environment& env,
-  		 	 	 	 	 	 	 	 std::vector<ceps::ast::Nodebase_ptr>* generated_nodes
-  		 	 	 )
+  		 	 	 	 	 	 	 	 std::vector<ceps::ast::Nodebase_ptr>* generated_nodes)
 {
 
 	if (root_ == nullptr) return;
@@ -80,7 +79,6 @@ void ceps::interpreter::evaluate(	 ceps::ast::Nodeset & universe,
 		return;
 	}
 
-
 	auto root = ceps::ast::nlf_ptr(root_);
 	env.associated_universe() = &universe;
 	ceps::ast::Nodebase_ptr predecessor = nullptr;
@@ -91,7 +89,7 @@ void ceps::interpreter::evaluate(	 ceps::ast::Nodeset & universe,
 			ceps::ast::Nodebase_ptr predecessor = nullptr;
 			for(auto pp: as_stmts_ptr(p)->children() )
 			{
-				auto ev = evaluate_generic(pp,sym_table,env,p,predecessor,nullptr);predecessor = ev;
+				auto ev = evaluate_generic(pp,sym_table,env,p,predecessor,nullptr,thoroughness_t::normal);predecessor = ev;
 				if (ev  != nullptr && ev->kind() == Kind::nodeset)
 				{
 					universe.nodes().insert(universe.nodes().end(),as_ast_nodeset_ptr(ev)->children().begin(),as_ast_nodeset_ptr(ev)->children().end());
@@ -112,7 +110,7 @@ void ceps::interpreter::evaluate(	 ceps::ast::Nodeset & universe,
 			}//for
 			continue;
 		}
-		auto ev = evaluate_generic(p,sym_table,env,/*p??*/root_,predecessor,nullptr);predecessor=p;
+		auto ev = evaluate_generic(p,sym_table,env,/*p??*/root_,predecessor,nullptr,thoroughness_t::normal);predecessor=p;
 
 		if (ev != nullptr && ev->kind() == Kind::nodeset)
 		{
@@ -164,7 +162,7 @@ void ceps::interpreter::evaluate_without_modifying_universe(ceps::ast::Nodeset &
             ceps::ast::Nodebase_ptr predecessor = nullptr;
             for(auto pp: as_stmts_ptr(p)->children() )
             {
-                auto ev = evaluate_generic(pp,sym_table,env,p,predecessor,nullptr);predecessor = ev;
+                auto ev = evaluate_generic(pp,sym_table,env,p,predecessor,nullptr,thoroughness_t::normal);predecessor = ev;
                 if (ev  != nullptr && ev->kind() == Kind::nodeset)
                 {
                     universe.nodes().insert(universe.nodes().end(),as_ast_nodeset_ptr(ev)->children().begin(),as_ast_nodeset_ptr(ev)->children().end());
@@ -185,7 +183,7 @@ void ceps::interpreter::evaluate_without_modifying_universe(ceps::ast::Nodeset &
             }//for
             continue;
         }
-        auto ev = evaluate_generic(p,sym_table,env,/*p??*/root_,predecessor,nullptr);predecessor=p;
+        auto ev = evaluate_generic(p,sym_table,env,/*p??*/root_,predecessor,nullptr,thoroughness_t::normal);predecessor=p;
 
         if (ev != nullptr && ev->kind() == Kind::nodeset)
         {
@@ -208,32 +206,18 @@ void ceps::interpreter::evaluate_without_modifying_universe(ceps::ast::Nodeset &
 
 }//ceps::interpreter::evaluate
 
-
-
-static void flatten_args(ceps::ast::Nodebase_ptr r, std::vector<ceps::ast::Nodebase_ptr>& v, char op_val = ',')
-{
-	using namespace ceps::ast;
-	if (r == nullptr) return;
-	if (r->kind() == ceps::ast::Ast_node_kind::binary_operator && op(as_binop_ref(r)) ==  op_val)
-	{
-		auto& t = as_binop_ref(r);
-		flatten_args(t.left(),v,op_val);
-		flatten_args(t.right(),v,op_val);
-		return;
-	}
-	v.push_back(r);
-}
-
 ceps::ast::Nodebase_ptr ceps::interpreter::eval_kinddef(ceps::ast::Nodebase_ptr root_node,
 		ceps::parser_env::Symboltable & sym_table,
 		ceps::interpreter::Environment& env,
 		ceps::ast::Nodebase_ptr parent_node,
-		ceps::ast::Nodebase_ptr predecessor)
+		ceps::ast::Nodebase_ptr predecessor,
+		thoroughness_t thoroughness)
 {
  using namespace ceps::parser_env;
+
+
+
  ceps::ast::Kinddef& kind_def_node = *dynamic_cast<ceps::ast::Kinddef*>(root_node);
-
-
  ceps::parser_env::Symbol* sym_kind_ptr =
 	sym_table.lookup(ceps::ast::get<0>(kind_def_node),true);
  sym_kind_ptr->category = ceps::parser_env::Symbol::KIND;
@@ -255,13 +239,14 @@ ceps::ast::Nodebase_ptr ceps::interpreter::eval_valdef(ceps::ast::Nodebase_ptr r
 		ceps::parser_env::Symboltable & sym_table,
 		ceps::interpreter::Environment& env,
 		ceps::ast::Nodebase_ptr parent_node,
-		ceps::ast::Nodebase_ptr predecessor)
+		ceps::ast::Nodebase_ptr predecessor,
+		thoroughness_t thoroughness)
 {
  using namespace ceps::parser_env;
  ceps::ast::Valdef& val_node = *dynamic_cast<ceps::ast::Valdef*>(root_node);
  ceps::parser_env::Symbol* sym_ptr;
 
- ceps::ast::Nodebase_ptr rhs = evaluate_generic(dynamic_cast<ceps::ast::Nonleafbase*>(root_node)->children()[0],sym_table,env,root_node,nullptr,nullptr);
+ ceps::ast::Nodebase_ptr rhs = evaluate_generic(dynamic_cast<ceps::ast::Nonleafbase*>(root_node)->children()[0],sym_table,env,root_node,nullptr,nullptr,thoroughness);
 
  if ( (sym_ptr = sym_table.lookup(name(val_node),true,true,false)) == nullptr)
  {
@@ -280,10 +265,11 @@ ceps::ast::Nodebase_ptr ceps::interpreter::eval_unaryop(ceps::ast::Nodebase_ptr 
 		ceps::parser_env::Symboltable & sym_table,
 		ceps::interpreter::Environment& env,
 		ceps::ast::Nodebase_ptr parent_node,
-		ceps::ast::Nodebase_ptr predecessor){
+		ceps::ast::Nodebase_ptr predecessor,
+		thoroughness_t thoroughness){
 
 	ceps::ast::Unary_operator& unop = as_unary_op_ref(root_node);
-	auto operand = evaluate_generic(unop.children()[0],sym_table,env,root_node,nullptr,nullptr);
+	auto operand = evaluate_generic(unop.children()[0],sym_table,env,root_node,nullptr,nullptr,thoroughness);
 	bool operand_boolean{false};
 	bool operand_bool_equiv{false};
 
@@ -322,52 +308,13 @@ ceps::ast::Nodebase_ptr ceps::interpreter::eval_unaryop(ceps::ast::Nodebase_ptr 
 	throw semantic_exception{root_node,"Illformed unary operator expression"};
 }
 
-ceps::ast::Nodebase_ptr ceps::interpreter::eval_ifelse(ceps::ast::Nodebase_ptr root_node,
-		ceps::parser_env::Symboltable & sym_table,
-		ceps::interpreter::Environment& env,
-		ceps::ast::Nodebase_ptr parent_node,
-		ceps::ast::Nodebase_ptr predecessor)
-{
- ceps::ast::Ifelse& ifelse = ceps::ast::as_ifelse_ref(root_node);
- ceps::ast::Nodebase_ptr cond = evaluate_generic(ifelse.children()[0],sym_table,env,root_node,nullptr,nullptr);
- ceps::ast::Nodebase_ptr left_branch = nullptr,right_branch=nullptr;
-
- 
- if (cond->kind() == ceps::ast::Ast_node_kind::int_literal){
-	 ceps::ast::Nodebase_ptr r = nullptr;
-	 if (ceps::ast::value(ceps::ast::as_int_ref(cond)) != 0 ){
-		 if (ifelse.children().size() > 1) r = evaluate_generic(ifelse.children()[1],sym_table,env,root_node,ifelse.children()[0],nullptr);
-	 } else {
-		 if (ifelse.children().size() > 2) r = evaluate_generic(ifelse.children()[2],sym_table,env,root_node,ifelse.children()[1],nullptr);
-	 }
-	 if (r == nullptr || r->kind() != ceps::ast::Ast_node_kind::scope) return r;
-	 auto& scope = *ceps::ast::nlf_ptr(r);
-	 if (scope.children().size() == 0) return nullptr;
-	 if (scope.children().size() == 1) return scope.children()[0];
-	 return create_ast_nodeset("", scope.children());
- }
-
-
- if (ifelse.children().size() > 1) left_branch = ifelse.children()[1]->clone(); //evaluate_generic(ifelse.children()[1],sym_table,env,root_node,ifelse.children()[0],nullptr); 
- if (ifelse.children().size() > 2) right_branch = ifelse.children()[2]->clone(); // evaluate_generic(ifelse.children()[2],sym_table,env,root_node,ifelse.children()[1],nullptr);
- return new ceps::ast::Ifelse(cond,left_branch,right_branch);
-}
-
-
-
-
-
-
-
-
-
-
 
 ceps::ast::Nodebase_ptr ceps::interpreter::eval_binaryop(ceps::ast::Nodebase_ptr root_node,
 		ceps::parser_env::Symboltable & sym_table,
 		ceps::interpreter::Environment& env,
 		ceps::ast::Nodebase_ptr parent_node,
-		ceps::ast::Nodebase_ptr predecessor)
+		ceps::ast::Nodebase_ptr predecessor,
+		ceps::interpreter::thoroughness_t thoroughness)
 {
 
 	ceps::ast::Binary_operator& binop = *dynamic_cast<ceps::ast::Binary_operator*>(root_node);
@@ -380,8 +327,8 @@ ceps::ast::Nodebase_ptr ceps::interpreter::eval_binaryop(ceps::ast::Nodebase_ptr
 
 	if (op_val(binop) != "=")
 	{
-	 ceps::ast::Nodebase_ptr lhs = evaluate_generic(binop.children()[0],sym_table,env,root_node,predecessor,nullptr);
-	 ceps::ast::Nodebase_ptr rhs = evaluate_generic(binop.children()[1],sym_table,env,root_node,predecessor, op(binop) == '.' ? lhs : nullptr );
+	 ceps::ast::Nodebase_ptr lhs = evaluate_generic(binop.children()[0],sym_table,env,root_node,predecessor,nullptr,thoroughness);
+	 ceps::ast::Nodebase_ptr rhs = evaluate_generic(binop.children()[1],sym_table,env,root_node,predecessor, (op(binop) == '.' ? lhs : nullptr) , thoroughness);
 
 
 
@@ -404,19 +351,25 @@ ceps::ast::Nodebase_ptr ceps::interpreter::eval_binaryop(ceps::ast::Nodebase_ptr
 			return evaluate_nodeset_expr_dot(	lhs,
 												rhs ,
 												sym_table,
-												env,root_node
+												env,
+												root_node,
+												thoroughness
 											);
 		else if (lhs->kind() == Kind::structdef)
 			return evaluate_nodeset_expr_dot(	create_ast_nodeset("",as_struct_ref(lhs).children()),
 												rhs ,
 												sym_table,
-												env,root_node
+												env,
+												root_node,
+												thoroughness
 											);
 		else if (lhs->kind() == Kind::scope)
 			return evaluate_nodeset_expr_dot(	create_ast_nodeset("",as_scope_ref(lhs).children()),
 												rhs ,
 												sym_table,
-												env,root_node
+												env,
+												root_node,
+												thoroughness
 											);
 	 }
 
@@ -434,13 +387,13 @@ ceps::ast::Nodebase_ptr ceps::interpreter::eval_binaryop(ceps::ast::Nodebase_ptr
 	 }
 
 
-	 result = handle_binop(root_node,ceps::ast::op(binop),lhs,rhs,sym_table,env,root_node,op(binop) == '.' ? lhs : nullptr);
+	 result = handle_binop(root_node,ceps::ast::op(binop),lhs,rhs,sym_table,env,root_node,op(binop) == '.' ? lhs : nullptr,thoroughness);
 	}
 	else /* operator is = */
 	{
-		 ceps::ast::Nodebase_ptr lhs =  evaluate_generic(binop.children()[0],sym_table,env,root_node,nullptr,nullptr);
+		 ceps::ast::Nodebase_ptr lhs =  evaluate_generic(binop.children()[0],sym_table,env,root_node,nullptr, nullptr,thoroughness);
 		 ceps::ast::Nodebase_ptr unevaluated_lhs = binop.children()[0];
-		 ceps::ast::Nodebase_ptr rhs = evaluate_generic(binop.children()[1],sym_table,env,root_node,binop.children()[0],nullptr);
+		 ceps::ast::Nodebase_ptr rhs = evaluate_generic(binop.children()[1],sym_table,env,root_node,binop.children()[0],nullptr, thoroughness);
 
 		 bool treat_lhs_as_symbol = false;
 
@@ -461,1189 +414,19 @@ ceps::ast::Nodebase_ptr ceps::interpreter::eval_binaryop(ceps::ast::Nodebase_ptr
 			 auto t = mk_bin_op(ceps::ast::op(binop),lhs,rhs,ceps::ast::op_str(binop));
 			 return t;
 		 }
-		 else result  = handle_binop(root_node,ceps::ast::op(binop),lhs,rhs,sym_table,env,root_node,nullptr);
+		 else result  = handle_binop(root_node,ceps::ast::op(binop),lhs,rhs,sym_table,env,root_node,nullptr, thoroughness);
 	}
 	return result;
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-ceps::ast::Nodebase_ptr ceps::interpreter::eval_id(ceps::ast::Nodebase_ptr root_node,
-		ceps::parser_env::Symboltable & sym_table,
-		ceps::interpreter::Environment& env,
-		ceps::ast::Nodebase_ptr parent_node,
-		ceps::ast::Nodebase_ptr predecessor)
-{
-	using namespace ceps::parser_env;
-
-	ceps::ast::Identifier& id = *dynamic_cast<ceps::ast::Identifier*>(root_node);
-
-	if (name(id) == "m" || name(id) == "metre" || name(id) == "meter")
-	{
-		return new ceps::ast::Int(1, ceps::ast::m_unit(), nullptr, nullptr, nullptr);
-	}
-	else if (name(id) == "s" || name(id) == "second")
-	{
-		return new ceps::ast::Int(1, ceps::ast::s_unit(), nullptr, nullptr, nullptr);
-	}
-	else if (name(id) == "kg" || name(id) == "kilogram")
-	{
-		return new ceps::ast::Int(1, ceps::ast::kg_unit(), nullptr, nullptr, nullptr);
-	}
-	else if (name(id) == "celsius" || name(id) == "kelvin")
-	{
-		return new ceps::ast::Int(1, ceps::ast::kelvin_unit(), nullptr, nullptr, nullptr);
-	}
-	else if (name(id) == "ampere" )
-	{
-		return new ceps::ast::Int(1, ceps::ast::ampere_unit(), nullptr, nullptr, nullptr);
-	}
-	else if (name(id) == "cd" || name(id) == "candela" )
-	{
-		return new ceps::ast::Int(1, ceps::ast::candela_unit(), nullptr, nullptr, nullptr);
-	}
-	else if (name(id) == "mol" || name(id) == "mole" )
-	{
-		return new ceps::ast::Int(1, ceps::ast::mol_unit(), nullptr, nullptr, nullptr);
-	}
-	else if (name(id) == "scope"){
-		if (env.scope)
-		 return create_ast_nodeset("", *env.scope);
-		return create_ast_nodeset("",std::vector<ceps::ast::Nodebase_ptr>{});
-	}
-	else if (name(id) == "root" && env.associated_universe() != nullptr)
-		return create_ast_nodeset("", env.associated_universe()->nodes());
-	else if (name(id) == "arglist"){
-		ceps::parser_env::Symbol* sym_ptr;
-		if ( (sym_ptr = sym_table.lookup(name(id))) == nullptr)
-			throw semantic_exception{root_node,"arglist undefined (not inside macro body)."};
-		if (sym_ptr->category != ceps::parser_env::Symbol::Category::NODESET)
-			throw semantic_exception{root_node,"arglist was redefined with wrong type (should be nodeset)."};
-		if(nullptr == sym_ptr->payload)
-		     throw semantic_exception{root_node,"arglist undefined."};
-
-		ceps::ast::Ast_nodeset_ptr ndeset = (ceps::ast::Ast_nodeset_ptr)(sym_ptr->payload);
-		return ndeset;
-	}
-
-	 ceps::parser_env::Symbol* sym_ptr;
-
-	 if ( (sym_ptr = sym_table.lookup(name(id))) == nullptr)
-	 {
-		 //throw semantic_exception{root_node,"Variable '" +name(id)+"' is not defined."};
-		 std::string id_name = name(id);
-		 return new ceps::ast::Identifier(id_name,nullptr,nullptr,nullptr);
-	 }
-
-	 ceps::parser_env::Symbol& sym = *sym_ptr;
-	 if (sym_ptr->category == ceps::parser_env::Symbol::Category::SYMBOL )
-	 {
-		 return new ceps::ast::Symbol(name(id), ((ceps::parser_env::Symbol*)sym_ptr->payload)->name, nullptr, nullptr, nullptr);
-	 }
-
-
-	 if (sym_ptr->category == ceps::parser_env::Symbol::Category::MACRO)
-	 {
-		 return new ceps::ast::Identifier(name(id),nullptr,nullptr,nullptr);
-	 }
-	 else if (sym.category != ceps::parser_env::Symbol::Category::VAR)
-		 throw semantic_exception{root_node,"Variable '" +name(id)+"' is not defined."};
-	
-	if (sym.payload == nullptr) return new ceps::ast::Undefined(nullptr,nullptr,nullptr);
-
-	 ceps::ast::Nodebase_ptr node_ptr = reinterpret_cast<ceps::ast::Nodebase_ptr>(sym.payload);
-
-
-	 if (node_ptr->kind() == ceps::ast::Ast_node_kind::float_literal)
-	 {
-		 ceps::ast::Double & v = *dynamic_cast<ceps::ast::Double*>(node_ptr);
-		 return new ceps::ast::Double(value(v), unit(v), nullptr, nullptr, nullptr);
-	 }
-	 else if (node_ptr->kind() == ceps::ast::Ast_node_kind::int_literal)
-	 {
-		 ceps::ast::Int & v = *dynamic_cast<ceps::ast::Int*>(node_ptr);
-		 return new ceps::ast::Int( value(v), unit(v), nullptr, nullptr, nullptr );
-	 }
-	 else if (node_ptr->kind() == ceps::ast::Ast_node_kind::string_literal)
-	 {
-		 ceps::ast::String & v = *dynamic_cast<ceps::ast::String*>(node_ptr);
-		 return new ceps::ast::String(value(v), nullptr, nullptr, nullptr);
-	 }
-	 else if (node_ptr->kind() == ceps::ast::Ast_node_kind::symbol)
-	 {
-	 	 auto & v = as_symbol_ref(node_ptr);
-		 return new ceps::ast::Symbol(name(v), kind(v), nullptr, nullptr, nullptr);
-	 }
-	 else
-		 return node_ptr;
-
-}
-
-ceps::ast::Nodebase_ptr ceps::interpreter::evaluate_generic(ceps::ast::Nodebase_ptr root_node,
-													ceps::parser_env::Symboltable & sym_table,
-													ceps::interpreter::Environment& env,
-													ceps::ast::Nodebase_ptr parent_node,
-													ceps::ast::Nodebase_ptr predecessor,
-													ceps::ast::Nodebase_ptr this_ptr)
- {
-	 if(!root_node)
-		 return nullptr;
-	 if (ceps::interpreter::DEBUG_OUTPUT) std::cerr << "ceps::interpreter::evaluate_generic " << *root_node << std::endl;
-
-	 switch(root_node->kind())
-	 {
-	 case Kind::kind_def:
-	 {
-		 return eval_kinddef(root_node,
-		 			  sym_table,
-		 			  env,
-		 			  parent_node,
-		 			  predecessor);
-	 }
-	 case Kind::valdef:
-	 {
-		 return eval_valdef(root_node,
-		 			  sym_table,
-		 			  env,
-		 			  parent_node,
-		 			  predecessor);
-	 }
-	 case Kind::let:
-	 {
-		ceps::ast::Let& let_node{ceps::ast::as_let_ref(root_node)};
- 		ceps::parser_env::Symbol* sym_ptr;
-
- 		ceps::ast::Nodebase_ptr rhs = evaluate_generic(let_node.children()[0],sym_table,env,root_node,nullptr,nullptr);
-
- 		if ( (sym_ptr = sym_table.lookup(name(let_node),false,false,false)) == nullptr)
-	 		throw semantic_exception{root_node,"Couldn't assign to Variable '" +name(let_node)+"': not defined."};
-
- 		ceps::parser_env::Symbol& sym = *sym_ptr;
- 		sym.payload = rhs;//TODO: See comment in symtab.hh
- 		return nullptr;//Called because of side effect, no return value. Variable definitions end up in the symbol table and disappear from the tree.
-	 }
-	 case Kind::stmts:
-	 case Kind::root:
-	 case Kind::stmt:
-	 case Kind::call_parameters:
-		 return evaluate_nonleaf(*dynamic_cast<ceps::ast::Nonleafbase*>(root_node),sym_table,env,root_node,predecessor,this_ptr);
-	 case Kind::scope:
-	 {
-		 sym_table.push_scope();
-	 	 auto r = evaluate_nonleaf(*dynamic_cast<ceps::ast::Nonleafbase*>(root_node),sym_table,env,root_node,predecessor,this_ptr);
-	 	 sym_table.pop_scope();
-	 	 return r;
-	 }
-	 case Kind::structdef:
-	 {
-		ceps::ast::Nodebase_ptr result = nullptr;
-		sym_table.push_scope();
-		std::string id = ceps::ast::name(ceps::ast::as_struct_ref(root_node));
-
-		ceps::parser_env::Symbol* sym_ptr = sym_table.lookup(id);
-		if ( sym_ptr  != nullptr && sym_ptr->category ==  ceps::parser_env::Symbol::Category::MACRO){
-			result =  eval_macro(root_node,
-					  sym_ptr,
-		 			  sym_table,
-		 			  env,
-		 			  parent_node,
-		 			  predecessor);
-		} else if ( sym_ptr != nullptr && sym_ptr->category ==  ceps::parser_env::Symbol::Category::REWRITE){
-			result =  eval_rewrite(root_node,
-					  sym_ptr,
-		 			  sym_table,
-		 			  env,
-		 			  parent_node,
-		 			  predecessor);
-		} else if (
-				sym_ptr != nullptr &&
-				sym_ptr->category ==  ceps::parser_env::Symbol::Category::VAR &&
-				sym_ptr->payload != nullptr &&
-
-				(
-				 (((ceps::ast::Nodebase_ptr)sym_ptr->payload)->kind() == ceps::ast::Ast_node_kind::nodeset)
-				)
-		)
-		{
-			std::string id;
-			auto& ns = ceps::ast::as_ast_nodeset_ref(((ceps::ast::Nodebase_ptr)sym_ptr->payload));
-			if (ns.children().size() > 0)
-			{
-			 if (ns.children()[0]->kind() == ceps::ast::Ast_node_kind::identifier)
-				id = ceps::ast::name(ceps::ast::as_id_ref( ns.children()[0] ));
-			 else if (ns.children()[0]->kind() == ceps::ast::Ast_node_kind::symbol)
-				id = ceps::ast::name(ceps::ast::as_symbol_ref( ns.children()[0] ));
-			}
-			result = evaluate_nonleaf(*dynamic_cast<ceps::ast::Nonleafbase*>(root_node),sym_table,env,root_node,predecessor,this_ptr);
-			if (id.length()) ceps::ast::name(ceps::ast::as_struct_ref(result)) = id;
-
-		}  else if (
-				sym_ptr != nullptr &&
-				sym_ptr->category ==  ceps::parser_env::Symbol::Category::VAR &&
-				sym_ptr->payload != nullptr &&
-
-				(
-				 (((ceps::ast::Nodebase_ptr)sym_ptr->payload)->kind() == ceps::ast::Ast_node_kind::identifier)
-				)
-		){
-			result = evaluate_nonleaf(*dynamic_cast<ceps::ast::Nonleafbase*>(root_node),sym_table,env,root_node,predecessor,this_ptr);
-			name(as_struct_ref(result)) = name(as_id_ref((ceps::ast::Nodebase_ptr)(sym_ptr->payload)));
-		}
-		else result = evaluate_nonleaf(*dynamic_cast<ceps::ast::Nonleafbase*>(root_node),sym_table,env,root_node,predecessor,this_ptr);
-		sym_table.pop_scope();
-		if (id == "ignore_value") return nullptr;
-		if (id == "comment_stmt") return nullptr;
-		return result;
-	 }
-	 case Kind::expr:
-	 {
-		ceps::ast::Nonleafbase& nleaf = *dynamic_cast<ceps::ast::Nonleafbase*>(root_node);
-
-
-		if ( nleaf.children().size() != 1)
-			{
-				CEPSERROR("Internal error: Expression invalid.")
-			}
-
-		ceps::ast::Nodebase_ptr result = evaluate_generic(nleaf.children()[0],sym_table,env,root_node,predecessor,this_ptr),this_ptr;
-		//nleaf.children().clear();
-		return result;
-	 }
-	 case Kind::unary_operator:
-	 {
-		 return eval_unaryop(root_node,
-		 			  sym_table,
-		 			  env,
-		 			  parent_node,
-		 			  predecessor);
-	 }
-	 case Kind::ifelse:
-	 {
-		 return eval_ifelse(root_node,
-		 			  sym_table,
-		 			  env,
-		 			  parent_node,
-		 			  predecessor);
-	 }
-	 case Kind::func_call:
-	 {
-		 if (ceps::interpreter::DEBUG_OUTPUT) std::cerr << "ceps::interpreter::evaluate_generic Kind::func_call:\n";
-		 return eval_funccall(root_node,
-		 			  sym_table,
-		 			  env,
-		 			  parent_node,
-		 			  predecessor,
-					  this_ptr);
-	 }
-	 case Kind::binary_operator:
-	 {
-		 auto& bop{as_binop_ref(root_node)};
-		 if (op_val(bop) != "#") return eval_binaryop(root_node,
-		 			  sym_table,
-		 			  env,
-		 			  parent_node,
-		 			  predecessor);
-		return evaluate_generic(bop.left(),sym_table,env,root_node,predecessor,this_ptr);
-	 }
-	 case Kind::identifier:
-	 {
-		 return eval_id(root_node,
-		 			  sym_table,
-		 			  env,
-		 			  parent_node,
-		 			  predecessor);
-	 }
-	 case Kind::rawmap:
-	 {
-		 using namespace ceps::ast;
-		 Rawmap_ptr map_p_src = as_rawmap_ptr(root_node);
-		 Rawmap_ptr map_p_dest = new Rawmap{};
-		 for(Nodebase_ptr p : map_p_src->children())
-		 {
-			 if (p->kind() != Kind::atoms) continue;
-			 Atoms_ptr atoms_p_src = as_atoms_ptr(p);
-			 Atoms_ptr atoms_p_dest = new Atoms{};
-			 predecessor = nullptr;
-			 for (Nodebase_ptr pp : atoms_p_src->children())
-			 {
-				 Nodebase_ptr r = evaluate_generic(pp,sym_table,env,root_node,predecessor,this_ptr);predecessor=pp;
-				 if (r == nullptr)
-					 continue;
-				 atoms_p_dest->children().push_back(r);
-			 }
-			 map_p_dest->children().push_back(atoms_p_dest);
-		 }
-		 return map_p_dest;
-	 }
-	 case Kind::float_literal:
-	 {
-		 using namespace ceps::ast;
-		 Double & v = as_double_ref(root_node);
-		 return new Double(value(v), unit(v), nullptr, nullptr, nullptr);
-	 }
-	 case Kind::int_literal:
-	 {
-		 using namespace ceps::ast;
-		 Int & v = as_int_ref(root_node);
-		 return new Int( value(v), unit(v), nullptr, nullptr, nullptr);
-	 }
-	 case Kind::string_literal:
-	 {
-		 using namespace ceps::ast;
-		 String & v = as_string_ref(root_node);
-		 return new String(value(v), nullptr, nullptr, nullptr);
-	 }
-	 case Kind::loop:
-	 {
-		 auto l = evaluate_loop(as_loop_ptr(root_node),
-				  	  	  	  sym_table,
-				  	  	  	  env,root_node,predecessor);
-		 return l;
-	 }
-	 case Kind::symbol:
-	 {
-		 std::string kind = ceps::ast::kind(ceps::ast::as_symbol_ref(root_node));
-		 std::string name = ceps::ast::name(ceps::ast::as_symbol_ref(root_node));
-		 if (ceps::interpreter::DEBUG_OUTPUT) 
-		  std::cerr << "ceps::interpreter::evaluate_generic Kind::symbol: kind(" << kind<< ") name("<< name << ")" << std::endl;
-		 if (env.symbol_mapping()[kind] != nullptr)
-		 {
-
-			 auto r = (*env.symbol_mapping()[kind])[name];
-			 
-			 if (r != nullptr) {
-				auto rv = evaluate_generic(r,sym_table, env,root_node,predecessor,this_ptr);
-				if (ceps::interpreter::DEBUG_OUTPUT) 
-		      		std::cerr << "ceps::interpreter::evaluate_generic Kind::symbol: kind(" << kind<< ") name("<< name << ") -> "<<*rv << std::endl;
-				 return rv;
-			 }
-			 return env.call_sym_undefined_clbk(root_node,parent_node);
-		 }
-         return new ceps::ast::Symbol(name,kind);
-		 return root_node;
-	 }
-	 case Kind::ret:
-	 {
-		 auto& ret_stmt = ceps::ast::as_return_ref(root_node);
-		 ceps::ast::Nodebase_ptr operand = evaluate_generic(ret_stmt.children()[0],sym_table,env,(ceps::ast::Nodebase_ptr)&ret_stmt,predecessor,this_ptr);
-		 return new ceps::ast::Return(operand);
-	 }
-	 case Kind::macro_definition:{
-		 auto& macrodef{ceps::ast::as_macrodef_ref(root_node)};
-
-		 return new::ceps::ast::Macrodef(name(macrodef),symbol_table_info(macrodef),attributes(macrodef));
-	 }
-	 default:
-		 return root_node;
-		 //ERROR("Internal error: Kind of node unknown.")
-	 }
-	 return nullptr;
- }
-ceps::ast::Nodebase_ptr ceps::interpreter::handle_binop(	ceps::ast::Nodebase_ptr binop_node,
-															int op,
-															ceps::ast::Nodebase_ptr lhs,
-															ceps::ast::Nodebase_ptr rhs,
-															ceps::parser_env::Symboltable & sym_table,
-															Environment& env,
-															ceps::ast::Nodebase_ptr parent_node,
-															ceps::ast::Nodebase_ptr this_ptr
-															)
-{
-	using namespace ceps::ast;
-	if (lhs == nullptr || rhs == nullptr)
-		{ CEPSERROR("Internal error: Operand(s) evaluates to null.") }
-
-	if (op == '=')
-	{
-		using namespace ceps::parser_env;
-		if (lhs->kind() != Kind::identifier){
-			throw semantic_exception{binop_node," Left hand side of assignment should be a variable"};
-		}
-
-		ceps::ast::Identifier& id = *dynamic_cast<ceps::ast::Identifier*>(lhs);
-		ceps::parser_env::Symbol* sym_ptr;
-
-		if ( (sym_ptr = sym_table.lookup(name(id))) == nullptr)
-		{
-		 throw semantic_exception{binop_node,"Variable '" +name(id)+"' is not defined."};
-		}
-
-		ceps::parser_env::Symbol& sym = *sym_ptr;
-		if (sym.category != ceps::parser_env::Symbol::Category::VAR)
-			 throw semantic_exception{binop_node,"Variable '" +name(id)+"' is not defined."};
-
-		 sym.payload = rhs;
-
-		return rhs;
-	}
-    
-	if (
-		is<Ast_node_kind::identifier>(lhs) || 
-		is<Ast_node_kind::identifier>(rhs) || 
-		is<Ast_node_kind::func_call>(rhs)  || 
-		is<Ast_node_kind::func_call>(lhs)  || 
-		is<Ast_node_kind::binary_operator>(rhs) || 
-		is<Ast_node_kind::binary_operator>(lhs) || 
-		is<Ast_node_kind::unary_operator>(lhs) || 
-		is<Ast_node_kind::unary_operator>(rhs) ||  
-		is<Ast_node_kind::symbol>(lhs) || 
-		is<Ast_node_kind::symbol>(rhs) 		
-		) return mk_bin_op(op,lhs,rhs,ceps::ast::op_str(ceps::ast::as_binop_ref(binop_node)));
-
-	
-	//Promotions / Coercions
-	if (lhs->kind() == Kind::float_literal && rhs->kind() == Kind::int_literal && op != '^')
-	{
-		rhs = mk_double_node(value(as_int_ref(rhs)), unit(as_int_ref(rhs)));
-	}
-	else if (lhs->kind() == Kind::int_literal && rhs->kind() == Kind::float_literal)
-	{
-		lhs = mk_double_node(value(as_int_ref(lhs)), unit(as_int_ref(lhs)));
-	}
-
-	if (op == ceps::Cepsparser::token::REL_OP_EQ)
-	{
-
-		if (lhs->kind() == Kind::string_literal && rhs->kind() == Kind::string_literal)
-		{
-			String lhs_ref = *dynamic_cast<String*>(lhs);
-			String rhs_ref = *dynamic_cast<String*>(rhs);
-			return new Int( (value(lhs_ref) == value(rhs_ref)) ? 1 : 0, ceps::ast::all_zero_unit(),nullptr, nullptr, nullptr);
-		}
-		if (lhs->kind() == Kind::string_literal && rhs->kind() != Kind::string_literal)
-		{
-			String & lhs_ref = *dynamic_cast<String*>(lhs);
-			std::stringstream os;
-			rhs->print_value(os);
-			return new Int( (value(lhs_ref) == os.str()) ? 1 : 0, ceps::ast::all_zero_unit(),nullptr, nullptr, nullptr);
-		}
-		if (lhs->kind() != Kind::string_literal && rhs->kind() == Kind::string_literal)
-		{
-			String & rhs_ref = *dynamic_cast<String*>(rhs);
-			std::stringstream os;
-			lhs->print_value(os);
-			return new Int( (value(rhs_ref) == os.str()) ? 1 : 0, ceps::ast::all_zero_unit(),nullptr, nullptr, nullptr);
-		}
-		if (lhs->kind() == Kind::int_literal && rhs->kind() == Kind::int_literal)
-		{
-			Int lhs_ref = *dynamic_cast<Int*>(lhs);
-			Int rhs_ref = *dynamic_cast<Int*>(rhs);
-			if ( ceps::ast::unit(lhs_ref) != ceps::ast::unit(rhs_ref) )
-			{
-				return new Int( 0, ceps::ast::all_zero_unit(), nullptr, nullptr, nullptr);
-			}
-			return new Int( (value(lhs_ref) == value(rhs_ref)) ? 1 : 0, ceps::ast::all_zero_unit(), nullptr, nullptr, nullptr);
-		}
-		if (lhs->kind() == Kind::float_literal && rhs->kind() == Kind::float_literal)
-		{
-			Double lhs_ref = *dynamic_cast<Double*>(lhs);
-			Double rhs_ref = *dynamic_cast<Double*>(rhs);
-			if ( ceps::ast::unit(lhs_ref) != ceps::ast::unit(rhs_ref) )
-			{
-				return new Int( 0, ceps::ast::all_zero_unit(), nullptr, nullptr, nullptr);
-			}
-			return new Int( (value(lhs_ref) == value(rhs_ref)) ? 1 : 0, ceps::ast::all_zero_unit(), nullptr, nullptr, nullptr);
-		}
-		if (is<Ast_node_kind::scope>(lhs) && is<Ast_node_kind::scope>(rhs))
-		{
-			auto& lhs_set = as_scope_ref(lhs);
-			auto& rhs_set = as_scope_ref(rhs);
-			if (lhs_set.children().size () == 0 && rhs_set.children().size() == 0)
-			 return mk_int_node(1);
-			if (lhs_set.children().size () == 0 && rhs_set.children().size() != 0)
-			 return mk_int_node(0);
-			if (lhs_set.children().size () != 0 && rhs_set.children().size() == 0)
-			 return mk_int_node(0);
-			std::vector<std::string> v1,v2;
-
-			for(auto e: lhs_set.children())
-			 {
-				 if (e == nullptr) continue;
-				 std::stringstream ss; ss << *e;v1.push_back(std::move(ss.str()));
-			 }
-
-			for(auto e: rhs_set.children())
-			 {
-				 if (e == nullptr) continue;
-				 std::stringstream ss; ss << *e;v2.push_back(std::move(ss.str()));
-			 }
-
-			 std::sort(v1.begin(),v1.end());
-			 std::sort(v2.begin(),v2.end());
-			 auto l1 = std::unique(v1.begin(),v1.end());
-			 auto l2 = std::unique(v2.begin(),v2.end());
-			 if (l1 - v1.begin() != l2 - v2.begin()) return mk_int_node(0);
-			 auto it1 = v1.begin();
-			 auto it2 = v2.begin();
-			 for(;it1 != l1 && it2 != l2; ++it1,++it2){
-				 if (*it1 != *it2) return mk_int_node(0);
-			 }
-
-			return mk_int_node(1);
-		}
-	}
-	else if (op == ceps::Cepsparser::token::REL_OP_NEQ)
-	{
-
-		if (lhs->kind() == Kind::string_literal && rhs->kind() == Kind::string_literal)
-		{
-			String lhs_ref = *dynamic_cast<String*>(lhs);
-			String rhs_ref = *dynamic_cast<String*>(rhs);
-			return new Int( (value(lhs_ref) == value(rhs_ref)) ? 0 : 1, ceps::ast::all_zero_unit(),nullptr, nullptr, nullptr);
-		}
-		if (lhs->kind() == Kind::string_literal && rhs->kind() != Kind::string_literal)
-		{
-			String & lhs_ref = *dynamic_cast<String*>(lhs);
-			std::stringstream os;
-			rhs->print_value(os);
-			return new Int( (value(lhs_ref) == os.str()) ? 0 : 1, ceps::ast::all_zero_unit(),nullptr, nullptr, nullptr);
-		}
-		if (lhs->kind() != Kind::string_literal && rhs->kind() == Kind::string_literal)
-		{
-			String & rhs_ref = *dynamic_cast<String*>(rhs);
-			std::stringstream os;
-			lhs->print_value(os);
-			return new Int( (value(rhs_ref) == os.str()) ? 0 : 1, ceps::ast::all_zero_unit(),nullptr, nullptr, nullptr);
-		}
-		if (lhs->kind() == Kind::int_literal && rhs->kind() == Kind::int_literal)
-		{
-			Int lhs_ref = *dynamic_cast<Int*>(lhs);
-			Int rhs_ref = *dynamic_cast<Int*>(rhs);
-			if ( ceps::ast::unit(lhs_ref) != ceps::ast::unit(rhs_ref) )
-			{
-				return new Int( 1, ceps::ast::all_zero_unit(), nullptr, nullptr, nullptr);
-			}
-			return new Int( (value(lhs_ref) == value(rhs_ref)) ? 0 : 1, ceps::ast::all_zero_unit(), nullptr, nullptr, nullptr);
-		}
-		if (lhs->kind() == Kind::float_literal && rhs->kind() == Kind::float_literal)
-		{
-			Double lhs_ref = *dynamic_cast<Double*>(lhs);
-			Double rhs_ref = *dynamic_cast<Double*>(rhs);
-			if ( ceps::ast::unit(lhs_ref) != ceps::ast::unit(rhs_ref) )
-			{
-				return new Int( 1, ceps::ast::all_zero_unit(), nullptr, nullptr, nullptr);
-			}
-			return new Int( (value(lhs_ref) == value(rhs_ref)) ? 0 : 1, ceps::ast::all_zero_unit(), nullptr, nullptr, nullptr);
-		}
-	}
-	else if (op == ceps::Cepsparser::token::REL_OP_GT)
-	{
-
-		if (lhs->kind() == Kind::string_literal && rhs->kind() == Kind::string_literal)
-		{
-			String lhs_ref = *dynamic_cast<String*>(lhs);
-			String rhs_ref = *dynamic_cast<String*>(rhs);
-			return new Int( (value(lhs_ref) > value(rhs_ref)) ? 1 : 0, ceps::ast::all_zero_unit(),nullptr, nullptr, nullptr);
-		}
-		if (lhs->kind() == Kind::string_literal && rhs->kind() != Kind::string_literal)
-		{
-			String & lhs_ref = *dynamic_cast<String*>(lhs);
-			std::stringstream os;
-			rhs->print_value(os);
-			return new Int( (value(lhs_ref) > os.str()) ? 1 : 0, ceps::ast::all_zero_unit(),nullptr, nullptr, nullptr);
-		}
-		if (lhs->kind() != Kind::string_literal && rhs->kind() == Kind::string_literal)
-		{
-			String & rhs_ref = *dynamic_cast<String*>(rhs);
-			std::stringstream os;
-			lhs->print_value(os);
-			return new Int( (value(rhs_ref) > os.str()) ? 1 : 0, ceps::ast::all_zero_unit(),nullptr, nullptr, nullptr);
-		}
-		if (lhs->kind() == Kind::int_literal && rhs->kind() == Kind::int_literal)
-		{
-			Int lhs_ref = *dynamic_cast<Int*>(lhs);
-			Int rhs_ref = *dynamic_cast<Int*>(rhs);
-			if ( ceps::ast::unit(lhs_ref) != ceps::ast::unit(rhs_ref) )
-			{
-				throw semantic_exception{&lhs_ref," Failed to apply '>': Incompatible units."};
-			}
-			return new Int( (value(lhs_ref) > value(rhs_ref)) ? 1 : 0, ceps::ast::all_zero_unit(), nullptr, nullptr, nullptr);
-		}
-		if (lhs->kind() == Kind::float_literal && rhs->kind() == Kind::float_literal)
-		{
-			Double lhs_ref = *dynamic_cast<Double*>(lhs);
-			Double rhs_ref = *dynamic_cast<Double*>(rhs);
-			if ( ceps::ast::unit(lhs_ref) != ceps::ast::unit(rhs_ref) )
-			{
-				throw semantic_exception{&lhs_ref," Failed to apply '>': Incompatible units."};
-			}
-			return new Int( (value(lhs_ref) > value(rhs_ref)) ? 1 : 0, ceps::ast::all_zero_unit(), nullptr, nullptr, nullptr);
-		}
-	}
-	else if (op == ceps::Cepsparser::token::REL_OP_LT)
-	{
-		if (lhs->kind() == Kind::string_literal && rhs->kind() == Kind::string_literal)
-		{
-			String lhs_ref = *dynamic_cast<String*>(lhs);
-			String rhs_ref = *dynamic_cast<String*>(rhs);
-			return new Int( (value(lhs_ref) < value(rhs_ref)) ? 1 : 0, ceps::ast::all_zero_unit(),nullptr, nullptr, nullptr);
-		}
-		if (lhs->kind() == Kind::string_literal && rhs->kind() != Kind::string_literal)
-		{
-			String & lhs_ref = *dynamic_cast<String*>(lhs);
-			std::stringstream os;
-			rhs->print_value(os);
-			return new Int( (value(lhs_ref) < os.str()) ? 1 : 0, ceps::ast::all_zero_unit(),nullptr, nullptr, nullptr);
-		}
-		if (lhs->kind() != Kind::string_literal && rhs->kind() == Kind::string_literal)
-		{
-			String & rhs_ref = *dynamic_cast<String*>(rhs);
-			std::stringstream os;
-			lhs->print_value(os);
-			return new Int( (value(rhs_ref) < os.str()) ? 1 : 0, ceps::ast::all_zero_unit(),nullptr, nullptr, nullptr);
-		}
-		if (lhs->kind() == Kind::int_literal && rhs->kind() == Kind::int_literal)
-		{
-			Int lhs_ref = *dynamic_cast<Int*>(lhs);
-			Int rhs_ref = *dynamic_cast<Int*>(rhs);
-			if ( ceps::ast::unit(lhs_ref) != ceps::ast::unit(rhs_ref) )
-			{
-				throw semantic_exception{&lhs_ref," Failed to apply '<': Incompatible units."};
-			}
-			return new Int( (value(lhs_ref) < value(rhs_ref)) ? 1 : 0, ceps::ast::all_zero_unit(), nullptr, nullptr, nullptr);
-		}
-		if (lhs->kind() == Kind::float_literal && rhs->kind() == Kind::float_literal)
-		{
-			Double lhs_ref = *dynamic_cast<Double*>(lhs);
-			Double rhs_ref = *dynamic_cast<Double*>(rhs);
-			if ( ceps::ast::unit(lhs_ref) != ceps::ast::unit(rhs_ref) )
-			{
-				throw semantic_exception{&lhs_ref," Failed to apply '<': Incompatible units."};
-			}
-			return new Int( (value(lhs_ref) < value(rhs_ref)) ? 1 : 0, ceps::ast::all_zero_unit(), nullptr, nullptr, nullptr);
-		}
-	}
-	else if (op == ceps::Cepsparser::token::REL_OP_GT_EQ)
-	{
-
-		if (lhs->kind() == Kind::string_literal && rhs->kind() == Kind::string_literal)
-		{
-			String lhs_ref = *dynamic_cast<String*>(lhs);
-			String rhs_ref = *dynamic_cast<String*>(rhs);
-			return new Int( (value(lhs_ref) >= value(rhs_ref)) ? 1 : 0, ceps::ast::all_zero_unit(),nullptr, nullptr, nullptr);
-		}
-		if (lhs->kind() == Kind::string_literal && rhs->kind() != Kind::string_literal)
-		{
-			String & lhs_ref = *dynamic_cast<String*>(lhs);
-			std::stringstream os;
-			rhs->print_value(os);
-			return new Int( (value(lhs_ref) >= os.str()) ? 1 : 0, ceps::ast::all_zero_unit(),nullptr, nullptr, nullptr);
-		}
-		if (lhs->kind() != Kind::string_literal && rhs->kind() == Kind::string_literal)
-		{
-			String & rhs_ref = *dynamic_cast<String*>(rhs);
-			std::stringstream os;
-			lhs->print_value(os);
-			return new Int( (value(rhs_ref) >= os.str()) ? 1 : 0, ceps::ast::all_zero_unit(),nullptr, nullptr, nullptr);
-		}
-		if (lhs->kind() == Kind::int_literal && rhs->kind() == Kind::int_literal)
-		{
-			Int lhs_ref = *dynamic_cast<Int*>(lhs);
-			Int rhs_ref = *dynamic_cast<Int*>(rhs);
-			if ( ceps::ast::unit(lhs_ref) != ceps::ast::unit(rhs_ref) )
-			{
-				throw semantic_exception{&lhs_ref," Failed to apply '>=': Incompatible units."};
-			}
-			return new Int( (value(lhs_ref) >= value(rhs_ref)) ? 1 : 0, ceps::ast::all_zero_unit(), nullptr, nullptr, nullptr);
-		}
-		if (lhs->kind() == Kind::float_literal && rhs->kind() == Kind::float_literal)
-		{
-			Double lhs_ref = *dynamic_cast<Double*>(lhs);
-			Double rhs_ref = *dynamic_cast<Double*>(rhs);
-			if ( ceps::ast::unit(lhs_ref) != ceps::ast::unit(rhs_ref) )
-			{
-				throw semantic_exception{&lhs_ref," Failed to apply '>=': Incompatible units."};
-			}
-			return new Int( (value(lhs_ref) >= value(rhs_ref)) ? 1 : 0, ceps::ast::all_zero_unit(), nullptr, nullptr, nullptr);
-		}
-	}
-	else if (op == ceps::Cepsparser::token::REL_OP_LT_EQ)
-	{
-
-		if (lhs->kind() == Kind::string_literal && rhs->kind() == Kind::string_literal)
-		{
-			String lhs_ref = *dynamic_cast<String*>(lhs);
-			String rhs_ref = *dynamic_cast<String*>(rhs);
-			return new Int( (value(lhs_ref) <= value(rhs_ref)) ? 1 : 0, ceps::ast::all_zero_unit(),nullptr, nullptr, nullptr);
-		}
-		if (lhs->kind() == Kind::string_literal && rhs->kind() != Kind::string_literal)
-		{
-			String & lhs_ref = *dynamic_cast<String*>(lhs);
-			std::stringstream os;
-			rhs->print_value(os);
-			return new Int( (value(lhs_ref) <= os.str()) ? 1 : 0, ceps::ast::all_zero_unit(),nullptr, nullptr, nullptr);
-		}
-		if (lhs->kind() != Kind::string_literal && rhs->kind() == Kind::string_literal)
-		{
-			String & rhs_ref = *dynamic_cast<String*>(rhs);
-			std::stringstream os;
-			lhs->print_value(os);
-			return new Int( (value(rhs_ref) <= os.str()) ? 1 : 0, ceps::ast::all_zero_unit(),nullptr, nullptr, nullptr);
-		}
-		if (lhs->kind() == Kind::int_literal && rhs->kind() == Kind::int_literal)
-		{
-			Int lhs_ref = *dynamic_cast<Int*>(lhs);
-			Int rhs_ref = *dynamic_cast<Int*>(rhs);
-			if ( ceps::ast::unit(lhs_ref) != ceps::ast::unit(rhs_ref) )
-			{
-				throw semantic_exception{&lhs_ref," Failed to apply '<=': Incompatible units."};
-			}
-			return new Int( (value(lhs_ref) <= value(rhs_ref)) ? 1 : 0, ceps::ast::all_zero_unit(), nullptr, nullptr, nullptr);
-		}
-		if (lhs->kind() == Kind::float_literal && rhs->kind() == Kind::float_literal)
-		{
-			Double lhs_ref = *dynamic_cast<Double*>(lhs);
-			Double rhs_ref = *dynamic_cast<Double*>(rhs);
-			if ( ceps::ast::unit(lhs_ref) != ceps::ast::unit(rhs_ref) )
-			{
-				throw semantic_exception{&lhs_ref," Failed to apply '<=': Incompatible units."};
-			}
-			return new Int( (value(lhs_ref) <= value(rhs_ref)) ? 1 : 0, ceps::ast::all_zero_unit(), nullptr, nullptr, nullptr);
-		}
-	}
-	/** Addition **/
-	else  if (op == '+')
-	{
-
-		if (lhs->kind() == Kind::string_literal && rhs->kind() == Kind::string_literal)
-		{
-			String lhs_ref = *dynamic_cast<String*>(lhs);
-			String rhs_ref = *dynamic_cast<String*>(rhs);
-			return new String(value(lhs_ref) + value(rhs_ref), nullptr, nullptr, nullptr);
-		}
-
-		if (lhs->kind() == Kind::string_literal && rhs->kind() != Kind::string_literal)
-		{
-			String & lhs_ref = *dynamic_cast<String*>(lhs);
-			std::stringstream os;
-			rhs->print_value(os);
-			return new String( value(lhs_ref) + os.str(), nullptr, nullptr, nullptr);
-		}
-		if (lhs->kind() != Kind::string_literal && rhs->kind() == Kind::string_literal)
-		{
-			String & rhs_ref = *dynamic_cast<String*>(rhs);
-			std::stringstream os;
-			lhs->print_value(os);
-			return new String(os.str() + value(rhs_ref), nullptr, nullptr, nullptr);
-		}
-		if (lhs->kind() == Kind::int_literal && rhs->kind() == Kind::int_literal)
-		{
-			Int lhs_ref = *dynamic_cast<Int*>(lhs);
-			Int rhs_ref = *dynamic_cast<Int*>(rhs);
-			if ( ceps::ast::unit(lhs_ref) != ceps::ast::unit(rhs_ref) )
-			{
-				throw semantic_exception{&lhs_ref," Failed to apply '+': Incompatible units."};
-			}
-			return new Int( value(lhs_ref) + value(rhs_ref), unit(lhs_ref), nullptr, nullptr, nullptr);
-		}
-
-		if (lhs->kind() == Kind::long_literal && rhs->kind() == Kind::long_literal)
-		{
-			auto lhs_ref = *static_cast<Int64*>(lhs);
-			auto rhs_ref = *static_cast<Int64*>(rhs);
-			if ( ceps::ast::unit(lhs_ref) != ceps::ast::unit(rhs_ref) )
-			{
-				throw semantic_exception{&lhs_ref," Failed to apply '+': Incompatible units."};
-			}
-			return mk_int64_node( value(lhs_ref) + value(rhs_ref), unit(lhs_ref));
-		}
-		if (lhs->kind() == Kind::long_literal && rhs->kind() == Kind::int_literal)
-		{
-			auto lhs_ref = *static_cast<Int64*>(lhs);
-			auto rhs_ref = *static_cast<Int*>(rhs);
-			if ( ceps::ast::unit(lhs_ref) != ceps::ast::unit(rhs_ref) )
-			{
-				throw semantic_exception{&lhs_ref," Failed to apply '+': Incompatible units."};
-			}
-			return mk_int64_node( value(lhs_ref) + value(rhs_ref), unit(lhs_ref));
-		}
-		if (lhs->kind() == Kind::int_literal && rhs->kind() == Kind::long_literal)
-		{
-			auto lhs_ref = *static_cast<Int*>(lhs);
-			auto rhs_ref = *static_cast<Int64*>(rhs);
-			if ( ceps::ast::unit(lhs_ref) != ceps::ast::unit(rhs_ref) )
-			{
-				throw semantic_exception{&lhs_ref," Failed to apply '+': Incompatible units."};
-			}
-			return mk_int64_node( value(lhs_ref) + value(rhs_ref), unit(lhs_ref));
-		}
-
-		if (lhs->kind() == Kind::float_literal && rhs->kind() == Kind::float_literal)
-		{
-			Double lhs_ref = *dynamic_cast<Double*>(lhs);
-			Double rhs_ref = *dynamic_cast<Double*>(rhs);
-			if ( ceps::ast::unit(lhs_ref) != ceps::ast::unit(rhs_ref) )
-			{
-				throw semantic_exception{&lhs_ref," Failed to apply '+': Incompatible units."};
-			}
-			return new Double(value(lhs_ref) + value(rhs_ref), unit(lhs_ref), nullptr, nullptr, nullptr);
-		}
-	}// Addition
-    /** Modulo **/
-    else if (op == '%')
-    {
-
-        if (lhs->kind() == Kind::int_literal && rhs->kind() == Kind::int_literal)
-        {
-            Int lhs_ref = *dynamic_cast<Int*>(lhs);
-            Int rhs_ref = *dynamic_cast<Int*>(rhs);
-            if ( ceps::ast::unit(lhs_ref) != ceps::ast::unit(rhs_ref) )
-            {
-                throw semantic_exception{&lhs_ref," Failed to apply '+': Incompatible units."};
-            }
-            return new Int( value(lhs_ref) % value(rhs_ref), unit(lhs_ref), nullptr, nullptr, nullptr);
-        } else throw semantic_exception{lhs," Failed to apply '%': Incompatible types."};
-    }// Modulo
-
-	/*Logical And*/
-	else if (op == '&')
-		{
-			if (lhs->kind() == Kind::string_literal && rhs->kind() == Kind::string_literal)
-			{
-				String lhs_ref = *dynamic_cast<String*>(lhs);
-				String rhs_ref = *dynamic_cast<String*>(rhs);
-				return new Int( ( value(lhs_ref).length() > 0 && value(rhs_ref).length() > 0 ) ? 1 : 0,ceps::ast::all_zero_unit(), nullptr, nullptr, nullptr);
-			}
-
-
-			if (lhs->kind() == Kind::int_literal && rhs->kind() == Kind::int_literal)
-			{
-				Int lhs_ref = *dynamic_cast<Int*>(lhs);
-				Int rhs_ref = *dynamic_cast<Int*>(rhs);
-				if ( ceps::ast::unit(lhs_ref) != ceps::ast::unit(rhs_ref) )
-				{
-					throw semantic_exception{&lhs_ref," Failed to apply '+': Incompatible units."};
-				}
-				return new Int( value(lhs_ref) != 0 && value(rhs_ref) != 0, unit(lhs_ref), nullptr, nullptr, nullptr);
-			}
-			if (lhs->kind() == Kind::float_literal && rhs->kind() == Kind::float_literal)
-			{
-				Double lhs_ref = *dynamic_cast<Double*>(lhs);
-				Double rhs_ref = *dynamic_cast<Double*>(rhs);
-				if ( ceps::ast::unit(lhs_ref) != ceps::ast::unit(rhs_ref) )
-				{
-					throw semantic_exception{&lhs_ref," Failed to apply '+': Incompatible units."};
-				}
-				return new Double(value(lhs_ref) != 0 && value(rhs_ref) != 0, unit(lhs_ref), nullptr, nullptr, nullptr);
-			}
-		}// Addition
-
-	else if (op == '|')
-			{
-				if (lhs->kind() == Kind::string_literal && rhs->kind() == Kind::string_literal)
-				{
-					String lhs_ref = *dynamic_cast<String*>(lhs);
-					String rhs_ref = *dynamic_cast<String*>(rhs);
-					return new Int( ( (value(lhs_ref).length() + value(rhs_ref).length()) > 0 ) ? 1 : 0,ceps::ast::all_zero_unit(), nullptr, nullptr, nullptr);
-				}
-
-
-				if (lhs->kind() == Kind::int_literal && rhs->kind() == Kind::int_literal)
-				{
-					Int lhs_ref = *dynamic_cast<Int*>(lhs);
-					Int rhs_ref = *dynamic_cast<Int*>(rhs);
-					if ( ceps::ast::unit(lhs_ref) != ceps::ast::unit(rhs_ref) )
-					{
-						throw semantic_exception{&lhs_ref," Failed to apply '+': Incompatible units."};
-					}
-					return new Int( value(lhs_ref) != 0 || value(rhs_ref) != 0, unit(lhs_ref), nullptr, nullptr, nullptr);
-				}
-				if (lhs->kind() == Kind::float_literal && rhs->kind() == Kind::float_literal)
-				{
-					Double lhs_ref = *dynamic_cast<Double*>(lhs);
-					Double rhs_ref = *dynamic_cast<Double*>(rhs);
-					if ( ceps::ast::unit(lhs_ref) != ceps::ast::unit(rhs_ref) )
-					{
-						throw semantic_exception{&lhs_ref," Failed to apply '+': Incompatible units."};
-					}
-					return new Double(value(lhs_ref) != 0 || value(rhs_ref) != 0, unit(lhs_ref), nullptr, nullptr, nullptr);
-				}
-			}// Addition
-
-
-	/** Subtraction **/
-	else if (op == '-')
-	{
-		if (lhs->kind() == Kind::string_literal && rhs->kind() == Kind::string_literal)
-		{
-			throw semantic_exception{binop_node," Can't (yet) subtract strings."};
-		}
-
-		if (lhs->kind() == Kind::string_literal && rhs->kind() != Kind::string_literal)
-		{
-			throw semantic_exception{binop_node," Invalid operation."};
-		}
-		if (lhs->kind() != Kind::string_literal && rhs->kind() == Kind::string_literal)
-		{
-			throw semantic_exception{binop_node," Invalid operation."};
-		}
-		if (lhs->kind() == Kind::int_literal && rhs->kind() == Kind::int_literal)
-		{
-			Int lhs_ref = *dynamic_cast<Int*>(lhs);
-			Int rhs_ref = *dynamic_cast<Int*>(rhs);
-			if ( ceps::ast::unit(lhs_ref) != ceps::ast::unit(rhs_ref) )
-			{
-				throw semantic_exception{&lhs_ref," Failed to apply '-': Incompatible units."};
-			}
-			return new Int(value(lhs_ref) - value(rhs_ref), unit(lhs_ref), nullptr, nullptr, nullptr);
-		}
-		if (lhs->kind() == Kind::float_literal && rhs->kind() == Kind::float_literal)
-		{
-			Double lhs_ref = *dynamic_cast<Double*>(lhs);
-			Double rhs_ref = *dynamic_cast<Double*>(rhs);
-			if ( ceps::ast::unit(lhs_ref) != ceps::ast::unit(rhs_ref) )
-			{
-				throw semantic_exception{&lhs_ref," Failed to apply '-': Incompatible units."};
-			}
-			return new Double(value(lhs_ref) - value(rhs_ref), unit(lhs_ref), nullptr, nullptr, nullptr);
-		}
-	}// Subtraction
-
-
-	/****** Multiplication *******/
-	else if (op == '*')
-	{
-		if (lhs->kind() == Kind::string_literal && rhs->kind() == Kind::string_literal)
-		{
-			throw semantic_exception{binop_node," Can't (yet) multiply strings."};
-		}
-
-		if (lhs->kind() == Kind::string_literal && rhs->kind() == Kind::int_literal)
-		{
-			int j = value(*dynamic_cast<Int*>(rhs));
-			if (j <= 0)
-				return new String("", nullptr, nullptr, nullptr);
-			std::string buffer;
-			std::string & s = value(*dynamic_cast<String*>(lhs));
-			for(int i = 0; i < j;++i)
-				buffer+= s;
-			return new String(buffer, nullptr, nullptr, nullptr);
-		}
-		if (lhs->kind() == Kind::int_literal && rhs->kind() == Kind::string_literal)
-		{
-			int j = value(*dynamic_cast<Int*>(lhs));
-			if (j <= 0)
-				return new String("", nullptr, nullptr, nullptr);
-			std::string buffer;
-			std::string & s = value(*dynamic_cast<String*>(rhs));
-			for(int i = 0; i < j;++i)
-				buffer+= s;
-			return new String(buffer, nullptr, nullptr, nullptr);
-		}
-
-		if (
-				(lhs->kind() == Kind::string_literal && rhs->kind() == Kind::float_literal)
-				|| (rhs->kind() == Kind::string_literal && lhs->kind() == Kind::float_literal)
-			)
-		{
-			throw semantic_exception{binop_node," Can't (yet) multiply strings with floats."};
-		}
-		if (lhs->kind() == Kind::int_literal && rhs->kind() == Kind::int_literal)
-		{
-			Int lhs_ref = *dynamic_cast<Int*>(lhs);
-			Int rhs_ref = *dynamic_cast<Int*>(rhs);
-			return new Int(
-								value(lhs_ref)*value(rhs_ref), //multiply values
-								unit(lhs_ref)+unit(rhs_ref) // add units
-								, nullptr, nullptr, nullptr
-			);
-		}
-		if (lhs->kind() == Kind::long_literal && rhs->kind() == Kind::long_literal)
-		{
-			auto lhs_ref = *static_cast<Int64*>(lhs);
-			auto rhs_ref = *static_cast<Int64*>(rhs);
-			return mk_int64_node(
-								value(lhs_ref)*value(rhs_ref), //multiply values
-								unit(lhs_ref)+unit(rhs_ref) // add units								
-			);
-		}
-		if (lhs->kind() == Kind::long_literal && rhs->kind() == Kind::int_literal)
-		{
-			auto lhs_ref = *static_cast<Int64*>(lhs);
-			auto rhs_ref = *static_cast<Int*>(rhs);
-			return mk_int64_node(
-								value(lhs_ref)*value(rhs_ref), //multiply values
-								unit(lhs_ref)+unit(rhs_ref) // add units								
-			);
-		}
-		if (lhs->kind() == Kind::int_literal && rhs->kind() == Kind::long_literal)
-		{
-			auto lhs_ref = *static_cast<Int*>(lhs);
-			auto rhs_ref = *static_cast<Int64*>(rhs);
-			return mk_int64_node(
-								value(lhs_ref)*value(rhs_ref), //multiply values
-								unit(lhs_ref)+unit(rhs_ref) // add units								
-			);
-		}
-		if (lhs->kind() == Kind::float_literal && rhs->kind() == Kind::float_literal)
-		{
-			Double lhs_ref = *dynamic_cast<Double*>(lhs);
-			Double rhs_ref = *dynamic_cast<Double*>(rhs);
-			return new Double(value(lhs_ref)*value(rhs_ref), unit(lhs_ref) + unit(rhs_ref), nullptr, nullptr, nullptr);
-		}
-	}// Multiplication
-
-	/****** Division *******/
-	else if (op == '/')
-	{
-		if (lhs->kind() == Kind::string_literal && rhs->kind() == Kind::string_literal)
-		{
-			throw semantic_exception{binop_node," Can't divide strings."};
-		}
-
-		if (lhs->kind() == Kind::string_literal && rhs->kind() == Kind::int_literal)
-		{
-			throw semantic_exception{binop_node," Can't divide strings."};
-		}
-		if (lhs->kind() == Kind::int_literal && rhs->kind() == Kind::string_literal)
-		{
-			throw semantic_exception{binop_node," Can't divide strings."};
-		}
-
-		if (
-				(lhs->kind() == Kind::string_literal && rhs->kind() == Kind::float_literal)
-				|| (rhs->kind() == Kind::string_literal && lhs->kind() == Kind::float_literal)
-			)
-		{
-			throw semantic_exception{binop_node," Can't (yet) divide strings."};
-		}
-		if (lhs->kind() == Kind::int_literal && rhs->kind() == Kind::int_literal)
-		{
-			Int lhs_ref = *dynamic_cast<Int*>(lhs);
-			Int rhs_ref = *dynamic_cast<Int*>(rhs);
-			return new Int(
-								value(lhs_ref)/value(rhs_ref), //multiply values
-								unit(lhs_ref)-unit(rhs_ref) // add units
-								, nullptr, nullptr, nullptr
-			);
-		}
-		if (lhs->kind() == Kind::float_literal && rhs->kind() == Kind::float_literal)
-		{
-			Double lhs_ref = *dynamic_cast<Double*>(lhs);
-			Double rhs_ref = *dynamic_cast<Double*>(rhs);
-			return new Double(value(lhs_ref) / value(rhs_ref), unit(lhs_ref) - unit(rhs_ref), nullptr, nullptr, nullptr);
-		}
-	}// Division
-	/****** Power *******/
-	else if (op == '^')
-	{
-		if ( (lhs->kind() == Kind::string_literal || rhs->kind() == Kind::string_literal))
-		{
-			throw semantic_exception{binop_node," Incompatible operands."};
-		}
-		if (lhs->kind() == Kind::int_literal && rhs->kind() == Kind::int_literal)
-		{
-			Int lhs_ref = *dynamic_cast<Int*>(lhs);
-			Int rhs_ref = *dynamic_cast<Int*>(rhs);
-			if (unit(rhs_ref) != ceps::ast::all_zero_unit())
-			{
-				throw semantic_exception{binop_node," Incompatible operands. rhs operand in ^ - operation has to be a scalar."};
-			}
-			int lhs_v = value(lhs_ref);
-			int rhs_v = value(rhs_ref);
-			if (rhs_v >= 0)
-			{
-				int result = 1;
-				if (rhs_v > 0)
-				{
-					for(int j = 0; j< rhs_v;++j)
-						result *= lhs_v;
-				}
-				return new Int(
-								result,
-								rhs_v*unit(lhs_ref)
-								, nullptr, nullptr, nullptr
-				);
-			}
-			else return new Double(
-				std::pow((double)lhs_v,rhs_v),
-				rhs_v*unit(lhs_ref), nullptr, nullptr, nullptr
-			);
-		}
-		if (lhs->kind() == Kind::float_literal && rhs->kind() == Kind::int_literal)
-		{
-			Double & lhs_ref = *dynamic_cast<Double*>(lhs);
-			Int & rhs_ref = *dynamic_cast<Int*>(rhs);
-			if (unit(rhs_ref) != ceps::ast::all_zero_unit())
-			{
-				throw semantic_exception{binop_node," XXX Incompatible operands. rhs operand in ^ - operation has to be a scalar."};
-			}
-			int rhs_v = value(rhs_ref);
-			double lhs_v = value(lhs_ref);
-
-			return new Double(
-								std::pow(lhs_v,(double)rhs_v),
-								rhs_v*unit(lhs_ref), nullptr, nullptr, nullptr
-				);
-		}
-
-		if (lhs->kind() == Kind::float_literal && rhs->kind() == Kind::float_literal)
-		{
-			Double lhs_ref = *dynamic_cast<Double*>(lhs);
-			Double rhs_ref = *dynamic_cast<Double*>(rhs);
-			if (unit(rhs_ref) != ceps::ast::all_zero_unit() || unit(lhs_ref) != ceps::ast::all_zero_unit() )
-			{
-				throw semantic_exception{binop_node," Incompatible operands. floating point operands in ^ - operation have to be scalar."};
-			}
-
-			return new Double(std::pow(value(lhs_ref), value(rhs_ref)), unit(lhs_ref), nullptr, nullptr, nullptr);
-		}
-	}// Power
-
-	return mk_bin_op(op,lhs,rhs,ceps::ast::op_str(ceps::ast::as_binop_ref(binop_node)));
-}
-
-static void rec_flatten_tree(	ceps::ast::Nonleafbase::Container_t& v, 
-					  			ceps::ast::Nonleafbase& root,
-								ceps::parser_env::Symboltable & sym_table,
-		                        ceps::interpreter::Environment& env, 
-								ceps::ast::Nodebase_ptr parent_node,
-								ceps::ast::Nodebase_ptr predecessor,
-								ceps::ast::Nodebase_ptr this_ptr, 
-								bool eval)
-{
-	using namespace ceps::ast;
-	for(Nodebase_ptr p : root.children())
-	{
-		Nodebase_ptr r =  eval ? evaluate_generic(p,sym_table,env,(Nodebase_ptr)&root,predecessor,this_ptr) : p;
-		predecessor=r;
-		if(r == nullptr)
-			continue;
-		if (r->kind() == Ast_node_kind::stmts || r->kind() == Ast_node_kind::nodeset)
-		{
-			rec_flatten_tree(	v, 
-					  			*nlf_ptr(r),
-								sym_table,
-		                        env, 
-								parent_node,
-								predecessor,
-								this_ptr,
-								false);
-		}
-		else v.push_back(r);
-	}
-}
 
 ceps::ast::Nodebase_ptr ceps::interpreter::evaluate_nonleaf(ceps::ast::Nonleafbase& root,
 		                                            ceps::parser_env::Symboltable & sym_table,
 		                                            ceps::interpreter::Environment& env, 
 													ceps::ast::Nodebase_ptr parent_node,
 													ceps::ast::Nodebase_ptr predecessor,
-										 			ceps::ast::Nodebase_ptr this_ptr)
+										 			ceps::ast::Nodebase_ptr this_ptr,
+													thoroughness_t thoroughness)
 {
 	using namespace ceps::ast;
 	Nonleafbase::Container_t v;
@@ -1653,7 +436,7 @@ ceps::ast::Nodebase_ptr ceps::interpreter::evaluate_nonleaf(ceps::ast::Nonleafba
 	Nodebase* root_ptr = dynamic_cast<Nodebase*>(&root);
 	for(Nodebase_ptr p : root.children())
 	{
-		Nodebase_ptr r = evaluate_generic(p,sym_table,env,(Nodebase_ptr)&root,predecessor,this_ptr);predecessor=r;
+		Nodebase_ptr r = evaluate_generic(p,sym_table,env,(Nodebase_ptr)&root,predecessor,this_ptr, thoroughness);predecessor=r;
 		if(r == nullptr)
 			continue;
 		if (r->kind() == Ast_node_kind::stmts || r->kind() == Ast_node_kind::nodeset)
