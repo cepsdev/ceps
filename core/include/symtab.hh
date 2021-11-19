@@ -45,9 +45,6 @@ namespace ceps
  	 class Symbol
  	 {
  	 public:
- 		 //In Eclipse CDT 8.1.2 the declaration below is marked by the code-analyzer as errorneous.
- 		 //This is a well known bug (https://bugs.eclipse.org/bugs/show_bug.cgi?id=385144) and will
- 		 //be fixed in Eclipse 8.2 (released in june).
  		 enum Category{UNDEFINED,CTOR,VAR,LAMBDA,KIND,SYMBOL,MACRO,REWRITE,NODESET};
  		 Category category;
  		 std::string name;

@@ -1588,7 +1588,6 @@ using node_struct_t = ceps::ast::Struct*;
 using node_scope_t = ceps::ast::Scope*;
 using node_callparameters_t = ceps::ast::Call_parameters*;
 using node_nodeset_t = ceps::ast::Ast_nodeset*;
-
 using nodes_t = std::vector<ceps::ast::node_t>;
 using function_target_t = std::string;
 
@@ -1602,6 +1601,7 @@ node_struct_t mk_struct(std::string);
 node_scope_t mk_scope();
 node_callparameters_t mk_callparameters();
 node_nodeset_t mk_nodeset ();
+node_t mk_ifelse(node_t,node_t,node_t);
 
 void gc(node_t);
 
@@ -1645,6 +1645,16 @@ inline bool traversable_fragment(Nodebase_ptr tree_node){
         is<Ast_node_kind::ifelse>(tree_node) || is<Ast_node_kind::func_call>(tree_node) || 
         is<Ast_node_kind::expr>(tree_node) || is<Ast_node_kind::binary_operator>(tree_node) || 
         is<Ast_node_kind::unary_operator>(tree_node) || is<Ast_node_kind::for_loop_head>(tree_node);
+}
+
+template <typename T>
+inline size_t num_of_children(const T& n){
+	return n.children().size();
+}
+
+template <typename T>
+inline auto& children(T& n){
+	return n.children();
 }
 
 /***************************** Parsetree ***********************************/

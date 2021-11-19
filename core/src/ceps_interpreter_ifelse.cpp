@@ -16,40 +16,73 @@ Licensed under the Apache License, Version 2.0 (the "License");
 
 
 #include "ceps_interpreter.hh"
-#include "symtab.hh"
-#include <cmath>
-#include "ceps_interpreter_loop.hh"
 #include "ceps_interpreter_nodeset.hh"
+namespace ceps::interpreter{
+	using namespace ceps::ast;
 
-ceps::ast::Nodebase_ptr ceps::interpreter::eval_ifelse(ceps::ast::Nodebase_ptr root_node,
+	node_t eval_ifelse(node_t root_node,
 		ceps::parser_env::Symboltable & sym_table,
-		ceps::interpreter::Environment& env,
-		ceps::ast::Nodebase_ptr parent_node,
-		ceps::ast::Nodebase_ptr predecessor,
-		ceps::interpreter::thoroughness_t thoroughness)
-{
- ceps::ast::Ifelse& ifelse = ceps::ast::as_ifelse_ref(root_node);
- ceps::ast::Nodebase_ptr cond = evaluate_generic(ifelse.children()[0],sym_table,env,root_node,nullptr,nullptr,thoroughness);
- ceps::ast::Nodebase_ptr left_branch = nullptr,right_branch=nullptr;
+		Environment& env,
+		node_t parent_node,
+		node_t predecessor,
+		thoroughness_t thoroughness)
+	{
 
- 
- if (cond->kind() == ceps::ast::Ast_node_kind::int_literal){
-	 ceps::ast::Nodebase_ptr r = nullptr;
-	 if (ceps::ast::value(ceps::ast::as_int_ref(cond)) != 0 ){
-		 if (ifelse.children().size() > 1) r = evaluate_generic(ifelse.children()[1],sym_table,env,root_node,ifelse.children()[0],nullptr,thoroughness);
-	 } else {
-		 if (ifelse.children().size() > 2) r = evaluate_generic(ifelse.children()[2],sym_table,env,root_node,ifelse.children()[1],nullptr,thoroughness);
-	 }
-	 if (r == nullptr || r->kind() != ceps::ast::Ast_node_kind::scope) return r;
-	 //INVARIANT: r is a scope element
-	 auto& scope = *ceps::ast::nlf_ptr(r);
-	 if (scope.children().size() == 0) return nullptr;
-	 if (scope.children().size() == 1) return scope.children()[0];
-	 return create_ast_nodeset("", scope.children());
- }
+		auto& ifelse = as_ifelse_ref(root_node);
+		auto cond = evaluate_generic(ifelse.children()[0],sym_table,env,root_node,nullptr,nullptr,thoroughness);
+		node_t left_branch{},right_branch{};
+	
+		auto cond_val  = ceps::ast::is_int(cond);
+		if ( cond_val.first ){
+			node_t r{};
+			if (cond_val.second  != 0 ){
+				if (num_of_children(ifelse) > 1) 
+					r = evaluate_generic(
+							children(ifelse)[1],
+							sym_table,
+							env,
+							root_node,
+							children(ifelse)[0],
+							nullptr,
+							thoroughness);
+			} else {
+				if (num_of_children(ifelse) > 2) 
+					r = evaluate_generic(
+							children(ifelse)[2],
+							sym_table,
+							env,
+							root_node,
+							children(ifelse)[1],
+							nullptr,
+							thoroughness);
+			}
+			if (r == node_t{} || !is<Ast_node_kind::scope>(r) ) return r;
+			//INVARIANT: r is a scope element
+			auto& scope = *nlf_ptr(r);
+			if (num_of_children(scope) == 0) return nullptr;
+			if (num_of_children(scope) == 1) return children(scope)[0];
+			return create_ast_nodeset("", children(scope));
+		}//if 
 
+		// Conditional is a symbolic expression => shallow expansion of left/right branches
 
- if (ifelse.children().size() > 1) left_branch = ifelse.children()[1]->clone(); //evaluate_generic(ifelse.children()[1],sym_table,env,root_node,ifelse.children()[0],nullptr); 
- if (ifelse.children().size() > 2) right_branch = ifelse.children()[2]->clone(); // evaluate_generic(ifelse.children()[2],sym_table,env,root_node,ifelse.children()[1],nullptr);
- return new ceps::ast::Ifelse(cond,left_branch,right_branch);
-}
+		if (num_of_children(ifelse) > 1) 
+			left_branch = evaluate_generic(		children(ifelse)[1],
+												sym_table,
+												env,
+												root_node,
+												children(ifelse)[0],
+												nullptr,
+												thoroughness_t::shallow); 
+		if (num_of_children(ifelse) > 2) 
+			right_branch = evaluate_generic( 	children(ifelse)[2],
+												sym_table,
+												env,
+												root_node,
+												children(ifelse)[1],
+												nullptr,
+												thoroughness_t::shallow);
+		return mk_ifelse(cond,left_branch,right_branch);
+	}//eval_ifelse(...)
+}//namespace ceps::interpreter
+

@@ -181,6 +181,11 @@ ceps::ast::node_nodeset_t ceps::ast::mk_nodeset(){
 	return new Ast_nodeset{""};
 }
 
+ceps::ast::node_t ceps::ast::mk_ifelse(ceps::ast::node_t c,ceps::ast::node_t l,ceps::ast::node_t r){
+	return new ceps::ast::Ifelse(c,l,r);
+}
+
+
 
 std::vector<ceps::ast::node_t> ceps::ast::extract_functioncall_arguments_from_param_block(ceps::ast::Call_parameters& params){
 	std::vector<ceps::ast::node_t> r;
