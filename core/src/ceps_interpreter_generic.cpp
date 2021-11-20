@@ -241,6 +241,7 @@ ceps::ast::Nodebase_ptr ceps::interpreter::evaluate_generic(ceps::ast::Nodebase_
 	 }
 	 case Kind::loop:
 	 {
+		 std::cout << "+++++++++++++++++ "<< *root_node << std::endl;
 		 auto l = evaluate_loop(as_loop_ptr(root_node),
 				  	  	  	  sym_table,
 				  	  	  	  env,root_node,predecessor,thoroughness);

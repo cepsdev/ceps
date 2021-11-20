@@ -695,7 +695,17 @@ namespace ceps{
             if(args.size() == 0)
                  throw semantic_exception{root_node,"as_nodeset(): argument has to be a non empty list of nodes."};
 
-            return ceps::ast::create_ast_nodeset("",args);
+			node_vec_t elements;
+			for(auto e:args){
+				if (is<Ast_node_kind::scope>(e))
+				{
+					auto& scp = as_scope_ref(e);
+					for(auto ee: children(scp))
+					 elements.push_back(ee);
+
+				} else elements.push_back(e);
+			}
+            return ceps::ast::create_ast_nodeset("",elements);
 		}
 
 		node_t mktime(node_t root_node, Symboltable & sym_table, Environment& env,node_t parent_node, node_t predecessor, Call_parameters* params)

@@ -89,7 +89,7 @@ ceps::ast::Nodebase_ptr ceps::interpreter::evaluate_nodeset_expr_dot(	ceps::ast:
 	std::string last_identifier;
 	last_identifier = apply_idx_op_operand(as_ast_nodeset_ref(lhs));
 
-	//std::cout <<"----------------------------- "<< acc.size() << std::endl;
+	//std::cout <<"----------------------------- "<< result << std::endl;
 
 	for (size_t i = 0; i < acc.size(); ++i)
 	{

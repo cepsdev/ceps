@@ -24,7 +24,7 @@ Licensed under the Apache License, Version 2.0 (the "License");
 
 
 
-static void flatten(ceps::ast::Nodebase_ptr root, std::vector<ceps::ast::Nodebase_ptr>& acc,bool& is_range)
+static void flatten(ceps::ast::Nodebase_ptr root, std::vector<ceps::ast::Nodebase_ptr>& acc,bool& is_range, bool& contains_symbol)
 {
 
 	is_range = false;
@@ -36,9 +36,9 @@ static void flatten(ceps::ast::Nodebase_ptr root, std::vector<ceps::ast::Nodebas
 		/*Induction case*/
 		bool t;
 		auto & op = as_binop_ref(root);
-		flatten(op.children()[0],acc,t);
+		flatten(op.children()[0],acc,t,contains_symbol);
 
-		flatten(op.children()[1],acc,t);
+		flatten(op.children()[1],acc,t,contains_symbol);
 
 	}
 	else if (root->kind() == ceps::ast::Ast_node_kind::binary_operator && op(as_binop_ref(root)) == ceps::Cepsparser::token::DOTDOT )
@@ -60,12 +60,15 @@ static void flatten(ceps::ast::Nodebase_ptr root, std::vector<ceps::ast::Nodebas
 			acc.push_back(ceps::ast::create_ast_nodeset(last_identifier,v));
 		}
 	}
-	else acc.push_back(root);
+	else {
+		 if (ceps::ast::is<ceps::ast::Ast_node_kind::symbol>(root)) contains_symbol = true;
+		 acc.push_back(root);
+	}
 
 
 }
 
-static void loop( std::vector<ceps::ast::Nodebase_ptr>& result,
+static ceps::ast::node_t loop( std::vector<ceps::ast::Nodebase_ptr>& result,
 		   ceps::ast::Nodebase_ptr body,
 		   ceps::ast::Loop_head& loop_head,
 		   int i,
@@ -83,8 +86,11 @@ static void loop( std::vector<ceps::ast::Nodebase_ptr>& result,
 
 
 
+	bool contains_symbol = false;
+	flatten(coll_,collection,is_range_loop,contains_symbol);
+	if (contains_symbol){
 
-	flatten(coll_,collection,is_range_loop);
+	}
 
 	sym_table.push_scope();
 
@@ -174,6 +180,7 @@ static void loop( std::vector<ceps::ast::Nodebase_ptr>& result,
 	}//for
 
 	sym_table.pop_scope();
+	return nullptr;
 }
 
 
@@ -190,21 +197,13 @@ ceps::ast::Nodebase_ptr  ceps::interpreter::evaluate_loop(ceps::ast::Loop_ptr lo
 {
 	const auto for_loop_head = 0;
 	const auto for_loop_body = 1;
-
-
-
 	auto& loop_head =  as_loop_head_ref(loop_node->children()[for_loop_head]);
 	ceps::ast::Nodebase_ptr body = loop_node->children()[for_loop_body];
-
 	std::vector<ceps::ast::Nodebase_ptr> result_vec;
-
 	loop(result_vec, body, loop_head, 0, sym_table, env,rootnode,predecessor, thoroughness);
 
 	ceps::ast::Stmts * result = new ceps::ast::Stmts{};
 	for(auto p : result_vec)
 		result->children().push_back(p);
-
-
-
 	return result;
 }
