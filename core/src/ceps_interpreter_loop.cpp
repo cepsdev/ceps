@@ -68,29 +68,43 @@ static void flatten(ceps::ast::Nodebase_ptr root, std::vector<ceps::ast::Nodebas
 
 }
 
+ceps::ast::node_t mk_loop(std::vector<std::pair<ceps::ast::node_t,ceps::ast::node_t>> const & head, ceps::ast::node_t body){
+	using namespace ceps::ast;
+	Loop_head* loop_head = new Loop_head{};
+	Loop* loop = new Loop{loop_head,body};
+	for(auto e : head){
+		children(loop_head).push_back(e.first);
+		children(loop_head).push_back(e.second);
+	}
+	return loop;
+} 
+
 static ceps::ast::node_t loop( std::vector<ceps::ast::Nodebase_ptr>& result,
 		   ceps::ast::Nodebase_ptr body,
 		   ceps::ast::Loop_head& loop_head,
 		   int i,
 		   ceps::parser_env::Symboltable & sym_table,
-		   ceps::interpreter::Environment& env,ceps::ast::Nodebase_ptr rootnode,ceps::ast::Nodebase_ptr predecessor, ceps::interpreter::thoroughness_t thoroughness)
+		   ceps::interpreter::Environment& env,
+		   ceps::ast::Nodebase_ptr rootnode,
+		   ceps::ast::Nodebase_ptr predecessor, 
+		   ceps::interpreter::thoroughness_t thoroughness)
 {
 	using namespace ceps::parser_env;
+	using namespace ceps::interpreter;
 
 
 	bool is_range_loop = false;
 	bool last_head = (size_t)(i*2 +1) == loop_head.children().size() - 1;
 	ceps::ast::Identifier& id  = ceps::ast::as_id_ref(loop_head.children()[2*i]);
-	ceps::ast::Nodebase_ptr coll_  = evaluate_generic(loop_head.children()[2*i+1],sym_table,env,&loop_head,loop_head.children()[2*i],nullptr,thoroughness);
+	bool loop_head_contains_symbols{false};
+	ceps::ast::Nodebase_ptr coll_  = evaluate_generic(loop_head.children()[2*i+1],sym_table,env,&loop_head,loop_head.children()[2*i],nullptr,loop_head_contains_symbols,thoroughness);
 	std::vector<ceps::ast::Nodebase_ptr> collection;
 
 
 
 	bool contains_symbol = false;
 	flatten(coll_,collection,is_range_loop,contains_symbol);
-	if (contains_symbol){
-
-	}
+	if (contains_symbol || loop_head_contains_symbols) thoroughness = thoroughness_t::shallow;
 
 	sym_table.push_scope();
 
@@ -112,9 +126,14 @@ static ceps::ast::node_t loop( std::vector<ceps::ast::Nodebase_ptr>& result,
 	}
 	//std::cout << "*****" << name(id) << std::endl;
 
-	last_sym_ptr->category= next_sym_ptr->category = sym_ptr->category = Symbol::Category::VAR;
-
-	if (is_range_loop)
+	last_sym_ptr->category= next_sym_ptr->category = sym_ptr->category = ceps::parser_env::Symbol::Category::VAR;
+	if (thoroughness == thoroughness_t::shallow){
+		sym_table.pop_scope();
+		bool symbols_found{false};
+		auto body_evaluated = evaluate_generic(body,sym_table,env,rootnode,predecessor,nullptr,symbols_found,thoroughness);
+		return mk_loop({ {id.clone(),coll_} } ,body_evaluated);
+	}
+	else if (is_range_loop)
 	{
 		int from = value(as_int_ref(collection[0]));
 		int to = value(as_int_ref(collection[1]));
@@ -128,7 +147,8 @@ static ceps::ast::node_t loop( std::vector<ceps::ast::Nodebase_ptr>& result,
 			value(counter_node) = h;
 			if (last_head)
 			{
-				auto new_node = evaluate_generic(body,sym_table,env,rootnode,predecessor,nullptr,thoroughness);
+				bool symbols_found{false};
+				auto new_node = evaluate_generic(body,sym_table,env,rootnode,predecessor,nullptr, symbols_found,thoroughness);
 				if (new_node != nullptr)
 				{
 					if (new_node->kind() == ceps::ast::Ast_node_kind::stmts)
@@ -158,8 +178,8 @@ static ceps::ast::node_t loop( std::vector<ceps::ast::Nodebase_ptr>& result,
 
 		if (last_head)
 		{
-
-			auto new_node = evaluate_generic(body,sym_table,env,rootnode,predecessor,nullptr,thoroughness);
+			bool symbols_found{false};
+			auto new_node = evaluate_generic(body,sym_table,env,rootnode,predecessor,nullptr,symbols_found,thoroughness);
 			if (new_node != nullptr)
 			{
 				if (new_node->kind() == ceps::ast::Ast_node_kind::stmts)
@@ -193,14 +213,20 @@ ceps::ast::Nodebase_ptr  ceps::interpreter::evaluate_loop(ceps::ast::Loop_ptr lo
 									  ceps::interpreter::Environment& env,
 									  ceps::ast::Nodebase_ptr rootnode,
 									  ceps::ast::Nodebase_ptr predecessor,
-									  ceps::interpreter::thoroughness_t thoroughness)
+									  bool& symbols_found,
+									  ceps::interpreter::thoroughness_t thoroughness
+									  )
 {
 	const auto for_loop_head = 0;
 	const auto for_loop_body = 1;
 	auto& loop_head =  as_loop_head_ref(loop_node->children()[for_loop_head]);
 	ceps::ast::Nodebase_ptr body = loop_node->children()[for_loop_body];
 	std::vector<ceps::ast::Nodebase_ptr> result_vec;
-	loop(result_vec, body, loop_head, 0, sym_table, env,rootnode,predecessor, thoroughness);
+	auto loop_result = loop(result_vec, body, loop_head, 0, sym_table, env,rootnode,predecessor, thoroughness);
+	if (loop_result) {
+		symbols_found = true;
+		return loop_result;
+	}
 
 	ceps::ast::Stmts * result = new ceps::ast::Stmts{};
 	for(auto p : result_vec)

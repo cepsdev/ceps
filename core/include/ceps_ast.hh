@@ -1657,6 +1657,11 @@ inline auto& children(T& n){
 	return n.children();
 }
 
+template <typename T>
+inline auto& children(T* n){
+	return n->children();
+}
+
 /***************************** Parsetree ***********************************/
 class Parsetree
 {

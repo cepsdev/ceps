@@ -30,7 +30,8 @@ ceps::ast::Nodebase_ptr ceps::interpreter::handle_binop(	ceps::ast::Nodebase_ptr
 															Environment& env,
 															ceps::ast::Nodebase_ptr parent_node,
 															ceps::ast::Nodebase_ptr this_ptr,
-													        ceps::interpreter::thoroughness_t thoroughness
+													        ceps::interpreter::thoroughness_t thoroughness,
+															bool& symbols_found
 															)
 {
 	using namespace ceps::ast;

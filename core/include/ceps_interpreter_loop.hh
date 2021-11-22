@@ -32,7 +32,9 @@ namespace ceps
 		ceps::interpreter::Environment& env,
 		ceps::ast::Nodebase_ptr rootnode,
 		ceps::ast::Nodebase_ptr predecessor,
-		ceps::interpreter::thoroughness_t thoroughness);
+		bool& symbols_found,
+		ceps::interpreter::thoroughness_t thoroughness
+		);
 	}
 }
 

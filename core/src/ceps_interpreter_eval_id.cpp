@@ -27,7 +27,9 @@ ceps::ast::Nodebase_ptr ceps::interpreter::eval_id(ceps::ast::Nodebase_ptr root_
 		ceps::interpreter::Environment& env,
 		ceps::ast::Nodebase_ptr parent_node,
 		ceps::ast::Nodebase_ptr predecessor,
-        ceps::interpreter::thoroughness_t thoroughness)
+		bool& symbols_found,
+        ceps::interpreter::thoroughness_t thoroughness
+		)
 {
 	using namespace ceps::parser_env;
 
@@ -93,6 +95,7 @@ ceps::ast::Nodebase_ptr ceps::interpreter::eval_id(ceps::ast::Nodebase_ptr root_
 	 ceps::parser_env::Symbol& sym = *sym_ptr;
 	 if (sym_ptr->category == ceps::parser_env::Symbol::Category::SYMBOL )
 	 {
+		 symbols_found = true;
 		 return new ceps::ast::Symbol(name(id), ((ceps::parser_env::Symbol*)sym_ptr->payload)->name, nullptr, nullptr, nullptr);
 	 }
 
@@ -126,8 +129,9 @@ ceps::ast::Nodebase_ptr ceps::interpreter::eval_id(ceps::ast::Nodebase_ptr root_
 	 }
 	 else if (node_ptr->kind() == ceps::ast::Ast_node_kind::symbol)
 	 {
-	 	 auto & v = as_symbol_ref(node_ptr);
-		 return new ceps::ast::Symbol(name(v), kind(v), nullptr, nullptr, nullptr);
+	 	auto & v = as_symbol_ref(node_ptr);
+		symbols_found = true;
+		return new ceps::ast::Symbol(name(v), kind(v), nullptr, nullptr, nullptr);
 	 }
 	 else
 		 return node_ptr;

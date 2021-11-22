@@ -33,7 +33,8 @@ namespace ceps
 			ceps::parser_env::Symboltable & sym_table,
 			ceps::interpreter::Environment& env,
 			ceps::ast::Nodebase_ptr,
-			ceps::interpreter::thoroughness_t thoroughness );
+			ceps::interpreter::thoroughness_t thoroughness,
+			bool& symbols_found);
 	}
 }
 

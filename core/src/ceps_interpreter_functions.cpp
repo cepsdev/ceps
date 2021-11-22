@@ -779,27 +779,34 @@ template<typename P>
 		return false;
 	}
 
-ceps::ast::Nodebase_ptr ceps::interpreter::eval_funccall(ceps::ast::Nodebase_ptr root_node,
-		                                                 ceps::parser_env::Symboltable & sym_table,
-		                                                 ceps::interpreter::Environment& env,
-		                                                 ceps::ast::Nodebase_ptr parent_node,
-		                                                 ceps::ast::Nodebase_ptr predecessor,
-														 ceps::ast::Nodebase_ptr this_ptr,
-														 ceps::interpreter::thoroughness_t thoroughness)
+ceps::ast::Nodebase_ptr ceps::interpreter::eval_funccall(
+		ceps::ast::Nodebase_ptr root_node,
+		ceps::parser_env::Symboltable & sym_table,
+		ceps::interpreter::Environment& env,
+		ceps::ast::Nodebase_ptr parent_node,
+		ceps::ast::Nodebase_ptr predecessor,
+		ceps::ast::Nodebase_ptr this_ptr,
+		bool& symbols_found,
+		ceps::interpreter::thoroughness_t thoroughness
+		)
 {
 	if (ceps::interpreter::DEBUG_OUTPUT) std::cerr << "ceps::interpreter::eval_funccall:" << *root_node << std::endl;
 
 	auto func_call = as_func_call_ref(root_node);
 	auto fcall_target = func_call_target(func_call);
 
+	bool func_symbolic{false};
 
 	if (is_an_identifier(func_call_target(func_call)))
 	 {
 		ceps::ast::Identifier& id = as_id_ref(fcall_target);
         ceps::ast::Nodebase_ptr params_ = nullptr;
 		 
+		
 		if (env.is_lazy_func != nullptr && env.is_lazy_func(name(id))) params_ = func_call.children()[1];
-		else params_ = evaluate_generic(func_call.children()[1],sym_table,env,root_node,predecessor,nullptr,thoroughness);
+		else params_ = evaluate_generic(func_call.children()[1],sym_table,env,root_node,predecessor,nullptr,func_symbolic,thoroughness);
+		
+
 		ceps::ast::Call_parameters& params = *static_cast<ceps::ast::Call_parameters*>(params_);
 		if (ceps::interpreter::DEBUG_OUTPUT) std::cerr << "ceps::interpreter::eval_funccall: params:" << params << std::endl;
 
@@ -812,6 +819,15 @@ ceps::ast::Nodebase_ptr ceps::interpreter::eval_funccall(ceps::ast::Nodebase_ptr
 
 		auto rr = env.call_func_callback(ceps::ast::name(id),&params,sym_table);
 		if (rr != nullptr) return rr;
+		symbols_found = symbols_found || func_symbolic;
+
+		if (func_symbolic){
+			ceps::ast::Func_call* f = new ceps::ast::Func_call();
+			f->children_.push_back(new ceps::ast::Identifier(name(id), nullptr, nullptr, nullptr));
+			f->children_.push_back(params_->clone());
+			return f;
+		}
+
 		auto fit = func_cache.find(name(id));
 		if (fit != func_cache.end()){
 		  	return fit->second(root_node,sym_table,env,parent_node,predecessor,static_cast<ceps::ast::Call_parameters*> (params_));
@@ -850,13 +866,18 @@ ceps::ast::Nodebase_ptr ceps::interpreter::eval_funccall(ceps::ast::Nodebase_ptr
 			env.set_binop_resolver(nullptr,nullptr);
 
 			sym_table.push_scope();
+			bool local_contains_symbols{false};
+
 			auto result =  eval_macro(root_node,
 					  sym_table.lookup(name(id)),
 		 			  sym_table,
 		 			  env,
 		 			  parent_node,
 		 			  predecessor,thoroughness,
+					  local_contains_symbols,
 					  &args);
+			symbols_found = symbols_found || local_contains_symbols;
+
 			sym_table.pop_scope();
 
 			env.set_func_callback(old_callback,old_func_callback_context_data);
@@ -887,7 +908,7 @@ ceps::ast::Nodebase_ptr ceps::interpreter::eval_funccall(ceps::ast::Nodebase_ptr
 				a.push_back(params.children()[params.children().size()-1]);
 			return ceps::ast::create_ast_nodeset("",a);
         } else if (name(id)=="as_nodeset"){
-			 func_cache[name(id)] = ceps::interpreter::as_nodeset; 
+			 func_cache[name(id)] = ceps::interpreter::as_nodeset;
 			 return ceps::interpreter::as_nodeset(root_node,sym_table,env,parent_node,predecessor,static_cast<ceps::ast::Call_parameters*>(params_));
         } else if (name(id)=="mktime"){
 			 func_cache[name(id)] = ceps::interpreter::mktime; 
@@ -945,13 +966,17 @@ ceps::ast::Nodebase_ptr ceps::interpreter::eval_funccall(ceps::ast::Nodebase_ptr
              }
              ceps::parser_env::Symbol* sym_ptr = sym_table.lookup(id);
              if ( sym_ptr != nullptr && sym_ptr->category ==  ceps::parser_env::Symbol::Category::MACRO){
-                 return  eval_macro(n,
+				bool local_contains_symbols{false};
+                auto r =  eval_macro(n,
                            sym_ptr,
                            sym_table,
                            env,
                            nullptr,
                            nullptr,
-						   thoroughness);
+						   thoroughness,
+						   local_contains_symbols);
+				symbols_found = symbols_found || local_contains_symbols;
+				return r;				
              }
 
              return n;
@@ -1087,15 +1112,13 @@ ceps::ast::Nodebase_ptr ceps::interpreter::eval_funccall(ceps::ast::Nodebase_ptr
 			 }
 			 return nullptr;
 		 } else if (name(id) == "include_xml")	 {
-			 std::vector<ceps::ast::Nodebase_ptr> args;
-			 flatten_args(params.children()[0], args);
+			 node_vec_t args{get_args(*static_cast<ceps::ast::Call_parameters*>(params_))};
 
 			 if (args.size() != 1 &&  args.size() != 2)
 				 throw semantic_exception{root_node,"include_xml: Wrong number of arguments"};
 
 			 if (args.size() == 1){
-			  ceps::ast::Nodebase_ptr arg_ = params.children()[0];
-			  auto arg = evaluate_generic(arg_,sym_table,env,root_node,nullptr,nullptr,thoroughness);
+			  auto arg = args[0];			  
 			  if (arg->kind() != Kind::string_literal)
 				 throw semantic_exception{root_node,"include_xml: Illformed argument"};
 			  return include_xml_file(ceps::ast::value(ceps::ast::as_string_ref(arg)));
@@ -1140,26 +1163,18 @@ ceps::ast::Nodebase_ptr ceps::interpreter::eval_funccall(ceps::ast::Nodebase_ptr
              return new ceps::ast::Int(uniform_dist(e1), ceps::ast::all_zero_unit(), nullptr, nullptr, nullptr);
 
          } else if (name(id) == "sin") {
-			 if (params.children().size() != 1)
+			node_vec_t args{get_args(*static_cast<ceps::ast::Call_parameters*>(params_))};
+			if (args.size() != 1)
 				 throw semantic_exception{root_node,"sin: Expecting 1 argument"};
-			 ceps::ast::Nodebase_ptr arg_ = params.children()[0];
+			auto arg = args[0];
 
-			 auto arg = evaluate_generic(arg_,sym_table,env,root_node,nullptr,nullptr,thoroughness);
-
-
-
-			 if (arg->kind() == Kind::float_literal)
+			if (arg->kind() == Kind::float_literal)
+				return new ceps::ast::Double(std::sin(value(as_double_ref(arg))),ceps::ast::all_zero_unit(),nullptr,nullptr,nullptr);
+			else if (arg->kind() == Kind::int_literal)
+				return new ceps::ast::Double(std::sin((double)value(as_int_ref(arg))), ceps::ast::all_zero_unit(), nullptr, nullptr, nullptr);
+		 	else
 			 {
-				 ceps::ast::Double& arg = *dynamic_cast<ceps::ast::Double*>(arg_);
-				 return new ceps::ast::Double(std::sin(value(arg)),ceps::ast::all_zero_unit(),nullptr,nullptr,nullptr);
-			 }
-			 else if (arg->kind() == Kind::int_literal)
-			 {
-				 ceps::ast::Int& arg = *dynamic_cast<ceps::ast::Int*>(arg_);
-				 return new ceps::ast::Double(std::sin((double)value(arg)), ceps::ast::all_zero_unit(), nullptr, nullptr, nullptr);
-			 }
-			 else
-			 {
+				 if (ceps::ast::is<Ast_node_kind::symbol>(arg)) symbols_found = true;
 				 auto fp = new ceps::ast::Call_parameters();
 				 fp->children().push_back(arg);
 				 ceps::ast::Func_call* f = new ceps::ast::Func_call();
@@ -1167,223 +1182,164 @@ ceps::ast::Nodebase_ptr ceps::interpreter::eval_funccall(ceps::ast::Nodebase_ptr
 				 f->children_.push_back(fp);
 				 return f;
 			 }
-
 		 } else 	if (name(id) == "abs")
 		 {
-			 if (params.children().size() != 1)
-				 throw semantic_exception{root_node,"sin: Expecting 1 argument"};
-			 ceps::ast::Nodebase_ptr arg_ = params.children()[0];
+			node_vec_t args{get_args(*static_cast<ceps::ast::Call_parameters*>(params_))};
+			if (args.size() != 1)
+				throw semantic_exception{root_node,"abs: Expecting 1 argument"};
+			auto arg = args[0];
 
-			 auto arg = evaluate_generic(arg_,sym_table,env,root_node,nullptr,nullptr,thoroughness);
-
-
-
-			 if (arg->kind() == Kind::float_literal)
-			 {
-				 ceps::ast::Double& arg = *dynamic_cast<ceps::ast::Double*>(arg_);
-				 return new ceps::ast::Double(std::abs(value(arg)),unit(arg),nullptr,nullptr,nullptr);
-			 }
-			 else if (arg->kind() == Kind::int_literal)
-			 {
-				 ceps::ast::Int& arg = *dynamic_cast<ceps::ast::Int*>(arg_);
-				 return new ceps::ast::Double(std::abs((double)value(arg)), unit(arg), nullptr, nullptr, nullptr);
-			 }
-			 else
-			 {
+			if (arg->kind() == Kind::float_literal)
+				return new ceps::ast::Double(std::abs(value(as_double_ref(arg))),unit(as_double_ref(arg)),nullptr,nullptr,nullptr);
+			else if (arg->kind() == Kind::int_literal)
+				return new ceps::ast::Double(std::abs((double)value(as_int_ref(arg))), unit(as_int_ref(arg)), nullptr, nullptr, nullptr);
+		 	else
+		 	{
+				 if (ceps::ast::is<Ast_node_kind::symbol>(arg)) symbols_found = true;
 				 auto fp = new ceps::ast::Call_parameters();
 				 fp->children().push_back(arg);
 				 ceps::ast::Func_call* f = new ceps::ast::Func_call();
 				 f->children_.push_back(new ceps::ast::Identifier(name(id), nullptr, nullptr, nullptr));
 				 f->children_.push_back(fp);
 				 return f;
-			 }
-
+			}
 		 } else	 if (name(id) == "cos")
 		 {
-			 if (params.children().size() != 1)
-				 throw semantic_exception{root_node,"sin: Expecting 1 argument"};
-			 ceps::ast::Nodebase_ptr arg_ = params.children()[0];
+			node_vec_t args{get_args(*static_cast<ceps::ast::Call_parameters*>(params_))};
+			if (args.size() != 1)
+				throw semantic_exception{root_node,"cos: Expecting 1 argument"};
+			auto arg = args[0];
 
-			 auto arg = evaluate_generic(arg_,sym_table,env,root_node,nullptr,nullptr,thoroughness);
-
-
-
-			 if (arg->kind() == Kind::float_literal)
-			 {
-				 ceps::ast::Double& arg = *dynamic_cast<ceps::ast::Double*>(arg_);
-				 return new ceps::ast::Double(std::cos(value(arg)),unit(arg),nullptr,nullptr,nullptr);
-			 }
-			 else if (arg->kind() == Kind::int_literal)
-			 {
-				 ceps::ast::Int& arg = *dynamic_cast<ceps::ast::Int*>(arg_);
-				 return new ceps::ast::Double(std::cos((double)value(arg)), unit(arg), nullptr, nullptr, nullptr);
-			 }
-			 else
-			 {
-				 auto fp = new ceps::ast::Call_parameters();
-				 fp->children().push_back(arg);
-				 ceps::ast::Func_call* f = new ceps::ast::Func_call();
-				 f->children_.push_back(new ceps::ast::Identifier(name(id), nullptr, nullptr, nullptr));
-				 f->children_.push_back(fp);
-				 return f;
-			 }
+			if (arg->kind() == Kind::float_literal)
+				return new ceps::ast::Double(std::cos(value(as_double_ref(arg))),unit(as_double_ref(arg)),nullptr,nullptr,nullptr);
+		 	else if (arg->kind() == Kind::int_literal)
+			 	return new ceps::ast::Double(std::cos((double)value(as_int_ref(arg))), unit(as_int_ref(arg)), nullptr, nullptr, nullptr);
+			else
+			{
+				if (ceps::ast::is<Ast_node_kind::symbol>(arg)) symbols_found = true;
+				auto fp = new ceps::ast::Call_parameters();
+				fp->children().push_back(arg);
+				ceps::ast::Func_call* f = new ceps::ast::Func_call();
+				f->children_.push_back(new ceps::ast::Identifier(name(id), nullptr, nullptr, nullptr));
+				f->children_.push_back(fp);
+				return f;
+			}
 		 }
 		 if (name(id) == "tan")
 		 {
-			 if (params.children().size() != 1)
-				 throw semantic_exception{root_node,"sin: Expecting 1 argument"};
-			 ceps::ast::Nodebase_ptr arg_ = params.children()[0];
+			node_vec_t args{get_args(*static_cast<ceps::ast::Call_parameters*>(params_))};
+			if (args.size() != 1)
+				throw semantic_exception{root_node,"tan: Expecting 1 argument"};
+			auto arg = args[0];
 
-			 auto arg = evaluate_generic(arg_,sym_table,env,root_node,nullptr,nullptr,thoroughness);
-
-
-
-			 if (arg->kind() == Kind::float_literal)
-			 {
-				 ceps::ast::Double& arg = *dynamic_cast<ceps::ast::Double*>(arg_);
-				 return new ceps::ast::Double(std::tan(value(arg)),unit(arg),nullptr,nullptr,nullptr);
-			 }
-			 else if (arg->kind() == Kind::int_literal)
-			 {
-				 ceps::ast::Int& arg = *dynamic_cast<ceps::ast::Int*>(arg_);
-				 return new ceps::ast::Double(std::tan((double)value(arg)), unit(arg), nullptr, nullptr, nullptr);
-			 }
-			 else
-			 {
-				 auto fp = new ceps::ast::Call_parameters();
-				 fp->children().push_back(arg);
-				 ceps::ast::Func_call* f = new ceps::ast::Func_call();
-				 f->children_.push_back(new ceps::ast::Identifier(name(id), nullptr, nullptr, nullptr));
-				 f->children_.push_back(fp);
-				 return f;
-			 }
+			if (arg->kind() == Kind::float_literal)
+				return new ceps::ast::Double(std::tan(value(as_double_ref(arg))),unit(as_double_ref(arg)),nullptr,nullptr,nullptr);
+			else if (arg->kind() == Kind::int_literal)
+				return new ceps::ast::Double(std::tan((double)value(as_int_ref(arg))), unit(as_int_ref(arg)), nullptr, nullptr, nullptr);
+			else
+			{
+				if (ceps::ast::is<Ast_node_kind::symbol>(arg)) symbols_found = true;
+				auto fp = new ceps::ast::Call_parameters();
+				fp->children().push_back(arg);
+				ceps::ast::Func_call* f = new ceps::ast::Func_call();
+				f->children_.push_back(new ceps::ast::Identifier(name(id), nullptr, nullptr, nullptr));
+				f->children_.push_back(fp);
+				return f;
+			}
 		 }
 		 if (name(id) == "atan")
 		 {
-			 if (params.children().size() != 1)
-				 throw semantic_exception{root_node,"sin: Expecting 1 argument"};
-			 ceps::ast::Nodebase_ptr arg_ = params.children()[0];
+			node_vec_t args{get_args(*static_cast<ceps::ast::Call_parameters*>(params_))};
+			if (args.size() != 1)
+				throw semantic_exception{root_node,"atan: Expecting 1 argument"};
+			auto arg = args[0];
 
-			 auto arg = evaluate_generic(arg_,sym_table,env,root_node,nullptr,nullptr,thoroughness);
-
-
-
-			 if (arg->kind() == Kind::float_literal)
-			 {
-				 ceps::ast::Double& arg = *dynamic_cast<ceps::ast::Double*>(arg_);
-				 return new ceps::ast::Double(std::atan(value(arg)),unit(arg),nullptr,nullptr,nullptr);
-			 }
+			if (arg->kind() == Kind::float_literal)
+				return new ceps::ast::Double(std::atan(value(as_double_ref(arg))),unit(as_double_ref(arg)),nullptr,nullptr,nullptr);
 			 else if (arg->kind() == Kind::int_literal)
-			 {
-				 ceps::ast::Int& arg = *dynamic_cast<ceps::ast::Int*>(arg_);
-				 return new ceps::ast::Double(std::atan((double)value(arg)), unit(arg), nullptr, nullptr, nullptr);
-			 }
+				return new ceps::ast::Double(std::atan((double)value(as_int_ref(arg))), unit(as_int_ref(arg)), nullptr, nullptr, nullptr);
 			 else
 			 {
-				 auto fp = new ceps::ast::Call_parameters();
-				 fp->children().push_back(arg);
-				 ceps::ast::Func_call* f = new ceps::ast::Func_call();
-				 f->children_.push_back(new ceps::ast::Identifier(name(id), nullptr, nullptr, nullptr));
-				 f->children_.push_back(fp);
-				 return f;
+				if (ceps::ast::is<Ast_node_kind::symbol>(arg)) symbols_found = true;
+			 	auto fp = new ceps::ast::Call_parameters();
+				fp->children().push_back(arg);
+				ceps::ast::Func_call* f = new ceps::ast::Func_call();
+				f->children_.push_back(new ceps::ast::Identifier(name(id), nullptr, nullptr, nullptr));
+				f->children_.push_back(fp);
+				return f;
 			 }
 		 }
 
 		 if (name(id) == "acos")
 		 {
-			 if (params.children().size() != 1)
-				 throw semantic_exception{root_node,"sin: Expecting 1 argument"};
-			 ceps::ast::Nodebase_ptr arg_ = params.children()[0];
+			node_vec_t args{get_args(*static_cast<ceps::ast::Call_parameters*>(params_))};
+			if (args.size() != 1)
+				throw semantic_exception{root_node,"atan: Expecting 1 argument"};
+			auto arg = args[0];
 
-			 auto arg = evaluate_generic(arg_,sym_table,env,root_node,nullptr,nullptr,thoroughness);
-
-
-
-			 if (arg->kind() == Kind::float_literal)
-			 {
-				 ceps::ast::Double& arg = *dynamic_cast<ceps::ast::Double*>(arg_);
-				 return new ceps::ast::Double(std::acos(value(arg)),unit(arg),nullptr,nullptr,nullptr);
-			 }
-			 else if (arg->kind() == Kind::int_literal)
-			 {
-				 ceps::ast::Int& arg = *dynamic_cast<ceps::ast::Int*>(arg_);
-				 return new ceps::ast::Double(std::acos((double)value(arg)), unit(arg), nullptr, nullptr, nullptr);
-			 }
-			 else
-			 {
-				 auto fp = new ceps::ast::Call_parameters();
-				 fp->children().push_back(arg);
-				 ceps::ast::Func_call* f = new ceps::ast::Func_call();
-				 f->children_.push_back(new ceps::ast::Identifier(name(id), nullptr, nullptr, nullptr));
-				 f->children_.push_back(fp);
-				 return f;
-			 }
+			if (arg->kind() == Kind::float_literal)
+				 return new ceps::ast::Double(std::acos(value(as_double_ref(arg))),unit(as_double_ref(arg)),nullptr,nullptr,nullptr);
+			else if (arg->kind() == Kind::int_literal)
+				 return new ceps::ast::Double(std::acos((double)value(as_int_ref(arg))), unit(as_int_ref(arg)), nullptr, nullptr, nullptr);
+			else
+			{
+				if (ceps::ast::is<Ast_node_kind::symbol>(arg)) symbols_found = true;
+			 	auto fp = new ceps::ast::Call_parameters();
+				fp->children().push_back(arg);
+				ceps::ast::Func_call* f = new ceps::ast::Func_call();
+				f->children_.push_back(new ceps::ast::Identifier(name(id), nullptr, nullptr, nullptr));
+				f->children_.push_back(fp);
+				return f;
+			}
 		 }
 
 		 if (name(id) == "asin")
 		 {
-			 if (params.children().size() != 1)
-				 throw semantic_exception{root_node,"sin: Expecting 1 argument"};
-			 ceps::ast::Nodebase_ptr arg_ = params.children()[0];
-
-			 auto arg = evaluate_generic(arg_,sym_table,env,root_node,nullptr,nullptr,thoroughness);
-
-
+			node_vec_t args{get_args(*static_cast<ceps::ast::Call_parameters*>(params_))};
+			if (args.size() != 1)
+				throw semantic_exception{root_node,"asin: Expecting 1 argument"};
+			auto arg = args[0];
 
 			 if (arg->kind() == Kind::float_literal)
-			 {
-				 ceps::ast::Double& arg = *dynamic_cast<ceps::ast::Double*>(arg_);
-				 return new ceps::ast::Double(std::asin(value(arg)),unit(arg),nullptr,nullptr,nullptr);
-			 }
+				return new ceps::ast::Double(std::asin(value(as_double_ref(arg))),unit(as_double_ref(arg)),nullptr,nullptr,nullptr);
 			 else if (arg->kind() == Kind::int_literal)
-			 {
-				 ceps::ast::Int& arg = *dynamic_cast<ceps::ast::Int*>(arg_);
-				 return new ceps::ast::Double(std::asin((double)value(arg)), unit(arg), nullptr, nullptr, nullptr);
-			 }
+				return new ceps::ast::Double(std::asin((double)value(as_int_ref(arg))), unit(as_int_ref(arg)), nullptr, nullptr, nullptr);
 			 else
 			 {
-				 auto fp = new ceps::ast::Call_parameters();
-				 fp->children().push_back(arg);
-				 ceps::ast::Func_call* f = new ceps::ast::Func_call();
-				 f->children_.push_back(new ceps::ast::Identifier(name(id), nullptr, nullptr, nullptr));
-				 f->children_.push_back(fp);
-				 return f;
+				if (ceps::ast::is<Ast_node_kind::symbol>(arg)) symbols_found = true;
+				auto fp = new ceps::ast::Call_parameters();
+				fp->children().push_back(arg);
+				ceps::ast::Func_call* f = new ceps::ast::Func_call();
+				f->children_.push_back(new ceps::ast::Identifier(name(id), nullptr, nullptr, nullptr));
+				f->children_.push_back(fp);
+				return f;
 			 }
 		 }
 
 		 if (name(id) == "ln" || name(id) == "log")
 		 {
-			 if (params.children().size() != 1)
-				 throw semantic_exception{root_node,"sin: Expecting 1 argument"};
-			 ceps::ast::Nodebase_ptr arg_ = params.children()[0];
+			node_vec_t args{get_args(*static_cast<ceps::ast::Call_parameters*>(params_))};
+			if (args.size() != 1)
+				throw semantic_exception{root_node,"ln/log: Expecting 1 argument"};
+			auto arg = args[0];
 
-			 auto arg = evaluate_generic(arg_,sym_table,env,root_node,nullptr,nullptr,thoroughness);
-
-
-
-			 if (arg->kind() == Kind::float_literal)
-			 {
-				 ceps::ast::Double& arg = *dynamic_cast<ceps::ast::Double*>(arg_);
-				 return new ceps::ast::Double(std::log(value(arg)),unit(arg),nullptr,nullptr,nullptr);
-			 }
-			 else if (arg->kind() == Kind::int_literal)
-			 {
-				 ceps::ast::Int& arg = *dynamic_cast<ceps::ast::Int*>(arg_);
-				 return new ceps::ast::Double(std::log((double)value(arg)), unit(arg), nullptr, nullptr, nullptr);
-			 }
-			 else
-			 {
-				 auto fp = new ceps::ast::Call_parameters();
-				 fp->children().push_back(arg);
-				 ceps::ast::Func_call* f = new ceps::ast::Func_call();
-				 f->children_.push_back(new ceps::ast::Identifier(name(id), nullptr, nullptr, nullptr));
-				 f->children_.push_back(fp);
-				 return f;
-			 }
+			if (arg->kind() == Kind::float_literal)
+				return new ceps::ast::Double(std::log(value(as_double_ref(arg))),unit(as_double_ref(arg)),nullptr,nullptr,nullptr);
+			else if (arg->kind() == Kind::int_literal)
+				 return new ceps::ast::Double(std::log((double)value(as_int_ref(arg))), unit(as_int_ref(arg)), nullptr, nullptr, nullptr);
+			else
+		 	{
+				if (ceps::ast::is<Ast_node_kind::symbol>(arg)) symbols_found = true;
+				auto fp = new ceps::ast::Call_parameters();
+				fp->children().push_back(arg);
+				ceps::ast::Func_call* f = new ceps::ast::Func_call();
+				f->children_.push_back(new ceps::ast::Identifier(name(id), nullptr, nullptr, nullptr));
+				f->children_.push_back(fp);
+				return f;
+			}
 		 }
 		 if (name(id) == "value" )
 		 {
-
 			 std::vector<ceps::ast::Nodebase_ptr> result;
 			 for ( auto & param : params.children() )
 			 {
@@ -1394,10 +1350,11 @@ ceps::ast::Nodebase_ptr ceps::interpreter::eval_funccall(ceps::ast::Nodebase_ptr
 			 return create_ast_nodeset( "", result);
 		 }
 
-
 		 ceps::ast::Func_call* f = new ceps::ast::Func_call();
 		 f->children_.push_back(new ceps::ast::Identifier(name(id), nullptr, nullptr, nullptr));
 		 f->children_.push_back(params_->clone());
+		 node_vec_t args{get_args(*static_cast<ceps::ast::Call_parameters*>(params_))};
+		 for(auto e : args) if (is<Ast_node_kind::symbol>(e)){ symbols_found = true;break;}
 		 return f;
 	 }
 	 return nullptr;

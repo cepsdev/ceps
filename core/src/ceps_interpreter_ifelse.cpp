@@ -20,16 +20,19 @@ Licensed under the Apache License, Version 2.0 (the "License");
 namespace ceps::interpreter{
 	using namespace ceps::ast;
 
-	node_t eval_ifelse(node_t root_node,
+node_t eval_ifelse(node_t root_node,
 		ceps::parser_env::Symboltable & sym_table,
 		Environment& env,
 		node_t parent_node,
 		node_t predecessor,
-		thoroughness_t thoroughness)
+		bool& symbols_found,
+		thoroughness_t thoroughness
+		)
 	{
 
 		auto& ifelse = as_ifelse_ref(root_node);
-		auto cond = evaluate_generic(ifelse.children()[0],sym_table,env,root_node,nullptr,nullptr,thoroughness);
+		bool s1{false};bool s2{false};bool s3{false};
+		auto cond = evaluate_generic(ifelse.children()[0],sym_table,env,root_node,nullptr,nullptr,s1,thoroughness);
 		node_t left_branch{},right_branch{};
 	
 		auto cond_val  = ceps::ast::is_int(cond);
@@ -44,6 +47,7 @@ namespace ceps::interpreter{
 							root_node,
 							children(ifelse)[0],
 							nullptr,
+							s2,
 							thoroughness);
 			} else {
 				if (num_of_children(ifelse) > 2) 
@@ -54,8 +58,10 @@ namespace ceps::interpreter{
 							root_node,
 							children(ifelse)[1],
 							nullptr,
+							s3,
 							thoroughness);
 			}
+			symbols_found = false;
 			if (r == node_t{} || !is<Ast_node_kind::scope>(r) ) return r;
 			//INVARIANT: r is a scope element
 			auto& scope = *nlf_ptr(r);
@@ -73,6 +79,7 @@ namespace ceps::interpreter{
 												root_node,
 												children(ifelse)[0],
 												nullptr,
+												s2,
 												thoroughness_t::shallow); 
 		if (num_of_children(ifelse) > 2) 
 			right_branch = evaluate_generic( 	children(ifelse)[2],
@@ -81,7 +88,9 @@ namespace ceps::interpreter{
 												root_node,
 												children(ifelse)[1],
 												nullptr,
+												s3,
 												thoroughness_t::shallow);
+		symbols_found = s1;
 		return mk_ifelse(cond,left_branch,right_branch);
 	}//eval_ifelse(...)
 }//namespace ceps::interpreter

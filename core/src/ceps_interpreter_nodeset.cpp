@@ -72,7 +72,8 @@ ceps::ast::Nodebase_ptr ceps::interpreter::evaluate_nodeset_expr_dot(	ceps::ast:
 															ceps::parser_env::Symboltable & sym_table,
 															ceps::interpreter::Environment& env,
 															ceps::ast::Nodebase_ptr, 
-															ceps::interpreter::thoroughness_t thoroughness )
+															ceps::interpreter::thoroughness_t thoroughness,
+															bool& symbols_found)
 {
 	//INVARIANT: lhs is a nodeset
 

@@ -89,7 +89,8 @@ void ceps::interpreter::evaluate(	 ceps::ast::Nodeset & universe,
 			ceps::ast::Nodebase_ptr predecessor = nullptr;
 			for(auto pp: as_stmts_ptr(p)->children() )
 			{
-				auto ev = evaluate_generic(pp,sym_table,env,p,predecessor,nullptr,thoroughness_t::normal);predecessor = ev;
+				bool symbols_found{false};
+				auto ev = evaluate_generic(pp,sym_table,env,p,predecessor,nullptr,symbols_found,thoroughness_t::normal);predecessor = ev;
 				if (ev  != nullptr && ev->kind() == Kind::nodeset)
 				{
 					universe.nodes().insert(universe.nodes().end(),as_ast_nodeset_ptr(ev)->children().begin(),as_ast_nodeset_ptr(ev)->children().end());
@@ -110,7 +111,8 @@ void ceps::interpreter::evaluate(	 ceps::ast::Nodeset & universe,
 			}//for
 			continue;
 		}
-		auto ev = evaluate_generic(p,sym_table,env,/*p??*/root_,predecessor,nullptr,thoroughness_t::normal);predecessor=p;
+		bool symbols_found{false};
+		auto ev = evaluate_generic(p,sym_table,env,/*p??*/root_,predecessor,nullptr,symbols_found,thoroughness_t::normal);predecessor=p;
 
 		if (ev != nullptr && ev->kind() == Kind::nodeset)
 		{
@@ -162,7 +164,8 @@ void ceps::interpreter::evaluate_without_modifying_universe(ceps::ast::Nodeset &
             ceps::ast::Nodebase_ptr predecessor = nullptr;
             for(auto pp: as_stmts_ptr(p)->children() )
             {
-                auto ev = evaluate_generic(pp,sym_table,env,p,predecessor,nullptr,thoroughness_t::normal);predecessor = ev;
+				bool symbols_found{false};
+                auto ev = evaluate_generic(pp,sym_table,env,p,predecessor,nullptr, symbols_found,thoroughness_t::normal);predecessor = ev;
                 if (ev  != nullptr && ev->kind() == Kind::nodeset)
                 {
                     universe.nodes().insert(universe.nodes().end(),as_ast_nodeset_ptr(ev)->children().begin(),as_ast_nodeset_ptr(ev)->children().end());
@@ -183,7 +186,8 @@ void ceps::interpreter::evaluate_without_modifying_universe(ceps::ast::Nodeset &
             }//for
             continue;
         }
-        auto ev = evaluate_generic(p,sym_table,env,/*p??*/root_,predecessor,nullptr,thoroughness_t::normal);predecessor=p;
+		bool symbols_found{false};
+        auto ev = evaluate_generic(p,sym_table,env,/*p??*/root_,predecessor,nullptr, symbols_found,thoroughness_t::normal);predecessor=p;
 
         if (ev != nullptr && ev->kind() == Kind::nodeset)
         {
@@ -211,11 +215,11 @@ ceps::ast::Nodebase_ptr ceps::interpreter::eval_kinddef(ceps::ast::Nodebase_ptr 
 		ceps::interpreter::Environment& env,
 		ceps::ast::Nodebase_ptr parent_node,
 		ceps::ast::Nodebase_ptr predecessor,
-		thoroughness_t thoroughness)
+		bool& symbols_found,
+		thoroughness_t thoroughness
+		)
 {
  using namespace ceps::parser_env;
-
-
 
  ceps::ast::Kinddef& kind_def_node = *dynamic_cast<ceps::ast::Kinddef*>(root_node);
  ceps::parser_env::Symbol* sym_kind_ptr =
@@ -240,19 +244,24 @@ ceps::ast::Nodebase_ptr ceps::interpreter::eval_valdef(ceps::ast::Nodebase_ptr r
 		ceps::interpreter::Environment& env,
 		ceps::ast::Nodebase_ptr parent_node,
 		ceps::ast::Nodebase_ptr predecessor,
+		bool& symbols_found,
 		thoroughness_t thoroughness)
 {
  using namespace ceps::parser_env;
  ceps::ast::Valdef& val_node = *dynamic_cast<ceps::ast::Valdef*>(root_node);
  ceps::parser_env::Symbol* sym_ptr;
+ bool local_symbols_found{false};
 
- ceps::ast::Nodebase_ptr rhs = evaluate_generic(dynamic_cast<ceps::ast::Nonleafbase*>(root_node)->children()[0],sym_table,env,root_node,nullptr,nullptr,thoroughness);
+ ceps::ast::Nodebase_ptr rhs = evaluate_generic(dynamic_cast<ceps::ast::Nonleafbase*>(root_node)->children()[0],sym_table,env,root_node,nullptr,nullptr,local_symbols_found,thoroughness);
+ if (local_symbols_found){
+	symbols_found = true;
+  	return new ceps::ast::Valdef{name(val_node),rhs};
+ }
 
  if ( (sym_ptr = sym_table.lookup(name(val_node),true,true,false)) == nullptr)
  {
 	 throw semantic_exception{root_node,"Couldn't define Variable '" +name(val_node)+"' already defined."};
  }
-
 
  ceps::parser_env::Symbol& sym = *sym_ptr;
  sym.category = ceps::parser_env::Symbol::Category::VAR;
@@ -266,10 +275,17 @@ ceps::ast::Nodebase_ptr ceps::interpreter::eval_unaryop(ceps::ast::Nodebase_ptr 
 		ceps::interpreter::Environment& env,
 		ceps::ast::Nodebase_ptr parent_node,
 		ceps::ast::Nodebase_ptr predecessor,
-		thoroughness_t thoroughness){
+		bool& symbols_found,
+		thoroughness_t thoroughness
+		){
 
 	ceps::ast::Unary_operator& unop = as_unary_op_ref(root_node);
-	auto operand = evaluate_generic(unop.children()[0],sym_table,env,root_node,nullptr,nullptr,thoroughness);
+	bool local_symbols_found{false};
+	auto operand = evaluate_generic(unop.children()[0],sym_table,env,root_node,nullptr,nullptr,local_symbols_found,thoroughness);
+	if (local_symbols_found){
+		symbols_found = true;
+		return new ceps::ast::Unary_operator{op(unop),operand};
+	}
 	bool operand_boolean{false};
 	bool operand_bool_equiv{false};
 
@@ -314,7 +330,9 @@ ceps::ast::Nodebase_ptr ceps::interpreter::eval_binaryop(ceps::ast::Nodebase_ptr
 		ceps::interpreter::Environment& env,
 		ceps::ast::Nodebase_ptr parent_node,
 		ceps::ast::Nodebase_ptr predecessor,
-		ceps::interpreter::thoroughness_t thoroughness)
+		bool& symbols_found,
+		ceps::interpreter::thoroughness_t thoroughness
+		)
 {
 
 	ceps::ast::Binary_operator& binop = *dynamic_cast<ceps::ast::Binary_operator*>(root_node);
@@ -327,10 +345,11 @@ ceps::ast::Nodebase_ptr ceps::interpreter::eval_binaryop(ceps::ast::Nodebase_ptr
 
 	if (op_val(binop) != "=")
 	{
-	 ceps::ast::Nodebase_ptr lhs = evaluate_generic(binop.children()[0],sym_table,env,root_node,predecessor,nullptr,thoroughness);
-	 ceps::ast::Nodebase_ptr rhs = evaluate_generic(binop.children()[1],sym_table,env,root_node,predecessor, (op(binop) == '.' ? lhs : nullptr) , thoroughness);
-
-
+	 bool local_symbols_found_l{false};
+	 bool local_symbols_found_r{false};
+	 ceps::ast::Nodebase_ptr lhs = evaluate_generic(binop.children()[0],sym_table,env,root_node,predecessor,nullptr,local_symbols_found_l,thoroughness);
+	 ceps::ast::Nodebase_ptr rhs = evaluate_generic(binop.children()[1],sym_table,env,root_node,predecessor, (op(binop) == '.' ? lhs : nullptr) ,local_symbols_found_r, thoroughness);
+	 symbols_found = local_symbols_found_l || local_symbols_found_r;
 
 	 //A single element nodeset, with no idx operand set, evaluates to its only element (execption: operator is '.')
 	 if(op(binop) != '.'){
@@ -346,14 +365,16 @@ ceps::ast::Nodebase_ptr ceps::interpreter::eval_binaryop(ceps::ast::Nodebase_ptr
 					rhs = ns.children()[0];
 			} 
 		}
-	 } else /*op == '.'*/{
+	 } else if (lhs->kind() == Kind::nodeset || lhs->kind() == Kind::structdef || lhs->kind() == Kind::scope) /*op == '.'*/{
+		if (local_symbols_found_l || local_symbols_found_r)  return mk_bin_op(ceps::ast::op(binop),lhs,rhs,ceps::ast::op_str(binop));
 		if(lhs->kind() == Kind::nodeset)
 			return evaluate_nodeset_expr_dot(	lhs,
 												rhs ,
 												sym_table,
 												env,
 												root_node,
-												thoroughness
+												thoroughness,
+												symbols_found
 											);
 		else if (lhs->kind() == Kind::structdef)
 			return evaluate_nodeset_expr_dot(	create_ast_nodeset("",as_struct_ref(lhs).children()),
@@ -361,7 +382,8 @@ ceps::ast::Nodebase_ptr ceps::interpreter::eval_binaryop(ceps::ast::Nodebase_ptr
 												sym_table,
 												env,
 												root_node,
-												thoroughness
+												thoroughness,
+												symbols_found
 											);
 		else if (lhs->kind() == Kind::scope)
 			return evaluate_nodeset_expr_dot(	create_ast_nodeset("",as_scope_ref(lhs).children()),
@@ -369,31 +391,33 @@ ceps::ast::Nodebase_ptr ceps::interpreter::eval_binaryop(ceps::ast::Nodebase_ptr
 												sym_table,
 												env,
 												root_node,
-												thoroughness
+												thoroughness,
+												symbols_found
 											);
 	 }
 
-	 if ( (lhs->kind() == ceps::ast::Ast_node_kind::symbol
-		 || rhs->kind() == ceps::ast::Ast_node_kind::symbol
-		 || lhs->kind() == ceps::ast::Ast_node_kind::binary_operator
-		 || rhs->kind() == ceps::ast::Ast_node_kind::binary_operator
-		 || lhs->kind() == ceps::ast::Ast_node_kind::func_call
-		 || rhs->kind() == ceps::ast::Ast_node_kind::func_call) )
-	 {
-		 auto override_value = env.call_binop_resolver(&binop,lhs,rhs,parent_node);
-		 if (override_value) return override_value;
-		 auto t = mk_bin_op(ceps::ast::op(binop),lhs,rhs,ceps::ast::op_str(binop));
-		 return t;
-	 }
-
-
-	 result = handle_binop(root_node,ceps::ast::op(binop),lhs,rhs,sym_table,env,root_node,op(binop) == '.' ? lhs : nullptr,thoroughness);
+		if ( (lhs->kind() == ceps::ast::Ast_node_kind::symbol
+				|| rhs->kind() == ceps::ast::Ast_node_kind::symbol
+				|| lhs->kind() == ceps::ast::Ast_node_kind::binary_operator
+				|| rhs->kind() == ceps::ast::Ast_node_kind::binary_operator
+				|| lhs->kind() == ceps::ast::Ast_node_kind::func_call
+				|| rhs->kind() == ceps::ast::Ast_node_kind::func_call) )
+			{
+				auto override_value = env.call_binop_resolver(&binop,lhs,rhs,parent_node);
+				if (override_value) {symbols_found = false; return override_value;}
+				auto t = mk_bin_op(ceps::ast::op(binop),lhs,rhs,ceps::ast::op_str(binop));
+				return t;
+			}
+		bool local_symbols_found_temp{false};
+	 	result = handle_binop(root_node,ceps::ast::op(binop),lhs,rhs,sym_table,env,root_node,op(binop) == '.' ? lhs : nullptr,thoroughness,local_symbols_found_temp);
 	}
 	else /* operator is = */
 	{
-		 ceps::ast::Nodebase_ptr lhs =  evaluate_generic(binop.children()[0],sym_table,env,root_node,nullptr, nullptr,thoroughness);
-		 ceps::ast::Nodebase_ptr unevaluated_lhs = binop.children()[0];
-		 ceps::ast::Nodebase_ptr rhs = evaluate_generic(binop.children()[1],sym_table,env,root_node,binop.children()[0],nullptr, thoroughness);
+		bool local_symbols_found_l{false};
+	 	bool local_symbols_found_r{false};
+		ceps::ast::Nodebase_ptr lhs =  evaluate_generic(binop.children()[0],sym_table,env,root_node,nullptr, nullptr,local_symbols_found_l,thoroughness);
+		ceps::ast::Nodebase_ptr unevaluated_lhs = binop.children()[0];
+		ceps::ast::Nodebase_ptr rhs = evaluate_generic(binop.children()[1],sym_table,env,root_node,binop.children()[0],nullptr, local_symbols_found_r, thoroughness);
 
 		 bool treat_lhs_as_symbol = false;
 
@@ -414,7 +438,11 @@ ceps::ast::Nodebase_ptr ceps::interpreter::eval_binaryop(ceps::ast::Nodebase_ptr
 			 auto t = mk_bin_op(ceps::ast::op(binop),lhs,rhs,ceps::ast::op_str(binop));
 			 return t;
 		 }
-		 else result  = handle_binop(root_node,ceps::ast::op(binop),lhs,rhs,sym_table,env,root_node,nullptr, thoroughness);
+		 else {
+			 
+			 result  = handle_binop(root_node,ceps::ast::op(binop),lhs,rhs,sym_table,env,root_node,nullptr, thoroughness,symbols_found);
+			 symbols_found = symbols_found || local_symbols_found_l || local_symbols_found_r;
+		 }
 	}
 	return result;
 }
@@ -426,7 +454,9 @@ ceps::ast::Nodebase_ptr ceps::interpreter::evaluate_nonleaf(ceps::ast::Nonleafba
 													ceps::ast::Nodebase_ptr parent_node,
 													ceps::ast::Nodebase_ptr predecessor,
 										 			ceps::ast::Nodebase_ptr this_ptr,
-													thoroughness_t thoroughness)
+													bool& symbols_found,
+													thoroughness_t thoroughness
+													)
 {
 	using namespace ceps::ast;
 	Nonleafbase::Container_t v;
@@ -436,7 +466,9 @@ ceps::ast::Nodebase_ptr ceps::interpreter::evaluate_nonleaf(ceps::ast::Nonleafba
 	Nodebase* root_ptr = dynamic_cast<Nodebase*>(&root);
 	for(Nodebase_ptr p : root.children())
 	{
-		Nodebase_ptr r = evaluate_generic(p,sym_table,env,(Nodebase_ptr)&root,predecessor,this_ptr, thoroughness);predecessor=r;
+		bool symbols_found_local{false};
+		Nodebase_ptr r = evaluate_generic(p,sym_table,env,(Nodebase_ptr)&root,predecessor,this_ptr,symbols_found_local, thoroughness);predecessor=r;
+		symbols_found = symbols_found || symbols_found_local;
 		if(r == nullptr)
 			continue;
 		if (r->kind() == Ast_node_kind::stmts || r->kind() == Ast_node_kind::nodeset)
@@ -446,6 +478,7 @@ ceps::ast::Nodebase_ptr ceps::interpreter::evaluate_nonleaf(ceps::ast::Nonleafba
 		}
 		else v.push_back(r);
 	}
+	
 
 	//rec_flatten_tree(v, root, sym_table, env, parent_node, predecessor, this_ptr, true);
 

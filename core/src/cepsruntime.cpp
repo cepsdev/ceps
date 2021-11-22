@@ -219,8 +219,9 @@ void ceps::ceps_start( void (*func) (ceps::ast::Nodeset&),
 void ceps::Ceps_Environment::eval_and_merge(ceps::ast::Parsetree pt,bool ignore_predicates,bool dont_evaluate)
 {
 	std::lock_guard<std::mutex> lk{mut_};
+	bool symbols_found{false};
 	ceps::ast::Nodebase_ptr p = dont_evaluate ? pt.get_root(): 
-	 ceps::interpreter::evaluate_generic(pt.get_root(),symboltable_,interpreter_env(),nullptr,nullptr,nullptr,ceps::interpreter::thoroughness_t::normal);
+	 ceps::interpreter::evaluate_generic(pt.get_root(),symboltable_,interpreter_env(),nullptr,nullptr,nullptr,symbols_found,ceps::interpreter::thoroughness_t::normal);
 	if (p == nullptr) return;
 	if (!ignore_predicates && !signal_)
 	{
@@ -292,11 +293,12 @@ void ceps::execute_script(std::istream & script,
 		if (driver.errors_occured())
 			throw std::runtime_error{""};
 
+		bool symbols_found{false};
 		ceps::ast::Nodebase_ptr p = ceps::interpreter::evaluate_generic(
 			driver.parsetree().get_root(),
 			ceps_env.get_global_symboltable(),
 			ceps_env.interpreter_env(),
-			nullptr,nullptr,nullptr,ceps::interpreter::thoroughness_t::normal);
+			nullptr,nullptr,nullptr,symbols_found,ceps::interpreter::thoroughness_t::normal);
 			
 		ceps::ast::Nodeset ns{p};
 		callback(ns);

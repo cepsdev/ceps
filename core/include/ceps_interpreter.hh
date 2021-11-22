@@ -184,6 +184,7 @@ namespace ceps{
 		ceps::ast::Nodebase_ptr parent_node,
 		ceps::ast::Nodebase_ptr predecessor,
 	    ceps::ast::Nodebase_ptr this_ptr,
+		bool& symbols_found,
 		thoroughness_t thoroughness = thoroughness_t::normal
 	);
 
@@ -194,6 +195,7 @@ namespace ceps{
 		ceps::ast::Nodebase_ptr parent_node,
 		ceps::ast::Nodebase_ptr predecessor,
 		ceps::ast::Nodebase_ptr this_ptr,
+		bool& symbols_found,	
 		thoroughness_t thoroughness  = thoroughness_t::normal
     );
 
@@ -202,6 +204,7 @@ namespace ceps{
 		ceps::interpreter::Environment& env,
 		ceps::ast::Nodebase_ptr parent_node,
 		ceps::ast::Nodebase_ptr predecessor,
+		bool& symbols_found,		
 		thoroughness_t thoroughness  = thoroughness_t::normal
 	);
 
@@ -210,6 +213,7 @@ namespace ceps{
 		ceps::interpreter::Environment& env,
 		ceps::ast::Nodebase_ptr parent_node,
 		ceps::ast::Nodebase_ptr predecessor,
+		bool& symbols_found,		
 		thoroughness_t thoroughness  = thoroughness_t::normal
 	);
 
@@ -218,7 +222,8 @@ namespace ceps{
 		ceps::interpreter::Environment& env,
 		ceps::ast::Nodebase_ptr parent_node,
 		ceps::ast::Nodebase_ptr predecessor,
-		thoroughness_t thoroughness  = thoroughness_t::normal 
+		bool& symbols_found,		
+		thoroughness_t thoroughness  = thoroughness_t::normal
 	);
 
  	ceps::ast::Nodebase_ptr eval_ifelse(ceps::ast::Nodebase_ptr root_node,
@@ -226,6 +231,7 @@ namespace ceps{
 		ceps::interpreter::Environment& env,
 		ceps::ast::Nodebase_ptr parent_node,
 		ceps::ast::Nodebase_ptr predecessor,
+		bool& symbols_found,
 		thoroughness_t thoroughness  = thoroughness_t::normal
 	);
 
@@ -235,6 +241,7 @@ namespace ceps{
 		ceps::ast::Nodebase_ptr parent_node,
 		ceps::ast::Nodebase_ptr predecessor,
 		ceps::ast::Nodebase_ptr this_ptr,
+		bool& symbols_found,
 		thoroughness_t thoroughness  = thoroughness_t::normal
 	);
 
@@ -243,6 +250,7 @@ namespace ceps{
 		ceps::interpreter::Environment& env,
 		ceps::ast::Nodebase_ptr parent_node,
 		ceps::ast::Nodebase_ptr predecessor,
+		bool& symbols_found,
 		thoroughness_t thoroughness  = thoroughness_t::normal
 	);
 
@@ -251,6 +259,7 @@ namespace ceps{
 		ceps::interpreter::Environment& env,
 		ceps::ast::Nodebase_ptr parent_node,
 		ceps::ast::Nodebase_ptr predecessor,
+		bool& symbols_found,
 		thoroughness_t thoroughness  = thoroughness_t::normal
 	);
 
@@ -261,14 +270,28 @@ namespace ceps{
 		ceps::ast::Nodebase_ptr parent_node,
 		ceps::ast::Nodebase_ptr predecessor,
 		thoroughness_t thoroughness,
+		bool& symbols_found,
 		std::vector<ceps::ast::Nodebase_ptr>* args = nullptr
 	);
+    
+	ceps::ast::Nodebase_ptr handle_binop(	ceps::ast::Nodebase_ptr binop_node,
+    	int op,
+    	ceps::ast::Nodebase_ptr lhs,
+    	ceps::ast::Nodebase_ptr rhs,
+    	Symboltable & sym_table,
+    	Environment& env,
+		ceps::ast::Nodebase_ptr parent_node,
+		ceps::ast::Nodebase_ptr this_ptr, 
+		thoroughness_t thoroughness,
+		bool& symbols_found
+    );
 
  	ceps::ast::Nodebase_ptr eval_rewrite(ceps::ast::Nodebase_ptr root_node,ceps::parser_env::Symbol* sym_ptr,
 		ceps::parser_env::Symboltable & sym_table,
 		ceps::interpreter::Environment& env,
 		ceps::ast::Nodebase_ptr parent_node,
 		ceps::ast::Nodebase_ptr predecessor,
+		bool& symbols_found,
 		thoroughness_t thoroughness  = thoroughness_t::normal
 	);
 
@@ -296,16 +319,6 @@ namespace ceps{
         std::vector<ceps::ast::Nodebase_ptr>* generated_nodes = nullptr
     );
 
-     ceps::ast::Nodebase_ptr handle_binop(	ceps::ast::Nodebase_ptr binop_node,
-    	int op,
-    	ceps::ast::Nodebase_ptr lhs,
-    	ceps::ast::Nodebase_ptr rhs,
-    	Symboltable & sym_table,
-    	Environment& env,
-		ceps::ast::Nodebase_ptr parent_node,
-		ceps::ast::Nodebase_ptr this_ptr, 
-		thoroughness_t thoroughness
-    );
 
      
 
