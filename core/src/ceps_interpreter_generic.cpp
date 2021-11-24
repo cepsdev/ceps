@@ -35,6 +35,8 @@ ceps::ast::Nodebase_ptr ceps::interpreter::evaluate_generic(ceps::ast::Nodebase_
 		 return nullptr;
 	 if (ceps::interpreter::DEBUG_OUTPUT) std::cerr << "ceps::interpreter::evaluate_generic " << *root_node << std::endl;
 
+	 node_t result = nullptr;
+
 	 switch(root_node->kind())
 	 {
 	 case Kind::kind_def:
@@ -178,13 +180,14 @@ ceps::ast::Nodebase_ptr ceps::interpreter::evaluate_generic(ceps::ast::Nodebase_
 	 }
 	 case Kind::func_call:
 	 {
-		 if (ceps::interpreter::DEBUG_OUTPUT) std::cerr << "ceps::interpreter::evaluate_generic Kind::func_call:\n";
-		 return eval_funccall(root_node,
+		if (ceps::interpreter::DEBUG_OUTPUT) std::cerr << "ceps::interpreter::evaluate_generic Kind::func_call:\n";
+		result = eval_funccall(root_node,
 		 			  sym_table,
 		 			  env,
 		 			  parent_node,
 		 			  predecessor,
 					  this_ptr,symbols_found, thoroughness);
+		break;
 	 }
 	 case Kind::binary_operator:
 	 {
@@ -268,6 +271,8 @@ ceps::ast::Nodebase_ptr ceps::interpreter::evaluate_generic(ceps::ast::Nodebase_
 				 return rv;
 			 }
 			 return env.call_sym_undefined_clbk(root_node,parent_node);
+		 } else {
+		  	
 		 }
 		 symbols_found = true;
          return new ceps::ast::Symbol(name,kind);
@@ -287,5 +292,10 @@ ceps::ast::Nodebase_ptr ceps::interpreter::evaluate_generic(ceps::ast::Nodebase_
 		 return root_node;
 		 //ERROR("Internal error: Kind of node unknown.")
 	 }
-	 return nullptr;
+	
+	if (result != nullptr && ( is<ceps::ast::Ast_node_kind::scope>(parent_node) || is<ceps::ast::Ast_node_kind::structdef>(parent_node) || is<ceps::ast::Ast_node_kind::root>(parent_node)) ) {
+		auto r = env.handle_stmt(result,sym_table);
+		if (r != nullptr) return r;
+	}
+ 	return result;
  }

@@ -420,13 +420,15 @@ ceps::ast::Nodebase_ptr ceps::interpreter::eval_binaryop(ceps::ast::Nodebase_ptr
 		ceps::ast::Nodebase_ptr rhs = evaluate_generic(binop.children()[1],sym_table,env,root_node,binop.children()[0],nullptr, local_symbols_found_r, thoroughness);
 
 		 bool treat_lhs_as_symbol = false;
-
 		 if (unevaluated_lhs->kind() == ceps::ast::Ast_node_kind::identifier){
-			 ceps::ast::Identifier& id = *dynamic_cast<ceps::ast::Identifier*>(unevaluated_lhs);
-		 	 ceps::parser_env::Symbol* sym_ptr;
-	 		 if ( (sym_ptr = sym_table.lookup(name(id))) == nullptr) treat_lhs_as_symbol=true;
-	 		 if (sym_ptr && sym_ptr->category != ceps::parser_env::Symbol::Category::VAR) treat_lhs_as_symbol=true;
-	 		 else if (sym_ptr && sym_ptr->category == ceps::parser_env::Symbol::Category::VAR) lhs = unevaluated_lhs;
+			 	ceps::ast::Identifier& id = *dynamic_cast<ceps::ast::Identifier*>(unevaluated_lhs);
+		 	 	ceps::parser_env::Symbol* sym_ptr;
+	 		 	if ( (sym_ptr = sym_table.lookup(name(id))) == nullptr) treat_lhs_as_symbol=true;
+	 		 	if (sym_ptr && sym_ptr->category != ceps::parser_env::Symbol::Category::VAR) treat_lhs_as_symbol=true;
+	 		 	else if (sym_ptr && sym_ptr->category == ceps::parser_env::Symbol::Category::VAR) lhs = unevaluated_lhs;
+		 } else if (ceps::ast::is<ceps::ast::Ast_node_kind::symbol>(unevaluated_lhs)){
+				auto override_value = env.call_binop_resolver(&binop,unevaluated_lhs,rhs,parent_node);
+				if (override_value) {symbols_found = false; return override_value;}
 		 }
 
 		 if( treat_lhs_as_symbol ||
@@ -435,7 +437,7 @@ ceps::ast::Nodebase_ptr ceps::interpreter::eval_binaryop(ceps::ast::Nodebase_ptr
 		     lhs->kind() == ceps::ast::Ast_node_kind::unary_operator ||
 		     lhs->kind() == ceps::ast::Ast_node_kind::func_call )
 		 {
-			 auto t = mk_bin_op(ceps::ast::op(binop),lhs,rhs,ceps::ast::op_str(binop));
+			 auto t = mk_bin_op(op(binop),lhs,rhs,op_val(binop));
 			 return t;
 		 }
 		 else {
@@ -463,11 +465,11 @@ ceps::ast::Nodebase_ptr ceps::interpreter::evaluate_nonleaf(ceps::ast::Nonleafba
 
     auto old_scope = env.scope;
     env.scope = &v;
-	Nodebase* root_ptr = dynamic_cast<Nodebase*>(&root);
+	Nodebase* root_ptr = dynamic_cast<Nodebase*>(&root); //The dynamic cast is REALLY necessary here
 	for(Nodebase_ptr p : root.children())
 	{
 		bool symbols_found_local{false};
-		Nodebase_ptr r = evaluate_generic(p,sym_table,env,(Nodebase_ptr)&root,predecessor,this_ptr,symbols_found_local, thoroughness);predecessor=r;
+		Nodebase_ptr r = evaluate_generic(p,sym_table,env,root_ptr,predecessor,this_ptr,symbols_found_local, thoroughness);predecessor=r;
 		symbols_found = symbols_found || symbols_found_local;
 		if(r == nullptr)
 			continue;

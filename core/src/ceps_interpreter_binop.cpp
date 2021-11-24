@@ -20,6 +20,7 @@ Licensed under the Apache License, Version 2.0 (the "License");
 #include <cmath>
 #include "ceps_interpreter_loop.hh"
 #include "ceps_interpreter_nodeset.hh"
+#include <sstream>
 
 
 ceps::ast::Nodebase_ptr ceps::interpreter::handle_binop(	ceps::ast::Nodebase_ptr binop_node,
@@ -44,7 +45,9 @@ ceps::ast::Nodebase_ptr ceps::interpreter::handle_binop(	ceps::ast::Nodebase_ptr
 	{
 		using namespace ceps::parser_env;
 		if (lhs->kind() != Kind::identifier){
-			throw semantic_exception{binop_node," Left hand side of assignment should be a variable"};
+			std::stringstream ss;
+			ss << *binop_node;
+			throw semantic_exception{binop_node," Left hand side of assignment should be a variable ["+ss.str()+"]"};
 		}
 
 		ceps::ast::Identifier& id = *dynamic_cast<ceps::ast::Identifier*>(lhs);

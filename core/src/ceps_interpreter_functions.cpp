@@ -126,6 +126,14 @@ static void default_text_representation_impl(std::stringstream& ss,ceps::ast::No
             if (p && p->kind() !=  ceps::ast::Ast_node_kind::structdef) ss << ";";
         }
         ss << "};";
+    } else if (ceps::ast::is<ceps::ast::Ast_node_kind::scope>(root_node)){
+        auto & s = ceps::ast::as_scope_ref(root_node);
+        ss << "{";
+        for (auto p: s.children()){
+            default_text_representation_impl(ss,p,enable_check_for_html);
+            if (p && p->kind() !=  ceps::ast::Ast_node_kind::structdef) ss << ";";
+        }
+        ss << "};";
     } else if (root_node->kind() == ceps::ast::Ast_node_kind::long_literal) {
 		ss << value(as_int64_ref(root_node));
 	} else ss << *root_node;

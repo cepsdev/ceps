@@ -1064,7 +1064,7 @@ inline Return* as_return_ptr(Nodebase_ptr p)
 
  inline User_defined* as_user_defined_ptr(Nodebase_ptr p)
   {
- 	return dynamic_cast<User_defined*>(p);
+ 	return static_cast<User_defined*>(p);
   }
  inline User_defined & as_user_defined_ref(Nodebase_ptr p)
   {
@@ -1073,7 +1073,7 @@ inline Return* as_return_ptr(Nodebase_ptr p)
 
 inline Ifelse* as_ifelse_ptr(Nodebase_ptr p)
  {
-	return dynamic_cast<Ifelse*>(p);
+	return static_cast<Ifelse*>(p);
  }
  inline Ifelse & as_ifelse_ref(Nodebase_ptr p)
  {
@@ -1082,7 +1082,7 @@ inline Ifelse* as_ifelse_ptr(Nodebase_ptr p)
 
  inline Double_ptr as_double_ptr(Nodebase_ptr p)
  {
-	return dynamic_cast<Double_ptr>(p);
+	return static_cast<Double_ptr>(p);
  }
  inline Double & as_double_ref(Nodebase_ptr p)
  {
@@ -1090,7 +1090,7 @@ inline Ifelse* as_ifelse_ptr(Nodebase_ptr p)
  }
  inline Int_ptr as_int_ptr(Nodebase_ptr p)
  {
-	return dynamic_cast<Int_ptr>(p);
+	return static_cast<Int_ptr>(p);
  }
  inline Int & as_int_ref(Nodebase_ptr p)
  {

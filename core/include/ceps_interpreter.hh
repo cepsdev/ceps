@@ -102,6 +102,7 @@ namespace ceps{
 		 ceps::ast::Nodeset * associated_universe_ = nullptr;
 		 std::map<std::string, std::map<std::string,ceps::ast::Nodebase_ptr >* > symbol_mapping_;
 		 typedef ceps::ast::Nodebase_ptr (*func_callback_t)(std::string const & , ceps::ast::Call_parameters*, void *, ceps::parser_env::Symboltable & sym_table);
+		 typedef ceps::ast::Nodebase_ptr (*func_stmt_claimer_t)(ceps::ast::node_t, void *, ceps::parser_env::Symboltable & sym_table);
 		 typedef ceps::ast::Nodebase_ptr (*func_binop_resolver_t)(ceps::ast::Binary_operator_ptr binop,
 				 	 	 	 	 	 	 	 	 	 	 	 	  ceps::ast::Nodebase_ptr lhs ,
 				 	 	 	 	 	 	 	 	 	 	 	 	  ceps::ast::Nodebase_ptr rhs,
@@ -112,6 +113,8 @@ namespace ceps{
 
 		 func_callback_t func_callback_ = nullptr;
 		 func_binop_resolver_t global_binop_resolver_ = nullptr;
+		 func_stmt_claimer_t func_stmt_claimer = nullptr;
+		 void*  ctxt_stmt_claimer = nullptr; 
 		 bool (*is_lazy_func)(std::string const &) = nullptr;
 
 		 void * func_callback_context_data_ = nullptr;
@@ -151,10 +154,17 @@ namespace ceps{
 		 std::map<std::string,std::string>& meta_info() {return meta_info_;}
 		 int lookup_kind(std::string const&);
 
+		 ceps::ast::node_t handle_stmt(ceps::ast::node_t node, ceps::parser_env::Symboltable & sym_table){
+			 if (func_stmt_claimer != nullptr)
+			  func_stmt_claimer(node,ctxt_stmt_claimer, sym_table);
+			return nullptr;
+		 }
+
+		 void set_func_stmt_claimer(func_stmt_claimer_t f,void * context_data){func_stmt_claimer = f;ctxt_stmt_claimer = context_data;}
+		 void get_func_stmt_claimer(func_stmt_claimer_t& f,void *& context_data){f = func_stmt_claimer;context_data=ctxt_stmt_claimer;}
+
 		 void set_func_callback(func_callback_t f,void * func_callback_context_data){func_callback_ = f;func_callback_context_data_ = func_callback_context_data;}
 		 void get_func_callback(func_callback_t& f,void *& func_callback_context_data){f = func_callback_;func_callback_context_data=func_callback_context_data_;}
-
-
 
 		 void set_binop_resolver(func_binop_resolver_t f,void * cxt){global_binop_resolver_ = f;func_binop_resolver_context_data_ = cxt;}
 		 void get_binop_resolver(func_binop_resolver_t& f,void * & cxt){f=global_binop_resolver_; cxt=func_binop_resolver_context_data_;}

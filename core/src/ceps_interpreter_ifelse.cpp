@@ -29,7 +29,6 @@ node_t eval_ifelse(node_t root_node,
 		thoroughness_t thoroughness
 		)
 	{
-
 		auto& ifelse = as_ifelse_ref(root_node);
 		bool s1{false};bool s2{false};bool s3{false};
 		auto cond = evaluate_generic(ifelse.children()[0],sym_table,env,root_node,nullptr,nullptr,s1,thoroughness);

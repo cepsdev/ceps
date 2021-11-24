@@ -98,6 +98,7 @@ static ceps::ast::node_t loop( std::vector<ceps::ast::Nodebase_ptr>& result,
 	ceps::ast::Identifier& id  = ceps::ast::as_id_ref(loop_head.children()[2*i]);
 	bool loop_head_contains_symbols{false};
 	ceps::ast::Nodebase_ptr coll_  = evaluate_generic(loop_head.children()[2*i+1],sym_table,env,&loop_head,loop_head.children()[2*i],nullptr,loop_head_contains_symbols,thoroughness);
+	//std::cerr << "##################################### " << *coll_ << std::endl;
 	std::vector<ceps::ast::Nodebase_ptr> collection;
 
 
@@ -217,6 +218,7 @@ ceps::ast::Nodebase_ptr  ceps::interpreter::evaluate_loop(ceps::ast::Loop_ptr lo
 									  ceps::interpreter::thoroughness_t thoroughness
 									  )
 {
+	//std::cerr << "~~~~~~~~~~~~~~~~~~~~~~ " << *loop_node << std::endl;
 	const auto for_loop_head = 0;
 	const auto for_loop_body = 1;
 	auto& loop_head =  as_loop_head_ref(loop_node->children()[for_loop_head]);
