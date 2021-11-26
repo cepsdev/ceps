@@ -275,7 +275,8 @@ ceps::ast::Nodebase_ptr ceps::interpreter::evaluate_generic(ceps::ast::Nodebase_
 		  	
 		 }
 		 symbols_found = true;
-         return new ceps::ast::Symbol(name,kind);
+         result = new ceps::ast::Symbol(name,kind);
+		 break;
 	 }
 	 case Kind::ret:
 	 {
@@ -293,9 +294,17 @@ ceps::ast::Nodebase_ptr ceps::interpreter::evaluate_generic(ceps::ast::Nodebase_
 		 //ERROR("Internal error: Kind of node unknown.")
 	 }
 	
-	if (result != nullptr && ( is<ceps::ast::Ast_node_kind::scope>(parent_node) || is<ceps::ast::Ast_node_kind::structdef>(parent_node) || is<ceps::ast::Ast_node_kind::root>(parent_node)) ) {
+	if (result != nullptr && 
+		parent_node && 
+		!is<Ast_node_kind::none>(result) 
+		&& ( is<Ast_node_kind::scope>(parent_node) ||  is<Ast_node_kind::structdef>(parent_node) || is<Ast_node_kind::root>(parent_node)) ) 
+	{
 		auto r = env.handle_stmt(result,sym_table);
 		if (r != nullptr) return r;
+	}
+	if (result != nullptr && is<Ast_node_kind::none>(result)){
+		delete result;
+		result = nullptr;
 	}
  	return result;
  }

@@ -978,11 +978,15 @@ inline bool is_a_let(Nodebase_ptr p)
 
 /////////// as_* casts
 
+inline Call_parameters& as_call_params_ref(Nodebase_ptr p){
+	return *static_cast<Call_parameters*>(p);
+}
 
 inline Let* as_let_ptr(Nodebase_ptr p)
- {
+{
 	return static_cast<Let*>(p);
- }
+}
+
 inline Let& as_let_ref(Nodebase_ptr p)
  {
 	return *static_cast<Let*>(p);
@@ -1602,6 +1606,7 @@ node_scope_t mk_scope();
 node_callparameters_t mk_callparameters();
 node_nodeset_t mk_nodeset ();
 node_t mk_ifelse(node_t,node_t,node_t);
+node_t mk_none();
 
 void gc(node_t);
 

@@ -185,7 +185,9 @@ ceps::ast::node_t ceps::ast::mk_ifelse(ceps::ast::node_t c,ceps::ast::node_t l,c
 	return new ceps::ast::Ifelse(c,l,r);
 }
 
-
+ceps::ast::node_t ceps::ast::mk_none(){
+	return new ceps::ast::None{};
+}
 
 std::vector<ceps::ast::node_t> ceps::ast::extract_functioncall_arguments_from_param_block(ceps::ast::Call_parameters& params){
 	std::vector<ceps::ast::node_t> r;

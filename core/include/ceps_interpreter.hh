@@ -101,15 +101,14 @@ namespace ceps{
 		 global_binop_overloads_;
 		 ceps::ast::Nodeset * associated_universe_ = nullptr;
 		 std::map<std::string, std::map<std::string,ceps::ast::Nodebase_ptr >* > symbol_mapping_;
-		 typedef ceps::ast::Nodebase_ptr (*func_callback_t)(std::string const & , ceps::ast::Call_parameters*, void *, ceps::parser_env::Symboltable & sym_table);
-		 typedef ceps::ast::Nodebase_ptr (*func_stmt_claimer_t)(ceps::ast::node_t, void *, ceps::parser_env::Symboltable & sym_table);
+		 typedef ceps::ast::Nodebase_ptr (*func_callback_t)(std::string const & , ceps::ast::Call_parameters*, void *, ceps::parser_env::Symboltable & );
+		 typedef ceps::ast::Nodebase_ptr (*func_stmt_claimer_t)(ceps::ast::node_t, void *, ceps::parser_env::Symboltable & );
 		 typedef ceps::ast::Nodebase_ptr (*func_binop_resolver_t)(ceps::ast::Binary_operator_ptr binop,
 				 	 	 	 	 	 	 	 	 	 	 	 	  ceps::ast::Nodebase_ptr lhs ,
 				 	 	 	 	 	 	 	 	 	 	 	 	  ceps::ast::Nodebase_ptr rhs,
 				 	 	 	 	 	 	 	 	 	 	 	 	  void* cxt,
 				 	 	 	 	 	 	 	 	 	 	 	 	  ceps::ast::Nodebase_ptr parent_node);
 		 typedef ceps::ast::Nodebase_ptr (*func_callback_if_symbol_undefined_t)(ceps::ast::Nodebase_ptr,ceps::ast::Nodebase_ptr, void *);
-
 
 		 func_callback_t func_callback_ = nullptr;
 		 func_binop_resolver_t global_binop_resolver_ = nullptr;
@@ -156,7 +155,7 @@ namespace ceps{
 
 		 ceps::ast::node_t handle_stmt(ceps::ast::node_t node, ceps::parser_env::Symboltable & sym_table){
 			 if (func_stmt_claimer != nullptr)
-			  func_stmt_claimer(node,ctxt_stmt_claimer, sym_table);
+			  return func_stmt_claimer(node,ctxt_stmt_claimer, sym_table);
 			return nullptr;
 		 }
 

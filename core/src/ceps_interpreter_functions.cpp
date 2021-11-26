@@ -134,6 +134,14 @@ static void default_text_representation_impl(std::stringstream& ss,ceps::ast::No
             if (p && p->kind() !=  ceps::ast::Ast_node_kind::structdef) ss << ";";
         }
         ss << "};";
+    } else if (ceps::ast::is<ceps::ast::Ast_node_kind::nodeset>(root_node)){
+        auto & s = ceps::ast::as_ast_nodeset_ref(root_node);
+        ss << "as_nodeset({";
+        for (auto p: s.children()){
+            default_text_representation_impl(ss,p,enable_check_for_html);
+            if (p && p->kind() !=  ceps::ast::Ast_node_kind::structdef) ss << ";";
+        }
+        ss << "})";
     } else if (root_node->kind() == ceps::ast::Ast_node_kind::long_literal) {
 		ss << value(as_int64_ref(root_node));
 	} else ss << *root_node;
@@ -801,12 +809,17 @@ ceps::ast::Nodebase_ptr ceps::interpreter::eval_funccall(
 	if (ceps::interpreter::DEBUG_OUTPUT) std::cerr << "ceps::interpreter::eval_funccall:" << *root_node << std::endl;
 
 	auto func_call = as_func_call_ref(root_node);
-	auto fcall_target = func_call_target(func_call);
-
+	auto fcall_target_ = func_call_target(func_call);
 	bool func_symbolic{false};
 
-	if (is_an_identifier(func_call_target(func_call)))
-	 {
+	auto fcall_target = evaluate_generic(fcall_target_,sym_table,env,root_node,predecessor,nullptr,func_symbolic,thoroughness);
+
+	if (!is_an_identifier(fcall_target)){
+ 		ceps::ast::Func_call* f = new ceps::ast::Func_call();
+		f->children_.push_back(fcall_target);
+		f->children_.push_back(evaluate_generic(func_call.children()[1],sym_table,env,root_node,predecessor,nullptr,func_symbolic,thoroughness));
+	 	return f;
+	} else {
 		ceps::ast::Identifier& id = as_id_ref(fcall_target);
         ceps::ast::Nodebase_ptr params_ = nullptr;
 		 
