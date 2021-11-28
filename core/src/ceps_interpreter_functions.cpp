@@ -124,7 +124,7 @@ static void default_text_representation_impl(std::stringstream& ss,ceps::ast::No
             default_text_representation_impl(ss,p,enable_check_for_html);
             if (p && p->kind() !=  ceps::ast::Ast_node_kind::structdef) ss << ";";
         }
-        ss << "};";
+        ss << "}";
     } else if (ceps::ast::is<ceps::ast::Ast_node_kind::scope>(root_node)){
         auto & s = ceps::ast::as_scope_ref(root_node);
         ss << "{";
@@ -132,7 +132,7 @@ static void default_text_representation_impl(std::stringstream& ss,ceps::ast::No
             default_text_representation_impl(ss,p,enable_check_for_html);
             if (p && p->kind() !=  ceps::ast::Ast_node_kind::structdef) ss << ";";
         }
-        ss << "};";
+        ss << "}";
     } else if (ceps::ast::is<ceps::ast::Ast_node_kind::nodeset>(root_node)){
         auto & s = ceps::ast::as_ast_nodeset_ref(root_node);
         ss << "as_nodeset({";

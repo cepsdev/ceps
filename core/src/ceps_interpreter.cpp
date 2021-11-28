@@ -336,6 +336,7 @@ ceps::ast::Nodebase_ptr ceps::interpreter::eval_binaryop(ceps::ast::Nodebase_ptr
 {
 
 	ceps::ast::Binary_operator& binop = *dynamic_cast<ceps::ast::Binary_operator*>(root_node);
+
 	if (binop.children().size() != 2)
 	{
 		throw semantic_exception{root_node,"Expecting 2 arguments, given " +make_string(binop.children().size())};

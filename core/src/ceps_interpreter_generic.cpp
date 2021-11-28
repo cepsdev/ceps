@@ -270,9 +270,6 @@ ceps::ast::Nodebase_ptr ceps::interpreter::evaluate_generic(ceps::ast::Nodebase_
 		      		std::cerr << "ceps::interpreter::evaluate_generic Kind::symbol: kind(" << kind<< ") name("<< name << ") -> "<<*rv << std::endl;
 				 return rv;
 			 }
-			 return env.call_sym_undefined_clbk(root_node,parent_node);
-		 } else {
-		  	
 		 }
 		 symbols_found = true;
          result = new ceps::ast::Symbol(name,kind);
