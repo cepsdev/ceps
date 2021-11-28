@@ -1110,6 +1110,16 @@ inline Ifelse* as_ifelse_ptr(Nodebase_ptr p)
 	return *as_int64_ptr(p);
  }
 
+ inline Uint64* as_uint64_ptr(Nodebase_ptr p)
+ {
+	return static_cast<Uint64*>(p);
+ }
+ inline Uint64 & as_uint64_ref(Nodebase_ptr p)
+ {
+	return *as_uint64_ptr(p);
+ }
+
+
  inline Identifier & as_id_ref(Nodebase_ptr p)
   {
  	return *static_cast<Identifier_ptr>(p);
@@ -1343,6 +1353,9 @@ inline std::string op_val(Binary_operator& x){
 	if(op(x) == '<') return "<";
 	if(op(x) == '&') return "&&";
     if(op(x) == '|') return "||";
+	if(op(x) == ',') return ",";
+	if(op(x) == ':') return ":";
+	if(op(x) == ';') return ";";
 
 	if(op(x) == ceps::Cepsparser::token::DOTDOT) return "..";
 	if(op(x) == ceps::Cepsparser::token::NOT) return "!";
@@ -1461,6 +1474,23 @@ inline getNth_type<0, Int64>::type & neg(Int64& x)
 }
 
 inline getNth_type<1, Int64>::type &  unit(Int64& x)
+{
+	return get<1>(x);
+}
+
+// Uint64
+
+inline getNth_type<0, Uint64>::type & value(Uint64& x)
+{
+	return get<0>(x);
+}
+
+inline getNth_type<0, Uint64>::type & neg(Uint64& x)
+{
+	return get<0>(x) =  - get<0>(x);
+}
+
+inline getNth_type<1, Uint64>::type &  unit(Uint64& x)
 {
 	return get<1>(x);
 }

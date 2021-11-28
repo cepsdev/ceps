@@ -475,12 +475,10 @@ expr:
 {
 	$$ = ceps::interpreter::mk_bin_op('=',$1,$3);
 }
-
 | expr '=' '{' stmts '}' 
 {
    $$ = ceps::interpreter::mk_bin_op('=',$1,new ceps::ast::Scope{$4});
 }
-
 | expr REL_OP_EQ expr 
 {
 	$$ = ceps::interpreter::mk_bin_op(ceps::Cepsparser::token::REL_OP_EQ,$1,$3);

@@ -351,6 +351,9 @@ ceps::ast::Nodebase_ptr ceps::interpreter::eval_binaryop(ceps::ast::Nodebase_ptr
 	 ceps::ast::Nodebase_ptr rhs = evaluate_generic(binop.children()[1],sym_table,env,root_node,predecessor, (op(binop) == '.' ? lhs : nullptr) ,local_symbols_found_r, thoroughness);
 	 symbols_found = local_symbols_found_l || local_symbols_found_r;
 
+	 //std::cout << "thoroughness="<< (int)thoroughness << " "<< op_val(binop) << ":\n"<< "\t" << *lhs << "\n\t"<< *rhs << std::endl;
+
+
 	 //A single element nodeset, with no idx operand set, evaluates to its only element (execption: operator is '.')
 	 if(op(binop) != '.'){
 		if (is<Ast_node_kind::nodeset>(lhs)){
@@ -376,8 +379,8 @@ ceps::ast::Nodebase_ptr ceps::interpreter::eval_binaryop(ceps::ast::Nodebase_ptr
 												thoroughness,
 												symbols_found
 											);
-		else if (lhs->kind() == Kind::structdef)
-			return evaluate_nodeset_expr_dot(	create_ast_nodeset("",as_struct_ref(lhs).children()),
+		else if (lhs->kind() == Kind::structdef){
+			return evaluate_nodeset_expr_dot(	create_ast_nodeset("",{lhs}),
 												rhs ,
 												sym_table,
 												env,
@@ -385,7 +388,7 @@ ceps::ast::Nodebase_ptr ceps::interpreter::eval_binaryop(ceps::ast::Nodebase_ptr
 												thoroughness,
 												symbols_found
 											);
-		else if (lhs->kind() == Kind::scope)
+		} else if (lhs->kind() == Kind::scope)
 			return evaluate_nodeset_expr_dot(	create_ast_nodeset("",as_scope_ref(lhs).children()),
 												rhs ,
 												sym_table,

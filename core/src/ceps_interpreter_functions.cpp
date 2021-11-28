@@ -112,8 +112,7 @@ static void default_text_representation_impl(std::stringstream& ss,ceps::ast::No
 		auto& binop = ceps::ast::as_binop_ref(root_node);
         ss << "(";
         default_text_representation_impl(ss,binop.left());
-		char buffer[2] = {};buffer[0] = op(binop);
-		ss << buffer;
+		ss << op_val(binop);
 		default_text_representation_impl(ss,binop.right());
         ss << ")";
     } else if (root_node->kind() == ceps::ast::Ast_node_kind::symbol) {
@@ -806,7 +805,8 @@ ceps::ast::Nodebase_ptr ceps::interpreter::eval_funccall(
 		ceps::interpreter::thoroughness_t thoroughness
 		)
 {
-	if (ceps::interpreter::DEBUG_OUTPUT) std::cerr << "ceps::interpreter::eval_funccall:" << *root_node << std::endl;
+	if (ceps::interpreter::DEBUG_OUTPUT) 
+		 std::cerr << "ceps::interpreter::eval_funccall:" << *root_node << std::endl;
 
 	auto func_call = as_func_call_ref(root_node);
 	auto fcall_target_ = func_call_target(func_call);
@@ -838,8 +838,10 @@ ceps::ast::Nodebase_ptr ceps::interpreter::eval_funccall(
 		 	return f;
 		}
 
-		auto rr = env.call_func_callback(ceps::ast::name(id),&params,sym_table);
-		if (rr != nullptr) return rr;
+		if (thoroughness == ceps::interpreter::thoroughness_t::normal){
+			auto rr = env.call_func_callback(ceps::ast::name(id),&params,sym_table);
+			if (rr != nullptr) return rr;
+		}
 		symbols_found = symbols_found || func_symbolic;
 
 		if (func_symbolic){
