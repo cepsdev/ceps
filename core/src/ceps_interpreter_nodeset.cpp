@@ -111,7 +111,7 @@ ceps::ast::Nodebase_ptr ceps::interpreter::evaluate_nodeset_expr_dot(	ceps::ast:
             }
 			last_identifier= id_name;
 
-		} else if (is_a_funccall(acc[i],method_name,args)){
+		} else if (is_a_simple_funccall(acc[i],method_name,args)){
             auto last_identifier_save = last_identifier;
             last_identifier = "";
             if (method_name == "select"){

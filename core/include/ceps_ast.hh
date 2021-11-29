@@ -1586,30 +1586,6 @@ inline std::pair<bool,int> is_int(Nodebase_ptr p)
  }
 
 void flatten_func_args(ceps::ast::Nodebase_ptr r, std::vector<ceps::ast::Nodebase_ptr>& v);
-inline bool is_a_funccall(Nodebase_ptr p,std::string& func_id,std::vector<ceps::ast::Nodebase_ptr>& args)
-  {
-	  auto r = p->kind() == ceps::ast::Ast_node_kind::func_call;
-	  if (!r) return r;
-	  ceps::ast::Func_call& func_call = *dynamic_cast<ceps::ast::Func_call*>(p);
-	  ceps::ast::Identifier& id = *dynamic_cast<ceps::ast::Identifier*>(func_call.children()[0]);
-	  func_id = name(id);
-	  if (nlf_ptr(func_call.children()[1])->children().size()){
-		  flatten_func_args(nlf_ptr(func_call.children()[1])->children()[0],args);
-	  }
-	  return r;
-  }
-
-/*
-const std::valarray<int> METER = {1,0,0,0,0,0,0};
-const std::valarray<int> KG = {0,1,0,0,0,0,0};
-const std::valarray<int> SECOND = {0,0,1,0,0,0,0};
-const std::valarray<int> AMPERE = {0,0,0,1,0,0,0};
-const std::valarray<int> KELVIN = {0,0,0,0,1,0,0};
-const std::valarray<int> MOL = {0,0,0,0,0,1,0};
-const std::valarray<int> CANDELA = {0,0,0,0,0,0,1};
-
-*/
-
 
 using node_t = Nodebase_ptr;
 using node_symbol_t = ceps::ast::Symbol*;
@@ -1986,7 +1962,71 @@ template<typename... Ts>
 std::ostream& operator << (std::ostream& out, strct & s);
 Nodebase_ptr read_xml_file(std::string path);
 
+inline bool 
+is_a_funccall(	Nodebase_ptr p,
+				std::string& func_id,
+				std::string& fkind, 
+				std::string& sym_name,
+				Nodebase_ptr& ftarget, 
+				std::vector<ceps::ast::Nodebase_ptr>& args)
+{
+	using namespace ceps::ast;
+	if(!is<ceps::ast::Ast_node_kind::func_call>(p)) return false;
+	auto& func_call = as_func_call_ref(p);
+	ftarget = children(func_call)[0];
+	auto& params = as_call_params_ref( children(func_call)[1]);
+	  
+	if (is<Ast_node_kind::identifier>(ftarget)){
+	    ceps::ast::Identifier& id = *dynamic_cast<ceps::ast::Identifier*>(func_call.children()[0]);
+	  	func_id = name(id);
+	} else if (is<Ast_node_kind::symbol>(ftarget)){
+		  fkind = kind(as_symbol_ref(ftarget));
+		  sym_name = name(as_symbol_ref(ftarget));
+	} else return false;
+	if (children(params).size()) flatten_func_args(children(params)[0],args);
+	return true;
+}
+
+inline bool 
+is_a_simple_funccall( Nodebase_ptr p,
+				std::string& func_id,
+				std::vector<ceps::ast::Nodebase_ptr>& args){
+	using namespace ceps::ast;
+	std::string fkind; 
+	std::string sym_name;
+	Nodebase_ptr ftarget;
+	if(!is_a_funccall(	p,
+				func_id,
+				fkind, 
+				sym_name,
+				ftarget, 
+				args)) return false;
+	if (is<Ast_node_kind::identifier>(ftarget)) return true;
+	return false;
+}
+
+inline bool 
+is_a_symbol_with_arguments( Nodebase_ptr p,
+				std::string& sym_name,
+				std::string& sym_kind,
+				std::vector<ceps::ast::Nodebase_ptr>& args){
+	using namespace ceps::ast;
+	std::string fkind; 
+	std::string id_name;
+	Nodebase_ptr ftarget;
+	if(!is_a_funccall(	p,
+				id_name,
+				sym_kind, 
+				sym_name,
+				ftarget, 
+				args)) return false;
+	if (is<Ast_node_kind::symbol>(ftarget)) return true;
+	return false;
+}
+
 }//namespace ast
 }//namespace ceps
+
+
 
 #endif
