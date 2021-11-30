@@ -102,7 +102,7 @@ namespace ceps{
 		 ceps::ast::Nodeset * associated_universe_ = nullptr;
 		 std::map<std::string, std::map<std::string,ceps::ast::Nodebase_ptr >* > symbol_mapping_;
 		 typedef ceps::ast::Nodebase_ptr (*func_callback_t)(std::string const & , ceps::ast::Call_parameters*, void *, ceps::parser_env::Symboltable & );
-		 typedef ceps::ast::Nodebase_ptr (*func_stmt_claimer_t)(ceps::ast::node_t, void *, ceps::parser_env::Symboltable & );
+		 typedef ceps::ast::Nodebase_ptr (*func_stmt_claimer_t)(ceps::ast::node_t, void *, ceps::parser_env::Symboltable &, Environment*);
 		 typedef ceps::ast::Nodebase_ptr (*func_binop_resolver_t)(ceps::ast::Binary_operator_ptr binop,
 				 	 	 	 	 	 	 	 	 	 	 	 	  ceps::ast::Nodebase_ptr lhs ,
 				 	 	 	 	 	 	 	 	 	 	 	 	  ceps::ast::Nodebase_ptr rhs,
@@ -115,14 +115,12 @@ namespace ceps{
 		 func_stmt_claimer_t func_stmt_claimer = nullptr;
 		 void*  ctxt_stmt_claimer = nullptr; 
 		 bool (*is_lazy_func)(std::string const &) = nullptr;
-
 		 void * func_callback_context_data_ = nullptr;
 		 void * func_binop_resolver_context_data_ = nullptr;
 		 func_callback_if_symbol_undefined_t func_callback_if_symbol_undefined_ = nullptr;
          void * func_callback_if_symbol_undefined_ctxt_ = nullptr;
 		 // Set by inner nodes (like stmts) which define the scope of node set expressions.
 		 std::vector<ceps::ast::Nodebase_ptr>* scope;
-
 		 ceps::ast::Nodebase_ptr call_func_callback(std::string const & id, ceps::ast::Call_parameters* params, ceps::parser_env::Symboltable & sym_table)
 		 {
 			 if (func_callback_ == nullptr) return nullptr;
@@ -138,7 +136,11 @@ namespace ceps{
 		 }
 
 		 std::map<std::string,std::string> meta_info_;
+		 int inside_func_call_ctr_ = 0;
+
  	  public:
+	     int inside_func_call_ctr() const {return inside_func_call_ctr_;}
+	     int& inside_func_call_ctr() {return inside_func_call_ctr_;}
 
 		 void reg_sym_undefined_clbk(func_callback_if_symbol_undefined_t f,void* ctxt){func_callback_if_symbol_undefined_ = f;func_callback_if_symbol_undefined_ctxt_ = ctxt;}
 		 func_callback_if_symbol_undefined_t get_sym_undefined_clbk(){return func_callback_if_symbol_undefined_;}
@@ -155,7 +157,7 @@ namespace ceps{
 
 		 ceps::ast::node_t handle_stmt(ceps::ast::node_t node, ceps::parser_env::Symboltable & sym_table){
 			 if (func_stmt_claimer != nullptr)
-			  return func_stmt_claimer(node,ctxt_stmt_claimer, sym_table);
+			  return func_stmt_claimer(node,ctxt_stmt_claimer, sym_table, this);
 			return nullptr;
 		 }
 
@@ -176,6 +178,7 @@ namespace ceps{
 		 Fn_binop_overload get_glbl_binop_overload(  char op,
 				                                    std::string const & lhs_kind,
 													std::string const & rhs_kind);
+
 
 
 		 ceps::ast::Nodeset * & associated_universe() {return associated_universe_;}

@@ -181,12 +181,14 @@ ceps::ast::Nodebase_ptr ceps::interpreter::evaluate_generic(ceps::ast::Nodebase_
 	 case Kind::func_call:
 	 {
 		if (ceps::interpreter::DEBUG_OUTPUT) std::cerr << "ceps::interpreter::evaluate_generic Kind::func_call:\n";
+		++env.inside_func_call_ctr();
 		result = eval_funccall(root_node,
 		 			  sym_table,
 		 			  env,
 		 			  parent_node,
 		 			  predecessor,
 					  this_ptr,symbols_found, thoroughness);
+		--env.inside_func_call_ctr();
 		break;
 	 }
 	 case Kind::binary_operator:

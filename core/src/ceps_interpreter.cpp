@@ -321,7 +321,7 @@ ceps::ast::Nodebase_ptr ceps::interpreter::eval_unaryop(ceps::ast::Nodebase_ptr 
 				return mk_unary_op_node(op(unop),operand);
 		}
 	}
-	throw semantic_exception{root_node,"Illformed unary operator expression"};
+	return mk_unary_op_node(op(unop),operand);
 }
 
 
