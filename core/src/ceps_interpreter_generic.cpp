@@ -144,8 +144,10 @@ ceps::ast::Nodebase_ptr ceps::interpreter::evaluate_generic(ceps::ast::Nodebase_
 		}
 		else result = evaluate_nonleaf(*dynamic_cast<ceps::ast::Nonleafbase*>(root_node),sym_table,env,root_node,predecessor,this_ptr,symbols_found,thoroughness);
 		sym_table.pop_scope();
-		if (id == "ignore_value") return nullptr;
-		if (id == "comment_stmt") return nullptr;
+		if (thoroughness == ceps::interpreter::thoroughness_t::normal){
+			if (id == "ignore_value") return nullptr;
+			if (id == "comment_stmt") return nullptr;
+		}
 		return result;
 	 }
 	 case Kind::expr:
