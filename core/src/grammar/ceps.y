@@ -80,6 +80,7 @@ Licensed under the Apache License, Version 2.0 (the "License");
 
 
 %left '#'
+%left ':'
 %left <sval> OP_OP
 %right <sval> OP_OPR
 %left ','
@@ -134,7 +135,7 @@ Licensed under the Apache License, Version 2.0 (the "License");
 %type <ast_node> macro_definition;
 %type <ast_list> attribute_list;
 
-%expect 48
+%expect 50
 
 %%
  
@@ -404,7 +405,10 @@ expr:
 {
  $$ = ceps::interpreter::mk_bin_op('#',$1,$3); 
 }
-
+|expr ':' expr
+{
+ $$ = ceps::interpreter::mk_bin_op(':',$1,$3); 
+}
 |expr OP_OP expr
 {
  $$ = ceps::interpreter::mk_bin_op(ceps::Cepsparser::token::OP_OP,$1,$3,*$2);
