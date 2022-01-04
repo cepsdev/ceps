@@ -95,23 +95,30 @@ namespace ceps{
  	 struct Environment
  	 {
  		using Fn_binop_overload = ceps::ast::Nodebase_ptr (*)(ceps::ast::Nodebase_ptr , ceps::ast::Nodebase_ptr);
-		 int kind_to_id_map_ctr_{0};
-		 std::map< std::string, int> kind_to_id_map_;
-		 std::map< std::tuple<char,int,int>, ceps::interpreter::Environment::Fn_binop_overload >
-		 global_binop_overloads_;
-		 ceps::ast::Nodeset * associated_universe_ = nullptr;
-		 std::map<std::string, std::map<std::string,ceps::ast::Nodebase_ptr >* > symbol_mapping_;
-		 typedef ceps::ast::Nodebase_ptr (*func_callback_t)(std::string const & , ceps::ast::Call_parameters*, void *, ceps::parser_env::Symboltable & );
-		 typedef ceps::ast::Nodebase_ptr (*func_stmt_claimer_t)(ceps::ast::node_t, void *, ceps::parser_env::Symboltable &, Environment*);
-		 typedef ceps::ast::Nodebase_ptr (*func_binop_resolver_t)(ceps::ast::Binary_operator_ptr binop,
+		int kind_to_id_map_ctr_{0};
+		std::map< std::string, int> kind_to_id_map_;
+		std::map< std::tuple<char,int,int>, ceps::interpreter::Environment::Fn_binop_overload >
+		global_binop_overloads_;
+		ceps::ast::Nodeset * associated_universe_ = nullptr;
+		std::map<std::string, std::map<std::string,ceps::ast::Nodebase_ptr >* > symbol_mapping_;
+		typedef ceps::ast::Nodebase_ptr (*func_callback_t)(std::string const & , ceps::ast::Call_parameters*, void *, ceps::parser_env::Symboltable & );
+		typedef ceps::ast::Nodebase_ptr (*func_stmt_claimer_t)(ceps::ast::node_t, void *, ceps::parser_env::Symboltable &, Environment*);
+		typedef ceps::ast::Nodebase_ptr (*func_binop_resolver_t)(ceps::ast::Binary_operator_ptr binop,
 				 	 	 	 	 	 	 	 	 	 	 	 	  ceps::ast::Nodebase_ptr lhs ,
 				 	 	 	 	 	 	 	 	 	 	 	 	  ceps::ast::Nodebase_ptr rhs,
 				 	 	 	 	 	 	 	 	 	 	 	 	  void* cxt,
 				 	 	 	 	 	 	 	 	 	 	 	 	  ceps::ast::Nodebase_ptr parent_node);
+		typedef bool (*func_binop_resolver_pred_t)(ceps::ast::Binary_operator_ptr binop,
+				 	 	 	 	 	 	 	 	 	 	 	 	  ceps::ast::Nodebase_ptr lhs ,
+				 	 	 	 	 	 	 	 	 	 	 	 	  void* cxt,
+				 	 	 	 	 	 	 	 	 	 	 	 	  ceps::ast::Nodebase_ptr parent_node);
+
 		 typedef ceps::ast::Nodebase_ptr (*func_callback_if_symbol_undefined_t)(ceps::ast::Nodebase_ptr,ceps::ast::Nodebase_ptr, void *);
 
 		 func_callback_t func_callback_ = nullptr;
 		 func_binop_resolver_t global_binop_resolver_ = nullptr;
+		 func_binop_resolver_pred_t global_binop_resolver_pred_ = nullptr;
+		 
 		 func_stmt_claimer_t func_stmt_claimer = nullptr;
 		 void*  ctxt_stmt_claimer = nullptr; 
 		 bool (*is_lazy_func)(std::string const &) = nullptr;
@@ -126,7 +133,15 @@ namespace ceps{
 			 if (func_callback_ == nullptr) return nullptr;
 			 return func_callback_(id,params,func_callback_context_data_,sym_table);
 		 }
-		 ceps::ast::Nodebase_ptr call_binop_resolver(ceps::ast::Binary_operator_ptr binop,
+		 bool binop_resolver_requires_evaluated_rhs(ceps::ast::Binary_operator_ptr binop,
+				                                     ceps::ast::Nodebase_ptr lhs ,
+				                                     ceps::ast::Nodebase_ptr parent_node)													 
+		{
+			if (global_binop_resolver_ == nullptr) return false;
+			if (global_binop_resolver_pred_ == nullptr) return true;
+			return global_binop_resolver_pred_(binop,lhs,func_binop_resolver_context_data_,parent_node);
+		}
+		ceps::ast::Nodebase_ptr call_binop_resolver(ceps::ast::Binary_operator_ptr binop,
 				                                     ceps::ast::Nodebase_ptr lhs ,
 				                                     ceps::ast::Nodebase_ptr rhs,
 				                                     ceps::ast::Nodebase_ptr parent_node)
@@ -169,6 +184,9 @@ namespace ceps{
 
 		 void set_binop_resolver(func_binop_resolver_t f,void * cxt){global_binop_resolver_ = f;func_binop_resolver_context_data_ = cxt;}
 		 void get_binop_resolver(func_binop_resolver_t& f,void * & cxt){f=global_binop_resolver_; cxt=func_binop_resolver_context_data_;}
+
+		 void set_binop_resolver_predicate(func_binop_resolver_pred_t f){global_binop_resolver_pred_ = f;}
+		 void get_binop_resolver_predicate(func_binop_resolver_pred_t& f){f=global_binop_resolver_pred_;}
 
 		 void register_global_binop_overload( 	ceps::interpreter::Environment::Fn_binop_overload fn,
 												char op,

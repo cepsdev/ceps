@@ -420,8 +420,9 @@ ceps::ast::Nodebase_ptr ceps::interpreter::eval_binaryop(ceps::ast::Nodebase_ptr
 		bool local_symbols_found_l{false};
 	 	bool local_symbols_found_r{false};
 		ceps::ast::Nodebase_ptr lhs =  evaluate_generic(binop.children()[0],sym_table,env,root_node,nullptr, nullptr,local_symbols_found_l,thoroughness);
+		// Example: guards never require evaluation of the rhs.
 		ceps::ast::Nodebase_ptr unevaluated_lhs = binop.children()[0];
-		ceps::ast::Nodebase_ptr rhs = evaluate_generic(binop.children()[1],sym_table,env,root_node,binop.children()[0],nullptr, local_symbols_found_r, thoroughness);
+		ceps::ast::Nodebase_ptr rhs = nullptr; 
 
 		 bool treat_lhs_as_symbol = false;
 		 if (unevaluated_lhs->kind() == ceps::ast::Ast_node_kind::identifier){
@@ -431,9 +432,12 @@ ceps::ast::Nodebase_ptr ceps::interpreter::eval_binaryop(ceps::ast::Nodebase_ptr
 	 		 	if (sym_ptr && sym_ptr->category != ceps::parser_env::Symbol::Category::VAR) treat_lhs_as_symbol=true;
 	 		 	else if (sym_ptr && sym_ptr->category == ceps::parser_env::Symbol::Category::VAR) lhs = unevaluated_lhs;
 		 } else if (ceps::ast::is<ceps::ast::Ast_node_kind::symbol>(unevaluated_lhs)){
+			    if (env.binop_resolver_requires_evaluated_rhs(&binop,lhs,parent_node))
+				 rhs = evaluate_generic(binop.children()[1],sym_table,env,root_node,binop.children()[0],nullptr, local_symbols_found_r, thoroughness); 
 				auto override_value = env.call_binop_resolver(&binop,unevaluated_lhs,rhs,parent_node);
 				if (override_value) {symbols_found = false; return override_value;}
 		 }
+		 rhs = evaluate_generic(binop.children()[1],sym_table,env,root_node,binop.children()[0],nullptr, local_symbols_found_r, thoroughness);
 
 		 if( treat_lhs_as_symbol ||
 			 lhs->kind() == ceps::ast::Ast_node_kind::symbol ||
