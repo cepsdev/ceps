@@ -1,0 +1,4 @@
+as_int(1.1);
+as_int(A*B);
+as_int(0);
+as_int(1.1*s);

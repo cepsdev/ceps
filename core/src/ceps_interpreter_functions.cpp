@@ -646,6 +646,10 @@ namespace ceps{
 			return new ceps::ast::Int(value, ceps::ast::all_zero_unit(), nullptr, nullptr, nullptr);
 		}
 
+		node_int_t mk_int_node(int value, ceps::ast::Unit_rep u){
+			return new ceps::ast::Int(value, u, nullptr, nullptr, nullptr);
+		}
+
 		node_int64_t mk_int64_node(std::int64_t value){
 			return new ceps::ast::Int64(value, ceps::ast::all_zero_unit(), nullptr, nullptr, nullptr);
 		}
@@ -700,6 +704,26 @@ namespace ceps{
 
             ceps::ast::Func_call* f = new ceps::ast::Func_call();
 		 	f->children_.push_back(new ceps::ast::Identifier("mod", nullptr, nullptr, nullptr));
+		 	f->children_.push_back(params);
+		 	return f;
+		}
+
+		node_t as_int(node_t root_node, Symboltable & sym_table, Environment& env, node_t parent_node, node_t predecessor, Call_parameters* params)
+		{
+			using namespace ceps::ast;
+        	node_vec_t args{get_args(*params)};
+            if(args.size() != 1)
+                 throw semantic_exception{root_node,"as_int() requires one argument."};
+
+			if ( is<Ast_node_kind::int_literal>(args[0]) )
+              return mk_int_node(value(as_int_ref(args[0])), unit(as_int_ref(args[0])) ) ;
+			if ( is<Ast_node_kind::long_literal>(args[0]) )
+              return mk_int_node(value(as_int64_ref(args[0])), unit(as_int64_ref(args[0]))) ;
+			if ( is<Ast_node_kind::float_literal>(args[0]) )
+              return mk_int_node(value(as_double_ref(args[0])), unit(as_double_ref(args[0]))) ;
+
+            ceps::ast::Func_call* f = new ceps::ast::Func_call();
+		 	f->children_.push_back(new ceps::ast::Identifier("as_int", nullptr, nullptr, nullptr));
 		 	f->children_.push_back(params);
 		 	return f;
 		}
@@ -930,6 +954,9 @@ ceps::ast::Nodebase_ptr ceps::interpreter::eval_funccall(
 			std::vector<ceps::ast::Nodebase_ptr> a;
 				a.push_back(params.children()[params.children().size()-1]);
 			return ceps::ast::create_ast_nodeset("",a);
+        } else if (name(id)=="as_int"){
+			 func_cache[name(id)] = ceps::interpreter::as_int;
+			 return ceps::interpreter::as_int(root_node,sym_table,env,parent_node,predecessor,static_cast<ceps::ast::Call_parameters*>(params_));
         } else if (name(id)=="as_nodeset"){
 			 func_cache[name(id)] = ceps::interpreter::as_nodeset;
 			 return ceps::interpreter::as_nodeset(root_node,sym_table,env,parent_node,predecessor,static_cast<ceps::ast::Call_parameters*>(params_));
@@ -1017,15 +1044,6 @@ ceps::ast::Nodebase_ptr ceps::interpreter::eval_funccall(
 			 if (args[0]->kind() != ceps::ast::Ast_node_kind::string_literal)
 				 throw semantic_exception{root_node,"as_identifier(): wrong arguments (expect a string)."};
 			 return new ceps::ast::Identifier(ceps::ast::value(ceps::ast::as_string_ref(args[0])), nullptr, nullptr, nullptr);
-         }else if (name(id) == "as_int"){
-             std::vector<ceps::ast::Nodebase_ptr> args;
-             if (params.children().size()) flatten_args(params.children()[0], args);
-             std::string s;
-             for (auto p : args){
-                    if(p == nullptr) continue;
-                    s+=default_text_representation(p);
-             }
-             return new ceps::ast::Int(std::stoi(s),ceps::ast::all_zero_unit());
          } else if (name(id) == "text"){
 			 std::vector<ceps::ast::Nodebase_ptr> args;
 			 if (params.children().size()) flatten_args(params.children()[0], args);
