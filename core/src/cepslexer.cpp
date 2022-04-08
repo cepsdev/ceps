@@ -423,7 +423,13 @@ ceps::Cepsparser::token_type yylex(
 					in_str << ch;
 				}
 			}
-			else in_str << ch;
+			else{
+				if (ch == '\n'){
+					yylloc->end.line+=1;
+					yylloc->end.column = 1;
+				} 
+				in_str << ch;
+			}
 		}
 
 		if(yylval != NULL)
