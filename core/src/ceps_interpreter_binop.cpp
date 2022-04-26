@@ -22,82 +22,89 @@ Licensed under the Apache License, Version 2.0 (the "License");
 #include "ceps_interpreter_nodeset.hh"
 #include <sstream>
 
-std::optional<bool> equality(ceps::ast::Nodebase_ptr lhs, ceps::ast::Nodebase_ptr rhs){
+std::tuple<bool,ceps::ast::node_t, ceps::ast::node_t,bool> symbolic_equality(ceps::ast::Nodebase_ptr lhs, ceps::ast::Nodebase_ptr rhs){
 	using namespace ceps::ast;
-	if (lhs == nullptr || rhs == nullptr) return false;
+	using namespace std;
+	if (lhs == nullptr || rhs == nullptr) return {false,lhs,rhs,false};
 
 	if (is<Ast_node_kind::int_literal>(lhs) &&  is<Ast_node_kind::int_literal>(rhs) )
 	{
 		auto& l = as_int_ref(lhs);auto& r = as_int_ref(rhs);
-		return value(l) == value(r) && unit(l) == unit(r);
+		return {value(l) == value(r) && unit(l) == unit(r), lhs, rhs,false};
 	}
 	if (is<Ast_node_kind::float_literal>(lhs) &&  is<Ast_node_kind::float_literal>(rhs) )
 	{
 		auto& l = as_double_ref(lhs);auto& r = as_double_ref(rhs);
-		return value(l) == value(r) && unit(l) == unit(r);
+		return {value(l) == value(r) && unit(l) == unit(r), lhs, rhs,false};
 	}
 	if (is<Ast_node_kind::string_literal>(lhs) &&  is<Ast_node_kind::string_literal>(rhs) )
 	{
 		auto& l = as_string_ref(lhs);auto& r = as_string_ref(rhs);
-		return value(l) == value(r);
+		return {value(l) == value(r), lhs, rhs,false};
 	}
 	if (is<Ast_node_kind::long_literal>(lhs) &&  is<Ast_node_kind::long_literal>(rhs) )
 	{
 		auto& l = as_int64_ref(lhs);auto& r = as_int64_ref(rhs);
-		return value(l) == value(r) && unit(l) == unit(r);
+		return { value(l) == value(r) && unit(l) == unit(r), lhs, rhs,false};
 	}
 	if (is<Ast_node_kind::unsigned_long_literal>(lhs) &&  is<Ast_node_kind::unsigned_long_literal>(rhs) )
 	{
 		auto& l = as_uint64_ref(lhs);auto& r = as_uint64_ref(rhs);
-		return value(l) == value(r) && unit(l) == unit(r);
+		return {value(l) == value(r) && unit(l) == unit(r), lhs, rhs,false};
 	}
 	if (is<Ast_node_kind::symbol>(lhs) &&  is<Ast_node_kind::symbol>(rhs) )
 	{
 		auto& l = as_symbol_ref(lhs);auto& r = as_symbol_ref(rhs);
-		return name(l) == name(r) && kind(l) == kind(r);
+		return {name(l) == name(r) && kind(l) == kind(r), lhs, rhs,false};
 	}
 	if (is<Ast_node_kind::identifier>(lhs) &&  is<Ast_node_kind::identifier>(rhs) )
 	{
 		auto& l = as_id_ref(lhs);auto& r = as_id_ref(rhs);
-		return name(l) == name(r);
+		return {name(l) == name(r), lhs, rhs,false};
 	}
 	if (is<Ast_node_kind::binary_operator>(lhs) &&  is<Ast_node_kind::binary_operator>(rhs) )
 	{
-		auto& l = as_binop_ref(lhs);auto& r = as_binop_ref(lhs);
-		if (op_val(l) != op_val(r)) return false;
-		auto ll = equality(l.left(),r.left());
-		if (!ll.has_value() || !ll.value()) return false;
-		auto rr = equality(l.right(),r.right());
-		if (!rr.has_value() || !rr.value()) return false;
-		return true;
+		auto& l = as_binop_ref(lhs);auto& r = as_binop_ref(rhs);
+		if (op_val(l) != op_val(r)) return {false, lhs, rhs,false};
+		auto ll = symbolic_equality(l.left(),r.left());
+		if (!get<0>(ll)) return ll;
+		auto rr = symbolic_equality(l.right(),r.right());
+		if (!get<0>(rr)) return rr;
+		return {true,nullptr,nullptr,false};
 	}
 	if ( (is<Ast_node_kind::scope>(lhs) || is<Ast_node_kind::stmts>(lhs) || is<Ast_node_kind::nodeset>(lhs)) &&
 	     (is<Ast_node_kind::scope>(rhs) || is<Ast_node_kind::stmts>(rhs) || is<Ast_node_kind::nodeset>(rhs))   )
 	{
 		auto& lv = is<Ast_node_kind::scope>(lhs) ? children(as_scope_ref(lhs)) : (is<Ast_node_kind::stmts>(lhs) ? children(as_stmts_ref(lhs)) : children(as_ast_nodeset_ref(lhs)) ); 
 		auto& rv = is<Ast_node_kind::scope>(rhs) ? children(as_scope_ref(rhs)) : (is<Ast_node_kind::stmts>(rhs) ? children(as_stmts_ref(rhs)) : children(as_ast_nodeset_ref(rhs)) );
-		if (lv.size() != rv.size()) return false;
+		if (lv.size() != rv.size()) return {false,lhs,rhs,false};
 		for(size_t i = 0; i != lv.size(); ++i){
-			auto r = equality(lv[i],rv[i]);
-			if(!r.has_value()) return r;
-			if(!r.value()) return r; 
+			auto r = symbolic_equality(lv[i],rv[i]);
+			if (!get<0>(r)) return r;
 		}
-		return true;				
+		return {true,nullptr,nullptr,false};				
 	}
 	if (is<Ast_node_kind::structdef>(lhs) && is<Ast_node_kind::structdef>(rhs)){
 		auto& l = as_struct_ref(lhs);auto& r = as_struct_ref(rhs);
-		if (name(l) != name(r) ) return false;
+		if (name(l) != name(r) ) return {false,&l,&r,false};
 		auto& lv = children(l);
 		auto& rv = children(r);
-		if (lv.size() != rv.size()) return false;
+		if (lv.size() != rv.size()) return {false,&l,&r,false};
 		for(size_t i = 0; i != lv.size(); ++i){
-			auto r = equality(lv[i],rv[i]);
-			if(!r.has_value()) return r;
-			if(!r.value()) return r; 
+			auto r = symbolic_equality(lv[i],rv[i]);
+			if (!get<0>(r)) return r;
 		}
-		return true;				
+		return  {true,nullptr,nullptr,false};					
 	}
-	return {};
+	
+	return {false,lhs,rhs,true};
+}
+
+std::optional<bool> equality(ceps::ast::Nodebase_ptr lhs, ceps::ast::Nodebase_ptr rhs){
+	using namespace std;
+	auto r = symbolic_equality(lhs, rhs);
+	if (get<3>(r)) return {};
+	return get<0>(r);
 }  
 
 

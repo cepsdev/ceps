@@ -818,6 +818,8 @@ template<typename P>
 		return false;
 	}
 
+std::tuple<bool,ceps::ast::node_t, ceps::ast::node_t,bool> symbolic_equality(ceps::ast::Nodebase_ptr lhs, ceps::ast::Nodebase_ptr rhs);
+
 ceps::ast::Nodebase_ptr ceps::interpreter::eval_funccall(
 		ceps::ast::Nodebase_ptr root_node,
 		ceps::parser_env::Symboltable & sym_table,
@@ -974,7 +976,28 @@ ceps::ast::Nodebase_ptr ceps::interpreter::eval_funccall(
 				throw semantic_exception{root_node,"tail(): argument has to be a non empty list of nodes."};
 			params.children().erase(params.children().begin());
 			return ceps::ast::create_ast_nodeset("",params.children());
-		 } else if (name(id) == "as_symbol") {
+		 } else if (name(id) == "symbolic_equality") {
+			 std::vector<ceps::ast::Nodebase_ptr> args;
+			 if (params.children().size()) flatten_args(params.children()[0], args);
+			 if (args.size() < 2)
+				 throw semantic_exception{root_node,"symbolic_diff(): two arguments expected."};
+			auto r = symbolic_equality(args[0],args[1]);
+			auto rr = mk_struct("diff");
+			auto rr1 = mk_struct("equal");
+
+			if (std::get<0>(r))
+			 children(*rr1).push_back(mk_int_node(1));
+			else 
+			 children(*rr1).push_back(mk_int_node(0));
+			children(*rr).push_back(rr1);
+			if (!std::get<0>(r)){
+				auto rr2 = mk_struct("reason");
+				children(*rr2).push_back(std::get<1>(r));
+				children(*rr2).push_back(std::get<2>(r));
+				children(*rr).push_back(rr2);
+			}
+			return rr;
+		} else if (name(id) == "as_symbol") {
 			 std::vector<ceps::ast::Nodebase_ptr> args;
 			 if (params.children().size()) flatten_args(params.children()[0], args);
 			 if (args.size() < 2)
