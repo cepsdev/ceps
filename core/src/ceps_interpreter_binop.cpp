@@ -95,6 +95,23 @@ std::tuple<bool,ceps::ast::node_t, ceps::ast::node_t,bool> symbolic_equality(cep
 			if (!get<0>(r)) return r;
 		}
 		return  {true,nullptr,nullptr,false};					
+	} if (is<Ast_node_kind::func_call>(lhs) && is<Ast_node_kind::func_call>(rhs)){
+		auto& l = as_func_call_ref(lhs);auto& r = as_func_call_ref(rhs);
+		auto ftargetl = children(l)[0];
+		auto ftargetr = children(r)[0];
+		auto r1 = symbolic_equality(ftargetl,ftargetr);
+		if (!get<0>(r1)) return r1;
+		auto& paramsl = as_call_params_ref( children(l)[1]);
+		auto& paramsr = as_call_params_ref( children(r)[1]);
+		if (children(paramsl).size() != children(paramsr).size())
+			return{false,lhs,rhs,false};
+		auto & vl = children(paramsl);
+		auto & vr = children(paramsr);
+		for(size_t i = 0; i != vl.size(); ++i){
+			auto r = symbolic_equality(vl[i],vr[i]);
+			if (!get<0>(r)) return r;
+		}
+		return {true,nullptr,nullptr,false};
 	}
 	
 	return {false,lhs,rhs,true};
