@@ -170,6 +170,13 @@ ceps::ast::node_stmt_t ceps::ast::mk_stmt(){
 ceps::ast::node_struct_t ceps::ast::mk_struct(std::string struct_name){
 	return new Struct{struct_name};
 }
+ceps::ast::node_struct_t ceps::ast::mk_struct(std::string struct_name, std::vector<node_t> const & v){
+	auto r = new Struct{struct_name};
+	children(*r) = v;
+	return r;
+}
+
+
 ceps::ast::node_scope_t ceps::ast::mk_scope(){
 	return new Scope{};
 }

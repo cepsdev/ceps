@@ -294,7 +294,7 @@ namespace ceps{
 	);
 
  	ceps::ast::Nodebase_ptr eval_macro(ceps::ast::Nodebase_ptr root_node,
-	    ceps::parser_env::Symbol* sym_ptr,
+	    ceps::ast::Nodebase_ptr body,
 		ceps::parser_env::Symboltable & sym_table,
 		ceps::interpreter::Environment& env,
 		ceps::ast::Nodebase_ptr parent_node,
@@ -303,7 +303,18 @@ namespace ceps{
 		bool& symbols_found,
 		std::vector<ceps::ast::Nodebase_ptr>* args = nullptr
 	);
-    
+
+   std::vector<ceps::ast::Nodebase_ptr> eval_macro_no_nodeset(
+	        ceps::ast::Nodebase_ptr root_node,
+            ceps::ast::Nodebase_ptr body,
+			ceps::parser_env::Symboltable & sym_table,
+			ceps::interpreter::Environment& env,
+			ceps::ast::Nodebase_ptr parent_node,
+			ceps::ast::Nodebase_ptr predecessor,
+			ceps::interpreter::thoroughness_t thoroughness,
+			bool& symbols_found,
+			std::vector<ceps::ast::Nodebase_ptr>* args = nullptr);
+ 
 	ceps::ast::Nodebase_ptr handle_binop(	ceps::ast::Nodebase_ptr binop_node,
     	int op,
     	ceps::ast::Nodebase_ptr lhs,

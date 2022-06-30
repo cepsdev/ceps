@@ -918,7 +918,7 @@ ceps::ast::Nodebase_ptr ceps::interpreter::eval_funccall(
 			bool local_contains_symbols{false};
 
 			auto result =  eval_macro(root_node,
-					  sym_table.lookup(name(id)),
+					  (node_t)sym_table.lookup(name(id))->payload,
 		 			  sym_table,
 		 			  env,
 		 			  parent_node,
@@ -1041,7 +1041,7 @@ ceps::ast::Nodebase_ptr ceps::interpreter::eval_funccall(
              if ( sym_ptr != nullptr && sym_ptr->category ==  ceps::parser_env::Symbol::Category::MACRO){
 				bool local_contains_symbols{false};
                 auto r =  eval_macro(n,
-                           sym_ptr,
+                           (node_t)sym_ptr->payload,
                            sym_table,
                            env,
                            nullptr,

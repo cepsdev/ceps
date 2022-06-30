@@ -94,7 +94,7 @@ ceps::ast::Nodebase_ptr ceps::interpreter::evaluate_generic(ceps::ast::Nodebase_
 		ceps::parser_env::Symbol* sym_ptr = sym_table.lookup(id);
 		if ( sym_ptr  != nullptr && sym_ptr->category ==  ceps::parser_env::Symbol::Category::MACRO){
 			result =  eval_macro(root_node,
-					  sym_ptr,
+					  (node_t)sym_ptr->payload,
 		 			  sym_table,
 		 			  env,
 		 			  parent_node,
@@ -287,8 +287,7 @@ ceps::ast::Nodebase_ptr ceps::interpreter::evaluate_generic(ceps::ast::Nodebase_
 	 }
 	 case Kind::macro_definition:{
 		 auto& macrodef{ceps::ast::as_macrodef_ref(root_node)};
-
-		 return new::ceps::ast::Macrodef(name(macrodef),symbol_table_info(macrodef),attributes(macrodef));
+		 return new::ceps::ast::Macrodef(name(macrodef),body(macrodef),attributes(macrodef));
 	 }
 	 default:
 		 return root_node;

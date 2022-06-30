@@ -851,7 +851,7 @@ typedef ast_node<Ast_node_kind::ifelse> Ifelse;
 typedef ast_node<Ast_node_kind::ret> Return;
 typedef ast_node<Ast_node_kind::byte_array, std::vector<unsigned char> > Byte_array;
 
-typedef ast_node<Ast_node_kind::macro_definition,std::string /*name*/, void* /*symbol entry*/, std::vector<Nodebase_ptr> /* attributes */> Macrodef;
+typedef ast_node<Ast_node_kind::macro_definition,std::string /*name*/, Nodebase_ptr /*body*/, std::vector<Nodebase_ptr> /* attributes */> Macrodef;
 typedef ast_node<Ast_node_kind::label,std::string /*name*/, std::vector<Nodebase_ptr> /* attributes */,  void* /*symbol entry*/> Label;
 typedef ast_node<Ast_node_kind::let,std::string /*lhs*/> Let;
 
@@ -1034,12 +1034,12 @@ inline Nodebase_ptr func_call_target(Func_call& fc){
 } 
 
 inline Func_call& as_func_call_ref(Nodebase_ptr p){
-	return *dynamic_cast<ceps::ast::Func_call*>(p);
+	return *static_cast<ceps::ast::Func_call*>(p);
 }
 
 inline Error* as_error_ptr(Nodebase_ptr p)
 {
- return dynamic_cast<Error*>(p);
+ return static_cast<Error*>(p);
 }
 inline Error & as_error_ref(Nodebase_ptr p)
 {
@@ -1552,7 +1552,7 @@ inline getNth_type<0,  Macrodef >::type & name(Macrodef& x)
 	return get<0>(x);
 }
 
-inline getNth_type<1,  Macrodef >::type & symbol_table_info(Macrodef& x)
+inline getNth_type<1,  Macrodef >::type & body(Macrodef& x)
 {
 	return get<1>(x);
 }
@@ -1608,6 +1608,7 @@ node_root_t mk_root();
 node_stmts_t mk_stmts();
 node_stmt_t mk_stmt();
 node_struct_t mk_struct(std::string);
+node_struct_t mk_struct(std::string, std::vector<node_t> const & v );
 node_scope_t mk_scope();
 node_callparameters_t mk_callparameters();
 node_nodeset_t mk_nodeset ();

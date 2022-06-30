@@ -100,8 +100,6 @@ ceps::ast::Nodebase_ptr ceps::interpreter::evaluate_nodeset_expr_dot(	ceps::ast:
 		if (is_an_identifier(acc[i]))
 		{
 			auto id_name = name(as_id_ref(acc[i]));
-            //std::cout << id_name <<" '"<<last_identifier<<"' "<<"-----" << std::endl;
-            //std::cout << "before="<< result << std::endl;
 
             if (last_identifier.length() == 0){
 				result = result[ceps::ast::all{id_name}];
@@ -110,7 +108,6 @@ ceps::ast::Nodebase_ptr ceps::interpreter::evaluate_nodeset_expr_dot(	ceps::ast:
 				result = result[last_identifier][ceps::ast::all{id_name}];
             }
 			last_identifier= id_name;
-
 		} else if (is_a_simple_funccall(acc[i],method_name,args)){
             auto last_identifier_save = last_identifier;
             last_identifier = "";
@@ -349,9 +346,39 @@ ceps::ast::Nodebase_ptr ceps::interpreter::evaluate_nodeset_expr_dot(	ceps::ast:
 				  v.push_back(pe);
 			  }
 			  result.nodes_ = v;
-			}
+			} else {
+				ceps::ast::Nodeset t;
+				std::vector<node_t> v;
+				if (last_identifier_save.length() == 0)
+					t = result;
+				else
+					t = result[last_identifier_save];
 
-			else throw ceps::interpreter::semantic_exception{nullptr,"'"+method_name+"' Unknown method/Invalid parameters for nodeset called."};
+				if(t.nodes().size() == 0) 
+				 throw ceps::interpreter::semantic_exception{nullptr,
+						"'"+method_name+"' Unknown method/Invalid parameters for nodeset called."};
+
+				for(auto e : t.nodes()) {
+					//std::cerr << *e << '\n';
+					sym_table.push_scope();
+					if (!is<Ast_node_kind::macro_definition>(e)) continue;
+					auto& macrodef{ceps::ast::as_macrodef_ref(e)};
+					auto body = ceps::ast::body(macrodef);
+					if(!body) continue;	
+					auto result =  eval_macro_no_nodeset(nullptr,
+					  body,
+		 			  sym_table,
+		 			  env,
+		 			  nullptr,
+		 			  nullptr,
+					  thoroughness,
+					  symbols_found, &args);
+					  if (result.size())
+						v.insert(v.end(), result.begin(), result.end());
+					sym_table.pop_scope();
+				}
+				result = Nodeset{v};
+			}
 		}
 		else
 		{
@@ -365,7 +392,6 @@ ceps::ast::Nodebase_ptr ceps::interpreter::evaluate_nodeset_expr_dot(	ceps::ast:
 			}
 		}
 	}//for
-
 	return create_ast_nodeset(last_identifier, result.nodes());
 }//ceps::interpreter::evaluate_nodeset_expr_dot
 

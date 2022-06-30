@@ -23,7 +23,7 @@ Licensed under the Apache License, Version 2.0 (the "License");
 
 ceps::ast::Nodebase_ptr ceps::interpreter::eval_macro(
 	        ceps::ast::Nodebase_ptr root_node,
-            ceps::parser_env::Symbol* sym_ptr,
+            ceps::ast::Nodebase_ptr body,
 			ceps::parser_env::Symboltable & sym_table,
 			ceps::interpreter::Environment& env,
 			ceps::ast::Nodebase_ptr parent_node,
@@ -32,10 +32,10 @@ ceps::ast::Nodebase_ptr ceps::interpreter::eval_macro(
 			bool& symbols_found,
 			std::vector<ceps::ast::Nodebase_ptr>* args)
 {
-	ceps::ast::Nodebase_ptr body = (ceps::ast::Nodebase_ptr)(sym_ptr->payload);
 	ceps::ast::Stmts* result = nullptr;
 	ceps::ast::Struct_ptr arglist_ = nullptr;
 	bool s1{false};
+
 	auto arglist = create_ast_nodeset("", 
 	 args != nullptr ? *args : ceps::ast::as_struct_ptr(evaluate_nonleaf(*dynamic_cast<ceps::ast::Nonleafbase*>(root_node),
 	 sym_table,
@@ -50,6 +50,37 @@ ceps::ast::Nodebase_ptr ceps::interpreter::eval_macro(
 	result = ceps::ast::as_stmts_ptr(evaluate_nonleaf(*dynamic_cast<ceps::ast::Nonleafbase*>(body),sym_table,env,root_node,predecessor,nullptr,s2,thoroughness));
 	symbols_found = s1 || s2;
 	return create_ast_nodeset("",result->children());
+}
+
+std::vector<ceps::ast::Nodebase_ptr> ceps::interpreter::eval_macro_no_nodeset(
+	        ceps::ast::Nodebase_ptr root_node,
+            ceps::ast::Nodebase_ptr body,
+			ceps::parser_env::Symboltable & sym_table,
+			ceps::interpreter::Environment& env,
+			ceps::ast::Nodebase_ptr parent_node,
+			ceps::ast::Nodebase_ptr predecessor,
+			ceps::interpreter::thoroughness_t thoroughness,
+			bool& symbols_found,
+			std::vector<ceps::ast::Nodebase_ptr>* args)
+{
+	ceps::ast::Stmts* result = nullptr;
+	ceps::ast::Struct_ptr arglist_ = nullptr;
+	bool s1{false};
+
+	auto arglist = create_ast_nodeset("", 
+	 args != nullptr ? *args : ceps::ast::as_struct_ptr(evaluate_nonleaf(*dynamic_cast<ceps::ast::Nonleafbase*>(root_node),
+	 sym_table,
+	 env,
+	 root_node,
+	 predecessor,
+	 nullptr, s1, thoroughness))->children());
+	auto symbol = sym_table.lookup("arglist",true,true,false);
+	symbol->category = ceps::parser_env::Symbol::NODESET;
+	symbol->payload = (void*)(arglist);
+	bool s2{false};
+	result = ceps::ast::as_stmts_ptr(evaluate_nonleaf(*dynamic_cast<ceps::ast::Nonleafbase*>(body),sym_table,env,root_node,predecessor,nullptr,s2,thoroughness));
+	symbols_found = s1 || s2;
+	return result->children();
 }
 
 ceps::ast::Nodebase_ptr ceps::interpreter::eval_rewrite(ceps::ast::Nodebase_ptr root_node,ceps::parser_env::Symbol* sym_ptr,

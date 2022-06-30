@@ -620,7 +620,7 @@ macro_definition:
   auto symbol = driver.symboltable().lookup(*$2,true,true,false);
   symbol->category = ceps::parser_env::Symbol::MACRO;
   symbol->payload = $5;
-  auto temp{new ceps::ast::Macrodef(*$2,symbol,*$3)};
+  auto temp{new ceps::ast::Macrodef(*$2,$5,*$3)};
   delete $2;delete $3;
   $$ = temp; 	  
  }
