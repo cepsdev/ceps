@@ -67,7 +67,8 @@ static void fetch_recursively_symbols(std::vector<ceps::ast::Nodebase_ptr> const
 
 extern std::string default_text_representation(std::vector<ceps::ast::Nodebase_ptr> nodes);
 
-ceps::ast::Nodebase_ptr ceps::interpreter::evaluate_nodeset_expr_dot(	ceps::ast::Nodebase_ptr lhs,
+ceps::ast::Nodebase_ptr ceps::interpreter::evaluate_nodeset_expr_dot(	
+	ceps::ast::Nodebase_ptr lhs,
 															ceps::ast::Nodebase_ptr rhs ,
 															ceps::parser_env::Symboltable & sym_table,
 															ceps::interpreter::Environment& env,
@@ -185,6 +186,13 @@ ceps::ast::Nodebase_ptr ceps::interpreter::evaluate_nodeset_expr_dot(	ceps::ast:
 					}					
 				}
 				result.nodes_ = v;				
+			}  else if (method_name == "last"){
+				if (!result.nodes().size()) result.nodes_.clear();
+				else{
+					std::vector<ceps::ast::Nodebase_ptr> v;
+					v.push_back(result.nodes()[result.nodes().size()-1]);
+					result.nodes_ = v;
+				}
 			} else if (method_name == "second"){
 				if (result.nodes().size() < 2) result.nodes_.clear();
 				else{
