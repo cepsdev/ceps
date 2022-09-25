@@ -67,6 +67,106 @@ static void fetch_recursively_symbols(std::vector<ceps::ast::Nodebase_ptr> const
 
 extern std::string default_text_representation(std::vector<ceps::ast::Nodebase_ptr> nodes);
 
+
+static bool less_than (ceps::ast::node_t a, ceps::ast::node_t b){
+	using namespace ceps::ast;
+                               if (is<Ast_node_kind::int_literal>(a) && is<Ast_node_kind::int_literal>(b) )
+                                   return value(as_int_ref(a)) < value(as_int_ref(b));
+                               if (is<Ast_node_kind::float_literal>(a) && is<Ast_node_kind::int_literal>(b))
+                                   return value(as_double_ref(a)) < (double)value(as_int_ref(b));
+                               if (is<Ast_node_kind::int_literal>(a) && is<Ast_node_kind::float_literal>(b) )
+                                   return (double)value(as_int_ref(a)) < value(as_double_ref(a));
+                               if (is<Ast_node_kind::float_literal>(a) && is<Ast_node_kind::float_literal>(b))
+                                   return value(as_double_ref(a)) < value(as_double_ref(a));
+                               if (is<Ast_node_kind::long_literal>(a) && is<Ast_node_kind::long_literal>(b) )
+                                   return value(as_int64_ref(a)) < value(as_int64_ref(a));
+                               if (is<Ast_node_kind::int_literal>(a) && is<Ast_node_kind::long_literal>(b) )
+                                   return value(as_int_ref(a)) < value(as_int64_ref(a));
+                               if (is<Ast_node_kind::long_literal>(a) && is<Ast_node_kind::int_literal>(b) )
+                                   return value(as_int64_ref(a)) < value(as_int_ref(a));
+                               if (is<Ast_node_kind::long_literal>(a) && is<Ast_node_kind::float_literal>(b) )
+                                   return	value(as_int64_ref(a)) < value(as_double_ref(a));
+                               if (is<Ast_node_kind::float_literal>(a) && is<Ast_node_kind::long_literal>(b) )
+                                   return value(as_double_ref(a)) < value(as_int64_ref(a));
+
+                               return default_text_representation(a) < default_text_representation(b);
+}
+
+static bool less_equal_than (ceps::ast::node_t a, ceps::ast::node_t b){
+	using namespace ceps::ast;
+                               if (is<Ast_node_kind::int_literal>(a) && is<Ast_node_kind::int_literal>(b) )
+                                   return value(as_int_ref(a)) <= value(as_int_ref(b));
+                               if (is<Ast_node_kind::float_literal>(a) && is<Ast_node_kind::int_literal>(b))
+                                   return value(as_double_ref(a)) <= (double)value(as_int_ref(b));
+                               if (is<Ast_node_kind::int_literal>(a) && is<Ast_node_kind::float_literal>(b) )
+                                   return (double)value(as_int_ref(a)) <= value(as_double_ref(a));
+                               if (is<Ast_node_kind::float_literal>(a) && is<Ast_node_kind::float_literal>(b))
+                                   return value(as_double_ref(a)) <= value(as_double_ref(a));
+
+                               if (is<Ast_node_kind::long_literal>(a) && is<Ast_node_kind::long_literal>(b) )
+                                   return value(as_int64_ref(a)) <= value(as_int64_ref(a));
+                               if (is<Ast_node_kind::int_literal>(a) && is<Ast_node_kind::long_literal>(b) )
+                                   return value(as_int_ref(a)) <= value(as_int64_ref(a));
+                               if (is<Ast_node_kind::long_literal>(a) && is<Ast_node_kind::int_literal>(b) )
+                                   return value(as_int64_ref(a)) <= value(as_int_ref(a));
+                               if (is<Ast_node_kind::long_literal>(a) && is<Ast_node_kind::float_literal>(b) )
+                                   return	value(as_int64_ref(a)) <= value(as_double_ref(a));
+                               if (is<Ast_node_kind::float_literal>(a) && is<Ast_node_kind::long_literal>(b) )
+                                   return value(as_double_ref(a)) <= value(as_int64_ref(a));
+
+                               return default_text_representation(a) <= default_text_representation(b);
+}
+
+static bool greater_than (ceps::ast::node_t a, ceps::ast::node_t b){
+	using namespace ceps::ast;
+                               if (is<Ast_node_kind::int_literal>(a) && is<Ast_node_kind::int_literal>(b) )
+                                   return value(as_int_ref(a)) > value(as_int_ref(b));
+                               if (is<Ast_node_kind::float_literal>(a) && is<Ast_node_kind::int_literal>(b))
+                                   return value(as_double_ref(a)) > (double)value(as_int_ref(b));
+                               if (is<Ast_node_kind::int_literal>(a) && is<Ast_node_kind::float_literal>(b) )
+                                   return (double)value(as_int_ref(a)) > value(as_double_ref(a));
+                               if (is<Ast_node_kind::float_literal>(a) && is<Ast_node_kind::float_literal>(b))
+                                   return value(as_double_ref(a)) > value(as_double_ref(a));
+
+                               if (is<Ast_node_kind::long_literal>(a) && is<Ast_node_kind::long_literal>(b) )
+                                   return value(as_int64_ref(a)) > value(as_int64_ref(a));
+                               if (is<Ast_node_kind::int_literal>(a) && is<Ast_node_kind::long_literal>(b) )
+                                   return value(as_int_ref(a)) > value(as_int64_ref(a));
+                               if (is<Ast_node_kind::long_literal>(a) && is<Ast_node_kind::int_literal>(b) )
+                                   return value(as_int64_ref(a)) > value(as_int_ref(a));
+                               if (is<Ast_node_kind::long_literal>(a) && is<Ast_node_kind::float_literal>(b) )
+                                   return	value(as_int64_ref(a)) > value(as_double_ref(a));
+                               if (is<Ast_node_kind::float_literal>(a) && is<Ast_node_kind::long_literal>(b) )
+                                   return value(as_double_ref(a)) > value(as_int64_ref(a));
+
+                               return default_text_representation(a) > default_text_representation(b);
+}
+
+static bool greater_equal_than (ceps::ast::node_t a, ceps::ast::node_t b){
+	using namespace ceps::ast;
+                               if (is<Ast_node_kind::int_literal>(a) && is<Ast_node_kind::int_literal>(b) )
+                                   return value(as_int_ref(a)) >= value(as_int_ref(b));
+                               if (is<Ast_node_kind::float_literal>(a) && is<Ast_node_kind::int_literal>(b))
+                                   return value(as_double_ref(a)) >= (double)value(as_int_ref(b));
+                               if (is<Ast_node_kind::int_literal>(a) && is<Ast_node_kind::float_literal>(b) )
+                                   return (double)value(as_int_ref(a)) >= value(as_double_ref(a));
+                               if (is<Ast_node_kind::float_literal>(a) && is<Ast_node_kind::float_literal>(b))
+                                   return value(as_double_ref(a)) >= value(as_double_ref(a));
+                               if (is<Ast_node_kind::long_literal>(a) && is<Ast_node_kind::long_literal>(b) )
+                                   return value(as_int64_ref(a)) >= value(as_int64_ref(a));
+                               if (is<Ast_node_kind::int_literal>(a) && is<Ast_node_kind::long_literal>(b) )
+                                   return value(as_int_ref(a)) >= value(as_int64_ref(a));
+                               if (is<Ast_node_kind::long_literal>(a) && is<Ast_node_kind::int_literal>(b) )
+                                   return value(as_int64_ref(a)) >= value(as_int_ref(a));
+                               if (is<Ast_node_kind::long_literal>(a) && is<Ast_node_kind::float_literal>(b) )
+                                   return	value(as_int64_ref(a)) >= value(as_double_ref(a));
+                               if (is<Ast_node_kind::float_literal>(a) && is<Ast_node_kind::long_literal>(b) )
+                                   return value(as_double_ref(a)) >= value(as_int64_ref(a));
+
+
+                               return default_text_representation(a) >= default_text_representation(b);
+}
+
 ceps::ast::Nodebase_ptr ceps::interpreter::evaluate_nodeset_expr_dot(	
 	ceps::ast::Nodebase_ptr lhs,
 															ceps::ast::Nodebase_ptr rhs ,
@@ -76,22 +176,16 @@ ceps::ast::Nodebase_ptr ceps::interpreter::evaluate_nodeset_expr_dot(
 															ceps::interpreter::thoroughness_t thoroughness,
 															bool& symbols_found)
 {
+	using namespace ceps::ast;
 	//INVARIANT: lhs is a nodeset
 
-
-
 	if (rhs == nullptr) return lhs;
-
-	//std::cout << "######################### RHS:" << *rhs << std::endl << std::endl;
-	//std::cout << "######################### LHS:" << *lhs << std::endl << std::endl;
 
 	std::vector<ceps::ast::Nodebase_ptr> acc;
 	flatten(rhs,  acc);
 	ceps::ast::Nodeset result{as_ast_nodeset_ref(lhs).children()};
 	std::string last_identifier;
 	last_identifier = apply_idx_op_operand(as_ast_nodeset_ref(lhs));
-
-	//std::cout <<"----------------------------- "<< result << std::endl;
 
 	for (size_t i = 0; i < acc.size(); ++i)
 	{
@@ -252,31 +346,29 @@ ceps::ast::Nodebase_ptr ceps::interpreter::evaluate_nodeset_expr_dot(
                           [](ceps::ast::Nodebase_ptr a,ceps::ast::Nodebase_ptr b ) {
                             return default_text_representation(a) < default_text_representation(b);
                           });
-                else if (args.size() == 1 && args[0]->kind() == ceps::ast::Ast_node_kind::string_literal){
-                    auto const & key = ceps::ast::value(ceps::ast::as_string_ref(args[0]));
-                   std::sort(result.nodes_.begin(),
+                else if (args.size() >= 1 && args[0]->kind() == ceps::ast::Ast_node_kind::string_literal){
+                    auto const & key = value(ceps::ast::as_string_ref(args[0]));
+					auto comp = less_than;
+
+					if (args.size() >= 2 && is<Ast_node_kind::binary_operator>(args[1])){
+						auto s = op_val(as_binop_ref(args[1]));
+						if (s == ">") comp = greater_than;
+						else if (s == ">=") comp = greater_equal_than;
+						else if (s == "<=") comp = less_equal_than;
+					}
+                   	
+					std::sort(result.nodes_.begin(),
                              result.nodes_.end(),
-                             [key](ceps::ast::Nodebase_ptr a_,ceps::ast::Nodebase_ptr b_ ) {
+                             [key,comp](ceps::ast::Nodebase_ptr a_,ceps::ast::Nodebase_ptr b_ ) {
                                using namespace ceps::ast;
                                if (a_->kind() != ceps::ast::Ast_node_kind::structdef || b_->kind() != ceps::ast::Ast_node_kind::structdef)
                                    throw ceps::interpreter::semantic_exception{nullptr,"'sort' type mismatch."};
                                auto ans = ceps::ast::Nodeset{as_struct_ref(a_).children()}[key];
                                auto bns = ceps::ast::Nodeset{as_struct_ref(b_).children()}[key];
-                               /*std::cout << key << std::endl;
-                               std::cout << *a_ << std::endl;
-                               std::cout << *b_ << std::endl;*/
                                if (ans.nodes().size() == 0 || bns.nodes().size() == 0 )
                                    throw ceps::interpreter::semantic_exception{nullptr,"'sort' illformed key."};
                                auto a = ans.nodes()[0];auto b = bns.nodes()[0];
-                               if (a->kind() == ceps::ast::Ast_node_kind::int_literal && b->kind() == ceps::ast::Ast_node_kind::int_literal )
-                                   return value(as_int_ref(a)) < value(as_int_ref(b));
-                               if (a->kind() == ceps::ast::Ast_node_kind::float_literal && b->kind() == ceps::ast::Ast_node_kind::int_literal )
-                                   return value(as_double_ref(a)) < (double)value(as_int_ref(b));
-                               if (a->kind() == ceps::ast::Ast_node_kind::int_literal && b->kind() == ceps::ast::Ast_node_kind::float_literal )
-                                   return (double)value(as_int_ref(a)) < value(as_double_ref(a));
-                               if (a->kind() == ceps::ast::Ast_node_kind::float_literal && b->kind() == ceps::ast::Ast_node_kind::float_literal )
-                                   return value(as_double_ref(a)) < value(as_double_ref(a));
-                               return default_text_representation(ans.nodes()) < default_text_representation(bns.nodes());
+							   return comp(a,b);
                     });
                 }
             } else if (method_name == "unique") {
