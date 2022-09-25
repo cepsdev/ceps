@@ -708,7 +708,11 @@ namespace ceps{
 		 	return f;
 		}
 
-		node_t as_int(node_t root_node, Symboltable & sym_table, Environment& env, node_t parent_node, node_t predecessor, Call_parameters* params)
+		node_t as_int(	node_t root_node, 
+						Symboltable & sym_table,
+						Environment& env, 
+						node_t parent_node, 
+						node_t predecessor, Call_parameters* params)
 		{
 			using namespace ceps::ast;
         	node_vec_t args{get_args(*params)};
@@ -724,6 +728,29 @@ namespace ceps{
 
             ceps::ast::Func_call* f = new ceps::ast::Func_call();
 		 	f->children_.push_back(new ceps::ast::Identifier("as_int", nullptr, nullptr, nullptr));
+		 	f->children_.push_back(params);
+		 	return f;
+		}
+		node_t as_double(	node_t root_node, 
+						Symboltable & sym_table,
+						Environment& env, 
+						node_t parent_node, 
+						node_t predecessor, Call_parameters* params)
+		{
+			using namespace ceps::ast;
+        	node_vec_t args{get_args(*params)};
+            if(args.size() != 1)
+                 throw semantic_exception{root_node,"as_double() requires one argument."};
+
+			if ( is<Ast_node_kind::int_literal>(args[0]) )
+              return mk_double_node(value(as_int_ref(args[0])), unit(as_int_ref(args[0])) ) ;
+			if ( is<Ast_node_kind::long_literal>(args[0]) )
+              return mk_double_node(value(as_int64_ref(args[0])), unit(as_int64_ref(args[0]))) ;
+			if ( is<Ast_node_kind::float_literal>(args[0]) )
+              return mk_double_node(value(as_double_ref(args[0])), unit(as_double_ref(args[0]))) ;
+
+            ceps::ast::Func_call* f = new ceps::ast::Func_call();
+		 	f->children_.push_back(new ceps::ast::Identifier("as_double", nullptr, nullptr, nullptr));
 		 	f->children_.push_back(params);
 		 	return f;
 		}
@@ -959,7 +986,10 @@ ceps::ast::Nodebase_ptr ceps::interpreter::eval_funccall(
         } else if (name(id)=="as_int"){
 			 func_cache[name(id)] = ceps::interpreter::as_int;
 			 return ceps::interpreter::as_int(root_node,sym_table,env,parent_node,predecessor,static_cast<ceps::ast::Call_parameters*>(params_));
-        } else if (name(id)=="as_nodeset"){
+        } else if (name(id)=="as_double"){
+			 func_cache[name(id)] = ceps::interpreter::as_double;
+			 return ceps::interpreter::as_double(root_node,sym_table,env,parent_node,predecessor,static_cast<ceps::ast::Call_parameters*>(params_));
+        }else if (name(id)=="as_nodeset"){
 			 func_cache[name(id)] = ceps::interpreter::as_nodeset;
 			 return ceps::interpreter::as_nodeset(root_node,sym_table,env,parent_node,predecessor,static_cast<ceps::ast::Call_parameters*>(params_));
         } else if (name(id)=="mktime"){
