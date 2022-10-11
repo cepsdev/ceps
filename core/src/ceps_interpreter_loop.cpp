@@ -125,7 +125,6 @@ static ceps::ast::node_t loop( std::vector<ceps::ast::Nodebase_ptr>& result,
 	{
 		 throw ceps::interpreter::semantic_exception{body,"last could not be defined."};
 	}
-	//std::cout << "*****" << name(id) << std::endl;
 
 	last_sym_ptr->category= next_sym_ptr->category = sym_ptr->category = ceps::parser_env::Symbol::Category::VAR;
 	if (thoroughness == thoroughness_t::shallow){
@@ -139,7 +138,7 @@ static ceps::ast::node_t loop( std::vector<ceps::ast::Nodebase_ptr>& result,
 		int from = value(as_int_ref(collection[0]));
 		int to = value(as_int_ref(collection[1]));
 		int step = 1;
-		if (from > to) step *= -1;
+		if (from > to) return nullptr;
 		ceps::ast::Int counter_node( from , ceps::ast::all_zero_unit(), nullptr, nullptr, nullptr);
 		sym_ptr->payload = &counter_node;
 
