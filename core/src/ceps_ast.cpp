@@ -377,8 +377,11 @@ ceps::ast::Nodebase* ceps::ast::ast_node<ceps::ast::Ast_node_kind::kind>::clone(
 }
 template<>
 ceps::ast::Nodebase* ceps::ast::ast_node<ceps::ast::Ast_node_kind::symbol>::clone(){
-	auto r =  new This_type(*this);
-	r->owns_children() = true;
+//std::cerr << "clone?" << std::endl;
+	auto r =  mk_symbol(name(as_symbol_ref(this)),ceps::ast::kind(as_symbol_ref(this)));
+//std::cerr << "clone!" << std::endl;
+
+	r->owns_children() = false;
 	return r;
 }
 template<>
