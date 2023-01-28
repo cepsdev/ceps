@@ -329,7 +329,13 @@ ceps::ast::Nodebase_ptr ceps::interpreter::evaluate_nodeset_expr_dot(
 			  std::vector<ceps::ast::Nodebase_ptr> t;
 			  t.push_back(result.nodes()[r.second]);
 			  result.nodes_=t;
-            } else if (method_name == "fetch_recursively_symbols") {
+            } else if (method_name == "replace_with" && args.size() == 2){
+			  auto r = is_int(args[0]);
+
+              if(!r.first) throw ceps::interpreter::semantic_exception{nullptr,"'"+method_name+"' expects integer as parameter."};
+			  if (result.nodes().size() <= (size_t) r.second) throw ceps::interpreter::semantic_exception{nullptr,"Nodeset method '"+method_name+"': index out of bounds."};
+			  result.nodes_[r.second] = args[1];
+            }else if (method_name == "fetch_recursively_symbols") {
                 std::vector<ceps::ast::Nodebase_ptr> v;
                 fetch_recursively_symbols(result.nodes_,v);
                 result.nodes_ = v;
