@@ -731,6 +731,26 @@ namespace ceps{
 		 	f->children_.push_back(params);
 		 	return f;
 		}
+		node_t force_int(	node_t root_node, 
+						Symboltable & sym_table,
+						Environment& env, 
+						node_t parent_node, 
+						node_t predecessor, Call_parameters* params)
+		{
+			using namespace ceps::ast;
+        	node_vec_t args{get_args(*params)};
+            if(args.size() != 1)
+                 throw semantic_exception{root_node,"force_int() requires one argument."};
+
+			if ( is<Ast_node_kind::int_literal>(args[0]) )
+              return mk_int_node(value(as_int_ref(args[0])), unit(as_int_ref(args[0])) ) ;
+			if ( is<Ast_node_kind::long_literal>(args[0]) )
+              return mk_int_node(value(as_int64_ref(args[0])), unit(as_int64_ref(args[0]))) ;
+			if ( is<Ast_node_kind::float_literal>(args[0]) )
+              return mk_int_node(value(as_double_ref(args[0])), unit(as_double_ref(args[0]))) ;
+			return mk_int_node(0, all_zero_unit() ) ;
+		}
+
 		node_t as_double(	node_t root_node, 
 						Symboltable & sym_table,
 						Environment& env, 
@@ -985,6 +1005,9 @@ ceps::ast::Nodebase_ptr ceps::interpreter::eval_funccall(
 			return ceps::ast::create_ast_nodeset("",a);
         } else if (name(id)=="as_int"){
 			 func_cache[name(id)] = ceps::interpreter::as_int;
+			 return ceps::interpreter::as_int(root_node,sym_table,env,parent_node,predecessor,static_cast<ceps::ast::Call_parameters*>(params_));
+        } else if (name(id)=="force_int"){
+			 func_cache[name(id)] = ceps::interpreter::force_int;
 			 return ceps::interpreter::as_int(root_node,sym_table,env,parent_node,predecessor,static_cast<ceps::ast::Call_parameters*>(params_));
         } else if (name(id)=="as_double"){
 			 func_cache[name(id)] = ceps::interpreter::as_double;
