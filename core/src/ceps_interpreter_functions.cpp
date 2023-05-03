@@ -1299,6 +1299,26 @@ ceps::ast::Nodebase_ptr ceps::interpreter::eval_funccall(
 				 f->children_.push_back(fp);
 				 return f;
 			 }
+		 } else if (name(id) == "sqrt") {
+			node_vec_t args{get_args(*static_cast<ceps::ast::Call_parameters*>(params_))};
+			if (args.size() != 1)
+				 throw semantic_exception{root_node,"sqrt: Expecting 1 argument"};
+			auto arg = args[0];
+
+			if (arg->kind() == Kind::float_literal)
+				return new ceps::ast::Double(std::sqrt(value(as_double_ref(arg))),ceps::ast::all_zero_unit(),nullptr,nullptr,nullptr);
+			else if (arg->kind() == Kind::int_literal)
+				return new ceps::ast::Double(std::sqrt((double)value(as_int_ref(arg))), ceps::ast::all_zero_unit(), nullptr, nullptr, nullptr);
+		 	else
+			 {
+				 if (ceps::ast::is<Ast_node_kind::symbol>(arg)) symbols_found = true;
+				 auto fp = new ceps::ast::Call_parameters();
+				 fp->children().push_back(arg);
+				 ceps::ast::Func_call* f = new ceps::ast::Func_call();
+				 f->children_.push_back(new ceps::ast::Identifier(name(id),nullptr,nullptr,nullptr));
+				 f->children_.push_back(fp);
+				 return f;
+			 }
 		 } else 	if (name(id) == "abs")
 		 {
 			node_vec_t args{get_args(*static_cast<ceps::ast::Call_parameters*>(params_))};
