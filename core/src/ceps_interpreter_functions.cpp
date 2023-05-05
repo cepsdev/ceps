@@ -739,8 +739,8 @@ namespace ceps{
 		{
 			using namespace ceps::ast;
         	node_vec_t args{get_args(*params)};
-            if(args.size() != 1)
-                 throw semantic_exception{root_node,"force_int() requires one argument."};
+            if(args.size() == 0)
+                 return mk_int_node(0,all_zero_unit()) ;
 
 			if ( is<Ast_node_kind::int_literal>(args[0]) )
               return mk_int_node(value(as_int_ref(args[0])), unit(as_int_ref(args[0])) ) ;
