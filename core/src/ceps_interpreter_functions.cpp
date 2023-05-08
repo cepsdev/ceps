@@ -858,6 +858,17 @@ namespace ceps{
 
 			return(mk_string(s.substr(start_of_sub,last_match)));
 		}
+		node_t string_ends_with(node_t root_node, Symboltable & sym_table, Environment& env,node_t parent_node, node_t predecessor, Call_parameters* params)
+		{
+        	node_vec_t args{get_args(*params)};
+            if(args.size() < 2 || !is<Ast_node_kind::string_literal>(args[0]) || !is<Ast_node_kind::string_literal>(args[1]) ) 
+			 return(mk_int_node(0));
+			std::string s{value(as_string_ref(args[0]))};
+			std::string terminating_seq{value(as_string_ref(args[1]))};
+			if (terminating_seq.length() > s.length() ) return(mk_int_node(0));
+			return(mk_int_node( s.substr(s.length() - terminating_seq.length()  ) == terminating_seq ));
+	}
+
 
 		node_t push_back(node_t root_node, Symboltable & sym_table, Environment& env,node_t parent_node, node_t predecessor, Call_parameters* params)
 		{
@@ -1058,6 +1069,9 @@ ceps::ast::Nodebase_ptr ceps::interpreter::eval_funccall(
         } else if (name(id)=="force_int"){
 			 func_cache[name(id)] = ceps::interpreter::force_int;
 			 return ceps::interpreter::as_int(root_node,sym_table,env,parent_node,predecessor,static_cast<ceps::ast::Call_parameters*>(params_));
+        }else if (name(id)=="string_ends_with"){
+			 func_cache[name(id)] = ceps::interpreter::string_ends_with;
+			 return ceps::interpreter::string_ends_with(root_node,sym_table,env,parent_node,predecessor,static_cast<ceps::ast::Call_parameters*>(params_));
         }else if (name(id)=="first_lines_of_string"){
 			 func_cache[name(id)] = ceps::interpreter::first_lines_of_string;
 			 return ceps::interpreter::first_lines_of_string(root_node,sym_table,env,parent_node,predecessor,static_cast<ceps::ast::Call_parameters*>(params_));
