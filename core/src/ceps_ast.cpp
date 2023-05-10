@@ -196,6 +196,10 @@ ceps::ast::node_t ceps::ast::mk_none(){
 	return new ceps::ast::None{};
 }
 
+ceps::ast::node_t ceps::ast::mk_undef(){
+	return new ceps::ast::Undefined{};
+}
+
 std::vector<ceps::ast::node_t> ceps::ast::extract_functioncall_arguments_from_param_block(ceps::ast::Call_parameters& params){
 	std::vector<ceps::ast::node_t> r;
 	auto & args = params.children();

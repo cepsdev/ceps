@@ -203,6 +203,7 @@ ceps::ast::Nodebase_ptr ceps::interpreter::evaluate_nodeset_expr_dot(
 				result = result[last_identifier][ceps::ast::all{id_name}];
             }
 			last_identifier= id_name;
+			continue;
 		} else if (is_a_simple_funccall(acc[i],method_name,args)){
             auto last_identifier_save = last_identifier;
             last_identifier = "";
@@ -323,11 +324,11 @@ ceps::ast::Nodebase_ptr ceps::interpreter::evaluate_nodeset_expr_dot(
 				} 
             } else if (method_name == "at" && args.size() == 1){
 			  auto r = is_int(args[0]);
-
-              if(!r.first) throw ceps::interpreter::semantic_exception{nullptr,"'"+method_name+"' expects integer as parameter."};
-			  if (result.nodes().size() <= (size_t) r.second) throw ceps::interpreter::semantic_exception{nullptr,"Nodeset method '"+method_name+"': index out of bounds."};
 			  std::vector<ceps::ast::Nodebase_ptr> t;
-			  t.push_back(result.nodes()[r.second]);
+			  
+			  if(!r.first || result.nodes().size() <= (size_t) r.second)
+			  t.push_back(mk_undef()); else t.push_back(result.nodes()[r.second]);
+			   
 			  result.nodes_=t;
             } else if (method_name == "replace_with" && args.size() == 2){
 			  auto r = is_int(args[0]);

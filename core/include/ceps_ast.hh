@@ -1614,6 +1614,7 @@ node_callparameters_t mk_callparameters();
 node_nodeset_t mk_nodeset ();
 node_t mk_ifelse(node_t,node_t,node_t);
 node_t mk_none();
+node_t mk_undef();
 
 void gc(node_t);
 
