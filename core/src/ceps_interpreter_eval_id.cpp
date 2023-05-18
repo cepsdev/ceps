@@ -63,6 +63,11 @@ ceps::ast::Nodebase_ptr ceps::interpreter::eval_id(ceps::ast::Nodebase_ptr root_
 	{
 		return new ceps::ast::Int(1, ceps::ast::mol_unit(), nullptr, nullptr, nullptr);
 	}
+	else if (name(id) == "undef")
+	{
+		return ceps::ast::mk_undef();
+	}
+
 	else if (name(id) == "scope"){
 		if (env.scope)
 		 return create_ast_nodeset("", *env.scope);

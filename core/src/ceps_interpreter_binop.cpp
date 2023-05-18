@@ -62,6 +62,8 @@ std::tuple<bool,ceps::ast::node_t, ceps::ast::node_t,bool> symbolic_equality(cep
 		auto& l = as_id_ref(lhs);auto& r = as_id_ref(rhs);
 		return {name(l) == name(r), lhs, rhs,false};
 	}
+	if (is<Ast_node_kind::undef>(lhs) &&  is<Ast_node_kind::undef>(rhs) ) return {true,lhs,rhs,false};
+
 	if (is<Ast_node_kind::binary_operator>(lhs) &&  is<Ast_node_kind::binary_operator>(rhs) )
 	{
 		auto& l = as_binop_ref(lhs);auto& r = as_binop_ref(rhs);
