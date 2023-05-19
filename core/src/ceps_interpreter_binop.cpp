@@ -91,6 +91,9 @@ std::tuple<bool,ceps::ast::node_t, ceps::ast::node_t,bool> symbolic_equality(cep
 		if (name(l) != name(r) ) return {false,&l,&r,false};
 		auto& lv = children(l);
 		auto& rv = children(r);
+		if(lv.size() == 1 && is<Ast_node_kind::symbol>(lv[0]) && "SymEqMatcherAny" == kind(as_symbol_ref(lv[0]))) return  {true,nullptr,nullptr,false};
+		if(rv.size() == 1 && is<Ast_node_kind::symbol>(rv[0]) && "SymEqMatcherAny" == kind(as_symbol_ref(rv[0]))) return  {true,nullptr,nullptr,false};
+
 		if (lv.size() != rv.size()) return {false,&l,&r,false};
 		for(size_t i = 0; i != lv.size(); ++i){
 			auto r = symbolic_equality(lv[i],rv[i]);
