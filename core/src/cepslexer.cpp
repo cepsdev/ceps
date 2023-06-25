@@ -206,14 +206,14 @@ ceps::Cepsparser::token_type yylex(
 
 	//INVARIANT: Input stream is valid. Next character in stream is neither whitespace nor belongs to a comment.
 
-	if (isalpha(ch) || ch == '_' || ch == '$')
+	if (isalpha(ch) || ch == '_' || ch == '$' || ch == '@')
 	{
 
 		// struct,val,STRUCT-ID or STRUCT
 		//if(yylloc) yylloc->begin = yylloc->end+1;
 		std::string s;
 		s += ch;
-		for(;in.get(ch) && (isalnum(ch) || ch == '_' || ch == '$' || ch == '\'');)
+		for(;in.get(ch) && (isalnum(ch) || ch == '_' || ch == '$' || ch == '\''|| ch == '@');)
 		{
 		 s += ch;
 		 if (yylloc) yylloc->end+=1;
