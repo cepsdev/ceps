@@ -258,6 +258,8 @@ ceps::ast::Nodebase_ptr ceps::interpreter::evaluate_nodeset_expr_dot(
 				result.nodes_ = v;
 			} else if (method_name == "contains_symbol"){
 				std::vector<std::string> symbol_kinds;
+				for(auto e: args)
+					if (is<Ast_node_kind::string_literal>(e)) symbol_kinds.push_back(value(as_string_ref(e)));
 				bool match_any_symbol = symbol_kinds.size() == 0;
 
 				auto match_symbol = [&](std::string symbol_kind) -> bool {
