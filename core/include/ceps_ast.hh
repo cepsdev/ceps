@@ -856,7 +856,7 @@ typedef ast_node<Ast_node_kind::label,std::string /*name*/, std::vector<Nodebase
 typedef ast_node<Ast_node_kind::let,std::string /*lhs*/> Let;
 
 typedef ast_node<Ast_node_kind::error, std::string , int , void* > Error;
-typedef ast_node<Ast_node_kind::undef> Undefined;
+typedef ast_node<Ast_node_kind::undef, std::string /*reason*/> Undefined;
 typedef ast_node<Ast_node_kind::none> None;
 
 typedef ast_node<Ast_node_kind::user_defined,int,void*> User_defined;
@@ -1615,6 +1615,7 @@ node_nodeset_t mk_nodeset ();
 node_t mk_ifelse(node_t,node_t,node_t);
 node_t mk_none();
 node_t mk_undef();
+node_t mk_undef(std::string);
 
 void gc(node_t);
 

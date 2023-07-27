@@ -197,7 +197,11 @@ ceps::ast::node_t ceps::ast::mk_none(){
 }
 
 ceps::ast::node_t ceps::ast::mk_undef(){
-	return new ceps::ast::Undefined{};
+	return new ceps::ast::Undefined{{}};
+}
+
+ceps::ast::node_t ceps::ast::mk_undef(std::string reason){
+	return new ceps::ast::Undefined{reason};
 }
 
 std::vector<ceps::ast::node_t> ceps::ast::extract_functioncall_arguments_from_param_block(ceps::ast::Call_parameters& params){
@@ -637,6 +641,13 @@ ceps::ast::Nodebase* ceps::ast::ast_node<ceps::ast::Ast_node_kind::user_defined>
 	return r;
 }
 
+template<>
+ceps::ast::Nodebase* ceps::ast::Undefined::clone(){
+
+	auto r = new This_type(*this);
+	
+	return r;
+}
 
 template<>
  ceps::ast::Nodebase*  ast_node<Ast_node_kind::symbol,std::string>::clone() {std::cerr << "** Undefined." << std::endl; return nullptr;}
