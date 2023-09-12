@@ -2027,6 +2027,12 @@ is_a_symbol_with_arguments( Nodebase_ptr p,
 	return false;
 }
 
+inline std::optional<Struct*> is_non_empty_struct_with_name(node_t e, std::string n){
+	 if (!is<Ast_node_kind::structdef>(e)) return {};
+	 if (name(*as_struct_ptr(e)) != n || children(*as_struct_ptr(e)).size() == 0) return {};
+	 return {as_struct_ptr(e)};
+}
+
 }//namespace ast
 }//namespace ceps
 
