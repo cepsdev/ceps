@@ -2033,6 +2033,12 @@ inline std::optional<Struct*> is_non_empty_struct_with_name(node_t e, std::strin
 	 return {as_struct_ptr(e)};
 }
 
+inline std::optional<Struct*> is_struct_with_name(node_t e, std::string n){
+	 if (!is<Ast_node_kind::structdef>(e)) return {};
+	 if (name(*as_struct_ptr(e)) != n ) return {};
+	 return {as_struct_ptr(e)};
+}
+
 }//namespace ast
 }//namespace ceps
 
