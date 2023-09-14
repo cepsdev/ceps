@@ -283,6 +283,29 @@ ceps::ast::Nodebase_ptr ceps::interpreter::evaluate_nodeset_expr_dot(
 					}					
 				}
 				result.nodes_ = v;				
+			} else if (method_name == "symbol"){
+				std::vector<std::string> symbol_kinds;
+				for(auto e: args)
+					if (is<Ast_node_kind::string_literal>(e)) symbol_kinds.push_back(value(as_string_ref(e)));
+				bool match_any_symbol = symbol_kinds.size() == 0;
+
+				auto match_symbol = [&](std::string symbol_kind) -> bool {
+					for(auto e : symbol_kinds) 
+					 if (e == symbol_kind) return true;
+					return false;
+				};
+
+				std::vector<ceps::ast::Nodebase_ptr> v;
+				for(auto e : result.nodes())
+				{
+					if ( !is_a_symbol(e) ) continue;
+					if (match_any_symbol) {
+						v.push_back(e);break;
+					} else if (match_symbol( kind(as_symbol_ref(e) )) ){
+							v.push_back(e);break;
+					}
+				}
+				result.nodes_ = v;				
 			}  else if (method_name == "last"){
 				if (!result.nodes().size()) result.nodes_.clear();
 				else{
