@@ -300,9 +300,9 @@ ceps::ast::Nodebase_ptr ceps::interpreter::evaluate_nodeset_expr_dot(
 				{
 					if ( !is_a_symbol(e) ) continue;
 					if (match_any_symbol) {
-						v.push_back(e);break;
+						v.push_back(e);
 					} else if (match_symbol( kind(as_symbol_ref(e) )) ){
-							v.push_back(e);break;
+							v.push_back(e);
 					}
 				}
 				result.nodes_ = v;				
