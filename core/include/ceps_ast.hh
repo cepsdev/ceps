@@ -34,6 +34,7 @@ Licensed under the Apache License, Version 2.0 (the "License");
 #include "si_literals.hh"
 #include "include_gen/ceps.tab.hh"
 #include <cctype>
+#include <optional>
 namespace ceps {
  namespace ast {
 
