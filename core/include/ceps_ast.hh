@@ -86,6 +86,7 @@ namespace ceps {
 		algorithm_definition,
 		label,
 		let,
+		uint8,
 		undefined = 4999,
 		user_defined = 5000
 	};
@@ -819,6 +820,12 @@ typedef ast_node<Ast_node_kind::float_literal,
 				double, //value
 				Unit_rep // SI Unit
 				> Double;
+
+typedef ast_node<Ast_node_kind::uint8,
+				 uint8_t, //value
+				 Unit_rep // SI Unit
+				 > Uint8;
+
 //typedef ast_node<Ast_node_kind::si_unit_or_derived,short int> SI_unit;
 typedef ast_node<Ast_node_kind::stmts> Stmts;
 typedef ast_node<Ast_node_kind::stmt> Stmt;
@@ -1101,6 +1108,17 @@ inline Ifelse* as_ifelse_ptr(Nodebase_ptr p)
 	return *as_int_ptr(p);
  }
  
+inline Uint8* as_uint8_ptr(Nodebase_ptr p)
+ {
+	return static_cast<Uint8*>(p);
+ }
+
+ inline Uint8 & as_uint8_ref(Nodebase_ptr p)
+ {
+	return *as_uint8_ptr(p);
+ }
+ 
+
  inline Int64* as_int64_ptr(Nodebase_ptr p)
  {
 	return static_cast<Int64*>(p);
@@ -1426,6 +1444,13 @@ inline getNth_type<0,  String >::type & value(String& x)
 	return get<0>(x);
 }
 
+//
+
+inline getNth_type<0, Uint8 >::type & value(Uint8& x)
+{
+	return get<0>(x);
+}
+
 // Double
 
 inline getNth_type<0, Double >::type & value(Double& x)
@@ -1616,6 +1641,7 @@ node_t mk_ifelse(node_t,node_t,node_t);
 node_t mk_none();
 node_t mk_undef();
 node_t mk_undef(std::string);
+node_t mk_uint8(uint8_t);
 
 void gc(node_t);
 

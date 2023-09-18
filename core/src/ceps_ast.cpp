@@ -154,6 +154,10 @@ ceps::ast::node_symbol_t ceps::ast::mk_symbol(std::string name, std::string kind
 	return new ceps::ast::Symbol(name,kind,nullptr, nullptr, nullptr);
 }
 
+ceps::ast::node_t ceps::ast::mk_uint8(uint8_t v){
+	return new ceps::ast::Uint8(v,ceps::ast::all_zero_unit(), nullptr, nullptr, nullptr);
+}
+
 ceps::ast::node_t ceps::ast::mk_string(std::string v){
 	return new ceps::ast::String(v,nullptr,nullptr,nullptr);
 }
@@ -646,6 +650,14 @@ ceps::ast::Nodebase* ceps::ast::Undefined::clone(){
 
 	auto r = new This_type(*this);
 	
+	return r;
+}
+
+template<>
+ceps::ast::Nodebase* ceps::ast::ast_node<ceps::ast::Ast_node_kind::uint8>::clone(){
+
+	auto r = new This_type(*this);
+		
 	return r;
 }
 
