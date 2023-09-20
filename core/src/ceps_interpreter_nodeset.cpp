@@ -306,7 +306,42 @@ ceps::ast::Nodebase_ptr ceps::interpreter::evaluate_nodeset_expr_dot(
 					}
 				}
 				result.nodes_ = v;				
-			}  else if (method_name == "last"){
+			} else if (method_name == "operator"){
+				std::vector<std::string> op_kinds;
+				for(auto e: args)
+					if (is<Ast_node_kind::string_literal>(e)) op_kinds.push_back(value(as_string_ref(e)));
+				bool match_any_op = op_kinds.size() == 0;
+
+				auto match_op = [&](std::string op_kind) -> bool {
+					for(auto e : op_kinds) 
+					 if (e == op_kind) return true;
+					return false;
+				};
+				std::vector<ceps::ast::Nodebase_ptr> v;
+				for(auto e : result.nodes())
+				{
+					if (!is<Ast_node_kind::binary_operator>(e) && !is<Ast_node_kind::binary_operator>(e)) continue;
+					if (match_any_op) {
+						v.push_back(e);
+					} else if ( is<Ast_node_kind::binary_operator>(e) && match_op( op_val(as_binop_ref(e) )) ){
+						v.push_back(e);
+					}				
+				}
+				result.nodes_ = v;				
+			} else if (method_name == "rhs" || method_name == "lhs"){
+				std::vector<ceps::ast::Nodebase_ptr> v;
+				if(method_name == "rhs") for(auto e : result.nodes())
+				{
+					if (!is<Ast_node_kind::binary_operator>(e)) continue;
+					v.push_back(children(as_binop_ref(e))[1]);
+				} else for(auto e : result.nodes())
+				{
+					if (!is<Ast_node_kind::binary_operator>(e)) continue;
+					v.push_back(children(as_binop_ref(e))[0]);
+				}
+
+				result.nodes_ = v;				
+			} else if (method_name == "last"){
 				if (!result.nodes().size()) result.nodes_.clear();
 				else{
 					std::vector<ceps::ast::Nodebase_ptr> v;
