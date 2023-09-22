@@ -43,19 +43,16 @@ static void flatten(ceps::ast::Nodebase_ptr root, std::vector<ceps::ast::Nodebas
 static void fetch_recursively_symbols(std::vector<ceps::ast::Nodebase_ptr> const & in,std::vector<ceps::ast::Nodebase_ptr> & out);
 
 static void fetch_recursively_symbols(ceps::ast::Nodebase_ptr elem,std::vector<ceps::ast::Nodebase_ptr> & out){
+ using namespace ceps::ast;
  if (elem->kind() == ceps::ast::Ast_node_kind::symbol) out.push_back(elem);
- else if (elem->kind() == ceps::ast::Ast_node_kind::structdef){
-     fetch_recursively_symbols(ceps::ast::as_struct_ref(elem).children(),out);
- } else if (elem->kind() == ceps::ast::Ast_node_kind::ifelse){
+ else if (elem->kind() == ceps::ast::Ast_node_kind::ifelse){
      auto ifelse = ceps::ast::as_ifelse_ptr(elem);
      ceps::ast::Nodebase_ptr cond = ifelse->children()[0];
      fetch_recursively_symbols(cond,out);
      if (ifelse->children().size() > 1) fetch_recursively_symbols(ifelse->children()[1],out);
      if (ifelse->children().size() > 2) fetch_recursively_symbols(ifelse->children()[2],out);
- } else if (elem->kind() == ceps::ast::Ast_node_kind::binary_operator){
-     auto & binop = ceps::ast::as_binop_ref(elem);
-     fetch_recursively_symbols(binop.left(),out);fetch_recursively_symbols(binop.right(),out);
- }
+ } else if (!ceps::ast::is_leaf(elem->kind())) 
+     for(auto e: children(*nlf_ptr(elem))) fetch_recursively_symbols(e,out);
 }
 
 

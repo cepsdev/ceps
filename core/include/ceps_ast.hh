@@ -167,12 +167,14 @@ AST_NODE_IS_LEAF(int_literal)
 AST_NODE_IS_LEAF(float_literal)
 AST_NODE_IS_LEAF(long_literal)
 AST_NODE_IS_LEAF(unsigned_long_literal)
+AST_NODE_IS_LEAF(uint8)
 
 inline bool is_leaf(Ast_node_kind kind){
 	return 	kind == Ast_node_kind::string_literal ||
 			kind == Ast_node_kind::int_literal || 
 			kind == Ast_node_kind::float_literal || 
-			kind == Ast_node_kind::long_literal || 
+			kind == Ast_node_kind::long_literal ||
+			kind == Ast_node_kind::uint8 || 
 			kind == Ast_node_kind::unsigned_long_literal;
 }
 /**
