@@ -1629,6 +1629,7 @@ using node_nodeset_t = ceps::ast::Ast_nodeset*;
 using nodes_t = std::vector<ceps::ast::node_t>;
 using function_target_t = std::string;
 
+node_t mk_identifier(std::string v);
 node_symbol_t mk_symbol(std::string name, std::string kind);
 node_t mk_string(std::string v);
 node_t get_node_by_path(std::vector<std::string> v, std::vector<node_t> const & ns);

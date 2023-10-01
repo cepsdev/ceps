@@ -225,6 +225,10 @@ std::vector<ceps::ast::node_t> ceps::ast::extract_functioncall_arguments_from_pa
 	return r;
 }
 
+node_t ceps::ast::mk_identifier(std::string v){
+    return new Identifier{v};
+}
+
 
 ceps::ast::node_t ceps::ast::get_node_by_path(std::vector<std::string> v, std::vector<ceps::ast::node_t> const & ns){
 	if (v.size() == 0) return nullptr;
