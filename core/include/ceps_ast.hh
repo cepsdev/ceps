@@ -1645,10 +1645,11 @@ node_t mk_none();
 node_t mk_undef();
 node_t mk_undef(std::string);
 node_t mk_uint8(uint8_t);
-
 void gc(node_t);
-
 std::vector<node_t> extract_functioncall_arguments_from_param_block(ceps::ast::Call_parameters& params);
+
+node_t mk_binary_op(std::string opstr, node_t lhs, node_t rhs);
+node_t mk_function(node_t target, std::vector<node_t> args);
 
 template <typename T, typename U> 
 bool shallow_traverse(T const & ns, U f){
@@ -1990,7 +1991,7 @@ template<typename... Ts>
 			p_strct = make_struct(name,args...);
 		}
 
-/****************************** I/O *************************************/
+
 std::ostream& operator << (std::ostream& out, strct & s);
 Nodebase_ptr read_xml_file(std::string path);
 

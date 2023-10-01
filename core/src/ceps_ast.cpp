@@ -247,6 +247,55 @@ ceps::ast::node_t ceps::ast::get_node_by_path(std::vector<std::string> v, std::v
 } 
 
 
+node_t ceps::ast::mk_function(node_t target, std::vector<node_t> args){
+    auto params{mk_callparameters()};
+    if (args.size() == 1){
+        children(*params).push_back(args[0]);
+    } else if (args.size() > 1){
+     auto cur{mk_binary_op(",",args[0],args[1])};
+     for(size_t i = 2; i < args.size(); ++i)
+        cur = mk_binary_op(",",cur, args[i] );
+    	children(*params).push_back(cur);
+    }
+    auto fcall{new ceps::ast::Func_call{target,params}};
+	return fcall;
+}
+    
+node_t ceps::ast::mk_binary_op(std::string opstr, node_t lhs, node_t rhs){
+    auto oper{new ceps::ast::Binary_operator{0,""}};op_str(*oper) = opstr;
+    if(opstr == ".") op(*oper) = '.';
+    else if(opstr == "+") op(*oper) = '+';
+	else if(opstr == "-") op(*oper) = '-';
+	else if(opstr == "*") op(*oper) = '*';
+	else if(opstr == "/") op(*oper) = '/';
+	else if(opstr == "%") op(*oper) = '%';
+	else if(opstr == "!") op(*oper) = '!';
+	else if(opstr == "~") op(*oper) = '~';
+	else if(opstr == "=") op(*oper) = '=';
+	else if(opstr == ">") op(*oper) = '>';
+	else if(opstr == "<") op(*oper) = '<';
+	else if(opstr == "&") op(*oper) = '&';
+    else if(opstr == "|") op(*oper) = '|';
+	else if(opstr == ",") op(*oper) = ',';
+	else if(opstr == ":") op(*oper) = ':';
+	else if(opstr == ";") op(*oper) = ';';
+
+    if(opstr == "..") op(*oper) = ceps::Cepsparser::token::DOTDOT;
+	if(opstr == "!") op(*oper) = ceps::Cepsparser::token::NOT;
+	if(opstr == "==") op(*oper) = ceps::Cepsparser::token::REL_OP_EQ;
+	if(opstr == ">") op(*oper) = ceps::Cepsparser::token::REL_OP_GT;
+    if(opstr == "<") op(*oper) = ceps::Cepsparser::token::REL_OP_LT;
+    if(opstr == ">=") op(*oper) = ceps::Cepsparser::token::REL_OP_GT_EQ;
+	if(opstr == "<=") op(*oper) = ceps::Cepsparser::token::REL_OP_LT_EQ;
+	if(opstr == "!=") op(*oper) = ceps::Cepsparser::token::REL_OP_NEQ;
+  
+    children(*oper).push_back(lhs);
+    children(*oper).push_back(rhs);
+    return oper;
+}
+
+
+
 template<>
 ceps::ast::Nodebase* ceps::ast::ast_node<ceps::ast::Ast_node_kind::string_literal>::clone(){
 	return new This_type(*this);
