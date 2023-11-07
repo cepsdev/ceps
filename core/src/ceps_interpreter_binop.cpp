@@ -25,6 +25,7 @@ Licensed under the Apache License, Version 2.0 (the "License");
 std::tuple<bool,ceps::ast::node_t, ceps::ast::node_t,bool> symbolic_equality(ceps::ast::Nodebase_ptr lhs, ceps::ast::Nodebase_ptr rhs){
 	using namespace ceps::ast;
 	using namespace std;
+	
 	if (lhs == nullptr || rhs == nullptr) return {false,lhs,rhs,false};
 
 	if (is<Ast_node_kind::int_literal>(lhs) &&  is<Ast_node_kind::int_literal>(rhs) )
@@ -36,6 +37,11 @@ std::tuple<bool,ceps::ast::node_t, ceps::ast::node_t,bool> symbolic_equality(cep
 	{
 		auto& l = as_double_ref(lhs);auto& r = as_double_ref(rhs);
 		return {value(l) == value(r) && unit(l) == unit(r), lhs, rhs,false};
+	}
+	if (is<Ast_node_kind::uint8>(lhs) &&  is<Ast_node_kind::uint8>(rhs) )
+	{
+		auto& l = as_uint8_ref(lhs);auto& r = as_uint8_ref(rhs);
+		return {value(l) == value(r), lhs, rhs,false};
 	}
 	if (is<Ast_node_kind::string_literal>(lhs) &&  is<Ast_node_kind::string_literal>(rhs) )
 	{
