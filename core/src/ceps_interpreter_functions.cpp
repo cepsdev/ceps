@@ -754,7 +754,7 @@ namespace ceps{
 
 
             ceps::ast::Func_call* f = new ceps::ast::Func_call();
-		 	f->children_.push_back(new ceps::ast::Identifier("as_int", nullptr, nullptr, nullptr));
+		 	f->children_.push_back(new ceps::ast::Identifier("as_uint8", nullptr, nullptr, nullptr));
 		 	f->children_.push_back(params);
 		 	return f;
 		}
@@ -1096,7 +1096,7 @@ ceps::ast::Nodebase_ptr ceps::interpreter::eval_funccall(
 			 return ceps::interpreter::as_int(root_node,sym_table,env,parent_node,predecessor,static_cast<ceps::ast::Call_parameters*>(params_));
         } else if (name(id)=="as_uint8"){
 			 func_cache[name(id)] = ceps::interpreter::as_uint8;
-			 return ceps::interpreter::as_int(root_node,sym_table,env,parent_node,predecessor,static_cast<ceps::ast::Call_parameters*>(params_));
+			 return ceps::interpreter::as_uint8(root_node,sym_table,env,parent_node,predecessor,static_cast<ceps::ast::Call_parameters*>(params_));
         } else if (name(id)=="force_int"){
 			 func_cache[name(id)] = ceps::interpreter::force_int;
 			 return ceps::interpreter::as_int(root_node,sym_table,env,parent_node,predecessor,static_cast<ceps::ast::Call_parameters*>(params_));
