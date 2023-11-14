@@ -731,6 +731,34 @@ namespace ceps{
 		 	f->children_.push_back(params);
 		 	return f;
 		}
+
+		node_t as_uint8(	node_t root_node, 
+						Symboltable & sym_table,
+						Environment& env, 
+						node_t parent_node, 
+						node_t predecessor, Call_parameters* params)
+		{
+			using namespace ceps::ast;
+        	node_vec_t args{get_args(*params)};
+            if(args.size() != 1)
+                 throw semantic_exception{root_node,"as_uint8() requires one argument."};
+
+			if ( is<Ast_node_kind::int_literal>(args[0]) )
+              return mk_uint8(value(as_int_ref(args[0]))) ;
+			if ( is<Ast_node_kind::long_literal>(args[0]) )
+              return mk_uint8(value(as_int64_ref(args[0]))) ;
+			if ( is<Ast_node_kind::float_literal>(args[0]) )
+              return mk_uint8(value(as_double_ref(args[0])));
+			if ( is<Ast_node_kind::uint8>(args[0]) )
+              return mk_uint8(value(as_uint8_ref(args[0])));
+
+
+            ceps::ast::Func_call* f = new ceps::ast::Func_call();
+		 	f->children_.push_back(new ceps::ast::Identifier("as_int", nullptr, nullptr, nullptr));
+		 	f->children_.push_back(params);
+		 	return f;
+		}
+
 		node_t force_int(	node_t root_node, 
 						Symboltable & sym_table,
 						Environment& env, 
@@ -1065,6 +1093,9 @@ ceps::ast::Nodebase_ptr ceps::interpreter::eval_funccall(
 			return ceps::ast::create_ast_nodeset("",a);
         } else if (name(id)=="as_int"){
 			 func_cache[name(id)] = ceps::interpreter::as_int;
+			 return ceps::interpreter::as_int(root_node,sym_table,env,parent_node,predecessor,static_cast<ceps::ast::Call_parameters*>(params_));
+        } else if (name(id)=="as_uint8"){
+			 func_cache[name(id)] = ceps::interpreter::as_uint8;
 			 return ceps::interpreter::as_int(root_node,sym_table,env,parent_node,predecessor,static_cast<ceps::ast::Call_parameters*>(params_));
         } else if (name(id)=="force_int"){
 			 func_cache[name(id)] = ceps::interpreter::force_int;
