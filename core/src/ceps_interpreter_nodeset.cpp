@@ -366,15 +366,32 @@ ceps::ast::Nodebase_ptr ceps::interpreter::evaluate_nodeset_expr_dot(
 				} else {
 					 auto range_start = is_int(args[0]); 
 					 auto range_end = is_int(args[1]);
-					 if(!range_start.first) throw ceps::interpreter::semantic_exception{nullptr,"'"+method_name+"' expects integer as parameter."};
-					 if(!range_end.first) throw ceps::interpreter::semantic_exception{nullptr,"'"+method_name+"' expects integer as parameter."};
-					 if ((size_t)range_start.second < result.nodes().size()){
-						if (range_start.second <= range_end.second )
-						{
-						  if((size_t)range_end.second < result.nodes().size()) 
-						   std::copy(result.nodes().begin()+range_start.second, result.nodes().begin()+range_end.second,std::back_inserter(t));
-						  else
-						   std::copy(result.nodes().begin()+range_start.second, result.nodes().end(),std::back_inserter(t));
+					 if (!range_start.first && range_end.first && is<Ast_node_kind::symbol>(args[0]) ){
+						auto sym_name = name(as_symbol_ref(args[0]));
+						auto sym_kind = kind(as_symbol_ref(args[0]));
+						size_t i{};
+						for(; i < result.nodes().size(); ++i){
+							if (!is<Ast_node_kind::symbol>(result.nodes()[i])) continue;
+							if ( name(as_symbol_ref(result.nodes()[i])) != sym_name ) continue;
+							if ( kind(as_symbol_ref(result.nodes()[i])) != sym_kind ) continue;
+							break;
+						}
+
+						if (i+1 < result.nodes().size() ){
+							size_t tt{std::min((size_t)range_end.second,result.nodes().size() - 1 )};					
+							std::copy(result.nodes().begin()+i+1, result.nodes().begin()+tt + i + 1,std::back_inserter(t));
+						}
+					 } else {
+						if(!range_start.first) throw ceps::interpreter::semantic_exception{nullptr,"'"+method_name+"' expects integer as parameter."};
+						if(!range_end.first) throw ceps::interpreter::semantic_exception{nullptr,"'"+method_name+"' expects integer as parameter."};
+						if ((size_t)range_start.second < result.nodes().size()){
+							if (range_start.second <= range_end.second )
+							{
+							if((size_t)range_end.second < result.nodes().size()) 
+							std::copy(result.nodes().begin()+range_start.second, result.nodes().begin()+range_end.second,std::back_inserter(t));
+							else
+							std::copy(result.nodes().begin()+range_start.second, result.nodes().end(),std::back_inserter(t));
+							}
 						}
 					 }
 					 result.nodes_ = t;
