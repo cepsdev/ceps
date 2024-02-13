@@ -811,15 +811,32 @@ namespace ceps{
 		{
 			using namespace ceps::ast;
         	node_vec_t args{get_args(*params)};
-            if(args.size() != 1)
-                 throw semantic_exception{root_node,"as_double() requires one argument."};
+            if(args.size() == 1){
+				if ( is<Ast_node_kind::int_literal>(args[0]) )
+				return mk_double_node(value(as_int_ref(args[0])), unit(as_int_ref(args[0])) ) ;
+				if ( is<Ast_node_kind::long_literal>(args[0]) )
+				return mk_double_node(value(as_int64_ref(args[0])), unit(as_int64_ref(args[0]))) ;
+				if ( is<Ast_node_kind::float_literal>(args[0]) )
+				return mk_double_node(value(as_double_ref(args[0])), unit(as_double_ref(args[0]))) ;
+			} else if(args.size() > 1){
+				double v{};
+				size_t ofs{};
+				for(auto e:args){
+					if (ofs >= sizeof(v)) break;
+					if ( is<Ast_node_kind::uint8>(e) ){
+						uint8_t t{value(as_uint8_ref(e))};
+						*( (uint8_t*)&v + ofs ) = t;
+						++ofs;
+					} else 	if ( is<Ast_node_kind::int_literal>(e) ){
+						int t{value(as_int_ref(e))};
+						*( (int*)&v + ofs ) = t;
+						ofs+=sizeof(int);
+					}
 
-			if ( is<Ast_node_kind::int_literal>(args[0]) )
-              return mk_double_node(value(as_int_ref(args[0])), unit(as_int_ref(args[0])) ) ;
-			if ( is<Ast_node_kind::long_literal>(args[0]) )
-              return mk_double_node(value(as_int64_ref(args[0])), unit(as_int64_ref(args[0]))) ;
-			if ( is<Ast_node_kind::float_literal>(args[0]) )
-              return mk_double_node(value(as_double_ref(args[0])), unit(as_double_ref(args[0]))) ;
+				}
+				return mk_double_node(v, all_zero_unit()) ;
+			}
+
 
             ceps::ast::Func_call* f = new ceps::ast::Func_call();
 		 	f->children_.push_back(new ceps::ast::Identifier("as_double", nullptr, nullptr, nullptr));
