@@ -1348,8 +1348,29 @@ ceps::ast::Nodebase_ptr ceps::interpreter::eval_funccall(
 			 std::vector<ceps::ast::Nodebase_ptr> args;
 			 flatten_args(params.children()[0], args);
 
-			 if (args.size() <= 1)
-				 throw semantic_exception{root_node,"dump: Wrong number of arguments"};
+			 if (args.size() <= 1){
+				using namespace std;
+				using namespace ceps::ast;
+				
+				auto e{args[0]};
+				if (!is<Ast_node_kind::structdef>(e) || name(as_struct_ref(e)) != "params")
+				 throw semantic_exception{root_node,"dump: wrong argument, expect a structure params, e.g. params{file_path{\"FILE\";}; data{...}; }."};
+				auto& ee{as_struct_ref(e)};
+				if (!children(ee).size() == 2 || !is<Ast_node_kind::structdef>(children(ee)[0]) || !is<Ast_node_kind::structdef>(children(ee)[1]) 
+				    || name(as_struct_ref(children(ee)[0])) != "file_path" || name(as_struct_ref(children(ee)[1])) != "data" || 
+				    children(as_struct_ref(children(ee)[0])).size() != 1 || !is<Ast_node_kind::string_literal>( children(as_struct_ref(children(ee)[0]))[0]  ) )
+				 throw semantic_exception{root_node,"dump: wrong argument, expect a structure params, e.g. params{file_path{\"FILE\";}; data{...}; }."};
+				
+				auto file_path{value(as_string_ref(children(as_struct_ref(children(ee)[0]))[0]))};
+				ofstream of{file_path};
+				if (!of)
+				 throw semantic_exception{root_node,"dump: Failed to write to '"+file_path+"'"};
+				auto& content{children(as_struct_ref(children(ee)[1]))};
+				for(auto nd : content){
+					of << default_text_representation(nd);
+				}
+				return nullptr;
+			 }
 			 if (args[0]->kind() != ceps::ast::Ast_node_kind::string_literal)
 				 throw semantic_exception{root_node,"dump: Expect first parameter to be a string."};
 			 std::string filename;
