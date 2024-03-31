@@ -483,7 +483,7 @@ template <Ast_node_kind what,typename... rest>
 			out <<"\""<< x<< "\"";Base::print_value(out);
 		}
 
-		virtual ~ast_node<what,std::string,rest...>() {}
+		virtual ~ast_node() {}
 
 		Nodebase* clone() override;
 	};
@@ -526,7 +526,7 @@ template <Ast_node_kind what,typename... rest>
 			}
 			Base::print_value(out);
 		}
-		virtual ~ast_node<what,std::vector<std::string>,rest...>() {}
+		virtual ~ast_node() {}
 
 		Nodebase* clone() override
 		{
@@ -571,7 +571,7 @@ template <Ast_node_kind what,typename... rest>
 			return new This_type(*this);
 		}
 
-		virtual ~ast_node<what,std::vector<unsigned char>,rest...>(){
+		virtual ~ast_node(){
 					
 		}
 
@@ -634,7 +634,7 @@ template <typename... rest>
 		}
 
 		Nodebase* clone() override;
-		virtual ~ast_node<Ast_node_kind::binary_operator,int,rest...>(){
+		virtual ~ast_node(){
 					
 		}
 
