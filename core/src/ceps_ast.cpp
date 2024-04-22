@@ -236,7 +236,7 @@ ceps::ast::node_t ceps::ast::get_node_by_path(std::vector<std::string> v, std::v
 	Struct* r = nullptr;
 	for(size_t i = 0; i < v.size(); ++i){
 		r = nullptr;
-		shallow_traverse(*nsp, [&](node_t n)->bool{
+		shallow_traverse(*nsp, [&](node_t n){
 			if (is<Ast_node_kind::structdef>(n)){
 			 auto&  strct{as_struct_ref(n)};
 			 if (name(strct) != v[i]) return true;
@@ -264,6 +264,16 @@ node_t ceps::ast::mk_function(node_t target, std::vector<node_t> args){
     auto fcall{new ceps::ast::Func_call{target,params}};
 	return fcall;
 }
+
+ceps::ast::node_t ceps::ast::mk_func_call(node_t func_id, node_t arg){
+    Func_call* f = new Func_call();
+	f->children_.push_back(func_id);
+    Call_parameters* params = new Call_parameters();
+	f->children_.push_back(params);
+    params->children_.push_back(arg);
+    return f;
+}
+
     
 node_t ceps::ast::mk_binary_op(std::string opstr, node_t lhs, node_t rhs){
     auto oper{new ceps::ast::Binary_operator{0,""}};op_str(*oper) = opstr;

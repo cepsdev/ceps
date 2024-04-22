@@ -1651,7 +1651,7 @@ std::vector<node_t> extract_functioncall_arguments_from_param_block(ceps::ast::C
 
 node_t mk_binary_op(std::string opstr, node_t lhs, node_t rhs);
 node_t mk_function(node_t target, std::vector<node_t> args);
-
+node_t mk_func_call(node_t func_id, node_t arg);
 template <typename T, typename U> 
 bool shallow_traverse(T const & ns, U f){
 	for(auto n : ns){
