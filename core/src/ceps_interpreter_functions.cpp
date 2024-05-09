@@ -1173,7 +1173,19 @@ ceps::ast::Nodebase_ptr ceps::interpreter::eval_funccall(
 				throw semantic_exception{root_node,"tail(): argument has to be a non empty list of nodes."};
 			params.children().erase(params.children().begin());
 			return ceps::ast::create_ast_nodeset("",params.children());
-		 } else if (name(id) == "symbolic_equality") {
+		 } else if (name(id) == "zip") {
+			std::vector<ceps::ast::Nodebase_ptr> args;
+			if (params.children().size()) flatten_args(params.children()[0], args); else return nullptr;
+			if(args.size() != 2) return nullptr;
+			auto& l{children(ceps::ast::as_ast_nodeset_ref(args[0]))};
+			auto& r{children(ceps::ast::as_ast_nodeset_ref(args[1]))};
+			size_t n{std::min(l.size(),r.size())};
+			auto ns = new Ast_nodeset{""};
+			auto& rs {children(*ns)};
+			for(size_t i{}; i < n; ++i)
+				rs.push_back(new Scope{l[i],r[i]});
+			return ns;
+		 }else if (name(id) == "symbolic_equality") {
 			 std::vector<ceps::ast::Nodebase_ptr> args;
 			 if (params.children().size()) flatten_args(params.children()[0], args);
 			 if (args.size() < 2)
