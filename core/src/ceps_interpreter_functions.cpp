@@ -1173,6 +1173,10 @@ ceps::ast::Nodebase_ptr ceps::interpreter::eval_funccall(
 				throw semantic_exception{root_node,"tail(): argument has to be a non empty list of nodes."};
 			params.children().erase(params.children().begin());
 			return ceps::ast::create_ast_nodeset("",params.children());
+		 } else if (name(id) == "identity"){
+			if(params.children().size() == 0)
+				throw semantic_exception{root_node,"identity(): argument expected."};
+			return params.children()[0];
 		 } else if (name(id) == "zip") {
 			std::vector<ceps::ast::Nodebase_ptr> args;
 			if (params.children().size()) flatten_args(params.children()[0], args); else return nullptr;
