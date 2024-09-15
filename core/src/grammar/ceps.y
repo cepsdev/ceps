@@ -135,7 +135,7 @@ Licensed under the Apache License, Version 2.0 (the "License");
 %type <ast_node> macro_definition;
 %type <ast_list> attribute_list;
 
-%expect 50
+%expect 54
 
 %%
  
@@ -425,7 +425,14 @@ expr:
 {
  $$ = ceps::interpreter::mk_bin_op(ceps::Cepsparser::token::DOTDOT,$1,$3); 
 }
-
+|expr LEFTARROW expr
+{
+ $$ = ceps::interpreter::mk_bin_op(ceps::Cepsparser::token::LEFTARROW,$1,$3,"<-"); 
+}
+|expr RIGHTARROW expr
+{
+ $$ = ceps::interpreter::mk_bin_op(ceps::Cepsparser::token::RIGHTARROW,$1,$3,"->"); 
+}
 |expr ',' expr
 {
 	$$ = ceps::interpreter::mk_bin_op(',',$1,$3); 

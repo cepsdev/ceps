@@ -455,6 +455,7 @@ ceps::Cepsparser::token_type yylex(
 		} else if (ch == '<')	{
 			char t;in.get(t);
 			if (t == '=') return ceps::Cepsparser::token::REL_OP_LT_EQ;
+			if (t == '-' ) { return  ceps::Cepsparser::token::LEFTARROW; }
 			in.unget();
 			return ceps::Cepsparser::token::REL_OP_LT;
 		} else if (ch == '!')	{
@@ -466,6 +467,11 @@ ceps::Cepsparser::token_type yylex(
 			if (t == '=') return ceps::Cepsparser::token::REL_OP_EQ;
 			in.unget();return ceps::Cepsparser::token_type(ch);
 		} else if (ch == '#') return ceps::Cepsparser::token_type(ch);
+		else if (ch == '-'){
+			char t;in.get(t);
+			if (t != '>' ) { in.unget(); return ceps::Cepsparser::token_type(ch); }
+			return ceps::Cepsparser::token::RIGHTARROW;
+		} 
 
 		return ceps::Cepsparser::token_type(ch);
 	}
