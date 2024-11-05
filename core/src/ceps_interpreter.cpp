@@ -425,7 +425,70 @@ ceps::ast::Nodebase_ptr ceps::interpreter::eval_binaryop(ceps::ast::Nodebase_ptr
 		ceps::ast::Nodebase_ptr rhs = nullptr; 
 
 		 bool treat_lhs_as_symbol = false;
-		 if (unevaluated_lhs->kind() == ceps::ast::Ast_node_kind::identifier){
+		 if (ceps::ast::is<ceps::ast::Ast_node_kind::symbol>(lhs)){
+			// This is an overlooked special case it makes the following run:
+			/*
+			kind Event;
+kind Guard;
+kind Systemstate;
+
+macro Stepper{
+    sm{
+        hd(arglist);
+        val evDown = hd(tail(arglist));
+        val evUp = hd(tail(arglist));
+        val max_pos = hd(tail(tail(tail(arglist))));
+        val delta_t = hd(tail(tail(tail(tail(arglist)))));
+        val cur_pos = hd(tail(tail(tail(tail(tail(arglist))))));
+
+        states{Initial;Ready;Error;};
+        sm{
+            RequestDown;
+            
+            on_enter{
+                print(cur_pos,"\n");
+                if (cur_pos > 0){
+                    print("What?\n");
+                    cur_pos = cur_pos - 1;
+                } else{
+                    print("What???\n");
+                }
+                print(cur_pos,"\n");
+            };
+            states{Initial;};
+        };
+
+        t{Initial;Ready;};
+        t{Ready;RequestDown;evDown;};
+    };
+};
+
+Systemstate stepper1_pos;
+Systemstate stepper2_pos;
+
+stepper1_pos = 10;
+stepper2_pos = 0;
+
+Event evStepper1Down;
+Event evStepper1Up;
+
+Event evStepper2Down;
+Event evStepper2Up;
+
+Stepper{stepper1;evStepper1Down;evStepper1Up;10;0.1;stepper1_pos;};
+//Stepper{stepper2;evStepper2Down;evStepper2Up;20;0.2;stepper2_pos;};
+
+Simulation{
+    Start{stepper1;};// stepper2;};
+    evStepper1Down;
+};
+			 */
+			    if (env.binop_resolver_requires_evaluated_rhs(&binop,lhs,parent_node))
+				 rhs = evaluate_generic(binop.children()[1],sym_table,env,root_node,binop.children()[0],nullptr, local_symbols_found_r, thoroughness); 
+				auto override_value = env.call_binop_resolver(&binop,unevaluated_lhs,rhs,parent_node);
+				if (override_value) {symbols_found = false; return override_value;}
+				 treat_lhs_as_symbol=true;
+		 } else if (unevaluated_lhs->kind() == ceps::ast::Ast_node_kind::identifier){
 			 	ceps::ast::Identifier& id = *dynamic_cast<ceps::ast::Identifier*>(unevaluated_lhs);
 		 	 	ceps::parser_env::Symbol* sym_ptr;
 	 		 	if ( (sym_ptr = sym_table.lookup(name(id))) == nullptr) treat_lhs_as_symbol=true;
