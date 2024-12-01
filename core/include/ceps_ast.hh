@@ -488,6 +488,34 @@ template <Ast_node_kind what,typename... rest>
 		Nodebase* clone() override;
 	};
 
+template <Ast_node_kind what,typename... rest>
+	struct ast_node<what,uint8_t,rest...>: public ast_node<what,rest...>
+	{
+		using T = uint8_t;
+		T x;
+		using Base = ast_node<what,rest...>;
+		using This_type = ast_node<what,uint8_t,rest...>;
+		ast_node(T val_1,rest... args,Nodebase_ptr child1=nullptr,Nodebase_ptr child2=nullptr,Nodebase_ptr child3=nullptr)
+			: Base(args...,child1,child2,child3),x(val_1)
+			{
+
+			}
+		void print_content(std::ostream& out,bool pretty_print,int indent) const override
+			{
+				out << (int) x ; Base::print_content(out,pretty_print,indent);
+			}
+
+
+		virtual void print_value(std::ostream& out) const override
+		{
+			out << (int) x; Base::print_value(out);
+		}
+
+		virtual ~ast_node() {}
+
+		Nodebase* clone() override {return new This_type(*this);}
+	};
+
 template<>
  ceps::ast::Nodebase*  ast_node<Ast_node_kind::structdef,std::string>::clone();
 template<>
