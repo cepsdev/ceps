@@ -1,0 +1,5 @@
+kind ASymbol;
+ASymbol asymbol;
+ASymbol bsymbol;
+val a = asymbol+bsymbol;
+a;
