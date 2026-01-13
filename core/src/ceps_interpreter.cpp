@@ -252,10 +252,15 @@ ceps::ast::Nodebase_ptr ceps::interpreter::eval_valdef(ceps::ast::Nodebase_ptr r
 	// Meaning of val = rhs; where rhs contained a symbol was val = rhs; internally the synbol table wasn't updated.
 	// Use case: actions in state machines evaluated after AST was already post-eval, was never a good idea, dies now and here. 
  using namespace ceps::parser_env;
+ using namespace ceps::ast;
+ using namespace std;
  ceps::ast::Valdef& val_node = *dynamic_cast<ceps::ast::Valdef*>(root_node);
  ceps::parser_env::Symbol* sym_ptr;
  bool local_symbols_found{false};
  ceps::ast::Nodebase_ptr rhs = evaluate_generic(dynamic_cast<ceps::ast::Nonleafbase*>(root_node)->children()[0],sym_table,env,root_node,nullptr,nullptr,local_symbols_found,thoroughness);
+ // Nodesets with one element e decay to e.
+ if (is<Ast_node_kind::nodeset>(rhs) && children(as_ast_nodeset_ref(rhs)).size() == 1 ) rhs = children(as_ast_nodeset_ref(rhs))[0]; 
+ 
  /*if (local_symbols_found){
 	symbols_found = true;
   	return new ceps::ast::Valdef{name(val_node),rhs};
