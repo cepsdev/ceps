@@ -1210,7 +1210,14 @@ ceps::ast::Nodebase_ptr ceps::interpreter::eval_funccall(
 				children(*rr).push_back(rr2);
 			}
 			return rr;
-		} else if (name(id) == "as_symbol") {
+		} else if (name(id) == "is_defined") {
+			if (0 == params.children().size()) return mk_int_node(0);
+			std::vector<ceps::ast::Nodebase_ptr> args;
+			flatten_args(params.children()[0], args);
+			if (args[0]->kind() == ceps::ast::Ast_node_kind::undef) return mk_int_node(0);
+			return mk_int_node(1); 
+		}
+		else if (name(id) == "as_symbol") {
 			 std::vector<ceps::ast::Nodebase_ptr> args;
 			 if (params.children().size()) flatten_args(params.children()[0], args);
 			 if (args.size() < 2)

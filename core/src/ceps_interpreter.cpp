@@ -379,7 +379,7 @@ ceps::ast::Nodebase_ptr ceps::interpreter::eval_binaryop(ceps::ast::Nodebase_ptr
 		}
 	 } else if (lhs->kind() == Kind::nodeset || lhs->kind() == Kind::structdef || lhs->kind() == Kind::scope) /*op == '.'*/{
 		if (local_symbols_found_l || local_symbols_found_r)  return mk_bin_op(ceps::ast::op(binop),lhs,rhs,ceps::ast::op_str(binop));
-		if(lhs->kind() == Kind::nodeset)
+		if(lhs->kind() == Kind::nodeset){
 			return evaluate_nodeset_expr_dot(	lhs,
 												rhs ,
 												sym_table,
@@ -388,7 +388,7 @@ ceps::ast::Nodebase_ptr ceps::interpreter::eval_binaryop(ceps::ast::Nodebase_ptr
 												thoroughness,
 												symbols_found
 											);
-		else if (lhs->kind() == Kind::structdef){
+		} else if (lhs->kind() == Kind::structdef){
 			return evaluate_nodeset_expr_dot(	create_ast_nodeset("",{lhs}),
 												rhs ,
 												sym_table,

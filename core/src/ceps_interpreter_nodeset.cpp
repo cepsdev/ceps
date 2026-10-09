@@ -224,8 +224,9 @@ ceps::ast::Nodebase_ptr ceps::interpreter::evaluate_nodeset_expr_dot(
 						for(auto pes: as_scope_ref(pe).children()) v.push_back(pes);
 						continue;
 					}
-					if (pe->kind() != ceps::ast::Ast_node_kind::structdef) continue;
-					for(auto pes: as_struct_ref(pe).children()) v.push_back(pes);
+					if (pe->kind() != ceps::ast::Ast_node_kind::structdef){
+						v.push_back(pe);
+					} else for(auto pes: as_struct_ref(pe).children()) v.push_back(pes);
 				}
 				result.nodes_ = v;
 			} else if (method_name == "strip"){
